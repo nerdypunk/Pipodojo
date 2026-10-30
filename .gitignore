@@ -1,0 +1,22 @@
+# Secrets (never commit)
+.dev.vars
+.env
+.env.*
+
+# Private working doc
+SPEC.md
+
+# Dependencies and build output
+node_modules/
+dist/
+.wrangler/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+
+# Local Claude Code app config
+.claude/
