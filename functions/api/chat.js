@@ -5,7 +5,16 @@
 // present, returns the upstream response unchanged, never logs request bodies.
 
 export const UPSTREAM_URL = "https://api.meta.ai/v1/chat/completions";
+// The client never picks the model. The server may choose one of ALLOWED_MODELS via
+// the MODEL_ID env var; anything else falls back to the standard tier.
+// The -contributor tier is much cheaper but lets Meta train on prompts. Our prompts
+// are only fictional mission text plus button choices, so it is fine for testing.
 export const MODEL = "muse-spark-1.2";
+export const ALLOWED_MODELS = ["muse-spark-1.2", "muse-spark-1.2-contributor"];
+
+export function resolveModel(env) {
+  return ALLOWED_MODELS.includes(env?.MODEL_ID) ? env.MODEL_ID : MODEL;
+}
 // The model reasons before answering and reasoning tokens count against this cap.
 // Too low a cap returns an empty answer (finish_reason "length"). 1200 leaves headroom.
 export const MAX_OUTPUT_TOKENS = 1200;
@@ -26,7 +35,7 @@ function errorResponse(status, message) {
 }
 
 /** Builds the upstream body from the client's body. Returns a string error if invalid. */
-export function buildUpstreamBody(clientBody) {
+export function buildUpstreamBody(clientBody, model = MODEL) {
   if (!clientBody || typeof clientBody !== "object") return "Body must be a JSON object.";
   const { messages, tools } = clientBody;
   if (!Array.isArray(messages) || messages.length === 0) return "messages must be a non-empty array.";
@@ -36,7 +45,7 @@ export function buildUpstreamBody(clientBody) {
 
   // Only messages and tools come from the client; everything else is fixed here.
   const body = {
-    model: MODEL,
+    model,
     messages,
     temperature: TEMPERATURE,
     [MAX_TOKENS_PARAM]: MAX_OUTPUT_TOKENS,
@@ -70,7 +79,7 @@ export async function onRequest({ request, env }) {
     return errorResponse(400, "Body must be valid JSON.");
   }
 
-  const upstreamBody = buildUpstreamBody(clientBody);
+  const upstreamBody = buildUpstreamBody(clientBody, resolveModel(env));
   if (typeof upstreamBody === "string") return errorResponse(400, upstreamBody);
 
   let upstream;

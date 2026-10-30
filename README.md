@@ -18,7 +18,17 @@ npm run dev                      # open http://localhost:5173
 
 `npm run dev` starts Vite and the Cloudflare Pages Function (`functions/api/chat.js`) together. Vite forwards `/api/*` to the function, which holds the API key.
 
+Add `?debug=1` to the URL (http://localhost:5173/?debug=1) to see the run log and score breakdown.
+
 Other commands:
 
 - `npm test` runs the tests.
 - `npm run build` builds the site into `dist`.
+- `npm run check:mission -- biz-01-refund --runs 5` plays a mission's key setups against the live API and reports how often each flaw shows up.
+
+## How it works
+
+- `missions/*.json`: one file per mission, validated with Zod. Adding a mission needs no code changes.
+- `src/engine`: pure TypeScript game engine (agent loop, simulated tools, rule-based scoring). No React.
+- `src/ui`: the screens.
+- `functions/api/chat.js`: the only server code. It holds the API key, picks the model, and caps cost.

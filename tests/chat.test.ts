@@ -102,6 +102,16 @@ describe("onRequest", () => {
     expect(sentBody(fetchMock)).toMatchObject({ model: MODEL, tool_choice: "auto" });
   });
 
+  it("uses MODEL_ID only when it is on the allowlist", async () => {
+    let fetchMock = stubUpstream();
+    await onRequest({ request: post({ messages }), env: { ...env, MODEL_ID: "muse-spark-1.2-contributor" } });
+    expect(sentBody(fetchMock).model).toBe("muse-spark-1.2-contributor");
+
+    fetchMock = stubUpstream();
+    await onRequest({ request: post({ messages }), env: { ...env, MODEL_ID: "some-other-model" } });
+    expect(sentBody(fetchMock).model).toBe(MODEL);
+  });
+
   it("passes the upstream status and body through unchanged", async () => {
     stubUpstream(429, { error: { message: "slow down" } });
     const res = await onRequest({ request: post({ messages }), env });
