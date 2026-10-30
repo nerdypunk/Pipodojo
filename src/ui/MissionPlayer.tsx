@@ -1,6 +1,7 @@
 // One mission, start to finish: setup -> running -> gate -> result.
 import { useState } from "react";
 import { runAgent } from "../engine/agentRunner.ts";
+import { isBriefReady, togglePick } from "../engine/brief.ts";
 import { evaluate } from "../engine/evaluator.ts";
 import type { AgentRun, Draft, GateDecision, Mission, RunLog, RunStep, Setup } from "../engine/types.ts";
 import { isDebug, liveClient, takeLiveRun } from "../app/liveClient.ts";
@@ -21,11 +22,11 @@ type Phase =
 export function MissionPlayer({ mission }: { mission: Mission }) {
   const [phase, setPhase] = useState<Phase>({ name: "setup" });
   const [equipped, setEquipped] = useState<string[]>([]);
-  const [goalId, setGoalId] = useState<string | null>(null);
+  const [picks, setPicks] = useState<string[]>([]);
 
   async function go() {
-    if (!goalId) return;
-    const setup: Setup = { equipped, goalId };
+    if (!isBriefReady(mission, picks)) return;
+    const setup: Setup = { equipped, picks };
     setPhase({ name: "running", steps: [] });
     if (!takeLiveRun()) {
       setPhase({ name: "failed", run: null });
@@ -51,7 +52,7 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
       log: {
         missionId: mission.id,
         equipped: setup.equipped,
-        goalId: setup.goalId,
+        picks: setup.picks,
         steps: run.steps,
         draft: run.draft,
         gateDecision: decision,
@@ -69,9 +70,9 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
         <SetupView
           mission={mission}
           equipped={equipped}
-          goalId={goalId}
+          picks={picks}
           onToggleTool={(id) => setEquipped((e) => (e.includes(id) ? e.filter((x) => x !== id) : [...e, id]))}
-          onChooseGoal={setGoalId}
+          onTapOption={(id) => setPicks((p) => togglePick(mission, p, id))}
           onGo={go}
         />
       )}

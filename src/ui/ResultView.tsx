@@ -1,5 +1,7 @@
+import { buildPrompt } from "../engine/brief.ts";
 import type { Mission, RunLog } from "../engine/types.ts";
 import { resultHeadline, resultNotes } from "../game/feedback.ts";
+import { PromptCard } from "./BriefBuilder.tsx";
 import { Button } from "./Button.tsx";
 
 interface Props {
@@ -26,6 +28,8 @@ export function ResultView({ mission, log, onTryAgain }: Props) {
           ))}
         </ul>
       </div>
+
+      <PromptCard prompt={buildPrompt(mission, log.picks)} />
 
       <p className="rounded-lg border p-3">
         <span className="font-semibold">Lesson: </span>

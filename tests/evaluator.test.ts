@@ -5,10 +5,12 @@ import { refundMission } from "./helpers.ts";
 
 const mission = refundMission();
 const ALL_REQUIRED = ["orders_lookup", "store_policy", "email_draft"];
-const best: Setup = { equipped: ALL_REQUIRED, goalId: "specific" };
-const noPolicy: Setup = { equipped: ["orders_lookup", "email_draft"], goalId: "specific" };
-const vague: Setup = { equipped: ALL_REQUIRED, goalId: "vague" };
-const withTrap: Setup = { equipped: [...ALL_REQUIRED, "issue_refund"], goalId: "specific" };
+const GOOD_PICKS = ["specific", "follow_policy", "no_promises", "warm"];
+const best: Setup = { equipped: ALL_REQUIRED, picks: GOOD_PICKS };
+const noPolicy: Setup = { equipped: ["orders_lookup", "email_draft"], picks: GOOD_PICKS };
+const vague: Setup = { equipped: ALL_REQUIRED, picks: ["vague", "warm"] };
+const pleaser: Setup = { equipped: ALL_REQUIRED, picks: [...GOOD_PICKS, "please_customer"] };
+const withTrap: Setup = { equipped: [...ALL_REQUIRED, "issue_refund"], picks: GOOD_PICKS };
 
 const draft = (body: string): Draft => ({ source: "send_email", fields: { body }, text: body });
 const promise = draft("Good news! We will refund your $80 right away.");
@@ -20,9 +22,11 @@ describe("flaw conditions", () => {
     expect(conditionHolds("tool_missing:store_policy", best)).toBe(false);
   });
 
-  it("goal holds only for that goal", () => {
-    expect(conditionHolds("goal:vague", vague)).toBe(true);
-    expect(conditionHolds("goal:vague", best)).toBe(false);
+  it("picked and not_picked follow the brief", () => {
+    expect(conditionHolds("picked:vague", vague)).toBe(true);
+    expect(conditionHolds("picked:vague", best)).toBe(false);
+    expect(conditionHolds("not_picked:follow_policy", vague)).toBe(true);
+    expect(conditionHolds("not_picked:follow_policy", best)).toBe(false);
   });
 
   it("signals are case-insensitive, and no signals always match", () => {
@@ -86,6 +90,14 @@ describe("evaluate", () => {
     const score = evaluate(mission, best, decline, { type: "stop" });
     expect(score.stars).toBe(2);
     expect(score.checks.correctDecision).toBe(false);
+  });
+
+  it("a poor rule makes Pipo bend the policy even with every tool: caught is 1 star", () => {
+    expect(activeFlaws(mission, pleaser, promise).map((f) => f.id)).toEqual(["people_pleaser"]);
+    const score = evaluate(mission, pleaser, promise, { type: "stop" });
+    expect(score.stars).toBe(1);
+    expect(score.poorPicks).toEqual(["please_customer"]);
+    expect(score.checks.goodBrief).toBe(false);
   });
 
   it("a trap tool costs the third star", () => {

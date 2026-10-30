@@ -47,11 +47,24 @@ describe("mission schema", () => {
     expect(() => parseMission(m)).toThrow(/gated tool "send_email"/);
   });
 
-  it("requires a trap tool, a correct fix, and both goal qualities", () => {
+  it("rejects a flaw that points at a brief option that doesn't exist", () => {
+    const m = base();
+    m.gate.flaws[0].when = "picked:magic_words";
+    expect(() => parseMission(m)).toThrow(/Unknown brief option "magic_words"/);
+  });
+
+  it("requires a tempting poor option outside the goal slot", () => {
+    const m = base();
+    m.brief[1].options = m.brief[1].options.filter((o: { quality: string }) => o.quality !== "poor");
+    m.gate.flaws = m.gate.flaws.filter((f: { when: string }) => f.when !== "picked:please_customer");
+    expect(() => parseMission(m)).toThrow(/tempting poor option/);
+  });
+
+  it("requires a trap tool, a correct fix, and a good and poor goal", () => {
     const m = base();
     m.tools = m.tools.filter((t: { role: string }) => t.role !== "trap");
     m.gate.fixes = m.gate.fixes.map((f: object) => ({ ...f, correct: false }));
-    m.goals = m.goals.map((g: object) => ({ ...g, quality: "good" }));
+    m.brief[0].options = m.brief[0].options.map((o: object) => ({ ...o, quality: "good" }));
     const error = (() => {
       try {
         parseMission(m);
@@ -61,7 +74,7 @@ describe("mission schema", () => {
     })();
     expect(error).toMatch(/trap tool/);
     expect(error).toMatch(/correct fix/);
-    expect(error).toMatch(/good and one poor goal/);
+    expect(error).toMatch(/good and one poor option/);
   });
 
   it("requires file names to match mission ids", () => {

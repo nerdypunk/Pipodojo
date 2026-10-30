@@ -1,16 +1,19 @@
+import { isBriefReady } from "../engine/brief.ts";
 import type { Mission } from "../engine/types.ts";
+import { BriefBuilder } from "./BriefBuilder.tsx";
 import { Button } from "./Button.tsx";
 
 interface Props {
   mission: Mission;
   equipped: string[];
-  goalId: string | null;
+  picks: string[];
   onToggleTool: (id: string) => void;
-  onChooseGoal: (id: string) => void;
+  onTapOption: (id: string) => void;
   onGo: () => void;
 }
 
-export function SetupView({ mission, equipped, goalId, onToggleTool, onChooseGoal, onGo }: Props) {
+export function SetupView({ mission, equipped, picks, onToggleTool, onTapOption, onGo }: Props) {
+  const ready = isBriefReady(mission, picks);
   return (
     <section className="space-y-6">
       <div className="space-y-2">
@@ -44,26 +47,19 @@ export function SetupView({ mission, equipped, goalId, onToggleTool, onChooseGoa
         })}
       </fieldset>
 
-      <fieldset className="space-y-2">
-        <legend className="mb-2 font-semibold">2. Aim Pipo: pick a goal</legend>
-        {mission.goals.map((goal) => (
-          <label key={goal.id} className="flex items-start gap-3 rounded-lg border p-3">
-            <input
-              type="radio"
-              name="goal"
-              className="mt-1 size-5"
-              checked={goalId === goal.id}
-              onChange={() => onChooseGoal(goal.id)}
-            />
-            <span>{goal.label}</span>
-          </label>
-        ))}
-      </fieldset>
+      <section className="space-y-2">
+        <h3 className="font-semibold">2. Brief Pipo: build your prompt</h3>
+        <BriefBuilder mission={mission} picks={picks} onTap={onTapOption} />
+      </section>
 
-      <Button className="w-full" disabled={!goalId} onClick={onGo}>
+      <Button className="w-full" disabled={!ready} onClick={onGo}>
         Pipo, go!
       </Button>
-      {!goalId && <p className="text-center text-sm text-gray-600">Pick a goal to get started.</p>}
+      {!ready && (
+        <p className="text-center text-sm text-gray-600">
+          Pick {missingChoices(mission, picks).join(" and ")} to get started.
+        </p>
+      )}
     </section>
   );
 }
@@ -90,6 +86,13 @@ function ContextCard({ context }: { context: Record<string, unknown> }) {
       ))}
     </>
   );
+}
+
+/** "a goal", "a tone": the pick-one slots still waiting for a choice. */
+function missingChoices(mission: Mission, picks: string[]): string[] {
+  return mission.brief
+    .filter((slot) => slot.pick === "one" && !slot.options.some((o) => picks.includes(o.id)))
+    .map((slot) => `a ${slot.label.toLowerCase()}`);
 }
 
 export function humanize(key: string): string {

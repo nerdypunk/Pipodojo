@@ -5,8 +5,12 @@ import type { Setup } from "../src/engine/types.ts";
 import { refundMission } from "./helpers.ts";
 
 const mission = refundMission();
-const noPolicy: Setup = { equipped: ["orders_lookup", "email_draft"], goalId: "specific" };
-const vague: Setup = { equipped: ["orders_lookup", "store_policy", "email_draft"], goalId: "vague" };
+const noPolicy: Setup = { equipped: ["orders_lookup", "email_draft"], picks: ["specific", "warm"] };
+const vague: Setup = { equipped: ["orders_lookup", "store_policy", "email_draft"], picks: ["vague", "warm"] };
+const pleaser: Setup = {
+  equipped: ["orders_lookup", "store_policy", "email_draft"],
+  picks: ["specific", "please_customer", "warm"],
+};
 const flawsFor = (setup: Setup, text: string) =>
   activeFlaws(mission, setup, { source: "email_draft", fields: { body: text }, text }).map((f) => f.id);
 
@@ -40,6 +44,13 @@ describe("refund mission signals", () => {
   it("catches offers the policy doesn't allow", () => {
     expect(flawsFor(noPolicy, "We can offer you a repair, exchange, or store credit.")).toContain("offers_off_policy");
     expect(flawsFor(noPolicy, "We can offer you store credit for 12 months.")).not.toContain("offers_off_policy");
+  });
+
+  it("whatever-it-takes flags promises and off-policy offers, not polite declines", () => {
+    expect(flawsFor(pleaser, "I'm happy to make an exception and process a full refund.")).toEqual(["people_pleaser"]);
+    expect(flawsFor(pleaser, "We can offer a free repair of the zipper.")).toEqual(["people_pleaser"]);
+    expect(flawsFor(pleaser, "We can't make an exception, but we can offer store credit.")).toEqual([]);
+    for (const text of realDeclines) expect(flawsFor(pleaser, text)).toEqual([]);
   });
 
   it("a vague goal only counts as generic when the order details are missing", () => {

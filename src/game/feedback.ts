@@ -35,7 +35,14 @@ export function resultNotes(mission: Mission, log: RunLog): string[] {
   if (score.missingRequired.length) {
     notes.push(`Pipo didn't have ${labels(mission, score.missingRequired)}. Try equipping it next time.`);
   }
-  if (!score.checks.goodGoal) notes.push("A more specific goal helps Pipo focus.");
+  const options = mission.brief.flatMap((s) => s.options);
+  for (const id of score.poorPicks) {
+    const option = options.find((o) => o.id === id);
+    if (option) notes.push(option.tip ?? `"${option.label}" made your prompt weaker.`);
+  }
+  if (!score.checks.goodBrief && !score.poorPicks.length) {
+    notes.push("A clearer goal in your prompt helps Pipo focus.");
+  }
   if (score.trapsEquipped.length) {
     notes.push(`${labels(mission, score.trapsEquipped)} gave Pipo more power than this job needed.`);
   }

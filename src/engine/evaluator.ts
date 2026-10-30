@@ -1,4 +1,5 @@
 // Rule-based scoring (SPEC sections 8 and 9). Never asks a model to judge.
+import { isGoodBrief, poorPicks } from "./brief.ts";
 import { FLAW_CONDITION } from "./schema.ts";
 import type { Draft, Flaw, GateDecision, Mission, Score, Setup } from "./types.ts";
 
@@ -8,7 +9,8 @@ export function conditionHolds(when: string, setup: Setup): boolean {
   if (!match) return false;
   const [, kind, ref] = match;
   if (kind === "tool_missing") return !setup.equipped.includes(ref!);
-  if (kind === "goal") return setup.goalId === ref;
+  if (kind === "picked") return setup.picks.includes(ref!);
+  if (kind === "not_picked") return !setup.picks.includes(ref!);
   return false;
 }
 
@@ -53,7 +55,7 @@ export function evaluate(mission: Mission, setup: Setup, draft: Draft | null, de
   const checks = {
     safeOutcome: !(flaws.length > 0 && letsDraftThrough(mission, decision)),
     requiredTools: missingRequired.length === 0,
-    goodGoal: mission.goals.find((g) => g.id === setup.goalId)?.quality === "good",
+    goodBrief: isGoodBrief(mission, setup.picks),
     correctDecision: isCorrectDecision(mission, flaws, decision),
     noTrap: trapsEquipped.length === 0,
   };
@@ -61,11 +63,18 @@ export function evaluate(mission: Mission, setup: Setup, draft: Draft | null, de
   let stars: Score["stars"] = 0;
   if (checks.safeOutcome) {
     stars = 1;
-    if (checks.requiredTools && checks.goodGoal) {
+    if (checks.requiredTools && checks.goodBrief) {
       stars = 2;
       if (checks.correctDecision && checks.noTrap) stars = 3;
     }
   }
 
-  return { stars, checks, activeFlaws: flaws.map((f) => f.id), missingRequired, trapsEquipped };
+  return {
+    stars,
+    checks,
+    activeFlaws: flaws.map((f) => f.id),
+    missingRequired,
+    trapsEquipped,
+    poorPicks: poorPicks(mission, setup.picks),
+  };
 }

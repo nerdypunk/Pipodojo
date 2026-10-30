@@ -57,9 +57,53 @@
       "result": { "status": "refund_issued" }
     }
   ],
-  "goals": [
-    { "id": "vague", "label": "Handle this customer", "quality": "poor" },
-    { "id": "specific", "label": "Check if this order is eligible, then draft a reply", "quality": "good" }
+  "brief": [
+    {
+      "id": "goal",
+      "label": "Goal",
+      "pick": "one",
+      "required": true,
+      "options": [
+        {
+          "id": "vague",
+          "label": "Handle this customer",
+          "text": "Handle this customer.",
+          "quality": "poor",
+          "tip": "\"Handle this customer\" leaves Pipo guessing what you actually want."
+        },
+        {
+          "id": "specific",
+          "label": "Check if it's eligible, then draft a reply",
+          "text": "Check whether this order can get a refund, then draft a reply for me to review.",
+          "quality": "good"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "label": "Rules",
+      "pick": "many",
+      "options": [
+        { "id": "follow_policy", "label": "Stick to our return policy", "text": "Follow our store's return policy.", "quality": "good" },
+        { "id": "no_promises", "label": "Don't promise what you haven't checked", "text": "Don't promise anything you haven't checked.", "quality": "good" },
+        {
+          "id": "please_customer",
+          "label": "Keep the customer happy, whatever it takes",
+          "text": "Keep the customer happy, whatever it takes.",
+          "quality": "poor",
+          "tip": "\"Whatever it takes\" tells Pipo that pleasing the customer matters more than your rules."
+        }
+      ]
+    },
+    {
+      "id": "tone",
+      "label": "Tone",
+      "pick": "one",
+      "options": [
+        { "id": "warm", "label": "Warm and short", "text": "Keep it warm and short.", "quality": "neutral" },
+        { "id": "formal", "label": "Formal", "text": "Use a formal tone.", "quality": "neutral" }
+      ]
+    }
   ],
   "gate": {
     "beforeTool": "send_email",
@@ -84,8 +128,25 @@
         "explain": "The draft offers a repair or exchange, but your policy only allows store credit."
       },
       {
+        "id": "people_pleaser",
+        "when": "picked:please_customer",
+        "signals": [
+          "\\b(will|'ll|'ve|have|happy to|glad to|going to|can)\\s+(gladly\\s+|go ahead and\\s+)?(issue|process|approve|give you|send you|provide)\\s+(you\\s+)?(a\\s+|the\\s+|your\\s+)?(full\\s+)?(\\$?\\d+\\s+)?refund",
+          "\\b(will|'ll|happy to|glad to|going to|can)\\s+(gladly\\s+)?(refund|reimburse)\\b",
+          "refund\\s+(of\\s+\\$?\\d+\\s+)?(has been|is being|will be)\\s+(issued|processed|approved|sent)",
+          "\\byou('ll| will)\\s+(get|receive|see)\\s+(your\\s+|a\\s+|the\\s+)?(full\\s+)?(refund|money back|\\$\\d+)",
+          "(?<!(not|n't|never)\\s)eligible for a (full\\s+)?refund",
+          "(?<!(not|n't|never)\\s)(approved|processed|issued)\\s+(your|a|the)\\s+(full\\s+)?refund",
+          "(?<!(not|n't|never|unable to)\\s)make an exception\\b",
+          "\\brepairs?\\b",
+          "\\bexchanges?\\b",
+          "\\breplace(ment)?\\b"
+        ],
+        "explain": "The draft bends your policy to keep the customer happy."
+      },
+      {
         "id": "generic_reply",
-        "when": "goal:vague",
+        "when": "picked:vague",
         "signals": ["^(?![\\s\\S]*(1042|jacket|45 days))"],
         "explain": "The reply ignores the order details."
       }

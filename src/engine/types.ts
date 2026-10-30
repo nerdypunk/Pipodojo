@@ -1,9 +1,10 @@
 // Engine types. Pure TypeScript: no React, no browser APIs.
 import type { z } from "zod";
 import type {
+  BriefOptionSchema,
+  BriefSlotSchema,
   FixSchema,
   FlawSchema,
-  GoalSchema,
   MissionSchema,
   PersonaSchema,
   ToolRoleSchema,
@@ -15,14 +16,17 @@ export type Mission = z.infer<typeof MissionSchema>;
 export type Persona = z.infer<typeof PersonaSchema>;
 export type ToolRole = z.infer<typeof ToolRoleSchema>;
 export type Tool = z.infer<typeof ToolSchema>;
-export type Goal = z.infer<typeof GoalSchema>;
+export type BriefSlot = z.infer<typeof BriefSlotSchema>;
+export type BriefOption = z.infer<typeof BriefOptionSchema>;
 export type Flaw = z.infer<typeof FlawSchema>;
 export type Fix = z.infer<typeof FixSchema>;
 
 /** What the player chose before pressing "Pipo, go!". */
 export interface Setup {
+  /** Tool ids the player switched on. */
   equipped: string[];
-  goalId: string;
+  /** Brief option ids the player tapped. */
+  picks: string[];
 }
 
 // ---- Model (OpenAI-style Chat Completions) ----
@@ -98,7 +102,7 @@ export type GateDecision = { type: "approve" } | { type: "stop" } | { type: "fix
 export interface ScoreChecks {
   safeOutcome: boolean;
   requiredTools: boolean;
-  goodGoal: boolean;
+  goodBrief: boolean;
   correctDecision: boolean;
   noTrap: boolean;
 }
@@ -109,12 +113,14 @@ export interface Score {
   activeFlaws: string[];
   missingRequired: string[];
   trapsEquipped: string[];
+  /** Poor brief options the player picked. */
+  poorPicks: string[];
 }
 
 export interface RunLog {
   missionId: string;
   equipped: string[];
-  goalId: string;
+  picks: string[];
   steps: RunStep[];
   draft: Draft | null;
   gateDecision: GateDecision;

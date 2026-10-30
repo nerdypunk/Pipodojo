@@ -1,5 +1,6 @@
 // The tool-calling loop: call the model, play tools locally, repeat until the
 // model asks for the gated tool, gives a final answer, or hits MAX_STEPS.
+import { buildPrompt, isBriefReady } from "./brief.ts";
 import { equippedTools, isWritingTool, runSimulatedTool, toToolDefinitions } from "./simulatedTools.ts";
 import type {
   AgentRun,
@@ -24,23 +25,23 @@ export interface RunOptions {
   maxSteps?: number;
 }
 
-export function buildInitialMessages(mission: Mission, goalLabel: string): ChatMessage[] {
+/** The mission's context, then the player's prompt exactly as the "Your prompt" card shows it. */
+export function buildInitialMessages(mission: Mission, prompt: string): ChatMessage[] {
   return [
     { role: "system", content: mission.systemPrompt },
     {
       role: "user",
-      content: `Here is the situation:\n${JSON.stringify(mission.context, null, 2)}\n\nYour goal: ${goalLabel}`,
+      content: `Here is the situation:\n${JSON.stringify(mission.context, null, 2)}\n\n${prompt}`,
     },
   ];
 }
 
 export async function runAgent({ mission, setup, client, now, onStep, maxSteps = MAX_STEPS }: RunOptions): Promise<AgentRun> {
-  const goal = mission.goals.find((g) => g.id === setup.goalId);
-  if (!goal) return failed([], `Unknown goal "${setup.goalId}"`);
+  if (!isBriefReady(mission, setup.picks)) return failed([], "The brief is missing a choice");
 
   const tools = equippedTools(mission, setup.equipped);
   const definitions = toToolDefinitions(tools);
-  const messages = buildInitialMessages(mission, goal.label);
+  const messages = buildInitialMessages(mission, buildPrompt(mission, setup.picks));
   const steps: RunStep[] = [];
   const record = (step: RunStep) => {
     steps.push(step);

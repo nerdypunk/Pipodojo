@@ -4,7 +4,8 @@ import type { RunStep, Setup } from "../src/engine/types.ts";
 import { call, fakeClock, refundMission, scriptedClient } from "./helpers.ts";
 
 const mission = refundMission();
-const best: Setup = { equipped: ["orders_lookup", "store_policy", "email_draft"], goalId: "specific" };
+const GOOD_PICKS = ["specific", "follow_policy", "warm"];
+const best: Setup = { equipped: ["orders_lookup", "store_policy", "email_draft"], picks: GOOD_PICKS };
 const email = { to: "dana@example.com", subject: "Your jacket", body: "We can offer store credit." };
 
 function run(setup: Setup, replies: Parameters<typeof scriptedClient>[0], maxSteps?: number) {
@@ -35,17 +36,27 @@ describe("runAgent", () => {
   });
 
   it("only sends equipped tools (plus the gated one) to the model", async () => {
-    const { result, requests } = run({ equipped: ["orders_lookup"], goalId: "vague" }, [{ content: "Hi Dana.", toolCalls: [] }]);
+    const { result, requests } = run({ equipped: ["orders_lookup"], picks: ["vague", "warm"] }, [
+      { content: "Hi Dana.", toolCalls: [] },
+    ]);
     await result;
     expect(requests[0]!.tools.map((t) => t.function.name)).toEqual(["orders_lookup", "send_email"]);
   });
 
-  it("includes the context and the chosen goal in the first message", async () => {
+  it("sends the context, then exactly the prompt the player built", async () => {
     const { result, requests } = run(best, [{ content: "ok", toolCalls: [] }]);
     await result;
     const user = requests[0]!.messages[1]!;
     expect(user.content).toContain("Order #1042");
-    expect(user.content).toContain("Check if this order is eligible, then draft a reply");
+    expect(user.content).toMatch(
+      /Check whether this order can get a refund, then draft a reply for me to review\. Follow our store's return policy\. Keep it warm and short\.$/,
+    );
+  });
+
+  it("won't run until every pick-one slot has a choice", async () => {
+    const { result, requests } = run({ ...best, picks: ["specific"] }, [{ content: "ok", toolCalls: [] }]);
+    expect(await result).toMatchObject({ status: "failed" });
+    expect(requests).toHaveLength(0);
   });
 
   it("returns a tool error to the model for malformed arguments, and keeps going", async () => {
@@ -59,7 +70,7 @@ describe("runAgent", () => {
   });
 
   it("tells the model when it calls a tool it wasn't given", async () => {
-    const { result, requests } = run({ equipped: ["email_draft"], goalId: "specific" }, [
+    const { result, requests } = run({ equipped: ["email_draft"], picks: GOOD_PICKS }, [
       { content: null, toolCalls: [call("c1", "issue_refund", { order_number: "1042" })] },
       { content: "Done.", toolCalls: [] },
     ]);

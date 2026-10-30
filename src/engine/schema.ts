@@ -5,8 +5,8 @@ import { z } from "zod";
 const id = z.string().regex(/^[a-z0-9_-]{1,64}$/, "Use lowercase letters, numbers, - or _");
 const text = z.string().trim().min(1);
 
-/** A flaw's `when` condition: the player left a tool off, or picked a goal. */
-export const FLAW_CONDITION = /^(tool_missing|goal):([a-z0-9_-]+)$/;
+/** A flaw's `when` condition: the player left a tool off, or picked / skipped a brief option. */
+export const FLAW_CONDITION = /^(tool_missing|picked|not_picked):([a-z0-9_-]+)$/;
 
 const regexSource = z.string().min(1).refine((source) => {
   try {
@@ -32,15 +32,29 @@ export const ToolSchema = z.strictObject({
   result: z.unknown().optional(),
 });
 
-export const GoalSchema = z.strictObject({
+/** One tappable piece of the prompt: `label` is the button, `text` is the words it adds. */
+export const BriefOptionSchema = z.strictObject({
   id,
   label: text,
-  quality: z.enum(["good", "poor"]),
+  text,
+  quality: z.enum(["good", "neutral", "poor"]),
+  /** For poor options: why it weakens a prompt, shown on the result screen. */
+  tip: text.optional(),
+});
+
+/** A group of options, e.g. Goal (pick one), Rules (pick any), Tone (pick one). */
+export const BriefSlotSchema = z.strictObject({
+  id,
+  label: text,
+  pick: z.enum(["one", "many"]),
+  /** Needs a good option picked for the 2nd star. */
+  required: z.boolean().optional(),
+  options: z.array(BriefOptionSchema).min(2).max(4),
 });
 
 export const FlawSchema = z.strictObject({
   id,
-  when: z.string().regex(FLAW_CONDITION, 'Use "tool_missing:<tool id>" or "goal:<goal id>"'),
+  when: z.string().regex(FLAW_CONDITION, 'Use "tool_missing:<tool id>", "picked:<option id>" or "not_picked:<option id>"'),
   signals: z.array(regexSource).min(1).optional(),
   explain: text,
 });
@@ -62,7 +76,7 @@ export const MissionSchema = z
     context: z.record(z.string(), z.unknown()),
     systemPrompt: text,
     tools: z.array(ToolSchema).min(1),
-    goals: z.array(GoalSchema).min(2).max(3),
+    brief: z.array(BriefSlotSchema).min(2).max(4),
     gate: z.strictObject({
       beforeTool: id,
       flaws: z.array(FlawSchema).min(1),
@@ -74,9 +88,11 @@ export const MissionSchema = z
     const issue = (message: string, path: (string | number)[]) =>
       ctx.addIssue({ code: "custom", message, path });
 
+    const options = m.brief.flatMap((s) => s.options);
     for (const [name, ids] of [
       ["tool", m.tools.map((t) => t.id)],
-      ["goal", m.goals.map((g) => g.id)],
+      ["brief slot", m.brief.map((s) => s.id)],
+      ["brief option", options.map((o) => o.id)],
       ["flaw", m.gate.flaws.map((f) => f.id)],
       ["fix", m.gate.fixes.map((f) => f.id)],
     ] as const) {
@@ -93,9 +109,16 @@ export const MissionSchema = z
       issue(`gate.beforeTool must be the gated tool "${gated[0].id}"`, ["gate", "beforeTool"]);
     }
 
-    const qualities = m.goals.map((g) => g.quality);
-    if (!qualities.includes("good") || !qualities.includes("poor")) {
-      issue("Needs at least one good and one poor goal", ["goals"]);
+    const goalSlot = m.brief.find((s) => s.required);
+    if (!goalSlot) issue("Needs a required brief slot (the goal)", ["brief"]);
+    else {
+      const q = goalSlot.options.map((o) => o.quality);
+      if (!q.includes("good") || !q.includes("poor")) {
+        issue("The required slot needs at least one good and one poor option", ["brief"]);
+      }
+    }
+    if (!m.brief.some((s) => !s.required && s.options.some((o) => o.quality === "poor"))) {
+      issue("Needs a tempting poor option outside the required slot", ["brief"]);
     }
     if (!m.gate.fixes.some((f) => f.correct)) issue("Needs at least one correct fix", ["gate", "fixes"]);
 
@@ -103,8 +126,8 @@ export const MissionSchema = z
       const match = FLAW_CONDITION.exec(flaw.when);
       if (!match) return;
       const [, kind, ref] = match;
-      if (kind === "goal" && !m.goals.some((g) => g.id === ref)) {
-        issue(`Unknown goal "${ref}"`, ["gate", "flaws", i, "when"]);
+      if ((kind === "picked" || kind === "not_picked") && !options.some((o) => o.id === ref)) {
+        issue(`Unknown brief option "${ref}"`, ["gate", "flaws", i, "when"]);
       }
       if (kind === "tool_missing") {
         const tool = m.tools.find((t) => t.id === ref);
