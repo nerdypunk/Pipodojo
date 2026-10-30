@@ -2,7 +2,7 @@
 import type { Mission, RunLog, Score } from "../engine/types.ts";
 
 export function resultHeadline(stars: Score["stars"]): string {
-  return ["Oops, that one got through.", "Safe call!", "Nice work!", "Perfect training!"][stars]!;
+  return ["Oops, that one got through.", "Safe call!", "Nice work!", "Perfect run!"][stars]!;
 }
 
 function labels(mission: Mission, ids: readonly string[]): string {

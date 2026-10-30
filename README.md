@@ -1,6 +1,6 @@
 # Pipodojo
 
-**Train your first AI agent.** Pipodojo is a Duolingo-style game where people with no technical background learn to set up and supervise an AI agent: Pipo, a little robot you equip, aim, and catch when it goes wrong.
+**Learn to use AI agents, one tap at a time.** Pipodojo is a Duolingo-style game where people with no technical background learn to use an AI agent: give Pipo, a little robot agent, the right tools, build a clear prompt by tapping options (no typing), and catch it when it goes wrong.
 
 Built solo for the Meta Global AI Developer Hackathon (Indie Developer track), Oct 27 to Nov 4, 2026.
 

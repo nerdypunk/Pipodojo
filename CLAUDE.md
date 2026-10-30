@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Project: Pipodojo (the mascot, and the player's agent, is a little robot called Pipo), a Duolingo-style game that teaches non-technical people to set up and supervise AI agents. Built solo for the Meta Global AI Developer Hackathon.
+Project: Pipodojo (the mascot, and the player's agent, is a little robot called Pipo), a Duolingo-style game that teaches very normal, non-technical people to use AI agents: give them the right tools, brief them with a good prompt (built by tapping options, never typing), and supervise what they do. It is not about training AI models; never use "train" in player-facing copy. Built solo for the Meta Global AI Developer Hackathon.
 
 ## Read first
 - Read `SPEC.md` completely at the start of every session. It is the source of truth.
