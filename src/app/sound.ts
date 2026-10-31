@@ -383,19 +383,27 @@ export async function renderPreview(): Promise<AudioBuffer> {
   }
 }
 
+/** For checking in a browser that the music is really running: its loop and its current volume. */
+export function musicState() {
+  return { running: musicTimer !== null, volume: musicBus?.gain.value ?? 0, audio: ctx?.state ?? "none" };
+}
+
 /** Starts or stops the music to match the setting, the tab's visibility and whether audio is awake. */
 function applyMusic() {
   if (!ctx || !musicBus || !unlocked) return;
   const want = settings.music && !document.hidden;
+  // Only touch the volume when the music actually starts or stops: this runs again on every
+  // wake-up, setting change and tab switch, and cancelling a fade that's under way left it silent.
+  if (want === (musicTimer !== null)) return;
   const t = ctx.currentTime;
   musicBus.gain.cancelScheduledValues(t);
-  if (want && musicTimer === null) {
+  if (want) {
     nextNoteTime = t + 0.1;
     musicBus.gain.setValueAtTime(0.0001, t);
     musicBus.gain.setTargetAtTime(MUSIC_LEVEL, t, 0.6);
     musicTimer = window.setInterval(scheduleMusic, 60);
     scheduleMusic();
-  } else if (!want && musicTimer !== null) {
+  } else if (musicTimer !== null) {
     musicBus.gain.setTargetAtTime(0.0001, t, 0.15);
     window.clearInterval(musicTimer);
     musicTimer = null;
