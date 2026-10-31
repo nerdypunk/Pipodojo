@@ -3,7 +3,7 @@
 // In lessons with tools, Pipo acts in a pretend app (a tool call) and the action becomes the answer.
 import { actionAnswer, pickAction, toolDefinitions } from "./actions.ts";
 import { buildPrompt, isPromptReady } from "./brief.ts";
-import type { ChatMessage, Clock, Mission, ModelClient, ModelRequest, PipoRun } from "./types.ts";
+import type { ChatMessage, Clock, Mission, ModelClient, ModelRequest, PipoAction, PipoRun } from "./types.ts";
 
 export interface RunOptions {
   mission: Mission;
@@ -37,6 +37,41 @@ export function buildMessages(mission: Mission, prompt: string): ChatMessage[] {
 export function buildRequest(mission: Mission, prompt: string): ModelRequest {
   const tools = toolDefinitions(mission);
   return tools.length ? { messages: buildMessages(mission, prompt), tools } : { messages: buildMessages(mission, prompt) };
+}
+
+/** What the player "says" when they tap Send or Pay on Pipo's phone. */
+export const APPROVE_MESSAGE = "Looks good, go ahead and do it now.";
+
+/**
+ * The player approved an action Pipo was holding (a draft or a cart). Pipo is asked to go ahead
+ * and finishes it with its own tool call. If the call fails or Pipo doesn't act, the action is
+ * finished locally so the player always sees it go through.
+ */
+export async function approveAction(opts: {
+  mission: Mission;
+  prompt: string;
+  action: PipoAction;
+  client: ModelClient;
+}): Promise<PipoAction> {
+  const { mission, prompt, action, client } = opts;
+  const finish = mission.tools?.find((t) => t.app === action.app && t.outcome === "done");
+  const local: PipoAction = finish ? { ...action, tool: finish.name, outcome: "done" } : { ...action, outcome: "done" };
+  if (action.outcome === "done") return action;
+  try {
+    const request = buildRequest(mission, prompt);
+    const reply = await client.complete({
+      ...request,
+      messages: [
+        ...request.messages,
+        { role: "assistant", content: `It's ready and I'm waiting for your OK:\n${actionAnswer(mission, action)}` },
+        { role: "user", content: APPROVE_MESSAGE },
+      ],
+    });
+    const next = pickAction(mission, reply.toolCalls);
+    return next && next.outcome === "done" ? next : local;
+  } catch {
+    return local;
+  }
 }
 
 export async function askPipo({ mission, picks, client, now }: RunOptions): Promise<PipoRun> {

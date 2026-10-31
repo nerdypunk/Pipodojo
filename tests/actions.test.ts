@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { actionAnswer, pickAction, readable, toolDefinitions } from "../src/engine/actions.ts";
-import { askPipo, TOOL_NUDGE } from "../src/engine/agentRunner.ts";
+import { APPROVE_MESSAGE, approveAction, askPipo, TOOL_NUDGE } from "../src/engine/agentRunner.ts";
 import { evaluate } from "../src/engine/evaluator.ts";
 import { parseMission } from "../src/engine/missionLoader.ts";
 import { parseReply } from "../src/engine/modelClient.ts";
@@ -94,6 +94,38 @@ describe("askPipo with tools", () => {
     await askPipo({ mission: dinner, picks: ["plan_dinner", "short_list"], client, now: fakeClock() });
     expect(requests).toHaveLength(1);
     expect(requests[0]).not.toHaveProperty("tools");
+  });
+});
+
+describe("approveAction", () => {
+  const draft = {
+    tool: "draft_whatsapp_message",
+    app: "whatsapp" as const,
+    outcome: "waiting" as const,
+    args: { to: "Barbecue crew", message: "BBQ Saturday 4pm" },
+  };
+
+  it("asks Pipo to go ahead and uses its own finishing tool call", async () => {
+    const { client, requests } = scriptedClient([
+      { content: null, toolCalls: [{ name: "send_whatsapp_message", args: { to: "Barbecue crew", message: "BBQ Saturday 4pm!" } }] },
+    ]);
+    const done = await approveAction({ mission: invite, prompt: "Invite them", action: draft, client });
+    expect(requests[0]!.messages.at(-1)).toEqual({ role: "user", content: APPROVE_MESSAGE });
+    expect(done).toEqual({
+      tool: "send_whatsapp_message",
+      app: "whatsapp",
+      outcome: "done",
+      args: { to: "Barbecue crew", message: "BBQ Saturday 4pm!" },
+    });
+  });
+
+  it("finishes locally if Pipo fails or holds it again, so it always goes through", async () => {
+    const failing = scriptedClient([new Error("network")]).client;
+    const holding = scriptedClient([{ content: null, toolCalls: [{ name: "draft_whatsapp_message", args: {} }] }]).client;
+    for (const client of [failing, holding]) {
+      const done = await approveAction({ mission: invite, prompt: "Invite them", action: draft, client });
+      expect(done).toEqual({ ...draft, tool: "send_whatsapp_message", outcome: "done" });
+    }
   });
 });
 

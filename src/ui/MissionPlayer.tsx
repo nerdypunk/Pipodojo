@@ -1,15 +1,16 @@
 // One lesson on one screen: Pipo's scene on the left, the prompt playground on the right,
 // with Check and the result at the foot of the playground card.
 import { useEffect, useRef, useState } from "react";
-import { askPipo } from "../engine/agentRunner.ts";
+import { approveAction, askPipo } from "../engine/agentRunner.ts";
 import { buildPrompt, emptySlots, filledShare, isPromptReady, togglePick } from "../engine/brief.ts";
 import { evaluate } from "../engine/evaluator.ts";
-import type { Mission, PipoRun, RunLog } from "../engine/types.ts";
+import type { Mission, ModelClient, PipoAction, PipoRun, RunLog } from "../engine/types.ts";
 import { answerLines } from "../game/feedback.ts";
 import { isDebug, liveClient, takeLiveRun } from "../app/liveClient.ts";
 import { ActionBar } from "./ActionBar.tsx";
 import { BriefBuilder, PromptCard } from "./BriefBuilder.tsx";
 import { DebugPanel } from "./DebugPanel.tsx";
+import { celebrate, FloatingPhone, type PhoneStatus } from "./FloatingPhone.tsx";
 import { PipoScene } from "./PipoScene.tsx";
 import { ShaderBorder } from "./ShaderBorder.tsx";
 import { TopBar } from "./TopBar.tsx";
@@ -19,6 +20,11 @@ type Phase =
   | { name: "thinking" }
   | { name: "result"; log: RunLog }
   | { name: "failed"; run: PipoRun | null };
+
+/** Used for Send / Pay when the session's live calls are used up: the action finishes locally. */
+const offline: ModelClient = {
+  complete: () => Promise.reject(new Error("No live calls left")),
+};
 
 interface Props {
   mission: Mission;
@@ -34,6 +40,8 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
   const [picks, setPicks] = useState<string[]>([]);
   const [nudge, setNudge] = useState<string | null>(null);
   const [bestStars, setBestStars] = useState(0);
+  // Pipo's floating phone, after Pipo acts in an app (lessons with tools).
+  const [phone, setPhone] = useState<{ action: PipoAction; status: PhoneStatus; open: boolean } | null>(null);
 
   async function check() {
     if (!isPromptReady(mission, picks)) {
@@ -54,6 +62,7 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
     }
     const score = evaluate(mission, picks, run.answer);
     setBestStars((best) => Math.max(best, score.stars));
+    setPhone(run.action ? { action: run.action, status: run.action.outcome === "done" ? "already" : "review", open: true } : null);
     setPhase({
       name: "result",
       log: {
@@ -68,7 +77,20 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
     });
   }
 
-  const tryAgain = () => setPhase({ name: "build" });
+  const tryAgain = () => {
+    setPhone(null);
+    setPhase({ name: "build" });
+  };
+
+  // Send / Pay on the phone: Pipo is asked to go ahead and finishes the action itself.
+  async function approve() {
+    if (!phone || phone.status !== "review" || !result) return;
+    setPhone({ ...phone, status: "working" });
+    const client = takeLiveRun() ? liveClient : offline;
+    const done = await approveAction({ mission, prompt: result.prompt, action: phone.action, client });
+    setPhone((p) => (p ? { ...p, action: done, status: "approved" } : p));
+    celebrate(done.app);
+  }
   const thinking = phase.name === "thinking";
   const result = phase.name === "result" ? phase.log : null;
   const mood = thinking ? "thinking" : result ? (result.score.stars === 1 ? "oops" : "happy") : "idle";
@@ -89,7 +111,7 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
       <TopBar progress={result ? 1 : filledShare(mission, picks)} stars={bestStars} onBack={onBack} lesson={lesson} />
 
       {/* Both cards stretch to the same height; the pieces stay put so nothing jumps after Check. */}
-      <main className="grid gap-3 md:grid-cols-[5fr_6fr] md:gap-5">
+      <main className="grid gap-3 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-5">
         <div ref={sceneRef} className="flex scroll-mt-3 flex-col">
           <ShaderBorder mode={borderMode} className="flex flex-1 flex-col">
             <PipoScene
@@ -98,7 +120,8 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
               stage={thinking ? "thinking" : result ? "done" : "idle"}
               stars={result ? result.score.stars : null}
               answer={result ? answerLines(mission, result.score, result.answer) : null}
-              action={result?.action}
+              action={phone?.action}
+              onOpenPhone={phone && !phone.open ? () => setPhone({ ...phone, open: true }) : undefined}
             />
           </ShaderBorder>
         </div>
@@ -149,6 +172,18 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
           </div>
         )}
       </main>
+
+      {phone && result && (
+        <FloatingPhone
+          action={phone.action}
+          flags={answerLines(mission, result.score, result.answer).map((line) => line.flagged)}
+          status={phone.status}
+          open={phone.open}
+          onOpen={() => setPhone({ ...phone, open: true })}
+          onClose={() => setPhone({ ...phone, open: false })}
+          onApprove={() => void approve()}
+        />
+      )}
     </div>
   );
 }

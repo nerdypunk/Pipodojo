@@ -2,7 +2,6 @@ import type { Mission, PipoAction } from "../engine/types.ts";
 import { splitEmoji } from "../game/emoji.ts";
 import type { AnswerLine } from "../game/feedback.ts";
 import type { Mood } from "./Pipo.tsx";
-import { PhoneMockup } from "./PhoneMockup.tsx";
 import { PipoStage, type StageMode } from "./PipoStage.tsx";
 
 interface Props {
@@ -13,18 +12,20 @@ interface Props {
   stars: number | null;
   /** Pipo's answer once it's in; until then the mission panel shows Pipo's request. */
   answer: AnswerLine[] | null;
-  /** Set when Pipo acted in an app (a tool call): shown as a phone screen instead of lines. */
+  /** Set when Pipo acted in an app (a tool call); the phone itself floats over the page. */
   action?: PipoAction | undefined;
+  /** Shown while the floating phone is put away. */
+  onOpenPhone?: (() => void) | undefined;
 }
 
 const LINE_DELAY_MS = 150;
 
 /** Left card, split in half: Pipo on stage on top, the mission you're on below. */
-export function PipoScene({ mission, mood, stage, stars, answer, action }: Props) {
+export function PipoScene({ mission, mood, stage, stars, answer, action, onOpenPhone }: Props) {
   return (
     <section className="glass flex flex-1 flex-col gap-3 rounded-3xl p-3 md:p-4" aria-label="Your mission">
       <PipoStage mode={stage} mood={mood} stars={stars} />
-      <MissionPanel mission={mission} answer={answer} action={action} />
+      <MissionPanel mission={mission} answer={answer} action={action} onOpenPhone={onOpenPhone} />
     </section>
   );
 }
@@ -33,10 +34,12 @@ function MissionPanel({
   mission,
   answer,
   action,
+  onOpenPhone,
 }: {
   mission: Mission;
   answer: AnswerLine[] | null;
   action?: PipoAction | undefined;
+  onOpenPhone?: (() => void) | undefined;
 }) {
   return (
     <div className="relative flex flex-1 basis-0 flex-col gap-3 rounded-2xl bg-white/90 p-4 shadow-sm">
@@ -50,21 +53,30 @@ function MissionPanel({
         <h1 className="mt-1 text-2xl leading-tight font-black text-ink md:text-[28px]">{mission.title}</h1>
       </div>
 
-      {/* With a phone screen, the phone and the facts sit side by side on wide screens to save height */}
-      <div className={action ? "flex flex-1 flex-col gap-3 md:grid md:grid-cols-[3fr_2fr] md:items-start" : "contents"}>
       {answer ? (
         <div>
-          <p className="mb-1.5 text-sm font-extrabold text-gray-600">{action ? "What Pipo did on your phone" : "Pipo's answer"}</p>
-          {action ? <PhoneMockup action={action} flags={answer.map((l) => l.flagged)} /> : <AnswerCard lines={answer} />}
+          <div className="mb-1.5 flex items-center justify-between gap-2">
+            <p className="text-sm font-extrabold text-gray-600">{action ? "What Pipo did on your phone" : "Pipo's answer"}</p>
+            {onOpenPhone && (
+              <button
+                type="button"
+                onClick={onOpenPhone}
+                className="rounded-full bg-ink px-3 py-1 text-xs font-extrabold text-white hover:bg-brand-800"
+              >
+                <span aria-hidden="true">📱 </span>Open Pipo's phone
+              </button>
+            )}
+          </div>
+          <AnswerCard lines={answer} short={!!action} />
         </div>
       ) : (
         <p className="text-lg leading-snug font-semibold text-ink md:text-xl">{mission.situation}</p>
       )}
 
       {mission.facts.length > 0 && (
-        <div className={action ? "md:border-l md:border-brand-100 md:pl-3" : "mt-auto border-t border-brand-100 pt-3"}>
+        <div className="mt-auto border-t border-brand-100 pt-3">
           <p className="mb-1.5 text-sm font-extrabold text-gray-600">What you know</p>
-          <ul className={action ? "flex flex-wrap gap-2 md:flex-col md:items-start" : "flex flex-wrap gap-2"}>
+          <ul className="flex flex-wrap gap-2">
             {mission.facts.map((fact) => {
               const { emoji, text } = splitEmoji(fact);
               return (
@@ -87,12 +99,12 @@ function MissionPanel({
           </ul>
         </div>
       )}
-      </div>
     </div>
   );
 }
 
-function AnswerCard({ lines }: { lines: AnswerLine[] }) {
+/** `short`: one line each, for when the phone already shows the full details. */
+function AnswerCard({ lines, short = false }: { lines: AnswerLine[]; short?: boolean }) {
   return (
     <ul className="space-y-1.5" aria-label="Pipo's answer">
       {lines.map((line, i) => (
@@ -106,7 +118,7 @@ function AnswerCard({ lines }: { lines: AnswerLine[] }) {
           <span className="text-xl" aria-hidden="true">
             {line.emoji || "•"}
           </span>
-          {line.text}
+          <span className={short ? "min-w-0 truncate" : ""}>{line.text}</span>
         </li>
       ))}
     </ul>
