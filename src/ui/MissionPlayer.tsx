@@ -20,7 +20,7 @@ type Phase =
   | { name: "result"; log: RunLog }
   | { name: "failed"; run: PipoRun | null };
 
-export function MissionPlayer({ mission }: { mission: Mission }) {
+export function MissionPlayer({ mission, onBack }: { mission: Mission; onBack: () => void }) {
   const [phase, setPhase] = useState<Phase>({ name: "build" });
   const [picks, setPicks] = useState<string[]>([]);
   const [nudge, setNudge] = useState<string | null>(null);
@@ -60,7 +60,7 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col justify-center gap-4 p-3 md:p-6">
       <Backdrop />
-      <TopBar progress={result ? 1 : filledShare(mission, picks)} stars={bestStars} />
+      <TopBar progress={result ? 1 : filledShare(mission, picks)} stars={bestStars} onBack={onBack} />
 
       {/* Both cards stretch to the same height; the pieces stay put so nothing jumps after Check. */}
       <main className="grid gap-4 md:grid-cols-[5fr_6fr] md:gap-5">

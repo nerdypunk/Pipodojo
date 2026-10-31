@@ -15,7 +15,7 @@ export default defineConfig({
   },
   // Pre-bundle the lazily loaded graphics libraries so dev never re-optimizes mid-session.
   optimizeDeps: {
-    include: ["three", "vanta/dist/vanta.halo.min"],
+    include: ["three", "vanta/dist/vanta.halo.min", "@egjs/flicking", "@egjs/flicking-plugins"],
   },
   // three.js (Pipo's stage) is a ~600 kB chunk, but it's lazy-loaded after the page shows.
   build: {

@@ -83,3 +83,18 @@ body {
     animation: none;
   }
 }
+
+/* Persona carousel dots (egjs Flicking pagination) in the brand colors. */
+.persona-dots .flicking-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  margin: 0 4px;
+  border-radius: 9999px;
+  background-color: rgb(255 255 255 / 0.7);
+  transition: width 200ms ease;
+}
+
+.persona-dots .flicking-pagination-bullet-active {
+  width: 22px;
+  background-color: var(--color-brand-600);
+}

@@ -3,13 +3,23 @@ interface Props {
   progress: number;
   /** Best stars earned on this lesson so far. */
   stars: number;
+  /** Back to picking a path. */
+  onBack: () => void;
 }
 
-/** Glass strip across the top: logo, progress bar, stars. */
-export function TopBar({ progress, stars }: Props) {
+/** Glass strip across the top: back, logo, progress bar, stars. */
+export function TopBar({ progress, stars, onBack }: Props) {
   const percent = Math.round(progress * 100);
   return (
-    <header className="glass flex items-center gap-4 rounded-2xl px-4 py-2.5">
+    <header className="glass flex items-center gap-3 rounded-2xl py-1.5 pr-4 pl-1.5 md:gap-4">
+      <button
+        type="button"
+        onClick={onBack}
+        aria-label="Back to paths"
+        className="flex h-9 w-9 items-center justify-center rounded-xl text-2xl leading-none font-black text-brand-700 transition hover:bg-white/70 focus-visible:outline-3 focus-visible:outline-brand-500"
+      >
+        <span aria-hidden="true">‹</span>
+      </button>
       <span className="text-lg font-black tracking-tight text-brand-700">Pipodojo</span>
       <div
         className="h-3 flex-1 overflow-hidden rounded-full bg-white/70"

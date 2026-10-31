@@ -1,11 +1,19 @@
+import { useState } from "react";
+import type { Persona } from "../engine/types.ts";
 import { MissionPlayer } from "../ui/MissionPlayer.tsx";
+import { PersonaPicker } from "../ui/PersonaPicker.tsx";
 import { missions } from "./missions.ts";
 
 export function App() {
-  const mission = missions[0];
+  const [persona, setPersona] = useState<Persona | null>(null);
+
+  if (!persona) return <PersonaPicker onStart={setPersona} />;
+
+  // For now each path opens its first lesson.
+  const mission = missions.find((m) => m.persona === persona);
   return mission ? (
-    <MissionPlayer key={mission.id} mission={mission} />
+    <MissionPlayer key={mission.id} mission={mission} onBack={() => setPersona(null)} />
   ) : (
-    <p className="p-8 text-center font-bold">No lessons yet.</p>
+    <PersonaPicker onStart={setPersona} />
   );
 }
