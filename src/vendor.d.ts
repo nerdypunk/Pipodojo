@@ -1,20 +1,14 @@
-// Minimal types for the untyped graphics libraries behind Pipo's brain panel.
+// Minimal types for the untyped graphics libraries behind Pipo's stage.
 declare module "three";
 
-declare module "vanta/dist/vanta.net.min" {
-  export interface VantaNetPoint {
-    /** Rotation rate, set once by Vanta. */
-    r: number;
-    /** Our copy of the starting rate, so thinking can speed it up and back down. */
-    baseR?: number;
-  }
-  export interface VantaNetEffect {
-    points: VantaNetPoint[] | null;
+declare module "vanta/dist/vanta.halo.min" {
+  export interface VantaEffect {
     setOptions(options: Record<string, unknown>): void;
+    resize(): void;
     destroy(): void;
   }
-  export type VantaNetFactory = (options: Record<string, unknown>) => VantaNetEffect;
+  export type VantaFactory = (options: Record<string, unknown>) => VantaEffect;
   // It's a UMD bundle: depending on the bundler the factory arrives as default or default.default.
-  const NET: VantaNetFactory | { default: VantaNetFactory };
-  export default NET;
+  const HALO: VantaFactory | { default: VantaFactory };
+  export default HALO;
 }

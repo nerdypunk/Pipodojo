@@ -67,7 +67,7 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
         <PipoScene
           mission={mission}
           mood={mood}
-          brain={thinking ? "thinking" : result ? "done" : "idle"}
+          stage={thinking ? "thinking" : result ? "done" : "idle"}
           answer={result ? answerLines(mission, result.score, result.answer) : null}
         />
 

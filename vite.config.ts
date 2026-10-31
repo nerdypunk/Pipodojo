@@ -15,9 +15,9 @@ export default defineConfig({
   },
   // Pre-bundle the lazily loaded graphics libraries so dev never re-optimizes mid-session.
   optimizeDeps: {
-    include: ["three", "vanta/dist/vanta.net.min"],
+    include: ["three", "vanta/dist/vanta.halo.min"],
   },
-  // three.js (Pipo's brain) is a ~600 kB chunk, but it's lazy-loaded on wide screens only.
+  // three.js (Pipo's stage) is a ~600 kB chunk, but it's lazy-loaded after the page shows.
   build: {
     chunkSizeWarningLimit: 700,
   },
