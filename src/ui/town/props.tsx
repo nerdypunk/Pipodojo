@@ -218,8 +218,8 @@ export function Car({ color, offset, speed, still }: { color: string; offset: nu
   useFrame(({ clock }) => {
     const p = ringPoint(offset + (still ? 0 : clock.elapsedTime * speed));
     if (!ref.current) return;
-    // Keep to the outer lane.
-    const side = 0.24;
+    // Keep to the outer lane (the road is RING.width wide; a car is about half that).
+    const side = 0.27;
     const alongX = Math.abs(Math.abs(p.z) - RING.half) < 1e-6;
     const nx = alongX ? 0 : Math.sign(p.x);
     const nz = alongX ? Math.sign(p.z) : 0;
@@ -228,6 +228,7 @@ export function Car({ color, offset, speed, still }: { color: string; offset: nu
   });
   return (
     <group ref={ref}>
+      <group scale={CAR_SCALE}>
       <Blob size={0.42} />
       <RoundedBox args={[0.72, 0.26, 0.42]} radius={0.1} smoothness={3} position={[0, 0.22, 0]}>
         <meshStandardMaterial color={color} roughness={0.6} />
@@ -246,9 +247,13 @@ export function Car({ color, offset, speed, still }: { color: string; offset: nu
           <meshStandardMaterial color={INK} roughness={0.8} />
         </mesh>
       ))}
+      </group>
     </group>
   );
 }
+
+/** How much bigger the cars are than their parts as drawn, so they read clearly from the town view. */
+const CAR_SCALE = 1.3;
 
 /** A soft cloud drifting across, wrapping round to the other side. */
 export function Cloud({ position, scale, speed, still }: { position: V3; scale: number; speed: number; still: boolean }) {

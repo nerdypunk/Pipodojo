@@ -166,22 +166,32 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
             </button>
           ))}
         </div>
-        <div className="flex flex-col items-center gap-1 rounded-2xl bg-white/70 px-3 py-1.5 text-center text-xs font-extrabold text-brand-800 ring-1 ring-white sm:flex-row sm:gap-2 sm:rounded-full sm:py-1">
+        <div className="flex flex-col items-start gap-1 rounded-2xl bg-white/70 px-3.5 py-2 text-xs sm:items-center font-extrabold text-brand-800 ring-1 ring-white sm:flex-row sm:gap-2 sm:rounded-full sm:py-1">
+          {/* Both lines share one shape (icon in a fixed slot, same size and weight), so they sit
+              as a matched pair when stacked on phones. */}
           <p className="inline-flex items-center gap-1.5">
-            <span aria-hidden="true">⚡</span> Pipo is powered by Meta's Muse Spark
+            <span className="w-4 text-center" aria-hidden="true">
+              ⚡
+            </span>
+            Pipo is powered by Meta's Muse Spark
           </p>
           <span className="hidden text-brand-300 sm:inline" aria-hidden="true">
             ·
           </span>
-          <p className="font-bold text-gray-600">
+          <p className="inline-flex items-center gap-1.5">
+            <span className="w-4 text-center" aria-hidden="true">
+              💻
+            </span>
+            <span>
             An{" "}
-            <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="font-extrabold text-brand-700 underline underline-offset-2 hover:text-brand-900">
+            <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="text-brand-700 underline underline-offset-2 hover:text-brand-900">
               open source project
             </a>{" "}
             by{" "}
-            <a href={SITE_URL} target="_blank" rel="noopener noreferrer" className="font-extrabold text-brand-700 underline underline-offset-2 hover:text-brand-900">
+            <a href={SITE_URL} target="_blank" rel="noopener noreferrer" className="text-brand-700 underline underline-offset-2 hover:text-brand-900">
               nerdypunk.dev
             </a>
+            </span>
           </p>
         </div>
       </nav>

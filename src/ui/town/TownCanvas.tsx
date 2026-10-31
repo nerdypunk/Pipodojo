@@ -277,10 +277,17 @@ function Roads() {
     }
   }
 
-  // Dashed middle lines on the spokes, and zebra crossings where each spoke meets the ring.
+  // Dashed middle lines on the spokes and round the ring (where the cars drive), and zebra
+  // crossings where each spoke meets the ring.
   const dashes: { at: [number, number, number]; alongX: boolean }[] = [];
   for (let d = h + 1.6; d < SPOKE_END - 0.4; d += 0.9) {
     dashes.push({ at: [0, 0.045, d], alongX: false }, { at: [0, 0.045, -d], alongX: false }, { at: [d, 0.045, 0], alongX: true }, { at: [-d, 0.045, 0], alongX: true });
+  }
+  // Along each side of the ring, leaving the corners and the junctions with the spokes clear.
+  for (let d = 0.9; d < h - w / 2 - 0.3; d += 0.9) {
+    for (const t of [d, -d]) {
+      dashes.push({ at: [t, 0.045, h], alongX: true }, { at: [t, 0.045, -h], alongX: true }, { at: [h, 0.045, t], alongX: false }, { at: [-h, 0.045, t], alongX: false });
+    }
   }
   const zebra: { at: [number, number, number]; alongX: boolean }[] = [];
   const cross = h + w / 2 + 0.5;
