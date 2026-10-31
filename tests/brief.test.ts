@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildPrompt, emptySlots, hasGoodGoal, isPromptReady, togglePick, weakPicks } from "../src/engine/brief.ts";
+import { buildPrompt, emptySlots, filledShare, hasGoodGoal, isPromptReady, togglePick, weakPicks } from "../src/engine/brief.ts";
 import { BEST_DINNER, dinnerMission } from "./helpers.ts";
 
 const mission = dinnerMission();
@@ -47,5 +47,14 @@ describe("prompt readiness and quality", () => {
     expect(hasGoodGoal(mission, BEST_DINNER)).toBe(true);
     expect(hasGoodGoal(mission, ["help_dinner"])).toBe(false);
     expect(weakPicks(mission, ["help_dinner", "amazing", "everything"])).toEqual(["help_dinner", "amazing", "everything"]);
+  });
+});
+
+describe("filledShare", () => {
+  it("counts rows with at least one piece", () => {
+    const mission = dinnerMission();
+    expect(filledShare(mission, [])).toBe(0);
+    expect(filledShare(mission, ["plan_dinner", "budget"])).toBeCloseTo(2 / 3);
+    expect(filledShare(mission, BEST_DINNER)).toBe(1);
   });
 });

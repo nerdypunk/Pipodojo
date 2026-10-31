@@ -1,11 +1,12 @@
 // Placeholder Pipo drawn in code (SPEC: fallback until the Muse Image art is ready).
-type Mood = "idle" | "thinking" | "happy" | "oops";
+export type Mood = "idle" | "thinking" | "happy" | "oops";
 
-export function Pipo({ mood = "idle", size = 56 }: { mood?: Mood; size?: number }) {
+/** Sized by className so it can scale with its column. */
+export function Pipo({ mood = "idle", className = "h-14 w-14" }: { mood?: Mood; className?: string }) {
   const mouth =
     mood === "happy" ? "M24 35 Q30 40 36 35" : mood === "oops" ? "M25 37 Q30 33 35 37" : "M26 36 Q30 38 34 36";
   return (
-    <svg width={size} height={size} viewBox="0 0 60 60" role="img" aria-label="Pipo">
+    <svg className={className} viewBox="0 0 60 60" role="img" aria-label="Pipo">
       <line x1="30" y1="4" x2="30" y2="13" stroke="#3b2f2f" strokeWidth="2.5" strokeLinecap="round" />
       <circle
         cx="30"

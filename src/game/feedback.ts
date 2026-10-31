@@ -1,6 +1,7 @@
 // Player-facing result copy. Friendly, plain, never blames the player.
 import { signalsMatch } from "../engine/evaluator.ts";
 import type { Mission, Score } from "../engine/types.ts";
+import { splitEmoji } from "./emoji.ts";
 
 export function resultHeadline(stars: Score["stars"]): string {
   return { 1: "Pipo missed something", 2: "Nice! Pipo did well", 3: "Perfect prompt!" }[stars];
@@ -27,8 +28,6 @@ export interface AnswerLine {
   flagged: boolean;
 }
 
-const LEADING_EMOJI = /^(\p{Extended_Pictographic}(?:️|‍\p{Extended_Pictographic})*)\s*/u;
-
 /** Pipo's answer as card lines. Gaps that point at specific lines get flagged. */
 export function answerLines(mission: Mission, score: Score, answer: string): AnswerLine[] {
   const lines = plainAnswer(answer)
@@ -41,10 +40,7 @@ export function answerLines(mission: Mission, score: Score, answer: string): Ans
     // A signal that matches every line is about something missing, not a line to point at.
     if (hits.length < lines.length) hits.forEach((i) => flagged.add(i));
   }
-  return lines.map((line, i) => {
-    const emoji = LEADING_EMOJI.exec(line)?.[1] ?? "";
-    return { emoji, text: line.slice(emoji.length).trim(), flagged: flagged.has(i) };
-  });
+  return lines.map((line, i) => ({ ...splitEmoji(line), flagged: flagged.has(i) }));
 }
 
 /** Light cleanup so a model's markdown reads as plain text on the card. */

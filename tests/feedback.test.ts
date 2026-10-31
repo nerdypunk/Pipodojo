@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { evaluate } from "../src/engine/evaluator.ts";
+import { splitEmoji } from "../src/game/emoji.ts";
 import { answerLines } from "../src/game/feedback.ts";
 import { BEST_DINNER, dinnerMission } from "./helpers.ts";
 
@@ -34,5 +35,13 @@ describe("answerLines", () => {
   it("veggie burgers aren't meat", () => {
     const picks = BEST_DINNER.filter((p) => p !== "vegetarian");
     expect(evaluate(mission, picks, "👥 For 6\n🍔 Veggie burgers, corn\n💰 $50").visibleFlaws).toEqual([]);
+  });
+});
+
+describe("splitEmoji", () => {
+  it("splits a leading emoji from the text", () => {
+    expect(splitEmoji("👥 6 people are coming")).toEqual({ emoji: "👥", text: "6 people are coming" });
+    expect(splitEmoji("🙋‍♀️ Ask Sam")).toEqual({ emoji: "🙋‍♀️", text: "Ask Sam" });
+    expect(splitEmoji("No emoji here")).toEqual({ emoji: "", text: "No emoji here" });
   });
 });

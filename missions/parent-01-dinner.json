@@ -5,9 +5,9 @@
   "title": "Saturday barbecue",
   "situation": "Friends are coming over Saturday for a barbecue. Tell me what you need!",
   "facts": [
-    "6 people are coming",
-    "Sam is vegetarian",
-    "Your budget is $60"
+    "👥 6 people are coming",
+    "🥕 Sam is vegetarian",
+    "💵 Your budget is $60"
   ],
   "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. Help with what they ask. When you plan food, your first line says how many people it's for.",
   "slots": [

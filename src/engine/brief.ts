@@ -34,6 +34,12 @@ export function emptySlots(mission: Mission, picks: readonly string[]) {
   return mission.slots.filter((slot) => slot.pick === "one" && !slot.pieces.some((p) => picks.includes(p.id)));
 }
 
+/** Share of rows (0 to 1) that have at least one piece. Drives the progress bar. */
+export function filledShare(mission: Mission, picks: readonly string[]): number {
+  const filled = mission.slots.filter((slot) => slot.pieces.some((p) => picks.includes(p.id))).length;
+  return filled / mission.slots.length;
+}
+
 export function weakPicks(mission: Mission, picks: readonly string[]): string[] {
   return pickedPieces(mission, picks)
     .filter((p) => p.quality === "weak")

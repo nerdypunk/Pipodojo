@@ -1,12 +1,22 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: "Nunito Variable", ui-rounded, system-ui, sans-serif;
+
+  /* Game palette: one green for "go", sky for your picks, amber for stars and misses. */
+  --color-go: #58cc02;
+  --color-go-dark: #46a302;
+  --color-paper: #f7f7f4;
+  --color-ink: #3c3c3c;
+}
+
 /* Always the bright, light game look, whatever the device's dark mode. */
 :root {
   color-scheme: light;
 }
 
 body {
-  @apply bg-white text-gray-900 antialiased;
+  @apply bg-white text-ink antialiased;
 }
 
 /* Result card lines pop in one by one. */
@@ -21,12 +31,27 @@ body {
   }
 }
 
+/* The result bar slides up from the bottom, like a game's answer banner. */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
 .pop-in {
   animation: pop-in 260ms ease-out both;
 }
 
+.slide-up {
+  animation: slide-up 280ms ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .pop-in {
+  .pop-in,
+  .slide-up {
     animation: none;
   }
 }
