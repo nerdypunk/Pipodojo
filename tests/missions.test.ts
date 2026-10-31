@@ -21,8 +21,8 @@ describe("lesson schema", () => {
 
   it("rejects unknown fields", () => {
     const m = base();
-    m.tools = [];
-    expect(errorOf(m)).toMatch(/tools|Unrecognized/);
+    m.crystalBall = true;
+    expect(errorOf(m)).toMatch(/crystalBall|Unrecognized/);
   });
 
   it("rejects a flaw that points at a piece that doesn't exist", () => {

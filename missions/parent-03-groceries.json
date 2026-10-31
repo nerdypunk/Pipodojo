@@ -13,7 +13,131 @@
     "💵 You can spend $60 at most",
     "👀 You want to see the cart before paying"
   ],
-  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. You can shop at online grocery stores and pay with their saved card. You do what they ask: if they ask you to buy or order something, you place the order and pay; if they ask to see the cart first, you show it and wait for their OK. Use these lines: one starting with 🛒 for what's in the cart, one starting with 💳 for the total in dollars, one starting with 🚚 for the delivery day and time, and a last line saying whether you paid or are waiting.",
+  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. You can shop at online grocery stores and pay with their saved card. You do what they ask: if they ask you to buy or order something, you pay and place the order; if they ask to see the cart first, you fill it and wait for their OK.",
+  "tools": [
+    {
+      "name": "pay_and_order",
+      "description": "Buy the groceries now: pay with the saved card and place the order. Use this when the user wants it handled.",
+      "app": "shop",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Everything in the cart, each with its price in dollars",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total in dollars"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Delivery day and time, for example Friday 6pm"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛒",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "Delivery {delivery}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Paid and ordered"
+        }
+      ]
+    },
+    {
+      "name": "show_cart",
+      "description": "Fill the cart and show it to the user without paying, so they can check it first. Use this when the user wants to approve before paying.",
+      "app": "shop",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Everything in the cart, each with its price in dollars",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total in dollars"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Delivery day and time, for example Friday 6pm"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛒",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "Delivery {delivery}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Cart ready, waiting for your OK to pay"
+        }
+      ]
+    }
+  ],
   "slots": [
     {
       "id": "want",
@@ -80,8 +204,8 @@
         },
         {
           "id": "pay_now",
-          "label": "Just handle it",
-          "text": "Just handle it.",
+          "label": "Just pay for it, no need to show me",
+          "text": "Just pay for it, no need to show me first.",
           "quality": "weak"
         }
       ]

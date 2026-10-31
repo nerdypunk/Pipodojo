@@ -1,9 +1,12 @@
 import StarBorder from "@/components/StarBorder";
 import type { Mission } from "../engine/types.ts";
+
 interface Props {
   mission: Mission;
   picks: string[];
   onTap: (pieceId: string) => void;
+  /** After Check: show only the pieces that went into the prompt. */
+  onlyPicked?: boolean;
 }
 
 /** A tiny tap you can feel on phones that support it. */
@@ -12,7 +15,7 @@ function buzz() {
 }
 
 /** Numbered rows of prompt pieces to tap. */
-export function BriefBuilder({ mission, picks, onTap }: Props) {
+export function BriefBuilder({ mission, picks, onTap, onlyPicked = false }: Props) {
   return (
     <div className="space-y-3 md:space-y-4">
       {mission.slots.map((slot, i) => (
@@ -25,7 +28,10 @@ export function BriefBuilder({ mission, picks, onTap }: Props) {
             <PickBadge pick={slot.pick} />
           </legend>
           <div className="flex flex-wrap gap-1.5 md:gap-2">
-            {slot.pieces.map((piece) => {
+            {onlyPicked && !slot.pieces.some((p) => picks.includes(p.id)) && (
+              <span className="text-sm font-semibold text-gray-500 italic">Nothing picked</span>
+            )}
+            {slot.pieces.filter((piece) => !onlyPicked || picks.includes(piece.id)).map((piece) => {
               const on = picks.includes(piece.id);
               return (
                 // Picked pieces turn solid violet with a check and pop; every piece shows a star on hover.

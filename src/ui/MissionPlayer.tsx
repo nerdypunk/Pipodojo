@@ -56,7 +56,15 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
     setBestStars((best) => Math.max(best, score.stars));
     setPhase({
       name: "result",
-      log: { missionId: mission.id, picks, prompt: run.prompt, answer: run.answer, ms: run.ms, score },
+      log: {
+        missionId: mission.id,
+        picks,
+        prompt: run.prompt,
+        answer: run.answer,
+        ...(run.action ? { action: run.action } : {}),
+        ms: run.ms,
+        score,
+      },
     });
   }
 
@@ -90,6 +98,7 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
               stage={thinking ? "thinking" : result ? "done" : "idle"}
               stars={result ? result.score.stars : null}
               answer={result ? answerLines(mission, result.score, result.answer) : null}
+              action={result?.action}
             />
           </ShaderBorder>
         </div>
@@ -111,6 +120,7 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
               <BriefBuilder
                 mission={mission}
                 picks={picks}
+                onlyPicked={!!result || phase.name === "failed"}
                 onTap={(id) => {
                   setNudge(null);
                   setPicks((p) => togglePick(mission, p, id));

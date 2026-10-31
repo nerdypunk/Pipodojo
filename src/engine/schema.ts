@@ -49,6 +49,21 @@ export const FlawSchema = z.strictObject({
   explain: text,
 });
 
+/** A pretend app action for Pipo (a function the model can call). Nothing real ever happens. */
+export const ToolSchema = z.strictObject({
+  name: z.string().regex(/^[a-z][a-z0-9_]{0,63}$/, "Use lowercase letters, numbers or _"),
+  /** Told to the model: when to use this tool. */
+  description: text,
+  /** Which phone mockup shows the result. */
+  app: z.enum(["whatsapp", "shop"]),
+  /** done: Pipo went ahead (sent, paid). waiting: Pipo is holding it for your OK. */
+  outcome: z.enum(["done", "waiting"]),
+  /** JSON Schema for the arguments, passed to the model as is. */
+  parameters: z.record(z.string(), z.unknown()),
+  /** The answer lines this action becomes, for scoring and the card. "{field}" fills in an argument. */
+  lines: z.array(z.strictObject({ emoji: text, text })).min(1).max(5),
+});
+
 export const MissionSchema = z
   .strictObject({
     id,
@@ -67,6 +82,8 @@ export const MissionSchema = z
     facts: z.array(text).max(4).default([]),
     /** Role only. Must not nudge Pipo toward good or bad answers. */
     systemPrompt: text,
+    /** Optional pretend apps Pipo can act in. Without tools, Pipo answers in text. */
+    tools: z.array(ToolSchema).max(4).optional(),
     slots: z.array(SlotSchema).min(2).max(4),
     flaws: z.array(FlawSchema).min(1),
     lesson: text,
