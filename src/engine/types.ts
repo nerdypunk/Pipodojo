@@ -36,6 +36,8 @@ export interface ModelReply {
   content: string | null;
   /** Tool calls the model chose, in order. Empty or missing when it just replied in text. */
   toolCalls?: ToolCall[];
+  /** The model that answered, as reported by the API (for the under-the-hood view). */
+  model?: string;
 }
 
 /** Injected so the engine runs without a network (live, replay, or fake in tests). */

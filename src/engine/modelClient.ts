@@ -51,7 +51,12 @@ export function parseReply(json: unknown): ModelReply {
 
   const content = typeof message.content === "string" && message.content.trim() ? message.content : null;
   const toolCalls = parseToolCalls(message.tool_calls);
-  return toolCalls.length ? { content, toolCalls } : { content };
+  const model = (json as { model?: unknown }).model;
+  return {
+    content,
+    ...(toolCalls.length ? { toolCalls } : {}),
+    ...(typeof model === "string" ? { model } : {}),
+  };
 }
 
 /** Tool calls with readable JSON arguments; anything malformed is skipped. */

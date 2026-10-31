@@ -39,6 +39,10 @@ Pipo's answers come live from Meta's **Muse Spark** model through the Meta Model
 
 In later lessons Pipo **acts**, using Muse Spark tool calling: each lesson offers pretend app actions (send or draft a WhatsApp message; pay and order, or show the cart first). Muse Spark picks one and fills in the details, and the game shows the result on a floating phone you can drag around. When Pipo is waiting for your OK, tap Send or Pay on that phone: Pipo is told to go ahead and finishes the job with a second tool call. Nothing real is ever sent or bought.
 
+Tap **🔧 Under the hood** below the boxes to see the real calls: the message your pieces built, the app actions offered, what Muse Spark sent back (with the model name and timing), and the scoring step, which is the game's own rules.
+
+Before a path you **make your own Pipo** (head, body, colours). It is drawn in code, so it is instant and free. When you finish the path, Meta's **Muse Image** (`muse-image-1.0`) paints a postcard of what your Pipo did across the lessons, starring your Pipo, and you peel the gift open to find it. That is one image per finished path; if painting is slow or fails, a ready-made postcard shows instead. The image endpoint (`functions/api/image.js`) fixes the model, size and style, so it can only paint a Pipodojo postcard.
+
 ## Credits
 
 Pipodojo's game, lessons and Pipo were built during the hackathon. It also uses these open-source projects:

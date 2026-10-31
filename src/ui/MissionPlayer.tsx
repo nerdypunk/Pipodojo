@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { approveAction, askPipo } from "../engine/agentRunner.ts";
 import { buildPrompt, emptySlots, filledShare, isPromptReady, togglePick } from "../engine/brief.ts";
 import { evaluate } from "../engine/evaluator.ts";
+import { recordingClient, type CallRecord } from "../engine/trace.ts";
 import type { Mission, ModelClient, PipoAction, PipoRun, RunLog } from "../engine/types.ts";
 import { answerLines } from "../game/feedback.ts";
 import { isDebug, liveClient, takeLiveRun } from "../app/liveClient.ts";
@@ -14,6 +15,7 @@ import { celebrate, FloatingPhone, type PhoneStatus } from "./FloatingPhone.tsx"
 import { PipoScene } from "./PipoScene.tsx";
 import { ShaderBorder } from "./ShaderBorder.tsx";
 import { TopBar } from "./TopBar.tsx";
+import { UnderTheHood } from "./UnderTheHood.tsx";
 
 type Phase =
   | { name: "build" }
@@ -42,6 +44,9 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
   const [bestStars, setBestStars] = useState(0);
   // Pipo's floating phone, after Pipo acts in an app (lessons with tools).
   const [phone, setPhone] = useState<{ action: PipoAction; status: PhoneStatus; open: boolean } | null>(null);
+  // Every real model call this attempt, for the under-the-hood timeline.
+  const [calls, setCalls] = useState<CallRecord[]>([]);
+  const traced = (client: ModelClient) => recordingClient(client, () => performance.now(), (call) => setCalls((c) => [...c, call]));
 
   async function check() {
     if (!isPromptReady(mission, picks)) {
@@ -50,12 +55,13 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
       return;
     }
     setNudge(null);
+    setCalls([]);
     setPhase({ name: "thinking" });
     if (!takeLiveRun()) {
       setPhase({ name: "failed", run: null });
       return;
     }
-    const run = await askPipo({ mission, picks, client: liveClient, now: () => performance.now() });
+    const run = await askPipo({ mission, picks, client: traced(liveClient), now: () => performance.now() });
     if (run.status === "failed") {
       setPhase({ name: "failed", run });
       return;
@@ -79,6 +85,7 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
 
   const tryAgain = () => {
     setPhone(null);
+    setCalls([]);
     setPhase({ name: "build" });
   };
 
@@ -86,7 +93,7 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
   async function approve() {
     if (!phone || phone.status !== "review" || !result) return;
     setPhone({ ...phone, status: "working" });
-    const client = takeLiveRun() ? liveClient : offline;
+    const client = traced(takeLiveRun() ? liveClient : offline);
     const done = await approveAction({ mission, prompt: result.prompt, action: phone.action, client });
     setPhone((p) => (p ? { ...p, action: done, status: "approved" } : p));
     celebrate(done.app);
@@ -172,6 +179,14 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
           </div>
         )}
       </main>
+
+      <UnderTheHood
+        mission={mission}
+        prompt={buildPrompt(mission, picks)}
+        calls={calls}
+        waiting={thinking || phone?.status === "working"}
+        score={result?.score ?? null}
+      />
 
       {phone && result && (
         <FloatingPhone

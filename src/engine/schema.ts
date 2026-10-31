@@ -76,6 +76,8 @@ export const MissionSchema = z
     recap: text.optional(),
     /** Shown after the lesson: a plain-words fact about what agents can do, leading into the next lesson. */
     funFact: text.optional(),
+    /** This lesson's part of the end-of-path postcard. {answer} is Pipo's answer; {arg} is a tool argument. */
+    postcard: text.optional(),
     /** Pipo's opening line, e.g. "Friends are coming Saturday. Tell me what you need!" */
     situation: text,
     /** Things the player knows and Pipo doesn't, shown on the lesson card. */

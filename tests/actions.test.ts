@@ -4,6 +4,7 @@ import { APPROVE_MESSAGE, approveAction, askPipo, TOOL_NUDGE } from "../src/engi
 import { evaluate } from "../src/engine/evaluator.ts";
 import { parseMission } from "../src/engine/missionLoader.ts";
 import { parseReply } from "../src/engine/modelClient.ts";
+import { callKind, recordingClient, type CallRecord } from "../src/engine/trace.ts";
 import { fakeClock, readMissionFiles, scriptedClient } from "./helpers.ts";
 
 const invite = parseMission(readMissionFiles()["parent-02-invite.json"], "parent-02-invite.json");
@@ -145,5 +146,35 @@ describe("parseReply tool calls", () => {
       ],
     });
     expect(reply).toEqual({ content: null, toolCalls: [{ name: "show_cart", args: { total: 57 } }] });
+  });
+});
+
+describe("recordingClient", () => {
+  it("reports each call with its reply and time, and passes errors through", async () => {
+    const records: CallRecord[] = [];
+    const { client } = scriptedClient([{ content: "hi", model: "muse-spark-1.2-contributor" }, new Error("boom")]);
+    const recording = recordingClient(client, fakeClock(), (r) => records.push(r));
+    await recording.complete({ messages: [{ role: "user", content: "one" }] });
+    await expect(recording.complete({ messages: [{ role: "user", content: "two" }] })).rejects.toThrow("boom");
+    expect(records.map((r) => [r.reply?.model, r.error, r.ms])).toEqual([
+      ["muse-spark-1.2-contributor", undefined, 100],
+      [undefined, "boom", 100],
+    ]);
+  });
+
+  it("parseReply keeps the model name", () => {
+    expect(parseReply({ model: "muse-spark-1.2-contributor", choices: [{ message: { content: "ok" } }] })).toEqual({
+      content: "ok",
+      model: "muse-spark-1.2-contributor",
+    });
+  });
+});
+
+describe("callKind", () => {
+  const at = (content: string): CallRecord => ({ request: { messages: [{ role: "user", content }] }, ms: 1 });
+  it("tells the first ask from a nudge and an approval", () => {
+    expect(callKind(at("Invite my friends"), TOOL_NUDGE, APPROVE_MESSAGE)).toBe("ask");
+    expect(callKind(at(TOOL_NUDGE), TOOL_NUDGE, APPROVE_MESSAGE)).toBe("nudge");
+    expect(callKind(at(APPROVE_MESSAGE), TOOL_NUDGE, APPROVE_MESSAGE)).toBe("approve");
   });
 });

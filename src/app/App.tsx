@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { postcardScene } from "../engine/postcard.ts";
 import type { Persona, RunLog } from "../engine/types.ts";
 import { PERSONAS } from "../game/personas.ts";
-import { DEFAULT_LOOK, parseLook, type PipoLook } from "../game/pipoLook.ts";
+import { DEFAULT_LOOK, describeLook, parseLook, type PipoLook } from "../game/pipoLook.ts";
 import { Backdrop } from "../ui/Backdrop.tsx";
 import { LessonComplete } from "../ui/LessonComplete.tsx";
 import { MissionPlayer } from "../ui/MissionPlayer.tsx";
@@ -10,6 +11,7 @@ import { PersonaPicker } from "../ui/PersonaPicker.tsx";
 import { PipoLookContext } from "../ui/Pipo.tsx";
 import { PipoBuilder } from "../ui/PipoBuilder.tsx";
 import { missions } from "./missions.ts";
+import { paintPostcard, type Postcard } from "./postcard.ts";
 
 type Screen =
   | { kind: "paths" }
@@ -47,6 +49,10 @@ export function App() {
   // Best stars per lesson, for this visit.
   const [stars, setStars] = useState<Record<string, number>>({});
   const [look, setLook] = useState<PipoLook>(loadLook);
+  // The latest run of each lesson this visit, and the postcard painted from them at the end of a path.
+  const runs = useRef<Record<string, RunLog>>({});
+  const [postcard, setPostcard] = useState<Postcard | null>(null);
+  const painting = useRef(0);
   const { direction, go, cover, uncover } = usePageTransition();
 
   useEffect(() => {
@@ -63,6 +69,20 @@ export function App() {
 
   const finish = async (persona: Persona, index: number, log: RunLog) => {
     setStars((s) => ({ ...s, [log.missionId]: Math.max(s[log.missionId] ?? 0, log.score.stars) }));
+    runs.current[log.missionId] = log;
+    const lessons = lessonsOf(persona);
+    if (index === lessons.length - 1) {
+      // Last lesson: Pipo starts painting now, while the box and the gift come up.
+      const scene = postcardScene(
+        describeLook(look),
+        lessons.flatMap((mission) => (runs.current[mission.id] ? [{ mission, log: runs.current[mission.id]! }] : [])),
+      );
+      const ticket = ++painting.current;
+      setPostcard({ status: "painting" });
+      void paintPostcard(scene).then((ready) => {
+        if (ticket === painting.current) setPostcard(ready);
+      });
+    }
     if (await cover("to-right")) setFinished({ persona, index, log });
   };
 
@@ -112,6 +132,7 @@ export function App() {
           index={finished.index}
           log={finished.log}
           stars={stars}
+          postcard={postcard}
           onContinue={() => leaveBox({ kind: "lesson", persona: finished.persona, index: finished.index + 1 })}
           onBack={() => leaveBox({ kind: "paths" })}
         />

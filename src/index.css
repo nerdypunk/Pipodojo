@@ -171,6 +171,18 @@ body {
 }
 
 /* A picked piece pops: a quick squash and bounce. */
+/* The postcard square while Muse Image paints it. */
+.postcard-painting {
+  background: linear-gradient(120deg, #2d2470, #5a46e0, #ff7a1a, #5a46e0, #2d2470);
+  background-size: 300% 100%;
+  animation: postcard-paint 3s linear infinite;
+}
+@keyframes postcard-paint {
+  to {
+    background-position: 300% 0;
+  }
+}
+
 @keyframes pick-pop {
   0% {
     transform: scale(1);
@@ -197,7 +209,8 @@ body {
   .pipo-float,
   .pipo-shadow,
   .pipo-core,
-  .pipo-flame {
+  .pipo-flame,
+  .postcard-painting {
     animation: none;
   }
 }

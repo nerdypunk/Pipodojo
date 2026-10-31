@@ -1,8 +1,12 @@
-// The path reward: a gift-wrapped card you peel open (peel.js) to reveal your badge.
+// The path reward: a gift-wrapped card you peel open (peel.js) to reveal your badge and a
+// postcard Muse Image painted from your own run, starring your Pipo. Save it or see it big.
 // Drag the curled corner, or tap it to peel it all the way. Keyboard users and reduced motion
 // get an "Open it" button that reveals the badge without peeling.
 import confetti from "canvas-confetti";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { postcardFileName, type Postcard } from "../app/postcard.ts";
 import { Peel, type PeelInstance } from "../vendor/peel/index.ts";
 import { Pipo } from "./Pipo.tsx";
 
@@ -11,6 +15,7 @@ interface Props {
   lessons: number;
   /** Stars earned across the path. */
   stars: number;
+  postcard: Postcard | null;
 }
 
 /** How far the corner curls up before anyone touches it, to invite a peel. */
@@ -20,10 +25,11 @@ const AUTO_PEEL_MS = 700;
 const PEEL_FINISH_AT = 0.45;
 const PEEL_RELEASE_AT = 0.25;
 
-export function PeelReward({ pathName, lessons, stars }: Props) {
+export function PeelReward({ pathName, lessons, stars, postcard }: Props) {
   const el = useRef<HTMLDivElement>(null);
   const peel = useRef<PeelInstance | null>(null);
   const [open, setOpen] = useState(false);
+  const [big, setBig] = useState(false);
   const [still] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
   // Refs, not state, so the peel.js handlers (set up once) always see the latest values.
@@ -67,7 +73,7 @@ export function PeelReward({ pathName, lessons, stars }: Props) {
 
   useEffect(() => {
     const box = el.current;
-    if (!box || still || !Peel?.supported) return;
+    if (!box || still || !Peel?.supported || opened.current) return;
     const p = new Peel(box, { corner: Peel.Corners.BOTTOM_RIGHT, backReflection: true, backReflectionAlpha: 0.2 });
     peel.current = p;
     const { width: w, height: h } = box.getBoundingClientRect();
@@ -103,24 +109,45 @@ export function PeelReward({ pathName, lessons, stars }: Props) {
     };
   }, [still]);
 
+  const ready = postcard?.status === "ready" ? postcard : null;
+
   return (
     <div className="space-y-2">
       <div
         ref={el}
-        className={`peel relative h-40 w-full cursor-grab rounded-2xl select-none ${still || !Peel?.supported ? "peel-ready" : ""}`}
-        aria-label={open ? `${pathName} Pro badge` : "A wrapped reward. Peel the corner to open it."}
+        className={`peel relative h-44 w-full cursor-grab rounded-2xl select-none ${still || !Peel?.supported ? "peel-ready" : ""}`}
+        aria-label={open ? `${pathName} Pro badge and your postcard` : "A wrapped reward. Peel the corner to open it."}
         role="img"
       >
-        {/* The reward underneath */}
-        <div className="peel-bottom flex items-center gap-4 rounded-2xl bg-gradient-to-br from-amber-100 via-white to-brand-100 px-5 ring-2 ring-amber-300">
-          <Pipo mood="happy" className="h-20 w-20 shrink-0 drop-shadow-[0_6px_12px_rgb(45_36_112/0.3)]" />
-          <div>
+        {/* The reward underneath: the postcard and the badge */}
+        <div className="peel-bottom flex items-center gap-3 rounded-2xl bg-gradient-to-br from-amber-100 via-white to-brand-100 p-3 ring-2 ring-amber-300">
+          <div className="relative aspect-square h-24 shrink-0 overflow-hidden sm:h-full rounded-xl bg-brand-900 shadow-md ring-2 ring-white">
+            {ready ? (
+              <img src={ready.src} alt="Your postcard: Pipo and your path, painted" className="h-full w-full object-cover" />
+            ) : postcard ? (
+              <div className="postcard-painting flex h-full w-full flex-col items-center justify-center gap-1 p-2 text-center">
+                <span className="text-3xl" aria-hidden="true">🎨</span>
+                <span className="text-xs font-extrabold text-white">Painting…</span>
+              </div>
+            ) : (
+              <Pipo mood="happy" className="h-full w-full p-2" />
+            )}
+          </div>
+          <div className="min-w-0">
             <p className="text-xs font-black tracking-wider text-amber-700 uppercase">Badge unlocked</p>
-            <p className="text-2xl leading-tight font-black text-ink">🏅 {pathName} Pro</p>
+            <p className="text-xl leading-tight font-black text-ink sm:text-2xl">🏅 {pathName} Pro</p>
             <p className="text-sm font-bold text-gray-700">
               {lessons} lessons · <span className="text-amber-500">★</span> {stars} of {lessons * 3} stars
             </p>
-            <p className="text-sm font-semibold text-gray-600">You can hand everyday chores to an agent now.</p>
+            <p className="text-xs font-semibold text-gray-600 sm:text-sm" aria-live="polite">
+              {!postcard
+                ? "You can hand everyday chores to an agent now."
+                : !ready
+                  ? "Pipo is painting your postcard…"
+                  : ready.painted
+                    ? "🎨 Your postcard, painted by Meta's Muse Image."
+                    : "🎨 A postcard from Pipo."}
+            </p>
           </div>
         </div>
 
@@ -141,7 +168,7 @@ export function PeelReward({ pathName, lessons, stars }: Props) {
         {!open && <div className="peel-back rounded-2xl" style={{ backgroundColor: "#e8e6ff" }} />}
       </div>
 
-      {!open && (
+      {!open ? (
         <button
           type="button"
           onClick={still || !Peel?.supported ? reveal : finishPeel}
@@ -149,7 +176,65 @@ export function PeelReward({ pathName, lessons, stars }: Props) {
         >
           Or tap here to open it
         </button>
+      ) : (
+        ready && (
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={() => setBig(true)}
+              className="text-sm font-extrabold text-brand-700 underline decoration-2 underline-offset-2 hover:text-brand-900"
+            >
+              🔍 See it big
+            </button>
+            <a
+              href={ready.src}
+              download={postcardFileName(ready.src)}
+              className="text-sm font-extrabold text-brand-700 underline decoration-2 underline-offset-2 hover:text-brand-900"
+            >
+              ⬇ Save postcard
+            </a>
+          </div>
+        )
+      )}
+
+      {/* On document.body: the lesson box is transformed, which would trap a fixed overlay inside it. */}
+      {createPortal(
+        <AnimatePresence>{big && ready && <BigPostcard src={ready.src} still={still} onClose={() => setBig(false)} />}</AnimatePresence>,
+        document.body,
       )}
     </div>
+  );
+}
+
+/** The postcard at full size over everything. Tap anywhere or press Escape to close. */
+function BigPostcard({ src, still, onClose }: { src: string; still: boolean; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
+  return (
+    <motion.div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Your postcard"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[10010] flex cursor-zoom-out flex-col items-center justify-center gap-3 bg-ink/80 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <motion.img
+        src={src}
+        alt="Your postcard: Pipo and your path, painted"
+        initial={still ? false : { scale: 0.9, rotate: -2 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ type: "spring", bounce: 0.35, duration: 0.5 }}
+        className="max-h-[80dvh] max-w-full rounded-2xl shadow-2xl ring-4 ring-white"
+      />
+      <button type="button" autoFocus className="rounded-full bg-white px-4 py-1.5 text-sm font-extrabold text-brand-700">
+        Close
+      </button>
+    </motion.div>
   );
 }

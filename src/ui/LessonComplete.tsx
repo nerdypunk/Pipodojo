@@ -3,6 +3,7 @@
 // are on the path, and Continue (which sweeps the panel away into the next lesson).
 import confetti from "canvas-confetti";
 import { useEffect } from "react";
+import type { Postcard } from "../app/postcard.ts";
 import type { Mission, RunLog } from "../engine/types.ts";
 import { answerLines } from "../game/feedback.ts";
 import { Button } from "./Button.tsx";
@@ -17,6 +18,8 @@ interface Props {
   log: RunLog;
   /** Best stars per lesson id this session. */
   stars: Readonly<Record<string, number>>;
+  /** Painted at the end of a path, from the player's runs. */
+  postcard: Postcard | null;
   onContinue: () => void;
   onBack: () => void;
 }
@@ -24,7 +27,7 @@ interface Props {
 /** Let the box pop in before the confetti starts. */
 const CONFETTI_DELAY_MS = 250;
 
-export function LessonComplete({ pathName, lessons, index, log, stars, onContinue, onBack }: Props) {
+export function LessonComplete({ pathName, lessons, index, log, stars, postcard, onContinue, onBack }: Props) {
   const mission = lessons[index]!;
   const next = lessons[index + 1];
   const won = log.score.stars;
@@ -137,6 +140,7 @@ export function LessonComplete({ pathName, lessons, index, log, stars, onContinu
                   pathName={pathName}
                   lessons={lessons.length}
                   stars={lessons.reduce((sum, lesson) => sum + (stars[lesson.id] ?? 0), 0)}
+                  postcard={postcard}
                 />
               </div>
             )}
