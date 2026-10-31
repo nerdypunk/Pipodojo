@@ -8,7 +8,17 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   // "@/..." points at src (used by the shadcn/smoothui components).
   resolve: {
-    alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
+    alias: {
+      // The swup theme packages only export their JS plugin; point straight at their CSS
+      // (we drive the theme classes ourselves, see src/ui/PageTransition.tsx).
+      "@swup/overlay-theme/src/index.css": fileURLToPath(
+        new URL("./node_modules/@swup/overlay-theme/src/index.css", import.meta.url),
+      ),
+      "@swup/slide-theme/src/index.css": fileURLToPath(
+        new URL("./node_modules/@swup/slide-theme/src/index.css", import.meta.url),
+      ),
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
   },
   server: {
     port: 5173,
