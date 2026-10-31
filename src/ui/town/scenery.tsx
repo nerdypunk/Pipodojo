@@ -8,10 +8,11 @@ import * as THREE from "three";
 import { ISLAND_RADIUS, POND, RING, scatterFlowers, scatterTrees, seeded, type TreeSpot } from "../../game/townLayout.ts";
 import { Blob, BRAND, INK, LEAF, ORANGE, Person, type PersonStyle } from "./props.tsx";
 
-const BLOSSOM = ["#f9c9dd", "#e2d1fb", "#fcd9e8"];
-const FLOWER = ["#ffb3cc", "#ffe08a", "#ffffff", "#cdbffd"];
+/** Lighter, yellower greens for some trees, so the forest isn't one flat colour. */
+const BLOSSOM = ["#a6d96a", "#b5de78", "#95cf62"];
+const FLOWER = ["#ffffff", "#ffd34d", "#ff7b6b", "#8fb8ff"];
 const WATER = "#7cc8ff";
-const ROCK = ["#e0d6fa", "#d3c6f6", "#c4b5f4"];
+const ROCK = ["#cfc8bf", "#bdb5ab", "#a9a197"];
 const noRaycast = () => null;
 
 /** Grows from nothing to full size with a little overshoot, starting `delay` seconds in. */
@@ -36,20 +37,20 @@ export function IslandBase({ still }: { still: boolean }) {
       {/* Grass top with a darker lip. Only the top catches shadows; nothing down here casts them. */}
       <mesh position={[0, -0.2, 0]} receiveShadow>
         <cylinderGeometry args={[ISLAND_RADIUS, ISLAND_RADIUS, 0.4, 72]} />
-        <meshStandardMaterial color="#c9ecbd" roughness={1} />
+        <meshStandardMaterial color="#a8d98a" roughness={1} />
       </mesh>
       <mesh position={[0, -0.42, 0]}>
         <cylinderGeometry args={[ISLAND_RADIUS + 0.06, ISLAND_RADIUS - 0.05, 0.16, 72]} />
-        <meshStandardMaterial color="#b2dfa5" roughness={1} />
+        <meshStandardMaterial color="#8fc771" roughness={1} />
       </mesh>
       {/* Lavender cliffs, faceted like rock */}
       <mesh position={[0, -1.4, 0]}>
         <cylinderGeometry args={[ISLAND_RADIUS - 0.05, ISLAND_RADIUS - 0.8, 1.8, 22]} />
-        <meshStandardMaterial color="#e0d6fa" roughness={1} />
+        <meshStandardMaterial color="#cfc8bf" roughness={1} />
       </mesh>
       <mesh position={[0, -5.3, 0]} rotation={[Math.PI, 0, 0]}>
         <coneGeometry args={[ISLAND_RADIUS - 0.8, 6, 11]} />
-        <meshStandardMaterial color="#cdbff3" roughness={1} />
+        <meshStandardMaterial color="#b9b1a7" roughness={1} />
       </mesh>
       {rocks.map((r, i) => (
         <mesh key={i} position={[r.x, r.y, r.z]} scale={r.s} rotation={[i, i * 2, 0]}>
@@ -79,11 +80,11 @@ function FloatingRock({ position, size, still, phase }: { position: [number, num
     <group ref={ref} position={position} scale={size}>
       <mesh position={[0, 0.1, 0]}>
         <cylinderGeometry args={[1, 1, 0.3, 10]} />
-        <meshStandardMaterial color="#c9ecbd" roughness={1} />
+        <meshStandardMaterial color="#a8d98a" roughness={1} />
       </mesh>
       <mesh position={[0, -0.8, 0]} rotation={[Math.PI, 0, 0]}>
         <coneGeometry args={[1, 1.6, 7]} />
-        <meshStandardMaterial color="#d3c6f6" roughness={1} flatShading />
+        <meshStandardMaterial color="#bdb5ab" roughness={1} flatShading />
       </mesh>
       <mesh position={[0.2, 0.6, 0]}>
         <coneGeometry args={[0.35, 0.8, 6]} />
@@ -144,7 +145,7 @@ export function Forest({ still }: { still: boolean }) {
     <group ref={group}>
       <Instances limit={trees.length} raycast={noRaycast}>
         <cylinderGeometry args={[0.08, 0.12, 0.6, 6]} />
-        <meshStandardMaterial color="#c9a089" roughness={0.9} />
+        <meshStandardMaterial color="#9c6b4a" roughness={0.9} />
         {trees.map((t, i) => (
           <Instance key={i} position={[t.x, 0.3 * t.scale, t.z]} scale={t.scale} />
         ))}
@@ -219,7 +220,7 @@ export function Pond({ still }: { still: boolean }) {
         </mesh>
         <mesh position={[0, 0.04, 0]} rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[POND.radius + 0.05, 0.1, 6, 40]} />
-          <meshStandardMaterial color="#e4defa" roughness={0.9} />
+          <meshStandardMaterial color="#d5dbe4" roughness={0.9} />
         </mesh>
         {[
           [0.5, -0.4],
@@ -301,11 +302,11 @@ export function Plaza() {
           <group position={[sx! * (corner - 0.5), 0, sz! * (corner - 0.5)]} rotation={[0, Math.atan2(-sx!, -sz!), 0]}>
             <mesh position={[0, 0.22, 0]}>
               <boxGeometry args={[0.8, 0.06, 0.26]} />
-              <meshStandardMaterial color="#e2b49a" roughness={0.8} />
+              <meshStandardMaterial color="#b98b62" roughness={0.8} />
             </mesh>
             <mesh position={[0, 0.38, -0.12]}>
               <boxGeometry args={[0.8, 0.22, 0.05]} />
-              <meshStandardMaterial color="#e2b49a" roughness={0.8} />
+              <meshStandardMaterial color="#b98b62" roughness={0.8} />
             </mesh>
             {[-0.32, 0.32].map((x) => (
               <mesh key={x} position={[x, 0.1, 0]}>

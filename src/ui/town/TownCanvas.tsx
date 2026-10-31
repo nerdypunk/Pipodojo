@@ -9,7 +9,7 @@ import type { PipoLook } from "../../game/pipoLook.ts";
 import { PLACES, RING, SPOKE_END, placeOf, type Place, type PlaceId } from "../../game/townLayout.ts";
 import { Pipo3D } from "./Pipo3D.tsx";
 import { Cafe, College, Dojo, Garage, House, KidHouse } from "./places.tsx";
-import { BRAND, Balloon, Car, Cloud } from "./props.tsx";
+import { Balloon, Car, Cloud } from "./props.tsx";
 import { Birds, Flowers, Forest, IslandBase, Plaza, Pond, Strollers, grow } from "./scenery.tsx";
 
 export interface PlaceTag {
@@ -86,12 +86,12 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
 
   return (
     <>
-      {/* Soft, warm light for a clay-diorama feel */}
-      <hemisphereLight args={["#fbf8ff", "#e6f3dc", 1.6]} />
+      {/* Clear, soft daylight */}
+      <hemisphereLight args={["#f4f7fb", "#d9e6cf", 1.5]} />
       <directionalLight
         position={[9, 18, 8]}
-        intensity={1.3}
-        color="#fff0e2"
+        intensity={1.5}
+        color="#ffffff"
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-left={-15}
@@ -133,9 +133,9 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
         <Forest still={still} />
       </group>
       {/* Things that move: soft blob shadows instead of real ones, which are baked after the intro. */}
-      <Car color="#ffd98a" offset={0} speed={0.035} still={still} />
-      <Car color={BRAND[400]} offset={0.36} speed={0.035} still={still} />
-      <Car color="#a8e6cf" offset={0.7} speed={0.035} still={still} />
+      <Car color="#f6c945" offset={0} speed={0.035} still={still} />
+      <Car color="#e8655a" offset={0.36} speed={0.035} still={still} />
+      <Car color="#5aa0e0" offset={0.7} speed={0.035} still={still} />
       <Strollers still={still} />
       <Pipo3D look={look} target={pipoTarget} still={still} />
       <BakeShadows after={still ? 0.3 : POP_START + PLACES.length * POP_STEP + 1.2} />
@@ -224,8 +224,8 @@ function Rig({ selected, onArrive, still }: { selected: PlaceId | null; onArrive
   return null;
 }
 
-const ROAD = "#b7afbf";
-const PAVEMENT = "#f5ede8";
+const ROAD = "#5f6f8a";
+const PAVEMENT = "#d9dee5";
 /** Sidewalk width; curbs stand a little above the road. */
 const SIDEWALK = 0.36;
 
@@ -284,7 +284,7 @@ function Roads() {
       {/* Dojo plaza paving */}
       <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={noRaycast}>
         <circleGeometry args={[RING.half - 0.65, 48]} />
-        <meshStandardMaterial color="#f6f2ff" roughness={1} />
+        <meshStandardMaterial color="#e7ebf0" roughness={1} />
       </mesh>
       {strips.map((s, i) => (
         <mesh key={i} position={s.pos} raycast={noRaycast}>
@@ -347,7 +347,7 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
     <group position={[place.at[0], 0, place.at[1]]}>
       <mesh ref={ring} position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={noRaycast}>
         <ringGeometry args={[place.clear - 0.6, place.clear - 0.25, 48]} />
-        <meshBasicMaterial color={tag.open ? BRAND[400] : "#ffffff"} transparent opacity={0} depthWrite={false} />
+        <meshBasicMaterial color={tag.open ? "#8c7dfb" : "#ffffff"} transparent opacity={0} depthWrite={false} />
       </mesh>
       <group
         ref={lift}

@@ -8,16 +8,17 @@ import { RING, ringPoint } from "../../game/townLayout.ts";
 
 type V3 = [number, number, number];
 
-// A soft pastel palette, like a clay diorama. Pipo keeps its orange; everything else is gentle.
+// A friendly toy-city palette: slate roofs and roads, light grey paving, natural greens and
+// buildings in clear, not-too-bright colours. Pipo keeps its orange. (BRAND here is the slate scale.)
 /** Soft plum grey for small dark details (poles, legs, wheels). */
-export const INK = "#6f6784";
+export const INK = "#4a5163";
 /** Eyes and smiles on the kawaii faces. */
-export const EYES = "#3a3350";
-export const BRAND = { 300: "#ddd7fd", 400: "#cbc2fa", 500: "#b9adf4", 600: "#a99ded", 700: "#978ae0", 900: "#6d63a8" };
+export const EYES = "#2b2f3a";
+export const BRAND = { 300: "#c9d3e3", 400: "#9fb0c8", 500: "#8496b3", 600: "#71839f", 700: "#5f708c", 900: "#3e4a5e" };
 export const ORANGE = "#ff7a1a";
-/** Pastel coral for doors, the dojo gate and other warm accents. */
-export const CORAL = "#ffb39b";
-export const LEAF = ["#a9dca0", "#94d0a4", "#bfe5ab", "#8fcbb2"];
+/** Brick red for chimneys, doors, the dojo gate and other warm accents. */
+export const CORAL = "#e2725b";
+export const LEAF = ["#7cc95c", "#68b84f", "#8fd16b", "#5fae4a"];
 
 /** A puffy gable roof: a soft-edged triangle pushed out along z. Width and depth include the overhang. */
 export function Roof({ width, height, depth, color, position }: { width: number; height: number; depth: number; color: string; position?: V3 }) {
@@ -77,7 +78,7 @@ export function Face({ position, scale = 1, blink = false }: { position: V3; sca
       {[-0.28, 0.28].map((x) => (
         <mesh key={x} position={[x, -0.06, 0]} scale={[1.4, 0.8, 0.3]}>
           <sphereGeometry args={[0.06, 10, 8]} />
-          <meshBasicMaterial color="#ff9fc0" transparent opacity={0.8} />
+          <meshBasicMaterial color="#f2a48a" transparent opacity={0.5} />
         </mesh>
       ))}
       <mesh position={[0, -0.05, 0]} rotation={[0, 0, Math.PI]}>
@@ -282,7 +283,7 @@ export function Balloon({ position, still }: { position: V3; still: boolean }) {
     ref.current.position.y = position[1] + Math.sin(clock.elapsedTime * 0.6) * 0.4;
     ref.current.rotation.y = clock.elapsedTime * 0.15;
   });
-  const stripes = [BRAND[500], "#ffffff", CORAL, "#ffffff", "#a8e6cf", "#ffffff"];
+  const stripes = ["#5aa0e0", "#ffffff", CORAL, "#ffffff", "#f6c945", "#ffffff"];
   return (
     <group ref={ref} position={position}>
       {stripes.map((color, i) => (
