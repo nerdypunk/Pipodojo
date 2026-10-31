@@ -117,35 +117,36 @@ function PersonaPanel({
     />
   );
 
+  // A soft animated glow behind the card: lively on the playable path, quiet on the ones still to come.
   return (
-    <article
-      className="glass relative mx-2.5 flex w-64 flex-col gap-3 rounded-3xl p-3 md:w-72"
-      onClick={onFocus}
-      aria-label={persona.available ? persona.name : `${persona.name}, coming soon`}
-    >
-      {/* Animated shader border: lively on the playable path, quiet on the ones still to come. */}
-      <ShaderBorder mode={persona.available ? "build" : "muted"} roundness={0.14} />
-      {art}
-      <div className="px-1">
-        <h2 className="text-xl font-black">{persona.name}</h2>
-        <p className="text-[15px] leading-snug font-semibold text-gray-600">{persona.blurb}</p>
-      </div>
-      {persona.available ? (
-        <Button
-          className="w-full"
-          onClick={(e) => {
-            e.stopPropagation();
-            onStart(persona.id);
-          }}
-        >
-          Start
-        </Button>
-      ) : (
-        <Button tone="plain" className="w-full" disabled>
-          Coming soon
-        </Button>
-      )}
-    </article>
+    <ShaderBorder mode={persona.available ? "build" : "muted"} roundness={0.14} className="mx-2.5">
+      <article
+        className="glass flex w-64 flex-col gap-3 rounded-3xl p-3 md:w-72"
+        onClick={onFocus}
+        aria-label={persona.available ? persona.name : `${persona.name}, coming soon`}
+      >
+        {art}
+        <div className="px-1">
+          <h2 className="text-xl font-black">{persona.name}</h2>
+          <p className="text-[15px] leading-snug font-semibold text-gray-600">{persona.blurb}</p>
+        </div>
+        {persona.available ? (
+          <Button
+            className="w-full"
+            onClick={(e) => {
+              e.stopPropagation();
+              onStart(persona.id);
+            }}
+          >
+            Start
+          </Button>
+        ) : (
+          <Button tone="plain" className="w-full" disabled>
+            Coming soon
+          </Button>
+        )}
+      </article>
+    </ShaderBorder>
   );
 }
 

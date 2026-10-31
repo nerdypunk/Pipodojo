@@ -57,7 +57,7 @@ export function MissionPlayer({ mission, onBack }: { mission: Mission; onBack: (
   const result = phase.name === "result" ? phase.log : null;
   const mood = thinking ? "thinking" : result ? (result.score.stars === 1 ? "oops" : "happy") : "idle";
   const locked = phase.name !== "build";
-  // Both big cards wear an animated border that follows what Pipo is doing.
+  // A soft animated glow sits behind both big cards and follows what Pipo is doing.
   const borderMode = thinking ? "thinking" : result ? "done" : "build";
 
   // On phones Pipo's answer is above the fold once Check is pressed: bring it into view.
@@ -76,53 +76,55 @@ export function MissionPlayer({ mission, onBack }: { mission: Mission; onBack: (
       {/* Both cards stretch to the same height; the pieces stay put so nothing jumps after Check. */}
       <main className="grid gap-3 md:grid-cols-[5fr_6fr] md:gap-5">
         <div ref={sceneRef} className="flex scroll-mt-3 flex-col">
-          <PipoScene
-            mission={mission}
-            mood={mood}
-            stage={thinking ? "thinking" : result ? "done" : "idle"}
-            border={borderMode}
-            stars={result ? result.score.stars : null}
-            answer={result ? answerLines(mission, result.score, result.answer) : null}
-          />
+          <ShaderBorder mode={borderMode} className="flex flex-1 flex-col">
+            <PipoScene
+              mission={mission}
+              mood={mood}
+              stage={thinking ? "thinking" : result ? "done" : "idle"}
+              stars={result ? result.score.stars : null}
+              answer={result ? answerLines(mission, result.score, result.answer) : null}
+            />
+          </ShaderBorder>
         </div>
 
-        <section
-          className="glass relative flex flex-col gap-3 rounded-3xl p-3 md:gap-4 md:p-5"
-          aria-label="Build your message to Pipo"
-        >
-          <ShaderBorder mode={borderMode} roundness={0.08} />
-          <PromptCard prompt={buildPrompt(mission, picks)} />
-          {/* Locked while Pipo thinks (the glow stays bright), faded once the answer is in.
-              On phones the faded pieces are hidden so the result sits right under the message. */}
-          <div
-            className={`transition-opacity motion-reduce:transition-none ${locked ? "pointer-events-none" : ""} ${
-              result || phase.name === "failed" ? "max-md:hidden md:opacity-60" : ""
-            }`}
-            aria-disabled={locked}
+        <ShaderBorder mode={borderMode} roundness={0.08} className="flex flex-col">
+          <section
+            className="glass flex flex-1 flex-col gap-3 rounded-3xl p-3 md:gap-4 md:p-5"
+            aria-label="Build your message to Pipo"
           >
-            <BriefBuilder
-              mission={mission}
-              picks={picks}
-              onTap={(id) => {
-                setNudge(null);
-                setPicks((p) => togglePick(mission, p, id));
-              }}
-            />
-          </div>
-          {/* On phones, Check stays pinned to the bottom of the screen while you build. */}
-          <div
-            className={`mt-auto ${
-              phase.name === "build" || thinking
-                ? "max-md:glass max-md:sticky max-md:bottom-3 max-md:z-20 max-md:-mx-1 max-md:rounded-2xl max-md:px-3 max-md:pb-3"
-                : ""
-            }`}
-          >
-            {phase.name === "build" && <ActionBar state="build" nudge={nudge} onCheck={check} />}
-            {thinking && <ActionBar state="thinking" />}
-            {result && <ActionBar state="result" mission={mission} score={result.score} onTryAgain={tryAgain} />}
-            {phase.name === "failed" && <ActionBar state="failed" onTryAgain={tryAgain} />}
-          </div>
-        </section>
+            <PromptCard prompt={buildPrompt(mission, picks)} />
+            {/* Locked while Pipo thinks (the glow stays bright), faded once the answer is in.
+                On phones the faded pieces are hidden so the result sits right under the message. */}
+            <div
+              className={`transition-opacity motion-reduce:transition-none ${locked ? "pointer-events-none" : ""} ${
+                result || phase.name === "failed" ? "max-md:hidden md:opacity-60" : ""
+              }`}
+              aria-disabled={locked}
+            >
+              <BriefBuilder
+                mission={mission}
+                picks={picks}
+                onTap={(id) => {
+                  setNudge(null);
+                  setPicks((p) => togglePick(mission, p, id));
+                }}
+              />
+            </div>
+            {/* On phones, Check stays pinned to the bottom of the screen while you build. */}
+            <div
+              className={`mt-auto ${
+                phase.name === "build" || thinking
+                  ? "max-md:glass max-md:sticky max-md:bottom-3 max-md:z-20 max-md:-mx-1 max-md:rounded-2xl max-md:px-3 max-md:pb-3"
+                  : ""
+              }`}
+            >
+              {phase.name === "build" && <ActionBar state="build" nudge={nudge} onCheck={check} />}
+              {thinking && <ActionBar state="thinking" />}
+              {result && <ActionBar state="result" mission={mission} score={result.score} onTryAgain={tryAgain} />}
+              {phase.name === "failed" && <ActionBar state="failed" onTryAgain={tryAgain} />}
+            </div>
+          </section>
+        </ShaderBorder>
 
         {isDebug && (result || phase.name === "failed") && (
           <div className="md:col-span-2">

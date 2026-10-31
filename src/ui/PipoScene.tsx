@@ -3,14 +3,11 @@ import { splitEmoji } from "../game/emoji.ts";
 import type { AnswerLine } from "../game/feedback.ts";
 import type { Mood } from "./Pipo.tsx";
 import { PipoStage, type StageMode } from "./PipoStage.tsx";
-import { ShaderBorder, type BorderMode } from "./ShaderBorder.tsx";
 
 interface Props {
   mission: Mission;
   mood: Mood;
   stage: StageMode;
-  /** Animated border around the card, following what Pipo is doing. */
-  border: BorderMode;
   /** Stars once Pipo has answered, for the status island. */
   stars: number | null;
   /** Pipo's answer once it's in; until then Pipo shows the lesson's request. */
@@ -20,10 +17,9 @@ interface Props {
 const LINE_DELAY_MS = 150;
 
 /** Left card: Pipo on stage, what Pipo says, and what you know. */
-export function PipoScene({ mission, mood, stage, border, stars, answer }: Props) {
+export function PipoScene({ mission, mood, stage, stars, answer }: Props) {
   return (
-    <section className="glass relative flex flex-1 flex-col gap-3 rounded-3xl p-3 md:p-4" aria-label="The situation">
-      <ShaderBorder mode={border} roundness={0.1} />
+    <section className="glass flex flex-1 flex-col gap-3 rounded-3xl p-3 md:p-4" aria-label="The situation">
       <PipoStage title={mission.title} mode={stage} mood={mood} stars={stars} />
 
       {answer ? <AnswerCard lines={answer} /> : <SpeechBubble>{mission.situation}</SpeechBubble>}
