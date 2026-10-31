@@ -3,11 +3,32 @@
 @theme {
   --font-sans: "Nunito Variable", ui-rounded, system-ui, sans-serif;
 
-  /* Game palette: one green for "go", sky for your picks, amber for stars and misses. */
-  --color-go: #58cc02;
-  --color-go-dark: #46a302;
-  --color-paper: #f7f7f4;
-  --color-ink: #3c3c3c;
+  /* Pipodojo palette: blue-violet brand for actions and your picks, amber for stars and misses. */
+  --color-brand-50: #f3f2ff;
+  --color-brand-100: #e8e6ff;
+  --color-brand-200: #d3cfff;
+  --color-brand-300: #b2a9ff;
+  --color-brand-400: #8c7dfb;
+  --color-brand-500: #6e5cf2;
+  --color-brand-600: #5a46e0;
+  --color-brand-700: #4936bd;
+  --color-brand-800: #3b2d96;
+  --color-brand-900: #2d2470;
+
+  /* Cool, slightly violet greys so neutrals sit with the brand. */
+  --color-gray-50: #f7f7fb;
+  --color-gray-100: #efeff6;
+  --color-gray-200: #e2e1ec;
+  --color-gray-300: #cbc9da;
+  --color-gray-400: #9e9bb5;
+  --color-gray-500: #77748f;
+  --color-gray-600: #5c5973;
+  --color-gray-700: #47445b;
+  --color-gray-800: #312f42;
+  --color-gray-900: #1f1d2c;
+
+  --color-paper: #f5f4fb;
+  --color-ink: #26233a;
 }
 
 /* Always the bright, light game look, whatever the device's dark mode. */

@@ -26,14 +26,14 @@ export function PipoScene({ mission, mood, thinking, answer }: Props) {
 
       {!answer && mission.facts.length > 0 && (
         <div>
-          <p className="mb-2 text-sm font-extrabold tracking-wider text-gray-400 uppercase">What you know</p>
+          <p className="mb-2 text-sm font-extrabold text-gray-400">What you know</p>
           <ul className="grid gap-2">
             {mission.facts.map((fact) => {
               const { emoji, text } = splitEmoji(fact);
               return (
                 <li
                   key={fact}
-                  className="flex items-center gap-3 rounded-2xl border-2 border-sky-100 bg-sky-50 px-4 py-2.5 font-bold text-sky-900"
+                  className="flex items-center gap-3 rounded-2xl border-2 border-brand-100 bg-brand-50 px-4 py-2.5 font-bold text-brand-900"
                 >
                   {emoji && (
                     <span className="text-xl" aria-hidden="true">

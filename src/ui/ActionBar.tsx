@@ -44,11 +44,11 @@ function ResultBanner({ mission, score, onTryAgain }: { mission: Mission; score:
   const notes = resultNotes(mission, score);
   return (
     <Bar
-      className={`slide-up ${missed ? "border-amber-200 bg-amber-50" : "border-green-200 bg-green-50"}`}
+      className={`slide-up ${missed ? "border-amber-200 bg-amber-50" : "border-brand-200 bg-brand-50"}`}
       label="Your result"
     >
       <div className="flex-1 space-y-1">
-        <p className={`flex flex-wrap items-center gap-x-3 text-2xl font-black ${missed ? "text-amber-800" : "text-green-700"}`}>
+        <p className={`flex flex-wrap items-center gap-x-3 text-2xl font-black ${missed ? "text-amber-800" : "text-brand-700"}`}>
           <span className="tracking-widest" aria-label={`${score.stars} out of 3 stars`}>
             <span className="text-amber-400">{"★".repeat(score.stars)}</span>
             <span className="text-gray-300">{"★".repeat(3 - score.stars)}</span>
@@ -56,15 +56,15 @@ function ResultBanner({ mission, score, onTryAgain }: { mission: Mission; score:
           {resultHeadline(score.stars)}
         </p>
         {notes.map((note) => (
-          <p key={note} className={`font-bold ${missed ? "text-amber-800" : "text-green-800"}`}>
+          <p key={note} className={`font-bold ${missed ? "text-amber-800" : "text-brand-800"}`}>
             {note}
           </p>
         ))}
-        <p className={`text-sm font-semibold ${missed ? "text-amber-700" : "text-green-700"}`}>
+        <p className={`text-sm font-semibold ${missed ? "text-amber-700" : "text-brand-700"}`}>
           Remember: {mission.lesson}
         </p>
       </div>
-      <Button tone={missed ? "amber" : "go"} className="w-full md:w-48" onClick={onTryAgain}>
+      <Button tone={missed ? "amber" : "primary"} className="w-full md:w-48" onClick={onTryAgain}>
         Try again
       </Button>
     </Bar>

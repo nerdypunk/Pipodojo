@@ -10,9 +10,9 @@ export function TopBar({ progress, stars }: Props) {
   const percent = Math.round(progress * 100);
   return (
     <header className="mx-auto flex w-full max-w-6xl items-center gap-4 px-4 py-3 md:px-8 md:py-5">
-      <span className="text-xl font-black tracking-tight text-go md:text-2xl">Pipodojo</span>
+      <span className="text-xl font-black tracking-tight text-brand-600 md:text-2xl">Pipodojo</span>
       <div
-        className="h-4 flex-1 overflow-hidden rounded-full bg-gray-200"
+        className="h-4 flex-1 overflow-hidden rounded-full bg-brand-100"
         role="progressbar"
         aria-label="Prompt progress"
         aria-valuenow={percent}
@@ -20,7 +20,7 @@ export function TopBar({ progress, stars }: Props) {
         aria-valuemax={100}
       >
         <div
-          className="h-full rounded-full bg-go transition-[width] duration-300 motion-reduce:transition-none"
+          className="h-full rounded-full bg-brand-500 transition-[width] duration-300 motion-reduce:transition-none"
           style={{ width: `${percent}%` }}
         />
       </div>
