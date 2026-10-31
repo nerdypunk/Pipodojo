@@ -57,10 +57,13 @@ function MissionPanel({ mission, answer }: { mission: Mission; answer: AnswerLin
               return (
                 <li
                   key={fact}
-                  className="flex items-center gap-2 rounded-xl bg-brand-50 px-3 py-1.5 text-[15px] font-bold text-brand-900 ring-1 ring-brand-200 md:px-3.5 md:py-2 md:text-base"
+                  className={`flex items-center gap-2 rounded-xl bg-brand-50 font-bold text-brand-900 ring-1 ring-brand-200 ${
+                    // Compact once Pipo's answer takes the space
+                    answer ? "px-2.5 py-1 text-sm" : "px-3 py-1.5 text-[15px] md:px-3.5 md:py-2 md:text-base"
+                  }`}
                 >
                   {emoji && (
-                    <span className="text-lg" aria-hidden="true">
+                    <span className={answer ? "text-base" : "text-lg"} aria-hidden="true">
                       {emoji}
                     </span>
                   )}

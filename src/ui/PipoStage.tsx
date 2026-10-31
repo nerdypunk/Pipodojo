@@ -23,7 +23,12 @@ interface Props {
 export function PipoStage({ mode, mood, stars }: Props) {
   const still = useReducedMotion();
   return (
-    <div className="relative min-h-32 flex-1 basis-0 overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_50%_45%,#5a46e0_0%,#2d2470_55%,#1b1640_100%)] md:min-h-36">
+    <div
+      className={`relative flex-1 basis-0 overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_50%_45%,#5a46e0_0%,#2d2470_55%,#1b1640_100%)] ${
+        // Shorter once the answer is in, so the mission panel has room for it
+        mode === "done" ? "min-h-28" : "min-h-32 md:min-h-36"
+      }`}
+    >
       <div className="absolute inset-x-0 top-3 bottom-12 flex items-center justify-center gap-2">
         <Pipo mood={mood} className="h-full max-h-20 w-auto drop-shadow-[0_8px_18px_rgba(0,0,0,0.35)] md:max-h-28" />
 
