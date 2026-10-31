@@ -1,7 +1,7 @@
 import { MissionSchema } from "./schema.ts";
 import type { Mission, Persona } from "./types.ts";
 
-const PERSONA_ORDER: Persona[] = ["business", "student", "parent"];
+const PERSONA_ORDER: Persona[] = ["business", "student", "parent", "kid"];
 
 /** Validates one mission. Throws an Error that names the file and every problem. */
 export function parseMission(data: unknown, source = "mission"): Mission {

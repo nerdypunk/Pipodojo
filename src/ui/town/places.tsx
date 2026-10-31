@@ -1,24 +1,57 @@
-// The places in Pipodojo Town. Each is built facing +z (its front) at its own origin;
-// the town turns and moves it into place.
+// The places in Pipodojo Town, in a soft kawaii style: rounded pastel walls, puffy roofs and a
+// little face on every building. Each is built facing +z (its front) at its own origin; the town
+// turns and moves it into place.
 import { RoundedBox } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import * as THREE from "three";
-import { BRAND, INK, ORANGE, Person, Roof } from "./props.tsx";
+import { BRAND, Face, INK, ORANGE, Person, Roof } from "./props.tsx";
 
-const WALL = "#fbf8ff";
-const GLASS = "#bfe0ff";
+const CREAM = "#fff8f0";
+const GLASS = "#c7e6ff";
+const PINK = "#ffb8d2";
+const MINT = "#bff0d8";
+const LILAC = "#e6deff";
 
-function Window({ position, w = 0.36, h = 0.4 }: { position: [number, number, number]; w?: number; h?: number }) {
+function Walls({ size, position, color, radius = 0.18 }: { size: [number, number, number]; position: [number, number, number]; color: string; radius?: number }) {
+  return (
+    <RoundedBox args={size} radius={radius} smoothness={3} position={position}>
+      <meshStandardMaterial color={color} roughness={0.85} />
+    </RoundedBox>
+  );
+}
+
+/** A round window with a white frame. */
+function Porthole({ position, r = 0.22 }: { position: [number, number, number]; r?: number }) {
   return (
     <group position={position}>
-      <mesh>
-        <boxGeometry args={[w + 0.08, h + 0.08, 0.04]} />
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[r, 0.05, 8, 24]} />
         <meshStandardMaterial color="#ffffff" />
       </mesh>
-      <mesh position={[0, 0, 0.025]}>
-        <boxGeometry args={[w, h, 0.02]} />
-        <meshStandardMaterial color={GLASS} emissive={GLASS} emissiveIntensity={0.15} roughness={0.15} />
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[r, r, 0.03, 24]} />
+        <meshStandardMaterial color={GLASS} emissive={GLASS} emissiveIntensity={0.2} roughness={0.15} />
+      </mesh>
+    </group>
+  );
+}
+
+/** An arched door. */
+function Door({ position, color, w = 0.5, h = 0.8 }: { position: [number, number, number]; color: string; w?: number; h?: number }) {
+  return (
+    <group position={position}>
+      <mesh position={[0, h / 2 - w / 4, 0]}>
+        <boxGeometry args={[w, h - w / 2, 0.06]} />
+        <meshStandardMaterial color={color} roughness={0.6} />
+      </mesh>
+      <mesh position={[0, h - w / 2, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[w / 2, w / 2, 0.06, 20, 1, false, -Math.PI / 2, Math.PI]} />
+        <meshStandardMaterial color={color} roughness={0.6} />
+      </mesh>
+      <mesh position={[w * 0.28, h * 0.42, 0.05]}>
+        <sphereGeometry args={[0.035, 8, 6]} />
+        <meshStandardMaterial color="#ffd166" metalness={0.3} roughness={0.3} />
       </mesh>
     </group>
   );
@@ -29,66 +62,45 @@ export function Dojo({ still }: { still: boolean }) {
   const spark = useRef<THREE.Mesh>(null);
   useFrame(({ clock }) => {
     if (!spark.current || still) return;
-    const s = 1 + Math.sin(clock.elapsedTime * 2.4) * 0.12;
-    spark.current.scale.setScalar(s);
+    spark.current.scale.setScalar(1 + Math.sin(clock.elapsedTime * 2.4) * 0.12);
     spark.current.rotation.y = clock.elapsedTime * 0.8;
   });
   return (
     <group>
-      {/* Stone base and steps */}
-      <RoundedBox args={[4.4, 0.4, 4.4]} radius={0.12} position={[0, 0.2, 0]}>
-        <meshStandardMaterial color="#e7e3ff" roughness={0.9} />
+      <RoundedBox args={[4.4, 0.4, 4.4]} radius={0.16} smoothness={3} position={[0, 0.2, 0]}>
+        <meshStandardMaterial color="#ece7ff" roughness={0.9} />
       </RoundedBox>
       {[0, 1].map((i) => (
-        <mesh key={i} position={[0, 0.07 + i * 0.13, 2.45 - i * 0.18]}>
-          <boxGeometry args={[1.6, 0.14, 0.36]} />
-          <meshStandardMaterial color="#d9d4ff" roughness={0.9} />
-        </mesh>
+        <RoundedBox key={i} args={[1.6, 0.14, 0.36]} radius={0.05} position={[0, 0.07 + i * 0.13, 2.45 - i * 0.18]}>
+          <meshStandardMaterial color="#ddd6ff" roughness={0.9} />
+        </RoundedBox>
       ))}
-      {/* Ground floor */}
-      <mesh position={[0, 1.1, 0]}>
-        <boxGeometry args={[2.8, 1.4, 2.8]} />
-        <meshStandardMaterial color={WALL} roughness={0.8} />
-      </mesh>
-      {/* Wooden posts on the corners */}
+      <Walls size={[2.8, 1.4, 2.8]} position={[0, 1.1, 0]} color={CREAM} radius={0.22} />
       {[
-        [-1.42, 1.42],
-        [1.42, 1.42],
-        [-1.42, -1.42],
-        [1.42, -1.42],
+        [-1.36, 1.36],
+        [1.36, 1.36],
+        [-1.36, -1.36],
+        [1.36, -1.36],
       ].map(([x, z]) => (
         <mesh key={`${x}${z}`} position={[x!, 1.1, z!]}>
-          <boxGeometry args={[0.16, 1.4, 0.16]} />
-          <meshStandardMaterial color={BRAND[700]} roughness={0.7} />
+          <cylinderGeometry args={[0.12, 0.12, 1.4, 12]} />
+          <meshStandardMaterial color={BRAND[600]} roughness={0.6} />
         </mesh>
       ))}
-      {/* Big round door */}
-      <mesh position={[0, 0.95, 1.41]}>
-        <cylinderGeometry args={[0.45, 0.45, 0.04, 24, 1, false, 0, Math.PI]} />
-        <meshStandardMaterial color={ORANGE} roughness={0.6} />
-      </mesh>
-      <mesh position={[0, 0.72, 1.42]}>
-        <boxGeometry args={[0.9, 0.5, 0.03]} />
-        <meshStandardMaterial color={ORANGE} roughness={0.6} />
-      </mesh>
-      <Window position={[-0.9, 1.25, 1.41]} />
-      <Window position={[0.9, 1.25, 1.41]} />
-      {/* Lower roof */}
+      <Door position={[0, 0.4, 1.41]} color={ORANGE} w={0.8} h={1.0} />
+      <Porthole position={[-0.9, 1.3, 1.41]} r={0.2} />
+      <Porthole position={[0.9, 1.3, 1.41]} r={0.2} />
+      {/* Puffy roofs: soft pyramids with rounded caps on the corners */}
       <mesh position={[0, 2.15, 0]} rotation={[0, Math.PI / 4, 0]}>
         <coneGeometry args={[2.75, 0.8, 4]} />
-        <meshStandardMaterial color={BRAND[600]} roughness={0.6} flatShading />
+        <meshStandardMaterial color={BRAND[500]} roughness={0.55} />
       </mesh>
-      {/* Upper floor and roof */}
-      <mesh position={[0, 2.7, 0]}>
-        <boxGeometry args={[1.5, 0.8, 1.5]} />
-        <meshStandardMaterial color={WALL} roughness={0.8} />
-      </mesh>
-      <Window position={[0, 2.72, 0.76]} w={0.5} h={0.3} />
+      <Walls size={[1.5, 0.8, 1.5]} position={[0, 2.7, 0]} color={CREAM} radius={0.14} />
+      <Face position={[0, 2.72, 0.77]} scale={1.1} blink={!still} />
       <mesh position={[0, 3.4, 0]} rotation={[0, Math.PI / 4, 0]}>
         <coneGeometry args={[1.6, 0.75, 4]} />
-        <meshStandardMaterial color={BRAND[500]} roughness={0.6} flatShading />
+        <meshStandardMaterial color={PINK} roughness={0.55} />
       </mesh>
-      {/* The spark */}
       <mesh position={[0, 3.95, 0]}>
         <cylinderGeometry args={[0.03, 0.03, 0.4, 6]} />
         <meshStandardMaterial color={INK} />
@@ -98,22 +110,20 @@ export function Dojo({ still }: { still: boolean }) {
         <meshStandardMaterial color={ORANGE} emissive={ORANGE} emissiveIntensity={1.6} toneMapped={false} />
       </mesh>
       <pointLight position={[0, 4.3, 0]} color={ORANGE} intensity={4} distance={6} />
-      {/* A gate in front */}
+      {/* Gate in front, with round ends */}
       <group position={[0, 0, 3.4]}>
         {[-1, 1].map((side) => (
           <mesh key={side} position={[side * 0.9, 0.8, 0]}>
-            <cylinderGeometry args={[0.09, 0.1, 1.6, 10]} />
+            <capsuleGeometry args={[0.1, 1.4, 4, 10]} />
             <meshStandardMaterial color={ORANGE} roughness={0.6} />
           </mesh>
         ))}
-        <mesh position={[0, 1.62, 0]}>
-          <boxGeometry args={[2.3, 0.14, 0.2]} />
+        <RoundedBox args={[2.4, 0.16, 0.22]} radius={0.07} position={[0, 1.62, 0]}>
           <meshStandardMaterial color={ORANGE} roughness={0.6} />
-        </mesh>
-        <mesh position={[0, 1.36, 0]}>
-          <boxGeometry args={[1.9, 0.09, 0.14]} />
+        </RoundedBox>
+        <RoundedBox args={[1.9, 0.1, 0.14]} radius={0.04} position={[0, 1.36, 0]}>
           <meshStandardMaterial color={ORANGE} roughness={0.6} />
-        </mesh>
+        </RoundedBox>
       </group>
     </group>
   );
@@ -133,35 +143,27 @@ export function House({ still }: { still: boolean }) {
   });
   return (
     <group>
-      {/* Lawn patch and path */}
-      <mesh position={[0, 0.02, 0.4]} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[2.9, 40]} />
-        <meshStandardMaterial color="#a6e3a1" roughness={1} />
+      <mesh position={[0, 0.02, 0.3]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[2.5, 40]} />
+        <meshStandardMaterial color="#b4e8a8" roughness={1} />
       </mesh>
-      <mesh position={[0, 0.03, 2.3]}>
-        <boxGeometry args={[0.6, 0.02, 1.6]} />
-        <meshStandardMaterial color="#efe7dc" roughness={1} />
+      <mesh position={[0, 0.03, 1.75]}>
+        <boxGeometry args={[0.55, 0.02, 1.3]} />
+        <meshStandardMaterial color="#f3e9dd" roughness={1} />
       </mesh>
-      {/* House */}
-      <mesh position={[0, 0.85, -0.5]}>
-        <boxGeometry args={[2.6, 1.7, 2.1]} />
-        <meshStandardMaterial color="#fff6ea" roughness={0.8} />
-      </mesh>
-      <group position={[0, 1.7, -0.5]} rotation={[0, Math.PI / 2, 0]}>
-        <Roof width={2.6} height={1.05} depth={3.0} color={BRAND[500]} />
+      <Walls size={[2.5, 1.6, 2.0]} position={[0, 0.82, -0.5]} color="#ffe9dc" />
+      <group position={[0, 1.6, -0.5]} rotation={[0, Math.PI / 2, 0]}>
+        <Roof width={2.5} height={1.0} depth={2.9} color={BRAND[400]} />
       </group>
-      <mesh position={[0.8, 2.3, -0.9]}>
-        <boxGeometry args={[0.3, 0.7, 0.3]} />
-        <meshStandardMaterial color="#d28a6a" roughness={0.9} />
-      </mesh>
-      <mesh position={[0, 0.55, 0.56]}>
-        <boxGeometry args={[0.5, 1.0, 0.04]} />
-        <meshStandardMaterial color={ORANGE} roughness={0.6} />
-      </mesh>
-      <Window position={[-0.75, 1.0, 0.56]} />
-      <Window position={[0.75, 1.0, 0.56]} />
+      <RoundedBox args={[0.3, 0.7, 0.3]} radius={0.08} position={[0.75, 2.2, -0.9]}>
+        <meshStandardMaterial color="#f4a3a3" roughness={0.9} />
+      </RoundedBox>
+      <Door position={[0, 0.02, 0.51]} color={ORANGE} />
+      <Porthole position={[-0.8, 1.0, 0.51]} />
+      <Porthole position={[0.8, 1.0, 0.51]} />
+      <Face position={[0, 1.33, 0.51]} scale={0.8} blink={!still} />
       {/* Barbecue grill with smoke */}
-      <group position={[1.35, 0, 1.55]}>
+      <group position={[1.3, 0, 1.3]}>
         <mesh position={[0, 0.55, 0]}>
           <sphereGeometry args={[0.28, 16, 12, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2]} />
           <meshStandardMaterial color={INK} roughness={0.5} side={THREE.DoubleSide} />
@@ -183,19 +185,23 @@ export function House({ still }: { still: boolean }) {
       </group>
       <Person
         style={{ skin: "#8d5524", hair: "#2b1d16", shirt: "#ef6f6c", pants: "#3b3a5a", extra: "spatula" }}
-        position={[0.65, 0, 1.75]}
+        position={[0.6, 0, 1.5]}
         turn={0.5}
         still={still}
       />
-      {/* Picket fence along the front */}
-      {Array.from({ length: 9 }, (_, i) => -2 + i * 0.5)
-        .filter((x) => Math.abs(x) > 0.4)
-        .map((x) => (
-          <mesh key={x} position={[x, 0.22, 2.75]}>
-            <boxGeometry args={[0.1, 0.44, 0.06]} />
-            <meshStandardMaterial color="#ffffff" />
-          </mesh>
-        ))}
+      {/* A low, rounded picket fence across the front of the yard */}
+      {[-1.8, -1.35, -0.9, 0.9, 1.35, 1.8].map((x) => (
+        <mesh key={x} position={[x, 0.2, 2.35]}>
+          <capsuleGeometry args={[0.05, 0.28, 4, 8]} />
+          <meshStandardMaterial color="#ffffff" />
+        </mesh>
+      ))}
+      {[-1, 1].map((side) => (
+        <mesh key={side} position={[side * 1.35, 0.26, 2.35]}>
+          <boxGeometry args={[0.95, 0.05, 0.04]} />
+          <meshStandardMaterial color="#ffffff" />
+        </mesh>
+      ))}
     </group>
   );
 }
@@ -211,57 +217,44 @@ export function College({ still }: { still: boolean }) {
     <group>
       <mesh position={[0, 0.02, 0.3]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[3.3, 40]} />
-        <meshStandardMaterial color="#cfe9c8" roughness={1} />
+        <meshStandardMaterial color="#cdeec5" roughness={1} />
       </mesh>
-      {/* Steps */}
       {[0, 1, 2].map((i) => (
-        <mesh key={i} position={[0, 0.08 + i * 0.12, 1.55 - i * 0.22]}>
-          <boxGeometry args={[2.4, 0.16, 0.5]} />
-          <meshStandardMaterial color="#eceaf6" roughness={0.9} />
-        </mesh>
+        <RoundedBox key={i} args={[2.4, 0.16, 0.5]} radius={0.05} position={[0, 0.08 + i * 0.12, 1.55 - i * 0.22]}>
+          <meshStandardMaterial color="#f1eefc" roughness={0.9} />
+        </RoundedBox>
       ))}
-      {/* Main hall */}
-      <mesh position={[0, 1.2, -0.4]}>
-        <boxGeometry args={[4.2, 2.0, 2.2]} />
-        <meshStandardMaterial color="#eef0ff" roughness={0.8} />
-      </mesh>
-      {/* Columns and portico */}
+      <Walls size={[4.2, 2.0, 2.2]} position={[0, 1.2, -0.4]} color={LILAC} radius={0.2} />
       {[-1.05, -0.35, 0.35, 1.05].map((x) => (
         <mesh key={x} position={[x, 1.25, 1.0]}>
-          <cylinderGeometry args={[0.13, 0.15, 1.7, 14]} />
+          <capsuleGeometry args={[0.14, 1.45, 4, 12]} />
           <meshStandardMaterial color="#ffffff" roughness={0.6} />
         </mesh>
       ))}
-      <mesh position={[0, 2.18, 0.55]}>
-        <boxGeometry args={[2.7, 0.18, 1.3]} />
+      <RoundedBox args={[2.7, 0.2, 1.3]} radius={0.08} position={[0, 2.18, 0.55]}>
         <meshStandardMaterial color="#ffffff" roughness={0.7} />
-      </mesh>
+      </RoundedBox>
       <Roof width={2.8} height={0.6} depth={1.3} color={BRAND[400]} position={[0, 2.27, 0.55]} />
-      <mesh position={[0, 2.25, -0.4]}>
-        <boxGeometry args={[4.4, 0.12, 2.4]} />
-        <meshStandardMaterial color={BRAND[600]} roughness={0.7} />
-      </mesh>
-      {[-1.6, 1.6].map((x) => (
-        <Window key={x} position={[x, 1.2, 0.71]} w={0.5} h={0.7} />
-      ))}
-      {/* Clock tower */}
-      <mesh position={[0, 2.9, -0.6]}>
-        <boxGeometry args={[1.0, 1.3, 1.0]} />
-        <meshStandardMaterial color="#eef0ff" roughness={0.8} />
-      </mesh>
-      <mesh position={[0, 3.0, -0.09]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.32, 0.32, 0.04, 24]} />
+      <RoundedBox args={[4.4, 0.16, 2.4]} radius={0.07} position={[0, 2.25, -0.4]}>
+        <meshStandardMaterial color={BRAND[500]} roughness={0.7} />
+      </RoundedBox>
+      <Porthole position={[-1.6, 1.25, 0.71]} r={0.28} />
+      <Porthole position={[1.6, 1.25, 0.71]} r={0.28} />
+      {/* Clock tower with a face */}
+      <Walls size={[1.0, 1.3, 1.0]} position={[0, 2.9, -0.6]} color={LILAC} radius={0.14} />
+      <mesh position={[0, 3.2, -0.09]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.24, 0.24, 0.04, 24]} />
         <meshStandardMaterial color="#ffffff" />
       </mesh>
-      <mesh position={[0, 3.05, -0.06]} rotation={[0, 0, 0.6]}>
-        <boxGeometry args={[0.04, 0.22, 0.02]} />
+      <mesh position={[0, 3.24, -0.06]} rotation={[0, 0, 0.6]}>
+        <boxGeometry args={[0.03, 0.16, 0.02]} />
         <meshStandardMaterial color={INK} />
       </mesh>
+      <Face position={[0, 2.62, -0.09]} scale={0.75} blink={!still} />
       <mesh position={[0, 3.85, -0.6]} rotation={[0, Math.PI / 4, 0]}>
         <coneGeometry args={[0.85, 0.8, 4]} />
-        <meshStandardMaterial color={BRAND[500]} roughness={0.6} flatShading />
+        <meshStandardMaterial color={PINK} roughness={0.55} />
       </mesh>
-      {/* Flag */}
       <mesh position={[1.7, 2.9, -1.2]}>
         <cylinderGeometry args={[0.03, 0.03, 1.4, 6]} />
         <meshStandardMaterial color={INK} />
@@ -280,7 +273,7 @@ export function College({ still }: { still: boolean }) {
   );
 }
 
-/** The café, with a striped awning, a big cup on the roof and tables outside. */
+/** The café, with a striped awning, a big smiling cup on the roof and tables outside. */
 export function Cafe({ still }: { still: boolean }) {
   const steam = useRef<THREE.Group>(null);
   useFrame(({ clock }) => {
@@ -294,52 +287,38 @@ export function Cafe({ still }: { still: boolean }) {
   const stripes = 8;
   return (
     <group>
-      <mesh position={[0, 0.02, 0.6]}>
-        <boxGeometry args={[4.4, 0.04, 3.6]} />
-        <meshStandardMaterial color="#f3ecff" roughness={1} />
-      </mesh>
-      <mesh position={[0, 0.95, -0.5]}>
-        <boxGeometry args={[3.2, 1.9, 2.2]} />
-        <meshStandardMaterial color="#fff1f2" roughness={0.8} />
-      </mesh>
-      <mesh position={[0, 1.95, -0.5]}>
-        <boxGeometry args={[3.4, 0.14, 2.4]} />
-        <meshStandardMaterial color={BRAND[700]} roughness={0.7} />
-      </mesh>
-      {/* Shop window and door */}
-      <mesh position={[-0.55, 0.85, 0.61]}>
-        <boxGeometry args={[1.5, 0.9, 0.04]} />
+      <RoundedBox args={[4.4, 0.06, 3.6]} radius={0.03} position={[0, 0.03, 0.6]}>
+        <meshStandardMaterial color="#f6efff" roughness={1} />
+      </RoundedBox>
+      <Walls size={[3.2, 1.9, 2.2]} position={[0, 0.95, -0.5]} color="#ffe4ee" />
+      <RoundedBox args={[3.4, 0.16, 2.4]} radius={0.07} position={[0, 1.95, -0.5]}>
+        <meshStandardMaterial color={BRAND[500]} roughness={0.7} />
+      </RoundedBox>
+      <RoundedBox args={[1.5, 0.9, 0.06]} radius={0.12} position={[-0.55, 0.85, 0.61]}>
         <meshStandardMaterial color={GLASS} emissive="#ffd8a8" emissiveIntensity={0.25} roughness={0.15} />
-      </mesh>
-      <mesh position={[0.9, 0.6, 0.61]}>
-        <boxGeometry args={[0.55, 1.15, 0.04]} />
-        <meshStandardMaterial color={BRAND[600]} roughness={0.6} />
-      </mesh>
-      {/* Striped awning */}
+      </RoundedBox>
+      <Door position={[0.9, 0.02, 0.61]} color={BRAND[600]} w={0.55} h={1.15} />
       {Array.from({ length: stripes }, (_, i) => (
-        <mesh key={i} position={[-1.4 + (i + 0.5) * (2.8 / stripes) + 0.0, 1.55, 0.85]} rotation={[0.55, 0, 0]}>
-          <boxGeometry args={[2.8 / stripes, 0.05, 0.65]} />
-          <meshStandardMaterial color={i % 2 ? "#ffffff" : BRAND[500]} roughness={0.7} />
+        <mesh key={i} position={[-1.4 + (i + 0.5) * (2.8 / stripes), 1.55, 0.85]} rotation={[0.55, 0, 0]}>
+          <capsuleGeometry args={[0.16, 0.38, 4, 8]} />
+          <meshStandardMaterial color={i % 2 ? "#ffffff" : PINK} roughness={0.7} />
         </mesh>
       ))}
-      {/* Big cup on the roof */}
-      <group position={[0, 2.35, -0.5]}>
+      {/* The big cup, smiling */}
+      <group position={[0, 2.38, -0.5]}>
         <mesh>
-          <cylinderGeometry args={[0.42, 0.32, 0.7, 20]} />
-          <meshStandardMaterial color="#ffffff" roughness={0.5} />
+          <cylinderGeometry args={[0.46, 0.36, 0.75, 24]} />
+          <meshStandardMaterial color="#ffffff" roughness={0.45} />
         </mesh>
-        <mesh position={[0, 0.34, 0]}>
-          <cylinderGeometry args={[0.38, 0.38, 0.03, 20]} />
-          <meshStandardMaterial color="#7a4a2e" roughness={0.6} />
+        <mesh position={[0, 0.37, 0]}>
+          <cylinderGeometry args={[0.42, 0.42, 0.03, 24]} />
+          <meshStandardMaterial color="#a0673f" roughness={0.6} />
         </mesh>
-        <mesh position={[0.45, 0.02, 0]} rotation={[0, 0, Math.PI / 2]}>
-          <torusGeometry args={[0.15, 0.05, 8, 16]} />
-          <meshStandardMaterial color="#ffffff" roughness={0.5} />
+        <mesh position={[0.5, 0.02, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <torusGeometry args={[0.16, 0.055, 8, 16]} />
+          <meshStandardMaterial color="#ffffff" roughness={0.45} />
         </mesh>
-        <mesh position={[0, -0.05, 0.36]} rotation={[0.1, 0, 0]}>
-          <boxGeometry args={[0.5, 0.18, 0.02]} />
-          <meshStandardMaterial color={ORANGE} />
-        </mesh>
+        <Face position={[0, 0, 0.42]} scale={0.85} blink={!still} />
         <group ref={steam} position={[0, 0.45, 0]}>
           {[-0.1, 0.12].map((x) => (
             <mesh key={x} position={[x, 0, 0]}>
@@ -349,7 +328,6 @@ export function Cafe({ still }: { still: boolean }) {
           ))}
         </group>
       </group>
-      {/* Tables with umbrellas */}
       {[-1.3, 1.4].map((x) => (
         <group key={x} position={[x, 0, 1.75]}>
           <mesh position={[0, 0.3, 0]}>
@@ -360,9 +338,9 @@ export function Cafe({ still }: { still: boolean }) {
             <cylinderGeometry args={[0.025, 0.025, 1.2, 6]} />
             <meshStandardMaterial color={INK} />
           </mesh>
-          <mesh position={[0, 1.2, 0]}>
-            <coneGeometry args={[0.6, 0.3, 8]} />
-            <meshStandardMaterial color={x < 0 ? ORANGE : BRAND[400]} roughness={0.7} flatShading />
+          <mesh position={[0, 1.2, 0]} scale={[1, 0.45, 1]}>
+            <sphereGeometry args={[0.6, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2]} />
+            <meshStandardMaterial color={x < 0 ? "#ffd59e" : LILAC} roughness={0.7} side={THREE.DoubleSide} />
           </mesh>
         </group>
       ))}
@@ -376,101 +354,93 @@ export function Cafe({ still }: { still: boolean }) {
   );
 }
 
-/** A lot under construction: someone new is moving in soon. */
-export function Lot({ still }: { still: boolean }) {
-  const arm = useRef<THREE.Group>(null);
+/** The young coder's home: a mint cottage with a puffy roof, a treehouse and a glowing laptop. */
+export function KidHouse({ still }: { still: boolean }) {
+  const star = useRef<THREE.Mesh>(null);
   useFrame(({ clock }) => {
-    if (arm.current && !still) arm.current.rotation.y = Math.sin(clock.elapsedTime * 0.4) * 0.6;
+    if (!star.current || still) return;
+    star.current.rotation.y = clock.elapsedTime;
+    star.current.position.y = 3.25 + Math.sin(clock.elapsedTime * 2) * 0.08;
   });
   return (
     <group>
-      <mesh position={[0, 0.03, 0]}>
-        <boxGeometry args={[3.6, 0.06, 3.4]} />
-        <meshStandardMaterial color="#e9dcc7" roughness={1} />
+      <mesh position={[0, 0.02, 0.3]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[2.7, 40]} />
+        <meshStandardMaterial color="#b4e8a8" roughness={1} />
       </mesh>
-      {/* Scaffolding */}
-      {[-1, 0, 1].flatMap((x) =>
-        [-0.8, 0.8].map((z) => (
-          <mesh key={`${x}${z}`} position={[x * 0.9, 0.9, z]}>
-            <boxGeometry args={[0.06, 1.8, 0.06]} />
-            <meshStandardMaterial color="#c9c3e6" />
-          </mesh>
-        )),
-      )}
-      {[0.6, 1.2, 1.8].map((y) => (
-        <mesh key={y} position={[0, y, 0.8]}>
-          <boxGeometry args={[1.9, 0.06, 0.06]} />
-          <meshStandardMaterial color="#c9c3e6" />
+      <Walls size={[2.2, 1.5, 1.9]} position={[-0.3, 0.77, -0.4]} color={MINT} radius={0.24} />
+      {/* A big round mushroom-style roof */}
+      <mesh position={[-0.3, 1.5, -0.4]} scale={[1.55, 0.85, 1.4]}>
+        <sphereGeometry args={[1, 28, 14, 0, Math.PI * 2, 0, Math.PI / 2]} />
+        <meshStandardMaterial color={PINK} roughness={0.55} />
+      </mesh>
+      {[
+        [-0.9, 1.95, 0.3],
+        [0.2, 2.15, 0.1],
+        [-0.4, 2.2, -0.9],
+      ].map(([x, y, z], i) => (
+        <mesh key={i} position={[x!, y!, z!]} scale={[1, 0.5, 1]}>
+          <sphereGeometry args={[0.16, 12, 8]} />
+          <meshStandardMaterial color="#ffffff" />
         </mesh>
       ))}
-      <mesh position={[0, 0.4, -0.3]}>
-        <boxGeometry args={[1.6, 0.8, 1.0]} />
-        <meshStandardMaterial color="#f4f1fb" roughness={0.9} />
+      <Door position={[-0.3, 0.02, 0.56]} color="#7cc8ff" w={0.5} h={0.8} />
+      <Porthole position={[-1.0, 0.95, 0.56]} r={0.2} />
+      <Face position={[0.4, 1.0, 0.56]} scale={0.7} blink={!still} />
+      {/* Treehouse */}
+      <mesh position={[1.4, 0.9, -0.9]}>
+        <cylinderGeometry args={[0.14, 0.2, 1.8, 8]} />
+        <meshStandardMaterial color="#b07a52" roughness={0.9} />
       </mesh>
-      {/* Crane */}
-      <mesh position={[1.4, 1.6, -1.2]}>
-        <boxGeometry args={[0.18, 3.2, 0.18]} />
-        <meshStandardMaterial color={ORANGE} roughness={0.6} />
+      <mesh position={[1.4, 2.3, -0.9]}>
+        <icosahedronGeometry args={[0.9, 1]} />
+        <meshStandardMaterial color="#8edb8a" roughness={0.8} />
       </mesh>
-      <group ref={arm} position={[1.4, 3.2, -1.2]}>
-        <mesh position={[-0.9, 0, 0]}>
-          <boxGeometry args={[2.4, 0.14, 0.14]} />
-          <meshStandardMaterial color={ORANGE} roughness={0.6} />
-        </mesh>
-        <mesh position={[-1.8, -0.6, 0]}>
-          <boxGeometry args={[0.02, 1.2, 0.02]} />
-          <meshStandardMaterial color={INK} />
-        </mesh>
-        <mesh position={[-1.8, -1.25, 0]}>
-          <boxGeometry args={[0.35, 0.18, 0.35]} />
-          <meshStandardMaterial color={BRAND[400]} />
-        </mesh>
-      </group>
-      {/* Cones */}
-      {[-1.4, -0.5, 0.4].map((x) => (
-        <mesh key={x} position={[x, 0.18, 1.45]}>
-          <coneGeometry args={[0.12, 0.3, 10]} />
-          <meshStandardMaterial color={ORANGE} roughness={0.6} />
-        </mesh>
-      ))}
+      <RoundedBox args={[0.8, 0.6, 0.7]} radius={0.1} position={[1.4, 1.75, -0.4]}>
+        <meshStandardMaterial color="#ffd59e" roughness={0.8} />
+      </RoundedBox>
+      <Porthole position={[1.4, 1.78, -0.04]} r={0.13} />
+      <mesh ref={star} position={[1.4, 3.25, -0.9]}>
+        <octahedronGeometry args={[0.16, 0]} />
+        <meshStandardMaterial color="#ffd166" emissive="#ffd166" emissiveIntensity={1} toneMapped={false} />
+      </mesh>
+      {/* The kid, out front with a laptop */}
+      <Person
+        style={{ skin: "#c68642", hair: "#3b2416", shirt: "#ffb84d", pants: "#4f8ef7", extra: "laptop" }}
+        position={[0.7, 0, 1.25]}
+        turn={-0.2}
+        still={still}
+      />
     </group>
   );
 }
 
 /** Pipo's garage: where you change how your Pipo looks. */
-export function Garage() {
+export function Garage({ still }: { still: boolean }) {
   return (
     <group>
       <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[1.6, 32]} />
-        <meshStandardMaterial color="#e7e3ff" roughness={1} />
+        <meshStandardMaterial color="#ece7ff" roughness={1} />
       </mesh>
-      <mesh position={[0, 0, 0]}>
+      <mesh>
         <sphereGeometry args={[1.15, 28, 18, 0, Math.PI * 2, 0, Math.PI / 2]} />
         <meshStandardMaterial color="#ffffff" roughness={0.5} />
       </mesh>
       <mesh position={[0, 0.02, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[1.15, 0.06, 8, 32]} />
-        <meshStandardMaterial color={BRAND[500]} />
+        <torusGeometry args={[1.15, 0.07, 8, 32]} />
+        <meshStandardMaterial color={BRAND[400]} />
       </mesh>
-      {/* Garage door */}
-      <mesh position={[0, 0.42, 1.0]}>
-        <boxGeometry args={[0.9, 0.84, 0.3]} />
-        <meshStandardMaterial color={BRAND[600]} roughness={0.6} />
-      </mesh>
-      {[0.2, 0.4, 0.6].map((y) => (
-        <mesh key={y} position={[0, y, 1.16]}>
-          <boxGeometry args={[0.86, 0.03, 0.02]} />
-          <meshStandardMaterial color={BRAND[400]} />
-        </mesh>
-      ))}
-      {/* A spanner on top */}
+      <RoundedBox args={[0.9, 0.84, 0.3]} radius={0.1} position={[0, 0.42, 1.0]}>
+        <meshStandardMaterial color={BRAND[500]} roughness={0.6} />
+      </RoundedBox>
+      <Face position={[0, 0.58, 1.16]} scale={0.6} blink={!still} />
       <group position={[0, 1.35, 0]} rotation={[0, 0, 0.6]}>
         <mesh>
-          <boxGeometry args={[0.12, 0.6, 0.08]} />
+          <capsuleGeometry args={[0.07, 0.5, 4, 8]} />
           <meshStandardMaterial color={ORANGE} roughness={0.5} />
         </mesh>
-        <mesh position={[0, 0.34, 0]}>
+        <mesh position={[0, 0.36, 0]}>
           <torusGeometry args={[0.12, 0.05, 8, 16, Math.PI * 1.5]} />
           <meshStandardMaterial color={ORANGE} roughness={0.5} />
         </mesh>

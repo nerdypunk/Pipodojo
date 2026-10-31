@@ -65,13 +65,12 @@ export function Town({ look, stars, onVisit, onGarage }: Props) {
       };
     }
     result.garage = { title: "🔧 Pipo's garage", sub: "Change how your Pipo looks.", open: true };
-    result.lot = { title: "🚧 Coming soon", sub: "Someone new is moving in. More people for Pipo to help!", open: false };
     return result;
   }, [stars]);
 
   const go = (id: PlaceId) => {
     if (id === "garage") onGarage();
-    else if (id !== "lot") onVisit(id);
+    else onVisit(id);
   };
   // Clicking flies the camera in; the screen moves on once it lands.
   const select = (id: PlaceId) => {

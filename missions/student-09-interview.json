@@ -1,0 +1,94 @@
+{
+  "id": "student-09-interview",
+  "persona": "student",
+  "path": "student-job",
+  "order": 3,
+  "title": "Practise the interview",
+  "icon": "🎤",
+  "recap": "Pipo helped you practise for the interview.",
+  "funFact": "CV, email and interview practice: you're ready for your first job. Agents help you prepare; the job is all yours.",
+  "postcard": "a student shaking hands with Bloom Café's owner, Pipo cheering: {answer}",
+  "situation": "Bloom Café wants to meet you! Want to practise the interview?",
+  "facts": [
+    "☕ Barista interview at Bloom Café",
+    "🥐 They're known for pastries and oat lattes",
+    "💡 A short tip for each question",
+    "🗣️ You'll answer in your own words"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on a university student's phone. Help with what they ask. When you help someone practise, write one line per question.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "practise",
+          "label": "Help me practise for my Bloom Café barista interview",
+          "text": "Help me practise for my barista interview at Bloom Café.",
+          "quality": "good"
+        },
+        {
+          "id": "interview",
+          "label": "Help me with an interview",
+          "text": "Help me with an interview.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "label": "How should Pipo help?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "known_for",
+          "label": "They're known for pastries and oat lattes",
+          "text": "Bloom Café is known for its pastries and oat lattes, so ask about those too.",
+          "quality": "good"
+        },
+        {
+          "id": "tips",
+          "label": "A short tip for each",
+          "text": "Add a short tip for each question, not a full answer.",
+          "quality": "neutral"
+        },
+        {
+          "id": "three",
+          "label": "3 likely questions",
+          "text": "Give me 3 questions they'll probably ask.",
+          "quality": "neutral"
+        },
+        {
+          "id": "answers",
+          "label": "Write my answers so I can memorise them",
+          "text": "Write my answers so I can memorise them.",
+          "quality": "weak",
+          "tip": "Memorised answers sound robotic. Tips help you answer in your own words."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:interview",
+      "signals": [
+        "^(?![\\s\\S]*(barista|coffee|caf|customer|drink))"
+      ],
+      "hint": "\"An interview\" doesn't say for what job.",
+      "explain": "Pipo didn't know the job, so the questions aren't about being a barista."
+    },
+    {
+      "id": "no_research",
+      "when": "not_picked:known_for",
+      "signals": [
+        "^(?![\\s\\S]*(pastr|oat))"
+      ],
+      "hint": "You didn't tell Pipo what Bloom Café is known for.",
+      "explain": "Pipo didn't know about the pastries and oat lattes, so the practice is generic."
+    }
+  ],
+  "lesson": "Ask Pipo for practice and tips, not a script. Your own words win interviews."
+}

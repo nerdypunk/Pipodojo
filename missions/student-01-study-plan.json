@@ -1,0 +1,123 @@
+{
+  "id": "student-01-study-plan",
+  "persona": "student",
+  "path": "student-exams",
+  "order": 1,
+  "title": "Make a study plan",
+  "icon": "📚",
+  "recap": "Pipo planned your study days.",
+  "funFact": "Agents can block time in your calendar so the plan actually happens. Next, Pipo books your study sessions!",
+  "postcard": "a student at a cosy library desk with Pipo, the plan on the wall: {answer}",
+  "situation": "Exams are coming! Want me to plan your study days?",
+  "facts": [
+    "📅 Today is Thursday",
+    "🧬 Biology exam Monday, History Wednesday",
+    "⏱️ 3 hours of study a day, max",
+    "💼 You work all day Saturday"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on a university student's phone. Help with what they ask. When you plan study days, start each line with the day or days it covers.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "plan_study",
+          "label": "Plan my study for Monday's and Wednesday's exams",
+          "text": "Plan my study days, starting today (Thursday), for my Biology exam on Monday and my History exam on Wednesday.",
+          "quality": "good"
+        },
+        {
+          "id": "help_study",
+          "label": "Help me study",
+          "text": "Help me study for my exams.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "What does Pipo need to know?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "hours",
+          "label": "3 hours a day, max",
+          "text": "I can study 3 hours a day at most.",
+          "quality": "good"
+        },
+        {
+          "id": "shift",
+          "label": "I work all day Saturday",
+          "text": "I work all day Saturday, so no studying then.",
+          "quality": "good"
+        },
+        {
+          "id": "breaks",
+          "label": "Remind me to take breaks",
+          "text": "Remind me to take breaks.",
+          "quality": "neutral"
+        },
+        {
+          "id": "allnighter",
+          "label": "I'll study all night if I have to!",
+          "text": "I'll study all night if I have to!",
+          "quality": "weak",
+          "tip": "All-nighters make exams harder, not easier. Pipo plans better with your real limits."
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "label": "How should Pipo answer?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "short",
+          "label": "Short, with hours for each day",
+          "text": "Keep it short and give the study hours for each day.",
+          "quality": "good"
+        },
+        {
+          "id": "detailed",
+          "label": "Every detail, hour by hour",
+          "text": "Give me every detail, hour by hour.",
+          "quality": "weak",
+          "tip": "An hour-by-hour plan is hard to stick to. A short plan you'll actually follow is better."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "saturday_study",
+      "when": "not_picked:shift",
+      "signals": [
+        "(^|\\n)(?![^\\n]*(work|shift|\\boff\\b|rest|no study|day off|break))[^\\n]*\\bsat(urday)?\\b"
+      ],
+      "hint": "You didn't tell Pipo you work on Saturday.",
+      "explain": "Pipo didn't know about your shift, so it planned studying on Saturday."
+    },
+    {
+      "id": "too_long",
+      "when": "not_picked:hours",
+      "signals": [
+        "\\b([4-9]|1[0-2])\\s?(h|hrs?|hours)\\b"
+      ],
+      "hint": "You didn't tell Pipo how long you can study.",
+      "explain": "Pipo didn't know your limit, so some days have more than 3 hours."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:help_study",
+      "signals": [
+        "^(?![\\s\\S]*(bio|history))"
+      ],
+      "hint": "\"Help me study\" doesn't say which exams or when.",
+      "explain": "Pipo didn't know your exams, so the plan isn't built around them."
+    }
+  ],
+  "lesson": "Pipo plans around the limits you give it: your time, your job and your exam dates."
+}

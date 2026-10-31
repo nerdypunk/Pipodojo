@@ -16,7 +16,7 @@ const regexSource = z.string().min(1).refine((source) => {
   }
 }, "Not a valid regular expression");
 
-export const PersonaSchema = z.enum(["business", "student", "parent"]);
+export const PersonaSchema = z.enum(["business", "student", "parent", "kid"]);
 
 /** One tappable prompt piece: `label` is the tile, `text` is the words it adds to the prompt. */
 export const PieceSchema = z.strictObject({
@@ -55,7 +55,8 @@ export const ToolSchema = z.strictObject({
   /** Told to the model: when to use this tool. */
   description: text,
   /** Which phone mockup shows the result. */
-  app: z.enum(["whatsapp", "shop", "email", "calendar"]),
+  /** Phone apps, or laptop apps for Pipo Code (site, game, chart). */
+  app: z.enum(["whatsapp", "shop", "email", "calendar", "site", "game", "chart"]),
   /** The store's name on the shop screen, e.g. "TicketHub" (default FreshCart). */
   store: text.optional(),
   /** Label for the shop's "delivery" row, e.g. "Visit" for tickets (default Delivery). */

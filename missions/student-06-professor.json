@@ -1,0 +1,228 @@
+{
+  "id": "student-06-professor",
+  "persona": "student",
+  "path": "student-project",
+  "order": 3,
+  "title": "Email the professor",
+  "icon": "✉️",
+  "recap": "Pipo asked Professor Okafor for a new date.",
+  "funFact": "Splitting work, messaging and asking for help: that's teamwork with an agent. Pipo does the typing; you stay polite and in charge.",
+  "postcard": "Professor Okafor smiling at an email: {subject}",
+  "situation": "Oh no, Tom is sick. Want me to email Professor Okafor about the presentation?",
+  "facts": [
+    "👩‍🏫 Professor Okafor",
+    "🤒 Tom is sick this week",
+    "📅 Ask to present Monday instead of Friday",
+    "👀 You want to read it before it goes"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on a university student's phone. You can send emails for them. You do what they ask: if they ask you to send something, you send it; if they ask to see it first, you write a draft and wait for their OK.",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "Send the email right away. Use this when the user wants it sent.",
+      "app": "email",
+      "outcome": "done",
+      "store": "Uni Mail",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the email: a person, an email address or a mailing list"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The subject line, up to 8 words"
+          },
+          "body": {
+            "type": "string",
+            "description": "The email text, up to 45 words"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Sent"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "Write the email and show it to the user without sending it, so they can check it first. Use this when the user wants to read it before it goes out.",
+      "app": "email",
+      "outcome": "waiting",
+      "store": "Uni Mail",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the email: a person, an email address or a mailing list"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The subject line, up to 8 words"
+          },
+          "body": {
+            "type": "string",
+            "description": "The email text, up to 45 words"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Draft ready, waiting for your OK to send"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_prof",
+          "label": "Email Professor Okafor about our presentation",
+          "text": "Email Professor Okafor about our climate change presentation.",
+          "quality": "good"
+        },
+        {
+          "id": "email_teacher",
+          "label": "Email the teacher",
+          "text": "Email the teacher about the presentation.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "What should the email say?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "reason",
+          "label": "Tom is sick this week",
+          "text": "Explain that Tom is sick this week.",
+          "quality": "good"
+        },
+        {
+          "id": "new_date",
+          "label": "Ask to present Monday instead",
+          "text": "Ask if we can present on Monday instead of Friday.",
+          "quality": "good"
+        },
+        {
+          "id": "polite",
+          "label": "Say thank you",
+          "text": "Thank them for their help.",
+          "quality": "neutral"
+        },
+        {
+          "id": "demand",
+          "label": "Tell them we need more time, full stop",
+          "text": "Tell them we need more time, full stop.",
+          "quality": "weak",
+          "tip": "Demanding rarely works with professors. A polite ask with a reason and a new date usually does."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before Pipo sends it",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me the email first",
+          "text": "Show me the email before you send it.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Send it now",
+          "text": "Send it now.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:email_teacher",
+      "signals": [
+        "📧(?![^\\n]*okafor)"
+      ],
+      "hint": "\"The teacher\" doesn't say who should get it.",
+      "explain": "Pipo didn't know who to email, so it isn't addressed to Professor Okafor."
+    },
+    {
+      "id": "no_reason",
+      "when": "not_picked:reason",
+      "signals": [
+        "^(?![\\s\\S]*(sick|ill\\b|unwell))"
+      ],
+      "hint": "You didn't tell Pipo why you need more time.",
+      "explain": "Pipo didn't know Tom is sick, so the email gives no reason."
+    },
+    {
+      "id": "no_date",
+      "when": "not_picked:new_date",
+      "signals": [
+        "^(?![\\s\\S]*\\b(mon|monday)\\b)"
+      ],
+      "hint": "You didn't tell Pipo the new date you want.",
+      "explain": "Pipo didn't know you want Monday, so the professor has to guess."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\b(sent|delivered)\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Asking to see the email first lets you check the tone before your professor reads it.",
+      "explain": "Pipo sent it straight away, so you never got to check it."
+    }
+  ],
+  "lesson": "A good ask has a reason and a clear new date. Check the tone before it goes."
+}

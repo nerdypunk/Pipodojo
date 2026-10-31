@@ -23,6 +23,7 @@ describe("tool lessons", () => {
     expect(readable(57.4)).toBe("57.40");
     expect(readable([{ name: "Buns", price: 4 }, "Corn"])).toBe("Buns ($4), Corn");
     expect(readable([{ name: "Bake sale", when: "Thu 3pm" }])).toBe("Bake sale (Thu 3pm)");
+    expect(readable([{ name: "Apples", value: 8 }, { name: "Candy hat", cost: 30 }])).toBe("Apples (8), Candy hat (30)");
     expect(readable(undefined)).toBe("?");
   });
 

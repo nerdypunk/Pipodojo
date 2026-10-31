@@ -1,0 +1,103 @@
+{
+  "id": "kid-01-site-plan",
+  "persona": "kid",
+  "path": "kid-site",
+  "order": 1,
+  "title": "Plan your website",
+  "icon": "🗺️",
+  "recap": "Pipo Code planned Nugget's website.",
+  "funFact": "Coding agents like Pipo Code can write the code for you, and you're still the designer. Next, Pipo Code builds the home page!",
+  "postcard": "Kai and Pipo at a laptop showing a cheerful website about Nugget the hamster: {answer}",
+  "situation": "Hi Kai! Want to make a website? I can help you plan it.",
+  "facts": [
+    "🐹 About your hamster, Nugget",
+    "🌻 Nugget is 2 and loves sunflower seeds",
+    "📄 3 pages: home, photos, fun facts",
+    "🙈 Online you're just \"Kai\""
+  ],
+  "systemPrompt": "You are Pipo Code, a friendly coding helper on a 10-year-old's laptop. Help with what they ask, in simple words. When you plan a website, write one line per page.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo Code to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "plan_site",
+          "label": "Plan a website about my hamster, Nugget",
+          "text": "Plan a website about my hamster, Nugget.",
+          "quality": "good"
+        },
+        {
+          "id": "make_site",
+          "label": "Make me a website",
+          "text": "Make me a website.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "What does Pipo Code need to know?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "pages",
+          "label": "3 pages: home, photos, fun facts",
+          "text": "It needs 3 pages: home, photos and fun facts.",
+          "quality": "good"
+        },
+        {
+          "id": "facts",
+          "label": "Nugget is 2 and loves sunflower seeds",
+          "text": "Nugget is 2 years old and loves sunflower seeds.",
+          "quality": "good"
+        },
+        {
+          "id": "first_name",
+          "label": "Only use my first name, Kai",
+          "text": "Only use my first name, Kai.",
+          "quality": "neutral"
+        },
+        {
+          "id": "coolest",
+          "label": "Make it the coolest site in the universe!",
+          "text": "Make it the coolest site in the universe!",
+          "quality": "weak",
+          "tip": "\"The coolest site\" doesn't tell Pipo Code what to build. Pages and facts do."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:make_site",
+      "signals": [
+        "^(?![\\s\\S]*(nugget|hamster))"
+      ],
+      "hint": "\"Make me a website\" doesn't say what it's about.",
+      "explain": "Pipo Code didn't know it's about Nugget, so it planned some other website."
+    },
+    {
+      "id": "no_pages",
+      "when": "not_picked:pages",
+      "signals": [
+        "^(?![\\s\\S]*fun fact)"
+      ],
+      "hint": "You didn't tell Pipo Code which pages you want.",
+      "explain": "Pipo Code didn't know your pages, so it picked its own."
+    },
+    {
+      "id": "no_facts",
+      "when": "not_picked:facts",
+      "signals": [
+        "^(?![\\s\\S]*sunflower)"
+      ],
+      "hint": "You didn't tell Pipo Code anything about Nugget.",
+      "explain": "Pipo Code didn't know about Nugget, so there's nothing special about Nugget on the site."
+    }
+  ],
+  "lesson": "Pipo Code builds what you describe. Give it the pages and the facts."
+}

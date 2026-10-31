@@ -1,0 +1,211 @@
+{
+  "id": "kid-03-bug",
+  "persona": "kid",
+  "path": "kid-site",
+  "order": 3,
+  "title": "Fix a bug",
+  "icon": "🐞",
+  "recap": "Pipo Code fixed the More photos button.",
+  "funFact": "Plan, build, fix: that's how real websites get made. Coding agents do the typing, and you decide what's safe to share.",
+  "postcard": "Pipo and Kai cheering as a glowing More photos button works on a phone, {problem}",
+  "situation": "Uh-oh, Grandpa says a button on your site doesn't work! Want me to fix it?",
+  "facts": [
+    "🐞 The \"More photos\" button does nothing",
+    "📱 Only on phones, fine on the laptop",
+    "📄 It's on the photos page",
+    "👀 Check the fix before it goes online"
+  ],
+  "systemPrompt": "You are Pipo Code, a friendly coding helper on a 10-year-old's laptop. You build their website with your tools. You do what they ask: if they ask you to put the fix online, you do it; if they ask to see the fix first, you prepare it and wait for their OK.",
+  "tools": [
+    {
+      "name": "fix_and_publish",
+      "description": "Fix the bug and put the fixed site online right away. Use this when the user wants it fixed live.",
+      "app": "site",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "problem": {
+            "type": "string",
+            "description": "The bug, in one short sentence"
+          },
+          "fix": {
+            "type": "string",
+            "description": "What you changed, in one short sentence"
+          },
+          "page": {
+            "type": "string",
+            "description": "Which page the fix is on"
+          }
+        },
+        "required": [
+          "problem",
+          "fix",
+          "page"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🐞",
+          "text": "{problem}"
+        },
+        {
+          "emoji": "🔧",
+          "text": "{fix}"
+        },
+        {
+          "emoji": "📄",
+          "text": "{page}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Fixed and published"
+        }
+      ]
+    },
+    {
+      "name": "prepare_fix",
+      "description": "Prepare the fix without putting it online, so the user can check it first. Use this when the user wants to see the fix first.",
+      "app": "site",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "problem": {
+            "type": "string",
+            "description": "The bug, in one short sentence"
+          },
+          "fix": {
+            "type": "string",
+            "description": "What you changed, in one short sentence"
+          },
+          "page": {
+            "type": "string",
+            "description": "Which page the fix is on"
+          }
+        },
+        "required": [
+          "problem",
+          "fix",
+          "page"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🐞",
+          "text": "{problem}"
+        },
+        {
+          "emoji": "🔧",
+          "text": "{fix}"
+        },
+        {
+          "emoji": "📄",
+          "text": "{page}"
+        },
+        {
+          "emoji": "👀",
+          "text": "Fix ready, waiting for your OK"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo Code to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "fix_button",
+          "label": "Fix the More photos button on the photos page",
+          "text": "Fix the \"More photos\" button on the photos page of my site.",
+          "quality": "good"
+        },
+        {
+          "id": "fix_it",
+          "label": "My site is broken, fix it",
+          "text": "My site is broken, fix it.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "What does Pipo Code need to know?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "phones",
+          "label": "It only breaks on phones",
+          "text": "It only breaks on phones; on the laptop it works.",
+          "quality": "good"
+        },
+        {
+          "id": "nothing",
+          "label": "Tapping it does nothing",
+          "text": "When you tap it, nothing happens.",
+          "quality": "neutral"
+        },
+        {
+          "id": "rebuild",
+          "label": "Just rebuild the whole site!",
+          "text": "Just rebuild the whole site!",
+          "quality": "weak",
+          "tip": "Rebuilding everything can break the parts that worked. Describe the one problem instead."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before it goes online",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me the fix first",
+          "text": "Show me the fix before it goes online.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Just fix it live",
+          "text": "Just fix it live.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:fix_it",
+      "signals": [
+        "🐞(?![^\\n]*(button|photo))"
+      ],
+      "hint": "\"It's broken\" doesn't say what's broken.",
+      "explain": "Pipo Code didn't know which bug, so it fixed the wrong thing."
+    },
+    {
+      "id": "no_phone",
+      "when": "not_picked:phones",
+      "signals": [
+        "^(?![\\s\\S]*(phone|mobile|tap|touch|small screen))"
+      ],
+      "hint": "You didn't tell Pipo Code it only breaks on phones.",
+      "explain": "Pipo Code didn't know it's a phone problem, so the fix might not help."
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\b(published|live)\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Asking to see the fix first lets you test it before Grandpa does.",
+      "explain": "Pipo Code changed the live site straight away, so you never tested the fix."
+    }
+  ],
+  "lesson": "Describe a bug exactly: what, where and when it happens. Then check the fix."
+}

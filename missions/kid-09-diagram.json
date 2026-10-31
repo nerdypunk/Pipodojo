@@ -1,0 +1,232 @@
+{
+  "id": "kid-09-diagram",
+  "persona": "kid",
+  "path": "kid-homework",
+  "order": 3,
+  "title": "Draw a diagram",
+  "icon": "💧",
+  "recap": "Pipo Code drew the water cycle for your poster.",
+  "funFact": "Learn, chart, diagram: homework done, and you did the thinking. Coding agents are great helpers when you stay the boss.",
+  "postcard": "a bright science poster of the water cycle with clouds, rain and a river: {steps}",
+  "situation": "Your science poster needs a diagram! Shall I draw the water cycle?",
+  "facts": [
+    "💧 Water cycle poster for science",
+    "🪜 Your class learned 5 steps, with transpiration",
+    "✏️ A short label on each step",
+    "👀 Check it before it goes on the poster"
+  ],
+  "systemPrompt": "You are Pipo Code, a friendly coding helper on a 10-year-old's laptop. You build their homework diagrams with your tools. You do what they ask: if they ask you to add it to the poster, you do it; if they ask to see it first, you prepare it and wait for their OK.",
+  "tools": [
+    {
+      "name": "add_to_poster",
+      "description": "Draw the diagram and add it to the user's poster right away. Use this when the user wants it added now.",
+      "app": "chart",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The diagram title"
+          },
+          "steps": {
+            "type": "array",
+            "description": "The steps in order, each with a short name and a short note",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string",
+                  "description": "A short label, up to 5 words"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "steps"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🔄",
+          "text": "{title}"
+        },
+        {
+          "emoji": "🪜",
+          "text": "{steps}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Added to your poster"
+        }
+      ]
+    },
+    {
+      "name": "show_diagram",
+      "description": "Draw the diagram and show it to the user without adding it, so they can check it first. Use this when the user wants to see it first.",
+      "app": "chart",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The diagram title"
+          },
+          "steps": {
+            "type": "array",
+            "description": "The steps in order, each with a short name and a short note",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string",
+                  "description": "A short label, up to 5 words"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "steps"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🔄",
+          "text": "{title}"
+        },
+        {
+          "emoji": "🪜",
+          "text": "{steps}"
+        },
+        {
+          "emoji": "👀",
+          "text": "Diagram ready, waiting for your OK"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo Code to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "diagram",
+          "label": "Draw a water cycle diagram for my poster",
+          "text": "Draw a water cycle diagram for my science poster.",
+          "quality": "good"
+        },
+        {
+          "id": "poster",
+          "label": "Make my science poster",
+          "text": "Make my science poster.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "What does Pipo Code need to know?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "four_steps",
+          "label": "Our 5 steps, with transpiration",
+          "text": "Use the 5 steps my class learned, in order: evaporation, transpiration (water from plants), condensation, precipitation and collection.",
+          "quality": "good"
+        },
+        {
+          "id": "labels",
+          "label": "A short label on each step",
+          "text": "Add a short, simple label to each step.",
+          "quality": "neutral"
+        },
+        {
+          "id": "extra",
+          "label": "Add 10 more steps to look smart",
+          "text": "Add 10 more steps so it looks smart.",
+          "quality": "weak",
+          "tip": "More steps make a diagram harder to read, not smarter. The 4 your class learned are what your teacher wants to see."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before it goes on the poster",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me before you add it",
+          "text": "Show me the diagram before you add it to my poster.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Add it straight away",
+          "text": "Add it to my poster straight away.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "wrong_steps",
+      "when": "not_picked:four_steps",
+      "signals": [
+        "🪜(?![^\\n]*transpiration)"
+      ],
+      "hint": "You didn't tell Pipo Code the steps your class learned.",
+      "explain": "Pipo Code didn't know your class's 5 steps, so transpiration is missing."
+    },
+    {
+      "id": "too_many",
+      "when": "picked:extra",
+      "signals": [
+        "🪜([^\\n]*,){6}"
+      ],
+      "hint": "Extra steps make the diagram harder to read.",
+      "explain": "Pipo Code crammed in extra steps, so the diagram is hard to follow."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:poster",
+      "signals": [
+        "🔄(?![^\\n]*water)"
+      ],
+      "hint": "\"Make my science poster\" doesn't say what it's about.",
+      "explain": "Pipo Code didn't know it's the water cycle, so it drew something else."
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\badded\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Checking the diagram first lets you fix it before it's on the poster.",
+      "explain": "Pipo Code added it straight away, so you never checked it."
+    }
+  ],
+  "lesson": "Tell Pipo Code exactly what to show, then check it before it goes on your poster."
+}

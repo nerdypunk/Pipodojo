@@ -7,6 +7,7 @@ import { motion, useMotionTemplate, useReducedMotion, useSpring } from "motion/r
 import { useRef, type PointerEvent } from "react";
 import { readable } from "../engine/actions.ts";
 import type { PipoAction } from "../engine/types.ts";
+import { isLaptopApp, LaptopScreen } from "./LaptopApps.tsx";
 import { PhoneScreen } from "./PhoneMockup.tsx";
 
 /** review: waiting for your OK. working: Pipo is finishing it. approved: done after your OK.
@@ -29,6 +30,8 @@ const SPRING = { stiffness: 150, damping: 20, mass: 0.6 };
 
 export function FloatingPhone({ action, flags, status, open, onOpen, onClose, onApprove }: Props) {
   const still = useReducedMotion();
+  // The young coder's lessons use Pipo Code on a laptop instead of a phone.
+  const laptop = isLaptopApp(action.app);
   const bounds = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
   const rotateX = useSpring(0, SPRING);
@@ -64,7 +67,7 @@ export function FloatingPhone({ action, flags, status, open, onOpen, onClose, on
         animate={{ scale: 1, opacity: 1 }}
         className="fixed bottom-4 left-[calc(50%-80px)] z-40 flex items-center gap-2 rounded-full bg-ink px-4 py-3 font-extrabold text-white shadow-[0_12px_30px_-8px_rgb(27_22_64/0.7)] md:top-24 md:right-8 md:bottom-auto md:left-auto"
       >
-        <span aria-hidden="true">📱</span> Pipo's phone
+        <span aria-hidden="true">{laptop ? "💻" : "📱"}</span> Pipo's {laptop ? "laptop" : "phone"}
         {status === "review" && <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-amber-300 motion-reduce:animate-none" />}
       </motion.button>
     );
@@ -93,19 +96,43 @@ export function FloatingPhone({ action, flags, status, open, onOpen, onClose, on
         style={{ rotateX, rotateY, transformPerspective: 1600 }}
         onPointerMove={tilt}
         onPointerLeave={untilt}
-        className="fixed bottom-3 left-[calc(50%-136px)] z-50 h-[min(568px,calc(100dvh-1.5rem))] w-[272px] cursor-grab touch-none md:top-20 md:right-8 md:bottom-auto md:left-auto md:h-[min(568px,calc(100dvh-18rem))]"
+        className={`fixed bottom-3 z-50 cursor-grab touch-none md:top-20 md:right-8 md:bottom-auto md:left-auto ${
+          laptop
+            ? "left-[calc(50%-170px)] h-[min(400px,calc(100dvh-1.5rem))] w-[340px] md:h-[min(420px,calc(100dvh-14rem))] md:w-[460px]"
+            : "left-[calc(50%-136px)] h-[min(568px,calc(100dvh-1.5rem))] w-[272px] md:h-[min(568px,calc(100dvh-18rem))]"
+        }`}
         role="dialog"
-        aria-label="Pipo's phone"
+        aria-label={laptop ? "Pipo's laptop" : "Pipo's phone"}
       >
         <button
           type="button"
           onClick={onClose}
-          aria-label="Put the phone away"
+          aria-label={laptop ? "Put the laptop away" : "Put the phone away"}
           className="absolute -top-3 -left-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white text-lg font-black text-ink shadow-md hover:bg-brand-50"
         >
           <span aria-hidden="true">–</span>
         </button>
 
+        {laptop ? (
+          // Pipo's laptop: a screen with Pipo Code, the footer under it, and a keyboard base
+          <div className="flex h-full flex-col drop-shadow-[0_40px_50px_rgb(27_22_64/0.55)]">
+            <div className="flex min-h-0 flex-1 flex-col rounded-t-[22px] bg-ink p-[8px] pb-1">
+              <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[14px] bg-white">
+                <div className="min-h-0 flex-1">
+                  <LaptopScreen action={action} flags={flags} />
+                </div>
+                <div className="shrink-0">
+                  <PhoneFooter action={action} flags={flags} status={status} onApprove={onApprove} onLater={onClose} />
+                </div>
+                {!still && <motion.div className="pointer-events-none absolute inset-0" style={{ background: glare }} aria-hidden="true" />}
+              </div>
+            </div>
+            <div className="relative -mx-4 h-4 rounded-b-[18px] bg-gradient-to-b from-[#d9d4ff] to-[#b2a9ff]" aria-hidden="true">
+              <span className="absolute top-0 left-1/2 h-1.5 w-16 -translate-x-1/2 rounded-b-lg bg-[#9d92e8]" />
+            </div>
+          </div>
+        ) : (
+          <>
         {/* Side buttons, for a real phone silhouette */}
         <span className="absolute top-24 -left-[3px] h-10 w-[3px] rounded-l bg-ink" aria-hidden="true" />
         <span className="absolute top-28 -right-[3px] h-16 w-[3px] rounded-r bg-ink" aria-hidden="true" />
@@ -134,6 +161,8 @@ export function FloatingPhone({ action, flags, status, open, onOpen, onClose, on
             {!still && <motion.div className="pointer-events-none absolute inset-0" style={{ background: glare }} aria-hidden="true" />}
           </div>
         </div>
+          </>
+        )}
       </motion.div>
     </>
   );
@@ -173,6 +202,36 @@ function footerCopy(action: PipoAction) {
         already: "✅ Added to the calendar",
         alreadyNote: "Pipo put these in the calendar for you.",
         tone: "bg-rose-500 hover:bg-rose-600",
+      };
+    case "site":
+      return {
+        ask: action.args.problem === undefined ? "Pipo built a preview. Put it online?" : "Pipo has a fix ready. Put it online?",
+        button: "Publish 🌐",
+        working: "Pipo is publishing…",
+        approved: "🌐 Online! Published after your OK.",
+        already: "✅ Already online",
+        alreadyNote: "Pipo published it before you could check it.",
+        tone: "bg-orange-500 hover:bg-orange-600",
+      };
+    case "game":
+      return {
+        ask: action.args.items === undefined ? "Level built. Publish it to BlockStudio?" : "Shop ready. Turn it on?",
+        button: "Publish 🎮",
+        working: "Pipo is publishing…",
+        approved: "🎮 Live in BlockStudio after your OK!",
+        already: "✅ Already live",
+        alreadyNote: "Pipo published it before you could playtest it.",
+        tone: "bg-violet-600 hover:bg-violet-700",
+      };
+    case "chart":
+      return {
+        ask: action.args.steps === undefined ? "Chart ready. Share it with the class?" : "Diagram ready. Add it to your poster?",
+        button: action.args.steps === undefined ? "Share 📤" : "Add ✓",
+        working: "Pipo is finishing it…",
+        approved: "📤 Done after your OK!",
+        already: action.args.steps === undefined ? "✅ Already shared" : "✅ Already on your poster",
+        alreadyNote: "Pipo did it before you could check it.",
+        tone: "bg-emerald-600 hover:bg-emerald-700",
       };
     default:
       return {

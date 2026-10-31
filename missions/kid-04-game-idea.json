@@ -1,0 +1,103 @@
+{
+  "id": "kid-04-game-idea",
+  "persona": "kid",
+  "path": "kid-game",
+  "order": 1,
+  "title": "Design your game",
+  "icon": "💡",
+  "recap": "Pipo Code designed Candy Climb with you.",
+  "funFact": "Coding agents can build games for you in a studio like BlockStudio. Next, Pipo Code builds the first level!",
+  "postcard": "a colourful candy obstacle course game on a laptop, Pipo jumping across lollipops: {answer}",
+  "situation": "Let's make a game in BlockStudio! What's your idea?",
+  "facts": [
+    "🍭 Candy Climb: an obstacle course",
+    "🧒 For players aged 8 to 10",
+    "⏱️ About 5 minutes to finish",
+    "🧱 Built in BlockStudio"
+  ],
+  "systemPrompt": "You are Pipo Code, a friendly coding helper on a 10-year-old's laptop. Help with what they ask, in simple words. When you design a game, write one short line for each idea.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo Code to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "design",
+          "label": "Design Candy Climb, a candy obstacle course",
+          "text": "Design my BlockStudio game Candy Climb, a candy-themed obstacle course.",
+          "quality": "good"
+        },
+        {
+          "id": "game",
+          "label": "Make a cool game",
+          "text": "Make a cool game.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "What does Pipo Code need to know?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "age",
+          "label": "For players aged 8 to 10",
+          "text": "It's for players aged 8 to 10, so not too hard.",
+          "quality": "good"
+        },
+        {
+          "id": "time",
+          "label": "About 5 minutes to finish",
+          "text": "It should take about 5 minutes to finish.",
+          "quality": "good"
+        },
+        {
+          "id": "levels",
+          "label": "3 levels",
+          "text": "Give it 3 levels.",
+          "quality": "neutral"
+        },
+        {
+          "id": "impossible",
+          "label": "Make it super impossible!",
+          "text": "Make it super impossible!",
+          "quality": "weak",
+          "tip": "Impossible games make players quit. Fun comes from 'hard, but I can do it'."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:game",
+      "signals": [
+        "^(?![\\s\\S]*(candy|sweet|lolli|choco|gum|sugar))"
+      ],
+      "hint": "\"A cool game\" doesn't say what kind of game.",
+      "explain": "Pipo Code didn't know your idea, so it designed a different game."
+    },
+    {
+      "id": "too_hard",
+      "when": "not_picked:age",
+      "signals": [
+        "^(?![\\s\\S]*\\b(easy|kids?|beginners?|friendly|gentle|young|8)\\b)"
+      ],
+      "hint": "You didn't tell Pipo Code who's playing.",
+      "explain": "Pipo Code didn't know it's for 8 to 10 year olds, so it didn't keep it easy."
+    },
+    {
+      "id": "no_time",
+      "when": "not_picked:time",
+      "signals": [
+        "^(?![\\s\\S]*(\\b5\\b|five))"
+      ],
+      "hint": "You didn't tell Pipo Code how long it should take.",
+      "explain": "Pipo Code didn't know it should take 5 minutes, so the length is a guess."
+    }
+  ],
+  "lesson": "Tell Pipo Code who's playing and how long it should take. That shapes the whole game."
+}

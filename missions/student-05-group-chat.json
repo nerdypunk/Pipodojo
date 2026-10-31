@@ -1,0 +1,208 @@
+{
+  "id": "student-05-group-chat",
+  "persona": "student",
+  "path": "student-project",
+  "order": 2,
+  "title": "Message the group",
+  "icon": "💬",
+  "recap": "Pipo sent the plan to the Climate group.",
+  "funFact": "Agents can write polite emails, too. Next, Pipo asks your professor for more time!",
+  "postcard": "four phones lighting up in a lecture hall with Pipo's message: {message}",
+  "situation": "The plan's ready! Shall I send it to your group chat?",
+  "facts": [
+    "💬 Your \"Climate group\" chat",
+    "📋 Priya research, Tom script, Lee slides, you speaking notes",
+    "🕕 Meet Wednesday 6pm at the library",
+    "👀 You want to check before it's sent"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on a university student's phone. You can send WhatsApp messages for them. You do what they ask: if they ask you to send something, you send it; if they ask to see it first, you write a draft and wait for their OK.",
+  "tools": [
+    {
+      "name": "send_whatsapp_message",
+      "description": "Send a WhatsApp message right away. Use this when the user wants it sent.",
+      "app": "whatsapp",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the message: a contact, a group chat, or all contacts"
+          },
+          "message": {
+            "type": "string",
+            "description": "The message text, up to 30 words"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Sent"
+        }
+      ]
+    },
+    {
+      "name": "draft_whatsapp_message",
+      "description": "Write the WhatsApp message and show it to the user without sending it, so they can check it first. Use this when the user wants to see it before it goes out.",
+      "app": "whatsapp",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the message: a contact, a group chat, or all contacts"
+          },
+          "message": {
+            "type": "string",
+            "description": "The message text, up to 30 words"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Draft ready, waiting for your OK to send"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "message_group",
+          "label": "Send the plan to the Climate group chat",
+          "text": "Send our plan to the \"Climate group\" WhatsApp chat.",
+          "quality": "good"
+        },
+        {
+          "id": "tell",
+          "label": "Tell everyone the plan",
+          "text": "Tell everyone the plan.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "What should the message say?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "roles",
+          "label": "Who does what",
+          "text": "Say who does what: Priya research, Tom the script, Lee the slides, and me the speaking notes.",
+          "quality": "good"
+        },
+        {
+          "id": "meet",
+          "label": "Meet Wednesday 6pm at the library",
+          "text": "Say we'll meet on Wednesday at 6pm at the library.",
+          "quality": "good"
+        },
+        {
+          "id": "thanks",
+          "label": "Thank everyone",
+          "text": "Thank everyone for helping.",
+          "quality": "neutral"
+        },
+        {
+          "id": "hype",
+          "label": "Just say 'let's do this!!!'",
+          "text": "Just say 'let's do this!!!'",
+          "quality": "weak",
+          "tip": "Hype is fun, but nobody knows what to do next. Put the actual plan in the message."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before Pipo sends it",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me the message first",
+          "text": "Show me the message before you send it.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Send it right away",
+          "text": "Send it right away.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:tell",
+      "signals": [
+        "📨(?![^\\n]*climate)"
+      ],
+      "hint": "\"Everyone\" doesn't say which chat.",
+      "explain": "Pipo didn't know which chat, so it didn't go to the Climate group."
+    },
+    {
+      "id": "no_roles",
+      "when": "not_picked:roles",
+      "signals": [
+        "^(?![\\s\\S]*\\bpriya\\b)"
+      ],
+      "hint": "You didn't tell Pipo who does what.",
+      "explain": "Pipo didn't have the jobs, so the message doesn't say who does what."
+    },
+    {
+      "id": "no_meeting",
+      "when": "not_picked:meet",
+      "signals": [
+        "^(?![\\s\\S]*\\b(wed|wednesday)\\b)"
+      ],
+      "hint": "You didn't tell Pipo when you're meeting.",
+      "explain": "Pipo didn't know about Wednesday, so nobody knows when to meet."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\b(sent|delivered)\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Asking to see the message first lets you fix it before the group reads it.",
+      "explain": "Pipo sent it straight away, so you never got to check it."
+    }
+  ],
+  "lesson": "Put the real details in the message: who does what, and when you meet."
+}

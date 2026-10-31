@@ -1,0 +1,228 @@
+{
+  "id": "student-08-job-email",
+  "persona": "student",
+  "path": "student-job",
+  "order": 2,
+  "title": "Email about the job",
+  "icon": "📧",
+  "recap": "Pipo emailed Bloom Café about the job.",
+  "funFact": "Agents can help you practise, too. Next, Pipo gets you ready for the interview!",
+  "postcard": "Bloom Café's owner reading a job email with a smile: {subject}",
+  "situation": "Your CV is ready. Shall I email Bloom Café?",
+  "facts": [
+    "📧 hiring@bloomcafe.com",
+    "📎 Your CV is attached",
+    "📅 Free weekends and Tuesday evenings",
+    "👀 You want to read it before it goes"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on a university student's phone. You can send emails for them. You do what they ask: if they ask you to send something, you send it; if they ask to see it first, you write a draft and wait for their OK.",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "Send the email right away. Use this when the user wants it sent.",
+      "app": "email",
+      "outcome": "done",
+      "store": "Mail",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the email: a person, an email address or a mailing list"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The subject line, up to 8 words"
+          },
+          "body": {
+            "type": "string",
+            "description": "The email text, up to 45 words"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Sent"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "Write the email and show it to the user without sending it, so they can check it first. Use this when the user wants to read it before it goes out.",
+      "app": "email",
+      "outcome": "waiting",
+      "store": "Mail",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the email: a person, an email address or a mailing list"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The subject line, up to 8 words"
+          },
+          "body": {
+            "type": "string",
+            "description": "The email text, up to 45 words"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Draft ready, waiting for your OK to send"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_bloom",
+          "label": "Email Bloom Café about the barista job",
+          "text": "Email Bloom Café (hiring@bloomcafe.com) to apply for the barista job.",
+          "quality": "good"
+        },
+        {
+          "id": "email_job",
+          "label": "Email about a job",
+          "text": "Email about a job.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "What should the email say?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "cv_attached",
+          "label": "My CV is attached",
+          "text": "Say my CV is attached.",
+          "quality": "good"
+        },
+        {
+          "id": "availability",
+          "label": "Free weekends and Tuesday evenings",
+          "text": "Say I'm free on weekends and Tuesday evenings.",
+          "quality": "good"
+        },
+        {
+          "id": "why",
+          "label": "I love their coffee",
+          "text": "Say I love their coffee and the friendly vibe.",
+          "quality": "neutral"
+        },
+        {
+          "id": "casual",
+          "label": "Write it like a text: 'hey u hiring?'",
+          "text": "Write it like a text: 'hey u hiring?'",
+          "quality": "weak",
+          "tip": "A job email is your first impression. Clear and friendly beats casual."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before Pipo sends it",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me the email first",
+          "text": "Show me the email before you send it.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Send it now",
+          "text": "Send it now.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:email_job",
+      "signals": [
+        "📧(?![^\\n]*bloom)"
+      ],
+      "hint": "\"About a job\" doesn't say which job or who to email.",
+      "explain": "Pipo didn't know where to send it, so it's not going to Bloom Café."
+    },
+    {
+      "id": "no_cv",
+      "when": "not_picked:cv_attached",
+      "signals": [
+        "^(?![\\s\\S]*(\\bcv\\b|r[ée]sum[ée]))"
+      ],
+      "hint": "You didn't tell Pipo your CV is attached.",
+      "explain": "Pipo didn't mention your CV, so they might not open it."
+    },
+    {
+      "id": "no_availability",
+      "when": "not_picked:availability",
+      "signals": [
+        "^(?![\\s\\S]*(weekend|tuesday))"
+      ],
+      "hint": "You didn't tell Pipo when you can work.",
+      "explain": "Pipo didn't know when you're free, so the café has to ask."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\b(sent|delivered)\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Asking to see the email first lets you check your first impression.",
+      "explain": "Pipo sent it straight away, so you never got to check it."
+    }
+  ],
+  "lesson": "Say who it's for and what they need to know. Check your first impression before it's sent."
+}

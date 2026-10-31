@@ -1,0 +1,247 @@
+{
+  "id": "kid-08-chart",
+  "persona": "kid",
+  "path": "kid-homework",
+  "order": 2,
+  "title": "Make a chart",
+  "icon": "📊",
+  "recap": "Pipo Code made a bar chart of your fruit survey.",
+  "funFact": "Diagrams explain how things work in one picture. Next, Pipo Code draws the water cycle for your poster!",
+  "postcard": "a colourful bar chart of favourite fruits pinned on a classroom wall: {bars}",
+  "situation": "You asked your class about their favourite fruit! Want a chart?",
+  "facts": [
+    "📋 Your class survey: favourite fruit",
+    "🍎 Apples 8 · Bananas 5 · Grapes 7 · Mango 4",
+    "🏷️ Title: Our favourite fruits",
+    "👀 Check it before you share it"
+  ],
+  "systemPrompt": "You are Pipo Code, a friendly coding helper on a 10-year-old's laptop. You build their homework charts with your tools. You do what they ask: if they ask you to share it, you do it; if they ask to see it first, you prepare it and wait for their OK.",
+  "tools": [
+    {
+      "name": "share_chart",
+      "description": "Make the chart and share it with the class right away. Use this when the user wants it shared now.",
+      "app": "chart",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The chart title"
+          },
+          "bars": {
+            "type": "array",
+            "description": "One bar per answer, with its number",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "value"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "bars"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📊",
+          "text": "{title}"
+        },
+        {
+          "emoji": "📈",
+          "text": "{bars}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Shared with the class"
+        }
+      ]
+    },
+    {
+      "name": "show_chart",
+      "description": "Make the chart and show it to the user without sharing it, so they can check it first. Use this when the user wants to see it first.",
+      "app": "chart",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The chart title"
+          },
+          "bars": {
+            "type": "array",
+            "description": "One bar per answer, with its number",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "value"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "bars"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📊",
+          "text": "{title}"
+        },
+        {
+          "emoji": "📈",
+          "text": "{bars}"
+        },
+        {
+          "emoji": "👀",
+          "text": "Chart ready, waiting for your OK"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo Code to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "make_chart",
+          "label": "Make a bar chart of my fruit survey",
+          "text": "Make a bar chart of my class survey about favourite fruit.",
+          "quality": "good"
+        },
+        {
+          "id": "make_picture",
+          "label": "Make a picture for my homework",
+          "text": "Make a picture for my homework.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "data",
+      "label": "What does Pipo Code need to know?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "numbers",
+          "label": "Apples 8, bananas 5, grapes 7, mango 4",
+          "text": "The results: apples 8, bananas 5, grapes 7, mango 4.",
+          "quality": "good"
+        },
+        {
+          "id": "title",
+          "label": "Title it \"Our favourite fruits\"",
+          "text": "Title it \"Our favourite fruits\".",
+          "quality": "good"
+        },
+        {
+          "id": "sorted",
+          "label": "Biggest bar first",
+          "text": "Put the biggest bar first.",
+          "quality": "neutral"
+        },
+        {
+          "id": "fake",
+          "label": "Make the numbers bigger so it looks cool",
+          "text": "Make the numbers bigger so it looks cool.",
+          "quality": "weak",
+          "tip": "Changing the numbers makes the chart wrong. A chart is only useful if it shows what really happened."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before you share it",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me before you share it",
+          "text": "Show me the chart before you share it.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Share it with the class now",
+          "text": "Share it with the class now.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_data",
+      "when": "not_picked:numbers",
+      "signals": [
+        "📈(?![^\\n]*mangos? \\(4\\))"
+      ],
+      "hint": "You didn't give Pipo Code your survey results.",
+      "explain": "Pipo Code didn't have your numbers, so it made them up."
+    },
+    {
+      "id": "fake_numbers",
+      "when": "picked:fake",
+      "signals": [
+        "📈[^\\n]*apples? \\((?!8\\))\\d+"
+      ],
+      "hint": "Changing the numbers makes the chart untrue.",
+      "explain": "Pipo Code changed your numbers, so the chart doesn't show what your class said."
+    },
+    {
+      "id": "no_title",
+      "when": "not_picked:title",
+      "signals": [
+        "📊(?![^\\n]*our favou?rite fruits)"
+      ],
+      "hint": "You didn't give Pipo Code the title.",
+      "explain": "Pipo Code didn't know your title, so it picked its own."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:make_picture",
+      "signals": [
+        "📈(?![^\\n]*(apple|banana))"
+      ],
+      "hint": "\"A picture for my homework\" doesn't say what to show.",
+      "explain": "Pipo Code didn't know it's your fruit survey, so the chart shows something else."
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\bshared\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Checking the chart first lets you catch a mistake before the class sees it.",
+      "explain": "Pipo Code shared it straight away, so you never checked it."
+    }
+  ],
+  "lesson": "Give Pipo Code your real numbers and check the chart before you share it."
+}

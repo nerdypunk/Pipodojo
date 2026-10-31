@@ -1,0 +1,243 @@
+{
+  "id": "student-02-study-sessions",
+  "persona": "student",
+  "path": "student-exams",
+  "order": 2,
+  "title": "Book study sessions",
+  "icon": "📅",
+  "recap": "Pipo booked your study sessions.",
+  "funFact": "Agents can test you, too, which is one of the best ways to learn. Next, Pipo quizzes you!",
+  "postcard": "a calendar full of study sessions: {events}",
+  "situation": "Want me to put your study sessions in your calendar so they actually happen?",
+  "facts": [
+    "🧬 Biology: Fri and Sun, 2 to 4pm",
+    "📜 History: Tuesday, 6 to 8pm",
+    "📍 At the campus library",
+    "🔔 A reminder 30 minutes before"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on a university student's phone. You can add events to their calendar. You do what they ask: if they ask you to add events, you add them; if they ask to see them first, you line them up and wait for their OK.",
+  "tools": [
+    {
+      "name": "add_to_calendar",
+      "description": "Add the events to the calendar now. Use this when the user wants them added.",
+      "app": "calendar",
+      "outcome": "done",
+      "store": "Uni calendar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "The events, each with a short name and when it happens (day and time)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "Day and time, for example Tuesday 5pm"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "When to remind, for example 1 hour before"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "Reminder: {reminder}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Added to the calendar"
+        }
+      ]
+    },
+    {
+      "name": "show_events",
+      "description": "Line the events up and show them to the user without adding them, so they can check first. Use this when the user wants to see them before they go in.",
+      "app": "calendar",
+      "outcome": "waiting",
+      "store": "Uni calendar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "The events, each with a short name and when it happens (day and time)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "Day and time, for example Tuesday 5pm"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "When to remind, for example 1 hour before"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "Reminder: {reminder}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Lined up, waiting for your OK to add"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "book_sessions",
+          "label": "Add my study sessions to my calendar",
+          "text": "Add my study sessions to my calendar, one event per session.",
+          "quality": "good"
+        },
+        {
+          "id": "add_study",
+          "label": "Put studying in my calendar",
+          "text": "Put studying in my calendar.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "What does Pipo need to know?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "times",
+          "label": "Bio Fri & Sun 2–4pm, History Tue 6–8pm",
+          "text": "Biology on Friday and Sunday from 2 to 4pm, and History on Tuesday from 6 to 8pm.",
+          "quality": "good"
+        },
+        {
+          "id": "library",
+          "label": "Put \"Library\" in each one",
+          "text": "Put \"Library\" in each event name, because that's where I'll study.",
+          "quality": "good"
+        },
+        {
+          "id": "remind",
+          "label": "Remind me 30 minutes before",
+          "text": "Remind me 30 minutes before each one.",
+          "quality": "good"
+        },
+        {
+          "id": "everyday",
+          "label": "Study every day, all day!",
+          "text": "Book study every day, all day!",
+          "quality": "weak",
+          "tip": "A calendar full of study blocks gets ignored. A few real sessions you'll keep work better."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before Pipo adds them",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me before you add them",
+          "text": "Show me the sessions before you add them.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Just add them",
+          "text": "Just add them.",
+          "quality": "weak",
+          "tip": "Adding without a look means a wrong time can sit in your calendar unnoticed."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_times",
+      "when": "not_picked:times",
+      "signals": [
+        "📅(?![^\\n]*tue)"
+      ],
+      "hint": "You didn't give Pipo the days and times.",
+      "explain": "Pipo didn't have your times, so it guessed them."
+    },
+    {
+      "id": "no_place",
+      "when": "not_picked:library",
+      "signals": [
+        "📅(?![^\\n]*librar)"
+      ],
+      "hint": "You didn't tell Pipo where you'll study.",
+      "explain": "Pipo didn't know you study at the library, so the events don't say where."
+    },
+    {
+      "id": "no_reminder",
+      "when": "not_picked:remind",
+      "signals": [
+        "🔔(?![^\\n]*\\b30\\b)"
+      ],
+      "hint": "You didn't tell Pipo when to remind you.",
+      "explain": "Pipo didn't know you want 30 minutes' notice, so it picked its own."
+    },
+    {
+      "id": "added_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\badded\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Asking to see the sessions first lets you catch a wrong time.",
+      "explain": "Pipo added them straight away, so you never got to check them."
+    }
+  ],
+  "lesson": "Exact days, times and places turn a study plan into sessions that happen."
+}

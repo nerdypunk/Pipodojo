@@ -287,7 +287,7 @@ export function Plaza() {
       ].map(([sx, sz]) => (
         <group key={`${sx}${sz}`}>
           {/* Lamp post */}
-          <group position={[sx! * (corner + 0.55), 0, sz! * (corner + 0.55)]}>
+          <group position={[sx! * (corner + 0.15), 0, sz! * (corner + 0.15)]}>
             <mesh position={[0, 0.6, 0]}>
               <cylinderGeometry args={[0.04, 0.05, 1.2, 8]} />
               <meshStandardMaterial color={INK} />
@@ -298,7 +298,7 @@ export function Plaza() {
             </mesh>
           </group>
           {/* Bench facing the dojo */}
-          <group position={[sx! * corner, 0, sz! * corner]} rotation={[0, Math.atan2(-sx!, -sz!), 0]}>
+          <group position={[sx! * (corner - 0.5), 0, sz! * (corner - 0.5)]} rotation={[0, Math.atan2(-sx!, -sz!), 0]}>
             <mesh position={[0, 0.22, 0]}>
               <boxGeometry args={[0.8, 0.06, 0.26]} />
               <meshStandardMaterial color="#c98b62" roughness={0.8} />

@@ -119,7 +119,7 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
 
       {/* Both cards stretch to the same height; the pieces stay put so nothing jumps after Check. */}
       <main className="grid gap-3 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-5">
-        <div ref={sceneRef} className="flex scroll-mt-3 flex-col">
+        <div ref={sceneRef} className="flex min-w-0 scroll-mt-3 flex-col">
           <ShaderBorder mode={borderMode} className="flex flex-1 flex-col">
             <PipoScene
               mission={mission}

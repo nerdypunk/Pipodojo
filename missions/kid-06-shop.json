@@ -1,0 +1,249 @@
+{
+  "id": "kid-06-shop",
+  "persona": "kid",
+  "path": "kid-game",
+  "order": 3,
+  "title": "Add a shop",
+  "icon": "🛍️",
+  "recap": "Pipo Code set up the Candy Climb shop.",
+  "funFact": "Design, build, shop: Candy Climb is ready! Coding agents build fast, so you decide what's fair and safe for your players.",
+  "postcard": "players in a candy game showing off a rainbow trail and a candy hat: {items}",
+  "situation": "Players want cool stuff! Shall I add a shop to Candy Climb?",
+  "facts": [
+    "🌈 Sell a rainbow trail and a candy hat",
+    "🪙 Paid with coins found in the game",
+    "💯 Prices from 10 to 50 coins",
+    "🚫 No real money, ever"
+  ],
+  "systemPrompt": "You are Pipo Code, a friendly coding helper on a 10-year-old's laptop. You build their game with your tools. You do what they ask: if they ask you to turn the shop on, you do it; if they ask to see the shop first, you prepare it and wait for their OK.",
+  "tools": [
+    {
+      "name": "open_shop",
+      "description": "Add the shop to the game and turn it on for every player right away. Use this when the user wants it on now.",
+      "app": "game",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "What the shop sells, each with its cost",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "cost": {
+                  "type": "number",
+                  "description": "Cost in the shop's currency"
+                }
+              },
+              "required": [
+                "name",
+                "cost"
+              ]
+            }
+          },
+          "currency": {
+            "type": "string",
+            "description": "What players pay with"
+          }
+        },
+        "required": [
+          "items",
+          "currency"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛍️",
+          "text": "{items}"
+        },
+        {
+          "emoji": "🪙",
+          "text": "Pay with: {currency}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Shop is live"
+        }
+      ]
+    },
+    {
+      "name": "preview_shop",
+      "description": "Set up the shop without turning it on, so the user can check it first. Use this when the user wants to see it first.",
+      "app": "game",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "What the shop sells, each with its cost",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "cost": {
+                  "type": "number",
+                  "description": "Cost in the shop's currency"
+                }
+              },
+              "required": [
+                "name",
+                "cost"
+              ]
+            }
+          },
+          "currency": {
+            "type": "string",
+            "description": "What players pay with"
+          }
+        },
+        "required": [
+          "items",
+          "currency"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛍️",
+          "text": "{items}"
+        },
+        {
+          "emoji": "🪙",
+          "text": "Pay with: {currency}"
+        },
+        {
+          "emoji": "👀",
+          "text": "Shop ready, waiting for your OK"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo Code to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "add_shop",
+          "label": "Add a shop with a rainbow trail and a candy hat",
+          "text": "Add a shop to Candy Climb that sells a rainbow trail and a candy hat.",
+          "quality": "good"
+        },
+        {
+          "id": "shop",
+          "label": "Add a shop",
+          "text": "Add a shop.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "label": "What rules should the shop follow?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "coins_only",
+          "label": "Only coins found in the game",
+          "text": "Players can only pay with coins they find in the game.",
+          "quality": "good"
+        },
+        {
+          "id": "fair",
+          "label": "Prices from 10 to 50 coins",
+          "text": "Keep prices between 10 and 50 coins.",
+          "quality": "good"
+        },
+        {
+          "id": "starter",
+          "label": "Give new players 10 free coins",
+          "text": "Give new players 10 free coins.",
+          "quality": "neutral"
+        },
+        {
+          "id": "real_money",
+          "label": "Let players buy coins with real money!",
+          "text": "Let players buy extra coins with real money!",
+          "quality": "weak",
+          "tip": "Real money in a kids' game means surprise bills for parents. Keep it to coins earned by playing."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before it's turned on",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me the shop first",
+          "text": "Show me the shop before you turn it on.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Turn it on now",
+          "text": "Turn it on now.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "real_money",
+      "when": "not_picked:coins_only",
+      "signals": [
+        "🪙[^\\n]*(real|\\$|dollar|card|bux|premium|purchase|buy)"
+      ],
+      "hint": "You didn't tell Pipo Code what players pay with.",
+      "explain": "Pipo Code didn't know it's coins only, so the shop asks for real money."
+    },
+    {
+      "id": "real_money_ask",
+      "when": "picked:real_money",
+      "signals": [
+        "🪙[^\\n]*(real|\\$|dollar|card|bux|premium|purchase|buy)"
+      ],
+      "hint": "Real money has no place in a kids' game shop.",
+      "explain": "Pipo Code set the shop up to take real money from players."
+    },
+    {
+      "id": "pricey",
+      "when": "not_picked:fair",
+      "signals": [
+        "🛍️[^\\n]*\\((5[1-9]|[6-9]\\d|\\d{3,})"
+      ],
+      "hint": "You didn't give Pipo Code a price range.",
+      "explain": "Pipo Code didn't know your prices, so some things cost more than 50 coins."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:shop",
+      "signals": [
+        "🛍️(?![^\\n]*(rainbow|hat))"
+      ],
+      "hint": "\"Add a shop\" doesn't say what it sells.",
+      "explain": "Pipo Code didn't know what to sell, so the shop has the wrong things."
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\blive\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Checking the shop first lets you make sure it's fair.",
+      "explain": "Pipo Code turned the shop on straight away, so you never checked it."
+    }
+  ],
+  "lesson": "Keep game shops fair and coins-only. Check them before players see them."
+}

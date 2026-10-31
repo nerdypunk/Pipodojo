@@ -3,6 +3,7 @@ import { splitEmoji } from "../game/emoji.ts";
 import type { AnswerLine } from "../game/feedback.ts";
 import type { Mood } from "./Pipo.tsx";
 import { PipoStage, type StageMode } from "./PipoStage.tsx";
+import { isLaptopApp } from "./LaptopApps.tsx";
 
 interface Props {
   mission: Mission;
@@ -56,14 +57,15 @@ function MissionPanel({
       {answer ? (
         <div>
           <div className="mb-1.5 flex items-center justify-between gap-2">
-            <p className="text-sm font-extrabold text-gray-600">{action ? "What Pipo did on your phone" : "Pipo's answer"}</p>
+            <p className="text-sm font-extrabold text-gray-600">{action ? (isLaptopApp(action.app) ? "What Pipo Code built" : "What Pipo did on your phone") : "Pipo's answer"}</p>
             {onOpenPhone && (
               <button
                 type="button"
                 onClick={onOpenPhone}
                 className="rounded-full bg-ink px-3 py-1 text-xs font-extrabold text-white hover:bg-brand-800"
               >
-                <span aria-hidden="true">📱 </span>Open Pipo's phone
+                <span aria-hidden="true">{action && isLaptopApp(action.app) ? "💻 " : "📱 "}</span>
+                Open Pipo's {action && isLaptopApp(action.app) ? "laptop" : "phone"}
               </button>
             )}
           </div>

@@ -1,0 +1,94 @@
+{
+  "id": "student-03-quiz",
+  "persona": "student",
+  "path": "student-exams",
+  "order": 3,
+  "title": "Quiz me",
+  "icon": "❓",
+  "recap": "Pipo quizzed you on plant cells.",
+  "funFact": "Plan, calendar, quiz: exam week sorted. Agents can coach you, but the learning is still yours.",
+  "postcard": "a student cheering after a biology exam while Pipo throws confetti: {answer}",
+  "situation": "Biology is first! Want me to quiz you?",
+  "facts": [
+    "🌱 Exam topic: plant cells",
+    "🍃 Especially chloroplasts and cell walls",
+    "❓ Just 3 questions",
+    "🙈 No answers until you've tried"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on a university student's phone. Help with what they ask. When you quiz someone, write one question per line.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "quiz_cells",
+          "label": "Quiz me on cells for Biology",
+          "text": "Quiz me on cells for my Biology exam.",
+          "quality": "good"
+        },
+        {
+          "id": "quiz",
+          "label": "Quiz me",
+          "text": "Quiz me.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "label": "How should the quiz work?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "plant",
+          "label": "Plant cells: chloroplasts and cell walls",
+          "text": "The exam is on plant cells, especially chloroplasts and cell walls.",
+          "quality": "good"
+        },
+        {
+          "id": "three",
+          "label": "Just 3 questions",
+          "text": "Ask me just 3 questions.",
+          "quality": "neutral"
+        },
+        {
+          "id": "no_answers",
+          "label": "Don't show the answers yet",
+          "text": "Don't show the answers yet; I want to try first.",
+          "quality": "neutral"
+        },
+        {
+          "id": "easy",
+          "label": "Make them super easy so I feel good",
+          "text": "Make them super easy so I feel good.",
+          "quality": "weak",
+          "tip": "Easy questions feel nice, but they won't show you what you still need to learn."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:quiz",
+      "signals": [
+        "^(?![\\s\\S]*(cell|nucleus|membrane|mitochond|organelle|ribosome))"
+      ],
+      "hint": "\"Quiz me\" doesn't say on what.",
+      "explain": "Pipo didn't know your topic, so the quiz isn't about cells."
+    },
+    {
+      "id": "no_focus",
+      "when": "not_picked:plant",
+      "signals": [
+        "^(?![\\s\\S]*(chloroplast|cell wall|plant))"
+      ],
+      "hint": "You didn't tell Pipo what the exam covers.",
+      "explain": "Pipo didn't know your exam is on plant cells, so it quizzed you on other things."
+    }
+  ],
+  "lesson": "Tell Pipo the topic and how you want to practise, so the quiz actually helps."
+}

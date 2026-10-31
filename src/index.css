@@ -171,6 +171,40 @@ body {
 }
 
 /* A picked piece pops: a quick squash and bounce. */
+/* Pipo Code's game preview: a little block hops across the level. */
+.level-hopper {
+  animation: level-hop 3.2s ease-in-out infinite;
+}
+@keyframes level-hop {
+  0% {
+    transform: translate(0px, 0px);
+  }
+  12.5% {
+    transform: translate(34px, -14px);
+  }
+  25% {
+    transform: translate(67px, 0px);
+  }
+  37.5% {
+    transform: translate(101px, -14px);
+  }
+  50% {
+    transform: translate(134px, 0px);
+  }
+  62.5% {
+    transform: translate(168px, -14px);
+  }
+  75% {
+    transform: translate(201px, 0px);
+  }
+  87.5% {
+    transform: translate(235px, -14px);
+  }
+  100% {
+    transform: translate(268px, 0px);
+  }
+}
+
 /* The postcard square while Muse Image paints it. */
 .postcard-painting {
   background: linear-gradient(120deg, #2d2470, #5a46e0, #ff7a1a, #5a46e0, #2d2470);
@@ -210,7 +244,8 @@ body {
   .pipo-shadow,
   .pipo-core,
   .pipo-flame,
-  .postcard-painting {
+  .postcard-painting,
+  .level-hopper {
     animation: none;
   }
 }

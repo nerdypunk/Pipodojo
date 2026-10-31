@@ -38,6 +38,14 @@ export const PERSONAS: readonly PersonaCard[] = [
     blurb: "Sales, customers and the staff rota.",
     tint: "from-fuchsia-400 to-brand-700",
   },
+  {
+    id: "kid",
+    name: "Young coder",
+    emoji: "🧒",
+    place: "Treehouse home",
+    blurb: "Websites, games and homework, with Pipo Code on the laptop.",
+    tint: "from-emerald-300 to-brand-600",
+  },
 ];
 
 export const personaById = (id: Persona) => PERSONAS.find((p) => p.id === id) ?? PERSONAS[0]!;

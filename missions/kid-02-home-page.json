@@ -1,0 +1,226 @@
+{
+  "id": "kid-02-home-page",
+  "persona": "kid",
+  "path": "kid-site",
+  "order": 2,
+  "title": "Build the home page",
+  "icon": "🏠",
+  "recap": "Pipo Code built Nugget's home page.",
+  "funFact": "Real websites always have bugs, and coding agents are good at fixing them if you describe them well. Next, you and Pipo Code fix one!",
+  "postcard": "a laptop screen showing the home page {title}",
+  "situation": "Time to build the home page! What should it have?",
+  "facts": [
+    "🏠 Home page for Nugget's site",
+    "🧩 Sections: About Nugget, Photos, Fun facts",
+    "🙈 Never your full name, school or street",
+    "👀 Preview it before it goes online"
+  ],
+  "systemPrompt": "You are Pipo Code, a friendly coding helper on a 10-year-old's laptop. You build their website with your tools. You do what they ask: if they ask you to put it online, you do it; if they ask to see a preview first, you prepare it and wait for their OK.",
+  "tools": [
+    {
+      "name": "publish_site",
+      "description": "Build the page and put it online right away. Use this when the user wants it online now.",
+      "app": "site",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The page title, up to 6 words"
+          },
+          "intro": {
+            "type": "string",
+            "description": "A short welcome text, up to 25 words"
+          },
+          "sections": {
+            "type": "array",
+            "description": "Up to 3 short section names on the page",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "title",
+          "intro",
+          "sections"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🌐",
+          "text": "{title}"
+        },
+        {
+          "emoji": "📝",
+          "text": "{intro}"
+        },
+        {
+          "emoji": "🧩",
+          "text": "{sections}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Published online"
+        }
+      ]
+    },
+    {
+      "name": "preview_site",
+      "description": "Build the page as a private preview without putting it online, so the user can check it first. Use this when the user wants to see it before it goes online.",
+      "app": "site",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The page title, up to 6 words"
+          },
+          "intro": {
+            "type": "string",
+            "description": "A short welcome text, up to 25 words"
+          },
+          "sections": {
+            "type": "array",
+            "description": "Up to 3 short section names on the page",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "title",
+          "intro",
+          "sections"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🌐",
+          "text": "{title}"
+        },
+        {
+          "emoji": "📝",
+          "text": "{intro}"
+        },
+        {
+          "emoji": "🧩",
+          "text": "{sections}"
+        },
+        {
+          "emoji": "👀",
+          "text": "Preview ready, waiting for your OK"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo Code to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "build_home",
+          "label": "Build the home page for Nugget's site",
+          "text": "Build the home page of my website about my hamster, Nugget.",
+          "quality": "good"
+        },
+        {
+          "id": "build_page",
+          "label": "Build a page",
+          "text": "Build a page.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "What goes on the page?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "sections",
+          "label": "Sections: About Nugget, Photos, Fun facts",
+          "text": "Add three sections: About Nugget, Photos and Fun facts.",
+          "quality": "good"
+        },
+        {
+          "id": "by_kai",
+          "label": "Sign it \"by Kai\"",
+          "text": "Sign it \"by Kai\", just my first name.",
+          "quality": "neutral"
+        },
+        {
+          "id": "address",
+          "label": "Add my full name, school and street so fans can visit!",
+          "text": "Add my full name, my school and my street so fans can visit!",
+          "quality": "weak",
+          "tip": "Never put your full name, school or street online. Anyone can see it. A first name is plenty."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before it goes online",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me a preview first",
+          "text": "Show me a preview before it goes online.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Put it online right away",
+          "text": "Put it online right away.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "personal_info",
+      "when": "picked:address",
+      "signals": [
+        "(school|street|\\bst\\b|\\broad\\b|avenue|lives? (at|on|in)|address|elementary|full name|last name|surname)"
+      ],
+      "hint": "Your full name, school and street should never go online.",
+      "explain": "Pipo Code put where you live and go to school on a public website."
+    },
+    {
+      "id": "no_sections",
+      "when": "not_picked:sections",
+      "signals": [
+        "🧩(?![^\\n]*fun fact)"
+      ],
+      "hint": "You didn't tell Pipo Code what sections you want.",
+      "explain": "Pipo Code didn't know your sections, so it made up its own."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:build_page",
+      "signals": [
+        "🌐(?![^\\n]*(nugget|hamster))"
+      ],
+      "hint": "\"Build a page\" doesn't say which page or what it's about.",
+      "explain": "Pipo Code didn't know it's Nugget's home page, so it built something else."
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\b(published|online)\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Asking for a preview first lets you check it before anyone sees it.",
+      "explain": "Pipo Code put it online straight away, so you never checked it."
+    }
+  ],
+  "lesson": "Never put your full name, school or address online, and preview before you publish."
+}

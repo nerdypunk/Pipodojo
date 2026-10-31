@@ -10,7 +10,7 @@ export const RING = { half: 4.4, width: 1.1 };
 /** Straight roads from the ring out to the edge of the island. */
 export const SPOKE_END = 11.6;
 
-export type PlaceId = Persona | "garage" | "lot";
+export type PlaceId = Persona | "garage";
 
 export interface Place {
   id: PlaceId;
@@ -24,10 +24,10 @@ export interface Place {
 }
 
 export const PLACES: readonly Place[] = [
-  { id: "parent", at: [-7.4, 4.6], turn: Math.PI / 2, clear: 3.2, tag: 3.9 },
+  { id: "parent", at: [-7.9, 4.3], turn: 0.35, clear: 3.0, tag: 3.9 },
   { id: "business", at: [7.4, 4.6], turn: 0, clear: 3.2, tag: 4.1 },
   { id: "student", at: [7.2, -6.6], turn: 0, clear: 3.6, tag: 4.6 },
-  { id: "lot", at: [-7.2, -6.6], turn: Math.PI / 4, clear: 3.2, tag: 4.6 },
+  { id: "kid", at: [-7.2, -6.6], turn: Math.PI / 4, clear: 3.2, tag: 4.1 },
   { id: "garage", at: [-2.9, 8.6], turn: 0, clear: 1.9, tag: 2.6 },
 ];
 
@@ -95,7 +95,7 @@ export function scatterTrees(count: number, seed = 7): TreeSpot[] {
     const x = Math.cos(angle) * r;
     const z = Math.sin(angle) * r;
     if (blocked(x, z, 0.45)) continue;
-    if (trees.some((t) => Math.hypot(x - t.x, z - t.z) < 1.15)) continue;
+    if (trees.some((t) => Math.hypot(x - t.x, z - t.z) < 1.4)) continue;
     const roll = rand();
     trees.push({ x, z, scale: 0.75 + rand() * 0.5, kind: roll < 0.3 ? "pine" : roll < 0.45 ? "blossom" : "round" });
   }

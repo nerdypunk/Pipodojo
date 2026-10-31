@@ -12,7 +12,7 @@ export const BRAND = { 300: "#b2a9ff", 400: "#8c7dfb", 500: "#6e5cf2", 600: "#5a
 export const ORANGE = "#ff7a1a";
 export const LEAF = ["#7fd38a", "#5fbf74", "#9be0a0", "#4fae6a"];
 
-/** A gable roof: a triangle pushed out along z. Width and depth include the overhang. */
+/** A puffy gable roof: a soft-edged triangle pushed out along z. Width and depth include the overhang. */
 export function Roof({ width, height, depth, color, position }: { width: number; height: number; depth: number; color: string; position?: V3 }) {
   const geometry = useMemo(() => {
     const shape = new THREE.Shape();
@@ -20,8 +20,9 @@ export function Roof({ width, height, depth, color, position }: { width: number;
     shape.lineTo(width / 2, 0);
     shape.lineTo(0, height);
     shape.closePath();
-    const g = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false });
-    g.translate(0, 0, -depth / 2);
+    const bevel = Math.min(0.12, height * 0.15);
+    const g = new THREE.ExtrudeGeometry(shape, { depth: depth - bevel * 2, bevelEnabled: true, bevelSize: bevel, bevelThickness: bevel, bevelSegments: 3 });
+    g.translate(0, 0, -(depth - bevel * 2) / 2);
     return g;
   }, [width, height, depth]);
   return (
@@ -41,13 +42,52 @@ export function Blob({ size, position = [0, 0.03, 0] }: { size: number; position
   );
 }
 
+/** A little kawaii face: shiny eyes, pink cheeks and a small smile. Faces +z. */
+export function Face({ position, scale = 1, blink = false }: { position: V3; scale?: number; blink?: boolean }) {
+  const eyes = useRef<THREE.Group>(null);
+  useFrame(({ clock }) => {
+    if (!eyes.current || !blink) return;
+    // A quick blink every few seconds.
+    const t = (clock.elapsedTime + position[0]) % 4;
+    eyes.current.scale.y = t < 0.12 ? 0.15 : 1;
+  });
+  return (
+    <group position={position} scale={scale}>
+      <group ref={eyes}>
+        {[-0.16, 0.16].map((x) => (
+          <group key={x} position={[x, 0.04, 0]}>
+            <mesh scale={[1, 1.25, 0.5]}>
+              <sphereGeometry args={[0.065, 12, 10]} />
+              <meshStandardMaterial color={INK} roughness={0.3} />
+            </mesh>
+            <mesh position={[0.02, 0.03, 0.03]}>
+              <sphereGeometry args={[0.02, 8, 6]} />
+              <meshBasicMaterial color="#ffffff" />
+            </mesh>
+          </group>
+        ))}
+      </group>
+      {[-0.28, 0.28].map((x) => (
+        <mesh key={x} position={[x, -0.06, 0]} scale={[1.4, 0.8, 0.3]}>
+          <sphereGeometry args={[0.06, 10, 8]} />
+          <meshBasicMaterial color="#ff9fc0" transparent opacity={0.8} />
+        </mesh>
+      ))}
+      <mesh position={[0, -0.05, 0]} rotation={[0, 0, Math.PI]}>
+        <torusGeometry args={[0.06, 0.018, 6, 12, Math.PI]} />
+        <meshStandardMaterial color={INK} />
+      </mesh>
+    </group>
+  );
+}
+
 export interface PersonStyle {
   skin: string;
   hair: string;
   shirt: string;
   pants: string;
   /** Something extra they carry or wear. */
-  extra?: "apron" | "backpack" | "spatula";
+  extra?: "apron" | "backpack" | "spatula" | "laptop";
 }
 
 /** A chunky little townsperson who waves now and then, or strolls along when `walking`. */
@@ -105,6 +145,18 @@ export function Person({
             <boxGeometry args={[0.26, 0.34, 0.06]} />
             <meshStandardMaterial color="#ffffff" roughness={0.8} />
           </mesh>
+        )}
+        {style.extra === "laptop" && (
+          <group position={[0, 0.55, 0.26]} rotation={[0.2, 0, 0]}>
+            <mesh>
+              <boxGeometry args={[0.36, 0.03, 0.24]} />
+              <meshStandardMaterial color="#c9c3e6" roughness={0.4} />
+            </mesh>
+            <mesh position={[0, 0.12, -0.12]} rotation={[-0.35, 0, 0]}>
+              <boxGeometry args={[0.36, 0.24, 0.02]} />
+              <meshStandardMaterial color="#9cf3ff" emissive="#7dd3fc" emissiveIntensity={0.9} toneMapped={false} />
+            </mesh>
+          </group>
         )}
         {style.extra === "backpack" && (
           <mesh position={[0, 0.58, -0.2]}>

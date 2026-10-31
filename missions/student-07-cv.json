@@ -1,0 +1,103 @@
+{
+  "id": "student-07-cv",
+  "persona": "student",
+  "path": "student-job",
+  "order": 1,
+  "title": "Polish your CV",
+  "icon": "📄",
+  "recap": "Pipo wrote the highlights for your CV.",
+  "funFact": "Agents can write job emails for you, too. Next, Pipo emails Bloom Café!",
+  "postcard": "a student proudly holding a neat CV outside Bloom Café: {answer}",
+  "situation": "Bloom Café is hiring a barista! Want me to polish your CV?",
+  "facts": [
+    "☕ A barista job at Bloom Café",
+    "🥫 1 year volunteering at the food bank",
+    "🗣️ You speak English and Spanish",
+    "📅 Free on weekends"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on a university student's phone. Help with what they ask. When you write CV highlights, write short bullet lines about the person.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "cv",
+          "label": "CV highlights for a barista job at Bloom Café",
+          "text": "Write the highlights for my CV for a barista job at Bloom Café.",
+          "quality": "good"
+        },
+        {
+          "id": "cv_better",
+          "label": "Make my CV better",
+          "text": "Make my CV better.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "What does Pipo need to know?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "volunteer",
+          "label": "1 year volunteering at the food bank",
+          "text": "I volunteered at the food bank for a year.",
+          "quality": "good"
+        },
+        {
+          "id": "spanish",
+          "label": "I speak English and Spanish",
+          "text": "I speak English and Spanish.",
+          "quality": "good"
+        },
+        {
+          "id": "weekends",
+          "label": "Free on weekends",
+          "text": "I'm free on weekends.",
+          "quality": "neutral"
+        },
+        {
+          "id": "exaggerate",
+          "label": "Say I'm a world-class barista!",
+          "text": "Say I'm a world-class barista!",
+          "quality": "weak",
+          "tip": "Made-up skills fall apart in the interview. Real experience, told well, is enough."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_volunteer",
+      "when": "not_picked:volunteer",
+      "signals": [
+        "^(?![\\s\\S]*(food bank|volunteer))"
+      ],
+      "hint": "You didn't tell Pipo about your volunteering.",
+      "explain": "Pipo didn't know about the food bank, so your best experience is missing."
+    },
+    {
+      "id": "no_spanish",
+      "when": "not_picked:spanish",
+      "signals": [
+        "^(?![\\s\\S]*spanish)"
+      ],
+      "hint": "You didn't tell Pipo you speak Spanish.",
+      "explain": "Pipo didn't know you speak Spanish, so the CV leaves it out."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:cv_better",
+      "signals": [
+        "^(?![\\s\\S]*(barista|coffee|caf))"
+      ],
+      "hint": "\"Make my CV better\" doesn't say which job it's for.",
+      "explain": "Pipo didn't know the job, so the CV isn't aimed at a barista role."
+    }
+  ],
+  "lesson": "Tell Pipo the job and your real experience. Honest and specific beats impressive."
+}

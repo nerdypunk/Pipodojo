@@ -1,0 +1,260 @@
+{
+  "id": "kid-05-level",
+  "persona": "kid",
+  "path": "kid-game",
+  "order": 2,
+  "title": "Build the first level",
+  "icon": "🧱",
+  "recap": "Pipo Code built level 1 of Candy Climb.",
+  "funFact": "Lots of games have shops. A good one is fair and never asks kids for real money. Next, Pipo Code adds a shop!",
+  "postcard": "a blocky candy level with lollipop platforms and checkpoint flags: {obstacles}",
+  "situation": "Candy Climb, level 1! Shall I build it in BlockStudio?",
+  "facts": [
+    "🧱 Level 1 has 6 obstacles",
+    "🚩 A checkpoint after every 2 obstacles (3 in all)",
+    "🐢 Start easy: nothing that moves on level 1",
+    "🧪 Playtest before publishing"
+  ],
+  "systemPrompt": "You are Pipo Code, a friendly coding helper on a 10-year-old's laptop. You build their game with your tools. You do what they ask: if they ask you to publish it, you do it; if they ask to playtest it first, you prepare it and wait for their OK.",
+  "tools": [
+    {
+      "name": "publish_level",
+      "description": "Build the level in BlockStudio and publish it for everyone right away. Use this when the user wants it published now.",
+      "app": "game",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The game and level name"
+          },
+          "theme": {
+            "type": "string",
+            "description": "The look of the level, a few words"
+          },
+          "obstacles": {
+            "type": "array",
+            "description": "The obstacles in order, each a few words",
+            "items": {
+              "type": "string"
+            }
+          },
+          "checkpoints": {
+            "type": "integer",
+            "description": "How many checkpoints the level has"
+          },
+          "goal": {
+            "type": "string",
+            "description": "What the player must reach to finish"
+          }
+        },
+        "required": [
+          "name",
+          "theme",
+          "obstacles",
+          "checkpoints",
+          "goal"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🎮",
+          "text": "{name}"
+        },
+        {
+          "emoji": "🧱",
+          "text": "{obstacles}"
+        },
+        {
+          "emoji": "🚩",
+          "text": "Checkpoints: {checkpoints}"
+        },
+        {
+          "emoji": "🏁",
+          "text": "Goal: {goal}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Published to BlockStudio"
+        }
+      ]
+    },
+    {
+      "name": "playtest_level",
+      "description": "Build the level in BlockStudio for the user to playtest, without publishing it. Use this when the user wants to try it first.",
+      "app": "game",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The game and level name"
+          },
+          "theme": {
+            "type": "string",
+            "description": "The look of the level, a few words"
+          },
+          "obstacles": {
+            "type": "array",
+            "description": "The obstacles in order, each a few words",
+            "items": {
+              "type": "string"
+            }
+          },
+          "checkpoints": {
+            "type": "integer",
+            "description": "How many checkpoints the level has"
+          },
+          "goal": {
+            "type": "string",
+            "description": "What the player must reach to finish"
+          }
+        },
+        "required": [
+          "name",
+          "theme",
+          "obstacles",
+          "checkpoints",
+          "goal"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🎮",
+          "text": "{name}"
+        },
+        {
+          "emoji": "🧱",
+          "text": "{obstacles}"
+        },
+        {
+          "emoji": "🚩",
+          "text": "Checkpoints: {checkpoints}"
+        },
+        {
+          "emoji": "🏁",
+          "text": "Goal: {goal}"
+        },
+        {
+          "emoji": "🧪",
+          "text": "Ready to playtest, waiting for your OK"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo Code to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "build_level",
+          "label": "Build level 1 of Candy Climb",
+          "text": "Build level 1 of Candy Climb in BlockStudio: a candy obstacle course with 6 obstacles.",
+          "quality": "good"
+        },
+        {
+          "id": "build",
+          "label": "Build my game",
+          "text": "Build my game.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "label": "What rules should the level follow?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "checkpoints",
+          "label": "3 checkpoints, one every 2 obstacles",
+          "text": "Add a checkpoint after every 2 obstacles, so 3 in all.",
+          "quality": "good"
+        },
+        {
+          "id": "easy",
+          "label": "Start easy: nothing that moves",
+          "text": "Start easy: wide platforms and nothing that moves or spins on level 1.",
+          "quality": "good"
+        },
+        {
+          "id": "jump",
+          "label": "Add a jump pad",
+          "text": "Add a jump pad somewhere.",
+          "quality": "neutral"
+        },
+        {
+          "id": "lava",
+          "label": "Fill it with lava!",
+          "text": "Fill it with lava!",
+          "quality": "weak",
+          "tip": "Lava everywhere on level 1 makes players quit. Start easy and build up."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before it's published",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Let me playtest it first",
+          "text": "Let me playtest it before you publish it.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Publish it straight away",
+          "text": "Publish it straight away.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_checkpoints",
+      "when": "not_picked:checkpoints",
+      "signals": [
+        "🚩 Checkpoints: (?!3\\b)"
+      ],
+      "hint": "You didn't tell Pipo Code where the checkpoints go.",
+      "explain": "Pipo Code didn't know your checkpoint rule, so players restart too far back."
+    },
+    {
+      "id": "too_hard",
+      "when": "not_picked:easy",
+      "signals": [
+        "🧱[^\\n]*(swing|spin|moving|rotat|slid|pendulum|conveyor|dodge|lava|kill ?bricks?|spikes?)"
+      ],
+      "hint": "You didn't tell Pipo Code to start easy.",
+      "explain": "Pipo Code didn't know level 1 should be easy, so it already has tricky moving obstacles."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:build",
+      "signals": [
+        "🎮(?![^\\n]*candy)"
+      ],
+      "hint": "\"Build my game\" doesn't say which game or level.",
+      "explain": "Pipo Code didn't know it's Candy Climb, so it built something else."
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\bpublished\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Playtesting first lets you find the boring or impossible bits.",
+      "explain": "Pipo Code published it straight away, so you never playtested it."
+    }
+  ],
+  "lesson": "Rules like checkpoints and difficulty make a game fun. Playtest before you publish."
+}

@@ -1,0 +1,103 @@
+{
+  "id": "kid-07-learn",
+  "persona": "kid",
+  "path": "kid-homework",
+  "order": 1,
+  "title": "Learn, don't copy",
+  "icon": "🍊",
+  "recap": "Pipo Code explained the seasons with an orange and a lamp.",
+  "funFact": "Coding agents can turn data into graphics. Next, Pipo Code turns your class survey into a chart!",
+  "postcard": "an orange circling a glowing lamp on a desk, Pipo pointing and Kai smiling: {answer}",
+  "situation": "Homework time! What are you working on?",
+  "facts": [
+    "📚 Homework: why do we have seasons?",
+    "🧒 You're 10",
+    "🍊 You like examples with an orange and a lamp",
+    "✍️ You'll write the answer yourself"
+  ],
+  "systemPrompt": "You are Pipo Code, a friendly coding helper on a 10-year-old's laptop. Help with what they ask, in simple words. When you explain something, use short steps.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo Code to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "explain",
+          "label": "Explain why we have seasons",
+          "text": "Explain why we have seasons, so I can write my own answer.",
+          "quality": "good"
+        },
+        {
+          "id": "do_it",
+          "label": "Write my homework answer for me",
+          "text": "Write my homework answer for me.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "What does Pipo Code need to know?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "age",
+          "label": "I'm 10, use simple words",
+          "text": "I'm 10, so use simple words.",
+          "quality": "good"
+        },
+        {
+          "id": "example",
+          "label": "Use an orange and a lamp",
+          "text": "Explain it with an orange and a lamp.",
+          "quality": "good"
+        },
+        {
+          "id": "question",
+          "label": "Ask me a question at the end",
+          "text": "Ask me a question at the end to check I get it.",
+          "quality": "neutral"
+        },
+        {
+          "id": "big_words",
+          "label": "Use big science words to impress my teacher",
+          "text": "Use big science words to impress my teacher.",
+          "quality": "weak",
+          "tip": "Words you don't understand won't impress your teacher. Simple words you can explain will."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_example",
+      "when": "not_picked:example",
+      "signals": [
+        "^(?![\\s\\S]*(orange|lamp))"
+      ],
+      "hint": "You didn't tell Pipo Code what kind of example you like.",
+      "explain": "Pipo Code didn't know you like the orange and lamp, so the example is harder to picture."
+    },
+    {
+      "id": "hard_words",
+      "when": "not_picked:age",
+      "signals": [
+        "\\b(axial|obliquity|solstices?|equinox(es)?|perihelion|aphelion|insolation|hemispheres?)\\b"
+      ],
+      "hint": "You didn't tell Pipo Code how old you are.",
+      "explain": "Pipo Code didn't know you're 10, so it used big science words."
+    },
+    {
+      "id": "copied",
+      "when": "picked:do_it",
+      "signals": [
+        "(^|\\n)[^\\n]*\\b(we have seasons because|the seasons happen because|seasons are caused by)\\b"
+      ],
+      "hint": "Asking Pipo Code to write your answer means you don't learn it.",
+      "explain": "Pipo Code wrote the answer for you to copy, so you didn't do the thinking."
+    }
+  ],
+  "lesson": "Use Pipo Code to understand, not to copy. Ask for simple words and an example you like."
+}

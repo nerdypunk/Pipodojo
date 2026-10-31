@@ -8,7 +8,7 @@ import * as THREE from "three";
 import type { PipoLook } from "../../game/pipoLook.ts";
 import { PLACES, RING, SPOKE_END, placeOf, type Place, type PlaceId } from "../../game/townLayout.ts";
 import { Pipo3D } from "./Pipo3D.tsx";
-import { Cafe, College, Dojo, Garage, House, Lot } from "./places.tsx";
+import { Cafe, College, Dojo, Garage, House, KidHouse } from "./places.tsx";
 import { BRAND, Balloon, Car, Cloud, ORANGE } from "./props.tsx";
 import { Birds, Flowers, Forest, IslandBase, Plaza, Pond, Strollers, grow } from "./scenery.tsx";
 
@@ -125,8 +125,8 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
             {place.id === "parent" && <House still={still} />}
             {place.id === "student" && <College still={still} />}
             {place.id === "business" && <Cafe still={still} />}
-            {place.id === "lot" && <Lot still={still} />}
-            {place.id === "garage" && <Garage />}
+            {place.id === "kid" && <KidHouse still={still} />}
+            {place.id === "garage" && <Garage still={still} />}
           </Spot>
         ))}
         <Forest still={still} />
