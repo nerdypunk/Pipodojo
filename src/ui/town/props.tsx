@@ -1,5 +1,6 @@
 // Small building blocks for Pipodojo Town: roofs, trees, people, cars, clouds and a balloon.
 // Everything is made of simple shapes in a soft toy style; nothing is loaded from outside.
+import { RoundedBox } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
@@ -7,10 +8,16 @@ import { RING, ringPoint } from "../../game/townLayout.ts";
 
 type V3 = [number, number, number];
 
-export const INK = "#26233a";
-export const BRAND = { 300: "#b2a9ff", 400: "#8c7dfb", 500: "#6e5cf2", 600: "#5a46e0", 700: "#4936bd", 900: "#2d2470" };
+// A soft pastel palette, like a clay diorama. Pipo keeps its orange; everything else is gentle.
+/** Soft plum grey for small dark details (poles, legs, wheels). */
+export const INK = "#6f6784";
+/** Eyes and smiles on the kawaii faces. */
+export const EYES = "#3a3350";
+export const BRAND = { 300: "#ddd7fd", 400: "#cbc2fa", 500: "#b9adf4", 600: "#a99ded", 700: "#978ae0", 900: "#6d63a8" };
 export const ORANGE = "#ff7a1a";
-export const LEAF = ["#7fd38a", "#5fbf74", "#9be0a0", "#4fae6a"];
+/** Pastel coral for doors, the dojo gate and other warm accents. */
+export const CORAL = "#ffb39b";
+export const LEAF = ["#a9dca0", "#94d0a4", "#bfe5ab", "#8fcbb2"];
 
 /** A puffy gable roof: a soft-edged triangle pushed out along z. Width and depth include the overhang. */
 export function Roof({ width, height, depth, color, position }: { width: number; height: number; depth: number; color: string; position?: V3 }) {
@@ -58,7 +65,7 @@ export function Face({ position, scale = 1, blink = false }: { position: V3; sca
           <group key={x} position={[x, 0.04, 0]}>
             <mesh scale={[1, 1.25, 0.5]}>
               <sphereGeometry args={[0.065, 12, 10]} />
-              <meshStandardMaterial color={INK} roughness={0.3} />
+              <meshStandardMaterial color={EYES} roughness={0.3} />
             </mesh>
             <mesh position={[0.02, 0.03, 0.03]}>
               <sphereGeometry args={[0.02, 8, 6]} />
@@ -75,7 +82,7 @@ export function Face({ position, scale = 1, blink = false }: { position: V3; sca
       ))}
       <mesh position={[0, -0.05, 0]} rotation={[0, 0, Math.PI]}>
         <torusGeometry args={[0.06, 0.018, 6, 12, Math.PI]} />
-        <meshStandardMaterial color={INK} />
+        <meshStandardMaterial color={EYES} />
       </mesh>
     </group>
   );
@@ -177,7 +184,7 @@ export function Person({
         {[-0.07, 0.07].map((x) => (
           <mesh key={x} position={[x, 0.98, 0.18]}>
             <sphereGeometry args={[0.025, 8, 8]} />
-            <meshStandardMaterial color={INK} />
+            <meshStandardMaterial color={EYES} />
           </mesh>
         ))}
         {/* Arms: the right one waves */}
@@ -221,14 +228,12 @@ export function Car({ color, offset, speed, still }: { color: string; offset: nu
   return (
     <group ref={ref}>
       <Blob size={0.42} />
-      <mesh position={[0, 0.2, 0]}>
-        <boxGeometry args={[0.7, 0.24, 0.4]} />
-        <meshStandardMaterial color={color} roughness={0.5} />
-      </mesh>
-      <mesh position={[-0.04, 0.38, 0]}>
-        <boxGeometry args={[0.38, 0.18, 0.36]} />
-        <meshStandardMaterial color="#e8f1ff" roughness={0.2} metalness={0.1} />
-      </mesh>
+      <RoundedBox args={[0.72, 0.26, 0.42]} radius={0.1} smoothness={3} position={[0, 0.22, 0]}>
+        <meshStandardMaterial color={color} roughness={0.6} />
+      </RoundedBox>
+      <RoundedBox args={[0.4, 0.2, 0.36]} radius={0.08} smoothness={3} position={[-0.04, 0.4, 0]}>
+        <meshStandardMaterial color="#eef4ff" roughness={0.3} />
+      </RoundedBox>
       {[
         [-0.22, 0.2],
         [0.22, 0.2],
@@ -277,7 +282,7 @@ export function Balloon({ position, still }: { position: V3; still: boolean }) {
     ref.current.position.y = position[1] + Math.sin(clock.elapsedTime * 0.6) * 0.4;
     ref.current.rotation.y = clock.elapsedTime * 0.15;
   });
-  const stripes = [BRAND[500], "#ffffff", ORANGE, "#ffffff", BRAND[400], "#ffffff"];
+  const stripes = [BRAND[500], "#ffffff", CORAL, "#ffffff", "#a8e6cf", "#ffffff"];
   return (
     <group ref={ref} position={position}>
       {stripes.map((color, i) => (

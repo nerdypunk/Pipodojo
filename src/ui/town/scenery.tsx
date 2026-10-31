@@ -8,10 +8,10 @@ import * as THREE from "three";
 import { ISLAND_RADIUS, POND, RING, scatterFlowers, scatterTrees, seeded, type TreeSpot } from "../../game/townLayout.ts";
 import { Blob, BRAND, INK, LEAF, ORANGE, Person, type PersonStyle } from "./props.tsx";
 
-const BLOSSOM = ["#f9b8d6", "#d8b4fe", "#fbcfe8"];
-const FLOWER = ["#ff8fb8", "#ffd166", "#ffffff", "#b9a7ff"];
+const BLOSSOM = ["#f9c9dd", "#e2d1fb", "#fcd9e8"];
+const FLOWER = ["#ffb3cc", "#ffe08a", "#ffffff", "#cdbffd"];
 const WATER = "#7cc8ff";
-const ROCK = ["#b7a2ea", "#a28fe0", "#c4b5f4"];
+const ROCK = ["#e0d6fa", "#d3c6f6", "#c4b5f4"];
 const noRaycast = () => null;
 
 /** Grows from nothing to full size with a little overshoot, starting `delay` seconds in. */
@@ -36,20 +36,20 @@ export function IslandBase({ still }: { still: boolean }) {
       {/* Grass top with a darker lip. Only the top catches shadows; nothing down here casts them. */}
       <mesh position={[0, -0.2, 0]} receiveShadow>
         <cylinderGeometry args={[ISLAND_RADIUS, ISLAND_RADIUS, 0.4, 72]} />
-        <meshStandardMaterial color="#9edb93" roughness={1} />
+        <meshStandardMaterial color="#c9ecbd" roughness={1} />
       </mesh>
       <mesh position={[0, -0.42, 0]}>
         <cylinderGeometry args={[ISLAND_RADIUS + 0.06, ISLAND_RADIUS - 0.05, 0.16, 72]} />
-        <meshStandardMaterial color="#7fc679" roughness={1} />
+        <meshStandardMaterial color="#b2dfa5" roughness={1} />
       </mesh>
       {/* Lavender cliffs, faceted like rock */}
       <mesh position={[0, -1.4, 0]}>
         <cylinderGeometry args={[ISLAND_RADIUS - 0.05, ISLAND_RADIUS - 0.8, 1.8, 22]} />
-        <meshStandardMaterial color="#b7a2ea" roughness={1} flatShading />
+        <meshStandardMaterial color="#e0d6fa" roughness={1} />
       </mesh>
       <mesh position={[0, -5.3, 0]} rotation={[Math.PI, 0, 0]}>
         <coneGeometry args={[ISLAND_RADIUS - 0.8, 6, 11]} />
-        <meshStandardMaterial color="#9583dc" roughness={1} flatShading />
+        <meshStandardMaterial color="#cdbff3" roughness={1} />
       </mesh>
       {rocks.map((r, i) => (
         <mesh key={i} position={[r.x, r.y, r.z]} scale={r.s} rotation={[i, i * 2, 0]}>
@@ -79,11 +79,11 @@ function FloatingRock({ position, size, still, phase }: { position: [number, num
     <group ref={ref} position={position} scale={size}>
       <mesh position={[0, 0.1, 0]}>
         <cylinderGeometry args={[1, 1, 0.3, 10]} />
-        <meshStandardMaterial color="#9edb93" roughness={1} />
+        <meshStandardMaterial color="#c9ecbd" roughness={1} />
       </mesh>
       <mesh position={[0, -0.8, 0]} rotation={[Math.PI, 0, 0]}>
         <coneGeometry args={[1, 1.6, 7]} />
-        <meshStandardMaterial color="#a28fe0" roughness={1} flatShading />
+        <meshStandardMaterial color="#d3c6f6" roughness={1} flatShading />
       </mesh>
       <mesh position={[0.2, 0.6, 0]}>
         <coneGeometry args={[0.35, 0.8, 6]} />
@@ -144,14 +144,14 @@ export function Forest({ still }: { still: boolean }) {
     <group ref={group}>
       <Instances limit={trees.length} raycast={noRaycast}>
         <cylinderGeometry args={[0.08, 0.12, 0.6, 6]} />
-        <meshStandardMaterial color="#9a6b4f" roughness={0.9} />
+        <meshStandardMaterial color="#c9a089" roughness={0.9} />
         {trees.map((t, i) => (
           <Instance key={i} position={[t.x, 0.3 * t.scale, t.z]} scale={t.scale} />
         ))}
       </Instances>
       <Instances limit={round.length * 2} raycast={noRaycast}>
-        <icosahedronGeometry args={[0.5, 0]} />
-        <meshStandardMaterial roughness={0.8} flatShading />
+        <sphereGeometry args={[0.5, 14, 10]} />
+        <meshStandardMaterial roughness={0.9} />
         {round.flatMap((t, i) => [
           <Instance key={`a${i}`} ref={keep()} position={[t.x, 0.9 * t.scale, t.z]} scale={t.scale} color={tint(t, i)} />,
           <Instance
@@ -164,8 +164,8 @@ export function Forest({ still }: { still: boolean }) {
         ])}
       </Instances>
       <Instances limit={pine.length * 2} raycast={noRaycast}>
-        <coneGeometry args={[0.45, 0.8, 6]} />
-        <meshStandardMaterial roughness={0.8} flatShading />
+        <coneGeometry args={[0.45, 0.8, 16]} />
+        <meshStandardMaterial roughness={0.9} />
         {pine.flatMap((t, i) => [
           <Instance key={`a${i}`} ref={keep()} position={[t.x, 0.9 * t.scale, t.z]} scale={t.scale} color={LEAF[(i + 1) % LEAF.length]!} />,
           <Instance key={`b${i}`} ref={keep()} position={[t.x, 1.35 * t.scale, t.z]} scale={t.scale * 0.72} color={LEAF[(i + 1) % LEAF.length]!} />,
@@ -301,11 +301,11 @@ export function Plaza() {
           <group position={[sx! * (corner - 0.5), 0, sz! * (corner - 0.5)]} rotation={[0, Math.atan2(-sx!, -sz!), 0]}>
             <mesh position={[0, 0.22, 0]}>
               <boxGeometry args={[0.8, 0.06, 0.26]} />
-              <meshStandardMaterial color="#c98b62" roughness={0.8} />
+              <meshStandardMaterial color="#e2b49a" roughness={0.8} />
             </mesh>
             <mesh position={[0, 0.38, -0.12]}>
               <boxGeometry args={[0.8, 0.22, 0.05]} />
-              <meshStandardMaterial color="#c98b62" roughness={0.8} />
+              <meshStandardMaterial color="#e2b49a" roughness={0.8} />
             </mesh>
             {[-0.32, 0.32].map((x) => (
               <mesh key={x} position={[x, 0.1, 0]}>

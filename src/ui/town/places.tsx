@@ -5,7 +5,7 @@ import { RoundedBox } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import * as THREE from "three";
-import { BRAND, Face, INK, ORANGE, Person, Roof } from "./props.tsx";
+import { BRAND, CORAL, Face, INK, ORANGE, Person, Roof } from "./props.tsx";
 
 const CREAM = "#fff8f0";
 const GLASS = "#c7e6ff";
@@ -87,7 +87,7 @@ export function Dojo({ still }: { still: boolean }) {
           <meshStandardMaterial color={BRAND[600]} roughness={0.6} />
         </mesh>
       ))}
-      <Door position={[0, 0.4, 1.41]} color={ORANGE} w={0.8} h={1.0} />
+      <Door position={[0, 0.4, 1.41]} color={CORAL} w={0.8} h={1.0} />
       <Porthole position={[-0.9, 1.3, 1.41]} r={0.2} />
       <Porthole position={[0.9, 1.3, 1.41]} r={0.2} />
       {/* Puffy roofs: soft pyramids with rounded caps on the corners */}
@@ -109,20 +109,20 @@ export function Dojo({ still }: { still: boolean }) {
         <octahedronGeometry args={[0.24, 0]} />
         <meshStandardMaterial color={ORANGE} emissive={ORANGE} emissiveIntensity={1.6} toneMapped={false} />
       </mesh>
-      <pointLight position={[0, 4.3, 0]} color={ORANGE} intensity={4} distance={6} />
+      <pointLight position={[0, 4.3, 0]} color={CORAL} intensity={4} distance={6} />
       {/* Gate in front, with round ends */}
       <group position={[0, 0, 3.4]}>
         {[-1, 1].map((side) => (
           <mesh key={side} position={[side * 0.9, 0.8, 0]}>
             <capsuleGeometry args={[0.1, 1.4, 4, 10]} />
-            <meshStandardMaterial color={ORANGE} roughness={0.6} />
+            <meshStandardMaterial color={CORAL} roughness={0.6} />
           </mesh>
         ))}
         <RoundedBox args={[2.4, 0.16, 0.22]} radius={0.07} position={[0, 1.62, 0]}>
-          <meshStandardMaterial color={ORANGE} roughness={0.6} />
+          <meshStandardMaterial color={CORAL} roughness={0.6} />
         </RoundedBox>
         <RoundedBox args={[1.9, 0.1, 0.14]} radius={0.04} position={[0, 1.36, 0]}>
-          <meshStandardMaterial color={ORANGE} roughness={0.6} />
+          <meshStandardMaterial color={CORAL} roughness={0.6} />
         </RoundedBox>
       </group>
     </group>
@@ -145,7 +145,7 @@ export function House({ still }: { still: boolean }) {
     <group>
       <mesh position={[0, 0.02, 0.3]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[2.5, 40]} />
-        <meshStandardMaterial color="#b4e8a8" roughness={1} />
+        <meshStandardMaterial color="#d3efc8" roughness={1} />
       </mesh>
       <mesh position={[0, 0.03, 1.75]}>
         <boxGeometry args={[0.55, 0.02, 1.3]} />
@@ -158,7 +158,7 @@ export function House({ still }: { still: boolean }) {
       <RoundedBox args={[0.3, 0.7, 0.3]} radius={0.08} position={[0.75, 2.2, -0.9]}>
         <meshStandardMaterial color="#f4a3a3" roughness={0.9} />
       </RoundedBox>
-      <Door position={[0, 0.02, 0.51]} color={ORANGE} />
+      <Door position={[0, 0.02, 0.51]} color={CORAL} />
       <Porthole position={[-0.8, 1.0, 0.51]} />
       <Porthole position={[0.8, 1.0, 0.51]} />
       <Face position={[0, 1.33, 0.51]} scale={0.8} blink={!still} />
@@ -184,7 +184,7 @@ export function House({ still }: { still: boolean }) {
         </group>
       </group>
       <Person
-        style={{ skin: "#8d5524", hair: "#2b1d16", shirt: "#ef6f6c", pants: "#3b3a5a", extra: "spatula" }}
+        style={{ skin: "#8d5524", hair: "#2b1d16", shirt: "#f59b98", pants: "#3b3a5a", extra: "spatula" }}
         position={[0.6, 0, 1.5]}
         turn={0.5}
         still={still}
@@ -217,7 +217,7 @@ export function College({ still }: { still: boolean }) {
     <group>
       <mesh position={[0, 0.02, 0.3]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[3.3, 40]} />
-        <meshStandardMaterial color="#cdeec5" roughness={1} />
+        <meshStandardMaterial color="#d8f0cf" roughness={1} />
       </mesh>
       {[0, 1, 2].map((i) => (
         <RoundedBox key={i} args={[2.4, 0.16, 0.5]} radius={0.05} position={[0, 0.08 + i * 0.12, 1.55 - i * 0.22]}>
@@ -261,10 +261,10 @@ export function College({ still }: { still: boolean }) {
       </mesh>
       <mesh ref={flag} position={[1.7, 3.4, -1.2]}>
         <boxGeometry args={[0.02, 0.32, 0.55]} />
-        <meshStandardMaterial color={ORANGE} roughness={0.6} />
+        <meshStandardMaterial color={CORAL} roughness={0.6} />
       </mesh>
       <Person
-        style={{ skin: "#f1c27d", hair: "#6b3e26", shirt: "#4f8ef7", pants: "#2d2470", extra: "backpack" }}
+        style={{ skin: "#f1c27d", hair: "#6b3e26", shirt: "#8fb4f7", pants: "#2d2470", extra: "backpack" }}
         position={[0.9, 0.36, 1.65]}
         turn={0.3}
         still={still}
@@ -345,7 +345,7 @@ export function Cafe({ still }: { still: boolean }) {
         </group>
       ))}
       <Person
-        style={{ skin: "#e0ac69", hair: "#1f1b2e", shirt: "#7c5cff", pants: "#2d2a3e", extra: "apron" }}
+        style={{ skin: "#e0ac69", hair: "#1f1b2e", shirt: "#a993ff", pants: "#2d2a3e", extra: "apron" }}
         position={[0.1, 0, 1.35]}
         turn={-0.3}
         still={still}
@@ -366,7 +366,7 @@ export function KidHouse({ still }: { still: boolean }) {
     <group>
       <mesh position={[0, 0.02, 0.3]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[2.7, 40]} />
-        <meshStandardMaterial color="#b4e8a8" roughness={1} />
+        <meshStandardMaterial color="#d3efc8" roughness={1} />
       </mesh>
       <Walls size={[2.2, 1.5, 1.9]} position={[-0.3, 0.77, -0.4]} color={MINT} radius={0.24} />
       {/* A big round mushroom-style roof */}
@@ -406,7 +406,7 @@ export function KidHouse({ still }: { still: boolean }) {
       </mesh>
       {/* The kid, out front with a laptop */}
       <Person
-        style={{ skin: "#c68642", hair: "#3b2416", shirt: "#ffb84d", pants: "#4f8ef7", extra: "laptop" }}
+        style={{ skin: "#c68642", hair: "#3b2416", shirt: "#ffcf85", pants: "#8fb4f7", extra: "laptop" }}
         position={[0.7, 0, 1.25]}
         turn={-0.2}
         still={still}
@@ -438,11 +438,11 @@ export function Garage({ still }: { still: boolean }) {
       <group position={[0, 1.35, 0]} rotation={[0, 0, 0.6]}>
         <mesh>
           <capsuleGeometry args={[0.07, 0.5, 4, 8]} />
-          <meshStandardMaterial color={ORANGE} roughness={0.5} />
+          <meshStandardMaterial color={CORAL} roughness={0.5} />
         </mesh>
         <mesh position={[0, 0.36, 0]}>
           <torusGeometry args={[0.12, 0.05, 8, 16, Math.PI * 1.5]} />
-          <meshStandardMaterial color={ORANGE} roughness={0.5} />
+          <meshStandardMaterial color={CORAL} roughness={0.5} />
         </mesh>
       </group>
     </group>

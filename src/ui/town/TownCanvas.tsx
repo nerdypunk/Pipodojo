@@ -1,7 +1,7 @@
 // The 3D town itself (react-three-fiber). Loaded on its own so lessons stay light.
 // On arrival the camera swoops in and the places pop up one by one. Hover a place to lift it
 // and send Pipo over; click it and the camera flies in, then the town tells the screen to move on.
-import { Html, Instance, Instances } from "@react-three/drei";
+import { Html, Instance, Instances, RoundedBox } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useLayoutEffect, useMemo, useRef, type ReactNode } from "react";
 import * as THREE from "three";
@@ -9,7 +9,7 @@ import type { PipoLook } from "../../game/pipoLook.ts";
 import { PLACES, RING, SPOKE_END, placeOf, type Place, type PlaceId } from "../../game/townLayout.ts";
 import { Pipo3D } from "./Pipo3D.tsx";
 import { Cafe, College, Dojo, Garage, House, KidHouse } from "./places.tsx";
-import { BRAND, Balloon, Car, Cloud, ORANGE } from "./props.tsx";
+import { BRAND, Balloon, Car, Cloud } from "./props.tsx";
 import { Birds, Flowers, Forest, IslandBase, Plaza, Pond, Strollers, grow } from "./scenery.tsx";
 
 export interface PlaceTag {
@@ -86,11 +86,12 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
 
   return (
     <>
-      <hemisphereLight args={["#f1efff", "#9fd89a", 1.25]} />
+      {/* Soft, warm light for a clay-diorama feel */}
+      <hemisphereLight args={["#fbf8ff", "#e6f3dc", 1.6]} />
       <directionalLight
         position={[9, 18, 8]}
-        intensity={1.9}
-        color="#fff3e2"
+        intensity={1.3}
+        color="#fff0e2"
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-left={-15}
@@ -132,9 +133,9 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
         <Forest still={still} />
       </group>
       {/* Things that move: soft blob shadows instead of real ones, which are baked after the intro. */}
-      <Car color={ORANGE} offset={0} speed={0.035} still={still} />
-      <Car color={BRAND[500]} offset={0.36} speed={0.035} still={still} />
-      <Car color="#4fb6ff" offset={0.7} speed={0.035} still={still} />
+      <Car color="#ffd98a" offset={0} speed={0.035} still={still} />
+      <Car color={BRAND[400]} offset={0.36} speed={0.035} still={still} />
+      <Car color="#a8e6cf" offset={0.7} speed={0.035} still={still} />
       <Strollers still={still} />
       <Pipo3D look={look} target={pipoTarget} still={still} />
       <BakeShadows after={still ? 0.3 : POP_START + PLACES.length * POP_STEP + 1.2} />
@@ -223,44 +224,87 @@ function Rig({ selected, onArrive, still }: { selected: PlaceId | null; onArrive
   return null;
 }
 
+const ROAD = "#b7afbf";
+const PAVEMENT = "#f5ede8";
+/** Sidewalk width; curbs stand a little above the road. */
+const SIDEWALK = 0.36;
+
+type Slab = { pos: [number, number, number]; size: [number, number, number] };
+
+/** Roads in warm grey, with rounded sidewalks along every edge and zebra crossings at the ring. */
 function Roads() {
   const h = RING.half;
   const w = RING.width;
-  const strips: { pos: [number, number, number]; size: [number, number, number] }[] = [
+  const strips: Slab[] = [
     // The ring
     { pos: [0, 0.02, h], size: [2 * h + w, 0.04, w] },
     { pos: [0, 0.02, -h], size: [2 * h + w, 0.04, w] },
     { pos: [h, 0.02, 0], size: [w, 0.04, 2 * h + w] },
     { pos: [-h, 0.02, 0], size: [w, 0.04, 2 * h + w] },
     // Spokes out to the edge
-    ...[1, -1].flatMap((s) => [
-      { pos: [0, 0.02, (s * (h + SPOKE_END)) / 2] as [number, number, number], size: [w, 0.04, SPOKE_END - h] as [number, number, number] },
-      { pos: [(s * (h + SPOKE_END)) / 2, 0.02, 0] as [number, number, number], size: [SPOKE_END - h, 0.04, w] as [number, number, number] },
+    ...[1, -1].flatMap((s): Slab[] => [
+      { pos: [0, 0.02, (s * (h + SPOKE_END)) / 2], size: [w, 0.04, SPOKE_END - h] },
+      { pos: [(s * (h + SPOKE_END)) / 2, 0.02, 0], size: [SPOKE_END - h, 0.04, w] },
     ]),
   ];
-  // Dashed middle lines on the spokes, drawn as one instanced mesh.
+
+  // Sidewalks: inside the ring, outside it (broken where the spokes leave), and along both sides of each spoke.
+  const outer = h + w / 2 + SIDEWALK / 2;
+  const inner = h - w / 2 - SIDEWALK / 2;
+  const gap = w / 2 + SIDEWALK;
+  const outerEnd = h + w / 2 + SIDEWALK;
+  const half = (outerEnd - gap) / 2;
+  const mid = (outerEnd + gap) / 2;
+  const spokeLen = SPOKE_END - outerEnd;
+  const spokeMid = (SPOKE_END + outerEnd) / 2;
+  const off = w / 2 + SIDEWALK / 2;
+  const walks: Slab[] = [];
+  for (const s of [1, -1]) {
+    walks.push({ pos: [0, 0.05, s * inner], size: [2 * inner + SIDEWALK, 0.1, SIDEWALK] }, { pos: [s * inner, 0.05, 0], size: [SIDEWALK, 0.1, 2 * inner - SIDEWALK] });
+    for (const t of [1, -1]) {
+      walks.push({ pos: [t * mid, 0.05, s * outer], size: [half * 2, 0.1, SIDEWALK] }, { pos: [s * outer, 0.05, t * mid], size: [SIDEWALK, 0.1, half * 2] });
+      walks.push({ pos: [t * off, 0.05, s * spokeMid], size: [SIDEWALK, 0.1, spokeLen] }, { pos: [s * spokeMid, 0.05, t * off], size: [spokeLen, 0.1, SIDEWALK] });
+    }
+  }
+
+  // Dashed middle lines on the spokes, and zebra crossings where each spoke meets the ring.
   const dashes: { at: [number, number, number]; alongX: boolean }[] = [];
-  for (let d = h + 1; d < SPOKE_END - 0.4; d += 0.9) {
+  for (let d = h + 1.6; d < SPOKE_END - 0.4; d += 0.9) {
     dashes.push({ at: [0, 0.045, d], alongX: false }, { at: [0, 0.045, -d], alongX: false }, { at: [d, 0.045, 0], alongX: true }, { at: [-d, 0.045, 0], alongX: true });
   }
+  const zebra: { at: [number, number, number]; alongX: boolean }[] = [];
+  const cross = h + w / 2 + 0.5;
+  for (let i = -2; i <= 2; i++) {
+    const o = i * 0.2;
+    zebra.push({ at: [o, 0.045, cross], alongX: false }, { at: [o, 0.045, -cross], alongX: false }, { at: [cross, 0.045, o], alongX: true }, { at: [-cross, 0.045, o], alongX: true });
+  }
+
   return (
     <group>
       {/* Dojo plaza paving */}
       <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={noRaycast}>
         <circleGeometry args={[RING.half - 0.65, 48]} />
-        <meshStandardMaterial color="#f4f1ff" roughness={1} />
+        <meshStandardMaterial color="#f6f2ff" roughness={1} />
       </mesh>
       {strips.map((s, i) => (
         <mesh key={i} position={s.pos} raycast={noRaycast}>
           <boxGeometry args={s.size} />
-          <meshStandardMaterial color="#6d6890" roughness={0.95} />
+          <meshStandardMaterial color={ROAD} roughness={0.95} />
         </mesh>
       ))}
-      <Instances limit={dashes.length} raycast={noRaycast}>
+      {walks.map((s, i) => (
+        <RoundedBox key={i} args={s.size} radius={0.045} smoothness={2} position={s.pos} raycast={noRaycast}>
+          <meshStandardMaterial color={PAVEMENT} roughness={0.95} />
+        </RoundedBox>
+      ))}
+      <Instances limit={dashes.length + zebra.length} raycast={noRaycast}>
         <boxGeometry args={[0.08, 0.01, 0.4]} />
         <meshStandardMaterial color="#ffffff" />
         {dashes.map((d, i) => (
-          <Instance key={i} position={d.at} rotation={[0, d.alongX ? Math.PI / 2 : 0, 0]} />
+          <Instance key={`d${i}`} position={d.at} rotation={[0, d.alongX ? Math.PI / 2 : 0, 0]} />
+        ))}
+        {zebra.map((z, i) => (
+          <Instance key={`z${i}`} position={z.at} rotation={[0, z.alongX ? Math.PI / 2 : 0, 0]} scale={[1.4, 1, 1.3]} />
         ))}
       </Instances>
     </group>
