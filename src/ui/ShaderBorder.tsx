@@ -36,24 +36,27 @@ export function ShaderBorder({ mode, roundness = 0.1, className = "", children }
   const look = LOOK[mode];
   return (
     <div className={`relative isolate ${className}`}>
-      <PulsingBorder
-        aria-hidden="true"
-        className="pointer-events-none absolute -inset-2 -z-10"
-        colorBack="#00000000"
-        colors={look.colors}
-        speed={still ? 0 : look.speed}
-        intensity={look.intensity}
-        thickness={look.thickness}
-        roundness={roundness}
-        softness={1}
-        pulse={0}
-        smoke={0}
-        bloom={0.2}
-        spots={3}
-        spotSize={0.7}
-        scale={1}
-        margin={0}
-      />
+      {/* The shader draws in a rectangle and its corners don't follow CSS radii, so clip it to a
+          rounded shape 8px outside the card's 24px corners (24 + 8 = 32) to keep them concentric. */}
+      <div className="pointer-events-none absolute -inset-2 -z-10 overflow-hidden rounded-[32px]" aria-hidden="true">
+        <PulsingBorder
+          className="absolute inset-0"
+          colorBack="#00000000"
+          colors={look.colors}
+          speed={still ? 0 : look.speed}
+          intensity={look.intensity}
+          thickness={look.thickness}
+          roundness={roundness}
+          softness={1}
+          pulse={0}
+          smoke={0}
+          bloom={0.2}
+          spots={3}
+          spotSize={0.7}
+          scale={1}
+          margin={0}
+        />
+      </div>
       {children}
     </div>
   );
