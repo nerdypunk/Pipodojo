@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Persona } from "../engine/types.ts";
 import { Backdrop } from "../ui/Backdrop.tsx";
 import { MissionPlayer } from "../ui/MissionPlayer.tsx";
@@ -29,10 +29,25 @@ export function App() {
   const mission = persona ? missions.find((m) => m.persona === persona) : undefined;
   const screenKey = mission?.id ?? "paths";
 
+  // Safety net: drop the reveal once it's done, or after 1.5s at the latest, so a screen can
+  // never stay clipped away if the animation doesn't run (e.g. a background tab).
+  useEffect(() => {
+    if (!reveal) return;
+    const timer = window.setTimeout(() => setReveal(undefined), 1500);
+    return () => window.clearTimeout(timer);
+  }, [reveal, screenKey]);
+
   return (
     <>
       <Backdrop />
-      <div key={screenKey} transition-style={reveal} className="page-transition">
+      <div
+        key={screenKey}
+        transition-style={reveal}
+        className="page-transition"
+        onAnimationEnd={(e) => {
+          if (e.target === e.currentTarget) setReveal(undefined);
+        }}
+      >
         {mission ? (
           <MissionPlayer key={mission.id} mission={mission} onBack={back} />
         ) : (
