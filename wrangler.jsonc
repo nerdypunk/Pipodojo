@@ -10,5 +10,7 @@
     // Only the API runs code; the game itself is plain files.
     "run_worker_first": ["/api/*"]
   },
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  // Deploys keep any variables set in the dashboard instead of wiping them (secrets always stay).
+  "keep_vars": true
 }
