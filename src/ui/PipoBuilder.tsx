@@ -72,7 +72,7 @@ export function PipoBuilder({ look, onChange, onDone, first }: Props) {
                 </Tile>
               ))}
             </Choice>
-            <Choice label={t.builder.colours}>
+            <Choice label={t.builder.colors}>
               {COLORS.map((color) => {
                 const [light, mid, dark] = paletteOf(color.id).shell;
                 return (

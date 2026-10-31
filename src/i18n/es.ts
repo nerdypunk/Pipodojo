@@ -35,7 +35,7 @@ export const es: Strings = {
     pickLook: "Elige un look",
     head: "Cabeza",
     body: "Cuerpo",
-    colours: "Colores",
+    colors: "Colores",
     go: "¡Vamos al pueblo!",
     back: "Volver al pueblo",
   },
