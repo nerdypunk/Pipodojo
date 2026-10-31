@@ -1,23 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import { postcardScene } from "../engine/postcard.ts";
 import type { Persona, RunLog } from "../engine/types.ts";
-import { PERSONAS } from "../game/personas.ts";
+import { pathById } from "../game/paths.ts";
 import { DEFAULT_LOOK, describeLook, parseLook, type PipoLook } from "../game/pipoLook.ts";
 import { Backdrop } from "../ui/Backdrop.tsx";
 import { LessonComplete } from "../ui/LessonComplete.tsx";
 import { MissionPlayer } from "../ui/MissionPlayer.tsx";
 import { TransitionOverlay, usePageTransition } from "../ui/PageTransition.tsx";
-import { PersonaPicker } from "../ui/PersonaPicker.tsx";
+import { PathPicker } from "../ui/PathPicker.tsx";
 import { PipoLookContext } from "../ui/Pipo.tsx";
 import { PipoBuilder } from "../ui/PipoBuilder.tsx";
+import { Town } from "../ui/town/Town.tsx";
 import { missions } from "./missions.ts";
 import { paintPostcard, type Postcard } from "./postcard.ts";
 
 type Screen =
-  | { kind: "paths" }
-  /** Make your Pipo, before a path starts. */
-  | { kind: "build"; persona: Persona }
-  | { kind: "lesson"; persona: Persona; index: number };
+  /** Make your Pipo: first thing on arrival, and later from Pipo's garage in town. */
+  | { kind: "build"; first: boolean }
+  | { kind: "town" }
+  | { kind: "paths"; persona: Persona }
+  | { kind: "lesson"; persona: Persona; path: string; index: number };
 
 const LOOK_KEY = "pipodojo.look";
 
@@ -34,17 +36,19 @@ function loadLook(): PipoLook {
 /** The lesson just finished, shown in a box on the dark sweep panel until the player moves on. */
 interface Finished {
   persona: Persona;
+  path: string;
   index: number;
   log: RunLog;
 }
 
 /**
- * Paths, then that path's lessons in order. Screens change behind a dark full-page sweep:
- * forward left to right, back right to left. After a lesson the sweep stops halfway, covering
- * the page, and the lesson complete box sits on it; Continue sweeps it away into the next lesson.
+ * Make your Pipo, then Pipodojo Town, then a persona's paths, then that path's lessons in order.
+ * Screens change behind a dark full-page sweep: forward left to right, back right to left.
+ * After a lesson the sweep stops halfway, covering the page, and the lesson complete box sits
+ * on it; Continue sweeps it away into the next lesson.
  */
 export function App() {
-  const [screen, setScreen] = useState<Screen>({ kind: "paths" });
+  const [screen, setScreen] = useState<Screen>({ kind: "build", first: true });
   const [finished, setFinished] = useState<Finished | null>(null);
   // Best stars per lesson, for this visit.
   const [stars, setStars] = useState<Record<string, number>>({});
@@ -64,13 +68,14 @@ export function App() {
   }, [look]);
 
   // Lessons come sorted by path and order (see missionLoader).
-  const lessonsOf = (persona: Persona) => missions.filter((m) => m.persona === persona);
-  const toPaths = () => void go("to-left", () => setScreen({ kind: "paths" }));
+  const lessonsOf = (path: string) => missions.filter((m) => m.path === path);
+  const toTown = () => void go("to-left", () => setScreen({ kind: "town" }));
+  const toPaths = (persona: Persona) => void go("to-left", () => setScreen({ kind: "paths", persona }));
 
-  const finish = async (persona: Persona, index: number, log: RunLog) => {
+  const finish = async (persona: Persona, path: string, index: number, log: RunLog) => {
     setStars((s) => ({ ...s, [log.missionId]: Math.max(s[log.missionId] ?? 0, log.score.stars) }));
     runs.current[log.missionId] = log;
-    const lessons = lessonsOf(persona);
+    const lessons = lessonsOf(path);
     if (index === lessons.length - 1) {
       // Last lesson: Pipo starts painting now, while the box and the gift come up.
       const scene = postcardScene(
@@ -83,7 +88,7 @@ export function App() {
         if (ticket === painting.current) setPostcard(ready);
       });
     }
-    if (await cover("to-right")) setFinished({ persona, index, log });
+    if (await cover("to-right")) setFinished({ persona, path, index, log });
   };
 
   const leaveBox = (next: Screen) => {
@@ -92,32 +97,48 @@ export function App() {
   };
 
   let content;
-  const lessons = screen.kind === "lesson" ? lessonsOf(screen.persona) : [];
+  const lessons = screen.kind === "lesson" ? lessonsOf(screen.path) : [];
   const mission = screen.kind === "lesson" ? lessons[screen.index] : undefined;
   if (screen.kind === "lesson" && mission) {
-    const { persona, index } = screen;
+    const { persona, path, index } = screen;
     content = (
       <MissionPlayer
         key={mission.id}
         mission={mission}
         lesson={{ number: index + 1, total: lessons.length }}
-        onFinish={(log) => void finish(persona, index, log)}
-        onBack={toPaths}
+        onFinish={(log) => void finish(persona, path, index, log)}
+        onBack={() => toPaths(persona)}
       />
     );
-  } else if (screen.kind === "build") {
+  } else if (screen.kind === "paths") {
     const { persona } = screen;
     content = (
-      <PipoBuilder
-        pathName={PERSONAS.find((p) => p.id === persona)?.name ?? ""}
+      <PathPicker
+        persona={persona}
+        stars={stars}
+        onStart={(path) => void go("to-right", () => setScreen({ kind: "lesson", persona, path, index: 0 }))}
+        onBack={toTown}
+      />
+    );
+  } else if (screen.kind === "town") {
+    content = (
+      <Town
         look={look}
-        onChange={setLook}
-        onStart={() => void go("to-right", () => setScreen({ kind: "lesson", persona, index: 0 }))}
-        onBack={toPaths}
+        stars={stars}
+        onVisit={(persona) => void go("to-right", () => setScreen({ kind: "paths", persona }))}
+        onGarage={() => void go("to-right", () => setScreen({ kind: "build", first: false }))}
       />
     );
   } else {
-    content = <PersonaPicker onStart={(persona) => void go("to-right", () => setScreen({ kind: "build", persona }))} />;
+    const first = screen.kind === "build" && screen.first;
+    content = (
+      <PipoBuilder
+        look={look}
+        onChange={setLook}
+        first={first}
+        onDone={() => void go(first ? "to-right" : "to-left", () => setScreen({ kind: "town" }))}
+      />
+    );
   }
 
   return (
@@ -127,14 +148,14 @@ export function App() {
       <TransitionOverlay direction={direction} />
       {finished && (
         <LessonComplete
-          pathName={PERSONAS.find((p) => p.id === finished.persona)?.name ?? ""}
-          lessons={lessonsOf(finished.persona)}
+          pathName={pathById(finished.path)?.name ?? ""}
+          lessons={lessonsOf(finished.path)}
           index={finished.index}
           log={finished.log}
           stars={stars}
           postcard={postcard}
-          onContinue={() => leaveBox({ kind: "lesson", persona: finished.persona, index: finished.index + 1 })}
-          onBack={() => leaveBox({ kind: "paths" })}
+          onContinue={() => leaveBox({ kind: "lesson", persona: finished.persona, path: finished.path, index: finished.index + 1 })}
+          onBack={() => leaveBox({ kind: "paths", persona: finished.persona })}
         />
       )}
     </PipoLookContext.Provider>

@@ -1,6 +1,7 @@
 {
   "id": "parent-01-dinner",
   "persona": "parent",
+  "path": "parent-barbecue",
   "order": 1,
   "title": "Saturday barbecue",
   "icon": "🍔",

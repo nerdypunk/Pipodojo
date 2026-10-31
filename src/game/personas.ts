@@ -1,15 +1,16 @@
-// The paths a player can pick before a lesson. Only paths marked available can be played;
-// the rest are placeholders that show "Coming soon".
+// The people Pipo helps. Each lives somewhere in Pipodojo Town and has three paths
+// (see paths.ts). Every persona can be visited; paths without lessons show "Coming soon".
 import type { Persona } from "../engine/types.ts";
 
 export interface PersonaCard {
   id: Persona;
   name: string;
   emoji: string;
+  /** Where they live in town, e.g. "Home". */
+  place: string;
   blurb: string;
   /** Background tint for the card's art, from the purple-blue family. */
   tint: string;
-  available: boolean;
 }
 
 export const PERSONAS: readonly PersonaCard[] = [
@@ -17,24 +18,26 @@ export const PERSONAS: readonly PersonaCard[] = [
     id: "parent",
     name: "Busy parent",
     emoji: "🏡",
-    blurb: "Plan dinners, rainy weekends and notes to school.",
+    place: "Home",
+    blurb: "Barbecues, school weeks and family trips.",
     tint: "from-brand-400 to-brand-700",
-    available: true,
   },
   {
     id: "student",
     name: "Student",
-    emoji: "🎒",
-    blurb: "Study plans, article summaries and emails to teachers.",
+    emoji: "🎓",
+    place: "College",
+    blurb: "Exams, group projects and a first job.",
     tint: "from-sky-400 to-brand-600",
-    available: false,
   },
   {
     id: "business",
-    name: "Small business",
-    emoji: "🛍️",
-    blurb: "Reply to customers, plan a sale post and staff shifts.",
+    name: "Café owner",
+    emoji: "☕",
+    place: "Café",
+    blurb: "Sales, customers and the staff rota.",
     tint: "from-fuchsia-400 to-brand-700",
-    available: false,
   },
 ];
+
+export const personaById = (id: Persona) => PERSONAS.find((p) => p.id === id) ?? PERSONAS[0]!;

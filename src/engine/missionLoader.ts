@@ -17,7 +17,7 @@ export function parseMission(data: unknown, source = "mission"): Mission {
 
 /**
  * Validates a set of mission files keyed by path (e.g. from import.meta.glob or fs).
- * File names must match the mission id. Returns missions sorted by persona, then order.
+ * File names must match the mission id. Returns missions sorted by persona, path, then order.
  */
 export function loadMissions(files: Record<string, unknown>): Mission[] {
   const missions = Object.entries(files).map(([path, data]) => {
@@ -29,12 +29,13 @@ export function loadMissions(files: Record<string, unknown>): Mission[] {
 
   const seen = new Set<string>();
   for (const m of missions) {
-    const key = `${m.persona}:${m.order}`;
-    if (seen.has(key)) throw new Error(`Two ${m.persona} missions have order ${m.order}`);
+    const key = `${m.path}:${m.order}`;
+    if (seen.has(key)) throw new Error(`Two ${m.path} missions have order ${m.order}`);
     seen.add(key);
   }
 
   return missions.sort(
-    (a, b) => PERSONA_ORDER.indexOf(a.persona) - PERSONA_ORDER.indexOf(b.persona) || a.order - b.order,
+    (a, b) =>
+      PERSONA_ORDER.indexOf(a.persona) - PERSONA_ORDER.indexOf(b.persona) || a.path.localeCompare(b.path) || a.order - b.order,
   );
 }

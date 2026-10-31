@@ -1,6 +1,7 @@
 {
   "id": "parent-02-invite",
   "persona": "parent",
+  "path": "parent-barbecue",
   "order": 2,
   "title": "Invite your friends",
   "icon": "💌",

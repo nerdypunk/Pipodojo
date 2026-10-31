@@ -30,8 +30,12 @@ Other commands:
 
 - `missions/*.json`: one file per lesson (the situation, the prompt pieces, and what goes wrong when a piece is missing), validated with Zod. Adding a lesson needs no code changes.
 - `src/engine`: pure TypeScript game engine (prompt building, asking Pipo, rule-based stars). No React. A model never scores the player.
-- `src/ui`: the screens.
+- `src/ui`: the screens. `src/ui/town` is the 3D overworld (React Three Fiber), built from simple shapes in code.
 - `functions/api/chat.js`: the only server code. It holds the API key, picks the model, and caps cost.
+
+## Playing
+
+Make your Pipo, then explore **Pipodojo Town**, a little 3D floating island. Each person Pipo can help lives somewhere in town: the busy parent at home, the student at the college, the café owner at the café. Click a place to see their three paths, then play a path's lessons. Today the busy parent's Saturday barbecue is playable; the other paths show what's coming.
 
 ## Powered by Muse Spark
 
@@ -49,5 +53,6 @@ Pipodojo's game, lessons and Pipo were built during the hackathon. It also uses 
 
 - [peel.js](https://github.com/andrewplummer/peel-js) by Andrew Plummer (MIT), copied into `src/vendor/peel` for the path reward
 - [smoothui](https://smoothui.dev) (Siri orb, dynamic island) and [React Bits](https://reactbits.dev) (StarBorder, PixelTransition and more), added with the shadcn CLI into `src/components`
+- [three.js](https://threejs.org), [React Three Fiber](https://github.com/pmndrs/react-three-fiber) and [drei](https://github.com/pmndrs/drei) (MIT) for the 3D town
 - [Paper Shaders](https://github.com/paper-design/shaders) (mesh gradient background, card glow), [swup](https://swup.js.org) overlay and slide themes (page transitions), [egjs Flicking](https://naver.github.io/egjs-flicking/) (path carousel), [Motion](https://motion.dev), [canvas-confetti](https://github.com/catdad/canvas-confetti)
 - [Nunito](https://fonts.google.com/specimen/Nunito) font via Fontsource

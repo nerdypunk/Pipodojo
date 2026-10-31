@@ -1,5 +1,5 @@
-// "Pick your path": persona cards in a swipeable carousel (egjs Flicking).
-// Only available personas can be started; the others are "Coming soon" placeholders.
+// "Pick a path": the three paths of the persona you visited in town, in a swipeable carousel
+// (egjs Flicking). Paths whose lessons are built can be started; the others show "Coming soon".
 import Flicking from "@egjs/flicking";
 import { Arrow, Pagination, Perspective } from "@egjs/flicking-plugins";
 import "@egjs/flicking/dist/flicking.css";
@@ -8,15 +8,26 @@ import { useEffect, useRef } from "react";
 import PixelTransition from "@/components/PixelTransition";
 import type { Persona } from "../engine/types.ts";
 import { missions } from "../app/missions.ts";
-import { PERSONAS, type PersonaCard } from "../game/personas.ts";
+import { pathsOf, type PathCard } from "../game/paths.ts";
+import { personaById } from "../game/personas.ts";
 import { Button } from "./Button.tsx";
 import { Pipo } from "./Pipo.tsx";
 import { ShaderBorder } from "./ShaderBorder.tsx";
 
-export function PersonaPicker({ onStart }: { onStart: (persona: Persona) => void }) {
+interface Props {
+  persona: Persona;
+  /** Best stars per lesson id this visit. */
+  stars: Readonly<Record<string, number>>;
+  onStart: (pathId: string) => void;
+  onBack: () => void;
+}
+
+export function PathPicker({ persona, stars, onStart, onBack }: Props) {
   const wrapper = useRef<HTMLDivElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
   const flicking = useRef<Flicking | null>(null);
+  const who = personaById(persona);
+  const paths = pathsOf(persona);
 
   useEffect(() => {
     if (!viewport.current || !wrapper.current) return;
@@ -45,22 +56,31 @@ export function PersonaPicker({ onStart }: { onStart: (persona: Persona) => void
   };
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col justify-center gap-6 p-3 md:p-6">
-      <header className="flex flex-col items-center gap-2 text-center">
+    <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col justify-center gap-5 p-3 md:p-6">
+      <header className="relative flex flex-col items-center gap-1.5 text-center">
+        <button
+          type="button"
+          onClick={onBack}
+          className="glass absolute top-0 left-0 flex items-center gap-1 rounded-full py-1.5 pr-4 pl-3 text-sm font-extrabold text-brand-700 transition hover:bg-white/80"
+        >
+          <span aria-hidden="true" className="text-lg leading-none">
+            ‹
+          </span>
+          Town
+        </button>
         <Pipo mood="happy" className="h-16 w-16 drop-shadow-[0_6px_16px_rgba(45,36,112,0.35)]" />
-        <p className="text-lg font-black tracking-tight text-brand-700">Pipodojo</p>
-        <h1 className="text-3xl font-black text-ink md:text-4xl">Pick your path</h1>
-        <p className="font-semibold text-gray-600">Who are you helping Pipo help today?</p>
-        <p className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1 text-xs font-extrabold text-brand-800 ring-1 ring-white">
-          <span aria-hidden="true">⚡</span> Pipo is powered by Meta's Muse Spark
+        <p className="text-sm font-black tracking-wide text-brand-700 uppercase">
+          {who.emoji} {who.place} · {who.name}
         </p>
+        <h1 className="text-3xl font-black text-ink md:text-4xl">Pick a path</h1>
+        <p className="font-semibold text-gray-600">Three lessons each. Pipo gets a little more done in every one.</p>
       </header>
 
       <div ref={wrapper} className="relative">
         <div ref={viewport} className="flicking-viewport py-4">
           <div className="flicking-camera">
-            {PERSONAS.map((persona, i) => (
-              <PersonaPanel key={persona.id} persona={persona} onFocus={() => focus(i)} onStart={onStart} />
+            {paths.map((path, i) => (
+              <PathPanel key={path.id} path={path} stars={stars} onFocus={() => focus(i)} onStart={onStart} />
             ))}
           </div>
         </div>
@@ -72,18 +92,22 @@ export function PersonaPicker({ onStart }: { onStart: (persona: Persona) => void
   );
 }
 
-function PersonaPanel({
-  persona,
+function PathPanel({
+  path,
+  stars,
   onFocus,
   onStart,
 }: {
-  persona: PersonaCard;
+  path: PathCard;
+  stars: Readonly<Record<string, number>>;
   onFocus: () => void;
-  onStart: (persona: Persona) => void;
+  onStart: (pathId: string) => void;
 }) {
-  const lessonCount = missions.filter((m) => m.persona === persona.id).length;
+  const lessons = missions.filter((m) => m.path === path.id);
+  const playable = lessons.length > 0;
+  const earned = lessons.reduce((sum, m) => sum + (stars[m.id] ?? 0), 0);
   const art = (
-    // Hovering the picture dissolves it in pixels into a peek at what's inside (React Bits PixelTransition).
+    // Hovering the picture dissolves it in pixels into the path's lessons (React Bits PixelTransition).
     <PixelTransition
       className="rounded-2xl"
       aspectRatio="56%"
@@ -92,56 +116,60 @@ function PersonaPanel({
       trigger="hover"
       firstContent={
         <div
-          className={`relative flex h-full w-full items-center justify-center bg-gradient-to-br ${persona.tint} ${
-            persona.available ? "" : "grayscale-[60%]"
+          className={`relative flex h-full w-full items-center justify-center bg-gradient-to-br ${path.tint} ${
+            playable ? "" : "grayscale-[60%]"
           }`}
         >
           <span className="text-6xl drop-shadow-[0_6px_12px_rgba(0,0,0,0.25)]" aria-hidden="true">
-            {persona.emoji}
+            {path.emoji}
           </span>
-          {!persona.available && (
-            <span className="absolute top-2.5 right-2.5 rounded-full bg-white/85 px-2.5 py-0.5 text-xs font-extrabold text-brand-800">
-              Coming soon
-            </span>
-          )}
+          <span className="absolute top-2.5 right-2.5 rounded-full bg-white/85 px-2.5 py-0.5 text-xs font-extrabold text-brand-800">
+            {playable ? `★ ${earned} of ${lessons.length * 3}` : "Coming soon"}
+          </span>
         </div>
       }
       secondContent={
-        <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-brand-900 px-4 text-center text-white">
-          <span className="text-3xl" aria-hidden="true">
-            {persona.available ? "🍔" : "🔒"}
-          </span>
-          <span className="font-black">{persona.available ? "The Saturday barbecue" : "Lessons on the way"}</span>
-          <span className="text-sm font-semibold text-white/70">
-            {persona.available ? `${lessonCount} lessons ready to play` : "Check back soon"}
-          </span>
-        </div>
+        <ol className="flex h-full w-full flex-col justify-center gap-1.5 bg-brand-900 px-5 text-left text-white">
+          {path.lessons.map((name, i) => (
+            <li key={name} className="flex items-center gap-2 text-sm font-bold">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/15 text-xs font-black">
+                {i + 1}
+              </span>
+              <span className="flex-1">{name}</span>
+              {!playable && (
+                <span className="text-xs" aria-label="Locked">
+                  🔒
+                </span>
+              )}
+            </li>
+          ))}
+        </ol>
       }
     />
   );
 
-  // A soft animated glow behind the card: lively on the playable path, quiet on the ones still to come.
+  // A soft animated glow behind the card: lively on playable paths, quiet on the ones still to come.
   return (
-    <ShaderBorder mode={persona.available ? "build" : "muted"} roundness={0.14} className="mx-2.5">
+    <ShaderBorder mode={playable ? "build" : "muted"} roundness={0.14} className="mx-2.5">
       <article
         className="glass flex w-64 flex-col gap-3 rounded-3xl p-3 md:w-72"
         onClick={onFocus}
-        aria-label={persona.available ? persona.name : `${persona.name}, coming soon`}
+        aria-label={playable ? path.name : `${path.name}, coming soon`}
       >
         {art}
         <div className="px-1">
-          <h2 className="text-xl font-black">{persona.name}</h2>
-          <p className="text-[15px] leading-snug font-semibold text-gray-600">{persona.blurb}</p>
+          <h2 className="text-xl font-black">{path.name}</h2>
+          <p className="text-[15px] leading-snug font-semibold text-gray-600">{path.blurb}</p>
         </div>
-        {persona.available ? (
+        {playable ? (
           <Button
             className="w-full"
             onClick={(e) => {
               e.stopPropagation();
-              onStart(persona.id);
+              onStart(path.id);
             }}
           >
-            Start
+            {earned > 0 ? "Play again" : "Start"}
           </Button>
         ) : (
           <Button tone="plain" className="w-full" disabled>

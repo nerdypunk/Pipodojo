@@ -1,6 +1,7 @@
 {
   "id": "parent-03-groceries",
   "persona": "parent",
+  "path": "parent-barbecue",
   "order": 3,
   "title": "Order the groceries",
   "icon": "🛒",

@@ -1,4 +1,5 @@
-// "Make your Pipo": pick a head, a body and colours before a path starts. Everything is drawn
+// "Make your Pipo": pick a head, a body and colours before heading into town (and any time
+// later from Pipo's garage). Everything is drawn
 // in code, so it's instant and free; the look also goes into the end-of-path postcard prompt.
 import { motion, useReducedMotion } from "motion/react";
 import { BODIES, COLORS, HEADS, paletteOf, type PipoLook } from "../game/pipoLook.ts";
@@ -7,29 +8,24 @@ import { Pipo } from "./Pipo.tsx";
 import { ShaderBorder } from "./ShaderBorder.tsx";
 
 interface Props {
-  pathName: string;
   look: PipoLook;
   /** Takes an update so quick taps never undo each other. */
   onChange: (update: (look: PipoLook) => PipoLook) => void;
-  onStart: () => void;
-  onBack: () => void;
+  /** Into town. `first` is the very first visit (the button says so). */
+  onDone: () => void;
+  first: boolean;
 }
 
-export function PipoBuilder({ pathName, look, onChange, onStart, onBack }: Props) {
+export function PipoBuilder({ look, onChange, onDone, first }: Props) {
   const still = useReducedMotion();
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col justify-center gap-3 p-3 md:px-6 md:py-4">
       <header className="glass flex items-center gap-3 rounded-2xl py-1.5 pr-4 pl-1.5">
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label="Back to paths"
-          className="flex h-9 w-9 items-center justify-center rounded-xl text-2xl leading-none font-black text-brand-700 transition hover:bg-white/70"
-        >
-          <span aria-hidden="true">‹</span>
-        </button>
-        <span className="hidden text-lg font-black tracking-tight text-brand-700 sm:inline">Pipodojo</span>
-        <span className="rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-extrabold text-white">{pathName}</span>
+        <span className="pl-2.5 text-lg font-black tracking-tight text-brand-700">Pipodojo</span>
+        <span className="rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-extrabold text-white">{first ? "Welcome!" : "Pipo's garage"}</span>
+        <span className="ml-auto hidden items-center gap-1.5 text-xs font-extrabold text-brand-800 sm:inline-flex">
+          <span aria-hidden="true">⚡</span> Pipo is powered by Meta's Muse Spark
+        </span>
       </header>
 
       <main className="grid gap-3 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-5">
@@ -47,9 +43,9 @@ export function PipoBuilder({ pathName, look, onChange, onStart, onBack }: Props
               </motion.div>
             </div>
             <div className="rounded-2xl bg-white/90 p-4">
-              <p className="text-xs font-extrabold tracking-wide text-brand-700 uppercase">Before you start</p>
+              <p className="text-xs font-extrabold tracking-wide text-brand-700 uppercase">{first ? "Meet your agent" : "New look?"}</p>
               <h1 className="text-2xl font-black text-ink md:text-3xl">Make Pipo yours</h1>
-              <p className="font-semibold text-gray-600">This is your agent for the {pathName.toLowerCase()} path. Pick a look!</p>
+              <p className="font-semibold text-gray-600">Pipo is the agent you'll guide around town. Pick a look!</p>
             </div>
           </section>
         </ShaderBorder>
@@ -86,11 +82,8 @@ export function PipoBuilder({ pathName, look, onChange, onStart, onBack }: Props
               })}
             </Choice>
             <div className="mt-auto flex gap-2 border-t border-white/70 pt-4">
-              <Button tone="plain" className="flex-1 sm:flex-none" onClick={onBack}>
-                Back
-              </Button>
-              <Button className="flex-1" onClick={onStart}>
-                Start lesson 1
+              <Button className="flex-1" onClick={onDone}>
+                {first ? "Let's go to town" : "Back to town"}
               </Button>
             </div>
           </section>

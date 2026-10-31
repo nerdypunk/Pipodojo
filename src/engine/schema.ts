@@ -68,6 +68,8 @@ export const MissionSchema = z
   .strictObject({
     id,
     persona: PersonaSchema,
+    /** The path this lesson belongs to, e.g. "parent-barbecue" (see src/game/paths.ts). */
+    path: id,
     order: z.number().int().positive(),
     title: text,
     /** One emoji for the lesson's spot on the path map. */
