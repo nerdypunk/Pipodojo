@@ -18,7 +18,7 @@ export function Button({ tone = "primary", className = "", ...props }: Props) {
     return (
       <button
         type="button"
-        className={`${BASE} rounded-2xl border-2 border-gray-300 bg-white text-gray-700 disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
+        className={`${BASE} rounded-2xl border-2 border-gray-300 bg-white text-gray-700 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-800 active:translate-y-px motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand-500 ${className}`}
         {...props}
       />
     );

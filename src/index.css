@@ -70,6 +70,15 @@ body {
   @apply bg-brand-100 text-ink antialiased;
 }
 
+/* Tailwind v4 gives buttons the default arrow cursor; every clickable thing here shows a hand. */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary {
+    cursor: pointer;
+  }
+}
+
 /* Glow effects (StarBorder) draw a little past their edges; never let that widen or scroll the page. */
 #root {
   overflow-x: clip;
