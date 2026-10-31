@@ -1,0 +1,123 @@
+{
+  "id": "cafe-04-review",
+  "persona": "business",
+  "path": "business-review",
+  "order": 1,
+  "title": "Reply to the review",
+  "icon": "⭐",
+  "recap": "Pipo wrote a kind reply to Jordan's review.",
+  "funFact": "Agents can email customers directly, too. Next, Pipo sorts out Jordan's refund, carefully!",
+  "postcard": "Pipo serving Jordan a steaming hot coffee with a smile, {answer}",
+  "situation": "Uh-oh, a one-star review from Jordan. Want me to write a reply?",
+  "facts": [
+    "⭐ Jordan: \"Cold coffee and a 20 minute wait\"",
+    "🧑‍🍳 You were short-staffed that morning",
+    "☕ You want to offer a free drink next time",
+    "🌍 Everyone can read the reply"
+  ],
+  "systemPrompt": "You are Pipo, a friendly assistant for the owner of Bloom Café, a small local café. Help with what they ask. When you reply to a review, write the reply itself, line by line.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "reply_jordan",
+          "label": "Reply to Jordan's review",
+          "text": "Write a public reply to Jordan's one-star review about cold coffee and a 20 minute wait.",
+          "quality": "good"
+        },
+        {
+          "id": "reply_bad",
+          "label": "Reply to the bad review",
+          "text": "Reply to the bad review.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "What should the reply say?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "sorry",
+          "label": "Sorry for the wait and cold coffee",
+          "text": "Say sorry for the long wait and the cold coffee.",
+          "quality": "neutral"
+        },
+        {
+          "id": "offer",
+          "label": "Offer a free drink next time",
+          "text": "Offer Jordan a free drink on their next visit.",
+          "quality": "good"
+        },
+        {
+          "id": "reason",
+          "label": "We were short-staffed that morning",
+          "text": "Mention we were short-staffed that morning.",
+          "quality": "neutral"
+        },
+        {
+          "id": "blame",
+          "label": "Say it wasn't our fault",
+          "text": "Say it wasn't our fault.",
+          "quality": "weak",
+          "tip": "Pushing back in public makes everyone reading side with the customer. A kind reply wins them back."
+        }
+      ]
+    },
+    {
+      "id": "tone",
+      "label": "How should it sound?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "kind",
+          "label": "Kind and short",
+          "text": "Keep it kind and short.",
+          "quality": "good"
+        },
+        {
+          "id": "long",
+          "label": "Long and detailed",
+          "text": "Make it long and detailed.",
+          "quality": "weak",
+          "tip": "Long replies read like excuses. Short and kind is what other customers notice."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_offer",
+      "when": "not_picked:offer",
+      "signals": [
+        "^(?![\\s\\S]*(free|on us|on the house|complimentary))"
+      ],
+      "hint": "You didn't tell Pipo you want to make it right.",
+      "explain": "Pipo didn't know about the free drink, so the reply doesn't offer anything."
+    },
+    {
+      "id": "blame",
+      "when": "picked:blame",
+      "signals": [
+        "(not our fault|wasn't our fault|no fault of ours|you should have|you could have|beyond (our )?control|unforeseen|caused by|due to|out of our hands)"
+      ],
+      "hint": "Saying it wasn't your fault sounds defensive in public.",
+      "explain": "Pipo made excuses to Jordan, and everyone can read it."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:reply_bad",
+      "signals": [
+        "^(?![\\s\\S]*(jordan|cold|wait))"
+      ],
+      "hint": "\"The bad review\" doesn't say which review or what went wrong.",
+      "explain": "Pipo didn't know which review, so the reply is generic."
+    }
+  ],
+  "lesson": "Tell Pipo the tone and what you want to offer. It writes what you'd say, not what it guesses."
+}

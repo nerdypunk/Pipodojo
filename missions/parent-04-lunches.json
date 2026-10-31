@@ -1,0 +1,123 @@
+{
+  "id": "parent-04-lunches",
+  "persona": "parent",
+  "path": "parent-school",
+  "order": 1,
+  "title": "Plan the week's lunches",
+  "icon": "🥪",
+  "recap": "Pipo planned a veggie lunch week for Mia and Leo.",
+  "funFact": "Agents like Meta's Muse can write emails for you, too. Next, Pipo answers Leo's teacher about the field trip!",
+  "postcard": "Pipo packing colourful lunch boxes for two kids: {answer}",
+  "situation": "School's back! Want me to plan the kids' lunches for this week?",
+  "facts": [
+    "👧 Two kids: Mia and Leo",
+    "🥦 Both kids are vegetarian",
+    "🏫 No school on Friday (teacher day)",
+    "⏱️ 10 minutes to make each lunch"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. Help with what they ask. When you plan meals, put two days on each line and start the line with those days.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "plan_lunches",
+          "label": "Plan lunches for Mia and Leo this week",
+          "text": "Plan school lunches for my two kids, Mia and Leo, for this week.",
+          "quality": "good"
+        },
+        {
+          "id": "help_lunch",
+          "label": "Help me with lunches",
+          "text": "Help me with school lunches.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "What does Pipo need to know?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "veggie",
+          "label": "Both kids are vegetarian",
+          "text": "Both kids are vegetarian.",
+          "quality": "good"
+        },
+        {
+          "id": "no_friday",
+          "label": "No school on Friday",
+          "text": "There's no school on Friday, so only Monday to Thursday.",
+          "quality": "good"
+        },
+        {
+          "id": "quick",
+          "label": "Each lunch takes 10 minutes or less",
+          "text": "Each lunch has to take 10 minutes or less to make.",
+          "quality": "neutral"
+        },
+        {
+          "id": "fancy",
+          "label": "Make them super fancy!",
+          "text": "Make them super fancy!",
+          "quality": "weak",
+          "tip": "\"Super fancy\" sounds fun, but fancy takes time you don't have on a school morning."
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "label": "How should Pipo answer?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "short",
+          "label": "Short and simple",
+          "text": "Keep it short and simple.",
+          "quality": "good"
+        },
+        {
+          "id": "essay",
+          "label": "Explain all about healthy eating",
+          "text": "Explain everything about healthy eating for kids.",
+          "quality": "weak",
+          "tip": "A lecture isn't a lunch plan. Asking for something short gets you a list you can shop from."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_veggie",
+      "when": "not_picked:veggie",
+      "signals": [
+        "(?<!(veggie|vegetarian|vegan|plant-based|bean|tofu|meatless|meat-free)[ -])\\b(chicken|turkey|ham|beef|pork|bacon|salami|pepperoni|tuna|salmon|fish|sausages?|hot ?dogs?|meatballs?|shrimp)\\b"
+      ],
+      "hint": "You didn't tell Pipo the kids are vegetarian.",
+      "explain": "Pipo didn't know the kids are vegetarian, so there's meat in the lunches."
+    },
+    {
+      "id": "friday_lunch",
+      "when": "not_picked:no_friday",
+      "signals": [
+        "(^|\\n)(?![^\\n]*(no school|day off|teacher day|skip|\\boff\\b|home))[^\\n]*\\bfri(day)?\\b"
+      ],
+      "hint": "You didn't tell Pipo there's no school on Friday.",
+      "explain": "Pipo didn't know Friday is a day off, so it planned a lunch nobody needs."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:help_lunch",
+      "signals": [
+        "^(?![\\s\\S]*\\bleo\\b)"
+      ],
+      "hint": "\"Help me with lunches\" doesn't say who they're for, so Pipo has to guess.",
+      "explain": "Pipo didn't know who the lunches are for, so it guessed."
+    }
+  ],
+  "lesson": "Tell Pipo the limits that matter: allergies, and which days you actually need."
+}

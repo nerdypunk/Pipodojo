@@ -1,0 +1,259 @@
+{
+  "id": "cafe-03-restock",
+  "persona": "business",
+  "path": "business-sale",
+  "order": 3,
+  "title": "Restock the shelves",
+  "icon": "📦",
+  "recap": "Pipo lined up the baking supplies for the sale.",
+  "funFact": "Post, email and stock: your sale is ready. Agents can run lots of small jobs around a business while you make the decisions.",
+  "postcard": "a delivery van unloading {items} at Bloom Café",
+  "situation": "Half-price pastries means lots of baking! Shall I order supplies?",
+  "facts": [
+    "📝 Flour, butter, sugar, eggs, chocolate",
+    "🚚 Must arrive by Friday 5pm",
+    "💵 $100 at most",
+    "👀 You want to see the order before paying"
+  ],
+  "systemPrompt": "You are Pipo, a friendly assistant for the owner of Bloom Café, a small local café. You can order from online suppliers and pay with the café's saved card. You do what they ask: if they ask you to order something, you pay and place the order; if they ask to see the basket first, you fill it and wait for their OK.",
+  "tools": [
+    {
+      "name": "pay_and_order",
+      "description": "Buy the supplies now: pay with the saved card and place the order. Use this when the user wants it handled.",
+      "app": "shop",
+      "outcome": "done",
+      "store": "BakeSupply",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Everything in the basket, each with its price in dollars",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total in dollars"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Delivery day and time, for example Thursday 2pm"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛒",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "Delivery {delivery}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Paid and ordered"
+        }
+      ]
+    },
+    {
+      "name": "show_basket",
+      "description": "Fill the basket and show it to the user without paying, so they can check first. Use this when the user wants to approve before paying.",
+      "app": "shop",
+      "outcome": "waiting",
+      "store": "BakeSupply",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Everything in the basket, each with its price in dollars",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total in dollars"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Delivery day and time, for example Thursday 2pm"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛒",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "Delivery {delivery}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Basket ready, waiting for your OK to pay"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "order_list",
+          "label": "Order the baking list for the sale",
+          "text": "Order my baking list for 200 pastries for the weekend sale: flour, butter, sugar, eggs and chocolate.",
+          "quality": "good"
+        },
+        {
+          "id": "order_stuff",
+          "label": "Order what we need",
+          "text": "Order what we need.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "label": "What limits should Pipo follow?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "deliver_by",
+          "label": "Deliver by Friday 5pm",
+          "text": "It has to arrive by Friday at 5pm.",
+          "quality": "good"
+        },
+        {
+          "id": "budget",
+          "label": "Spend no more than $100",
+          "text": "Spend no more than $100 in total.",
+          "quality": "good"
+        },
+        {
+          "id": "bulk",
+          "label": "Bulk sizes if they're cheaper",
+          "text": "Get bulk sizes if they work out cheaper.",
+          "quality": "neutral"
+        },
+        {
+          "id": "premium",
+          "label": "Only the fanciest brands!",
+          "text": "Only the fanciest brands!",
+          "quality": "weak",
+          "tip": "\"The fanciest brands\" tells Pipo to spend more, not what you can afford."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before Pipo pays",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me the basket first",
+          "text": "Show me the basket and wait for my OK before you pay.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Just pay for it",
+          "text": "Just pay for it, no need to show me.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:order_stuff",
+      "signals": [
+        "🛒(?![^\\n]*(flour|butter))"
+      ],
+      "hint": "\"What we need\" doesn't say what to order.",
+      "explain": "Pipo didn't know what to order, so the basket is missing your baking list."
+    },
+    {
+      "id": "no_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "💳[^\\n]*\\$\\s?(10[1-9]|1[1-9]\\d|[2-9]\\d\\d|\\d{1,3},\\d{3}|\\d{4,})"
+      ],
+      "hint": "You didn't give Pipo a spending limit.",
+      "explain": "Pipo didn't know your limit, so the order costs more than $100."
+    },
+    {
+      "id": "no_delivery_time",
+      "when": "not_picked:deliver_by",
+      "signals": [
+        "🚚(?![^\\n]*friday)",
+        "🚚[^\\n]*friday[^\\n]*\\b([6-9]|1[01])(:\\d\\d)?\\s?(pm|p\\.m\\.)"
+      ],
+      "hint": "You didn't tell Pipo when the supplies have to arrive.",
+      "explain": "Pipo didn't know when you need them, so the delivery comes too late for baking."
+    },
+    {
+      "id": "paid_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\b(paid|purchased|booked|order placed|ordered)\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Asking to see the basket first lets you catch mistakes before the café's money is spent.",
+      "explain": "Pipo paid straight away, so you never got to check the order."
+    }
+  ],
+  "lesson": "When Pipo spends the café's money, give it limits and have it check with you before it pays."
+}

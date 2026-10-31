@@ -1,0 +1,228 @@
+{
+  "id": "cafe-02-regulars",
+  "persona": "business",
+  "path": "business-sale",
+  "order": 2,
+  "title": "Email your regulars",
+  "icon": "📧",
+  "recap": "Pipo emailed your regulars about the sale.",
+  "funFact": "Agents can order stock for you, too. Next, Pipo restocks for the sale, and you set the limits!",
+  "postcard": "envelopes flying out of Bloom Café to happy regulars: {subject}",
+  "situation": "Your regulars would love to hear about the sale first. Shall I email them?",
+  "facts": [
+    "📋 Your \"Regulars\" mailing list",
+    "🥐 Half-price pastries this weekend",
+    "☕ Regulars get a free coffee with any pastry",
+    "👀 You want to read it before it goes"
+  ],
+  "systemPrompt": "You are Pipo, a friendly assistant for the owner of Bloom Café, a small local café. You can send emails for them. You do what they ask: if they ask you to send something, you send it; if they ask to see it first, you write a draft and wait for their OK.",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "Send the email right away. Use this when the user wants it sent.",
+      "app": "email",
+      "outcome": "done",
+      "store": "Café Mail",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the email: a person, an email address or a mailing list"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The subject line, up to 8 words"
+          },
+          "body": {
+            "type": "string",
+            "description": "The email text, up to 45 words"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Sent"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "Write the email and show it to the user without sending it, so they can check it first. Use this when the user wants to read it before it goes out.",
+      "app": "email",
+      "outcome": "waiting",
+      "store": "Café Mail",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the email: a person, an email address or a mailing list"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The subject line, up to 8 words"
+          },
+          "body": {
+            "type": "string",
+            "description": "The email text, up to 45 words"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Draft ready, waiting for your OK to send"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_regulars",
+          "label": "Email my Regulars list about the sale",
+          "text": "Email my \"Regulars\" mailing list about this weekend's half-price pastry sale.",
+          "quality": "good"
+        },
+        {
+          "id": "email_everyone",
+          "label": "Email everyone",
+          "text": "Email everyone about the sale.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "What should the email say?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "perk",
+          "label": "Regulars get a free coffee with a pastry",
+          "text": "Tell them regulars get a free coffee with any pastry.",
+          "quality": "good"
+        },
+        {
+          "id": "when",
+          "label": "Saturday and Sunday, 8 to 11am",
+          "text": "It's on Saturday and Sunday from 8 to 11am.",
+          "quality": "good"
+        },
+        {
+          "id": "thanks",
+          "label": "Thank them for coming so often",
+          "text": "Thank them for coming so often.",
+          "quality": "neutral"
+        },
+        {
+          "id": "caps",
+          "label": "Subject in capitals: SALE!!!",
+          "text": "Write the subject in capitals: SALE!!!",
+          "quality": "weak",
+          "tip": "All-caps subjects look like spam, and spam filters agree."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before Pipo sends it",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me the email first",
+          "text": "Show me the email before you send it.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Send it now",
+          "text": "Send it now.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "wrong_list",
+      "when": "picked:email_everyone",
+      "signals": [
+        "📧(?![^\\n]*regular)"
+      ],
+      "hint": "\"Everyone\" doesn't say which list to use.",
+      "explain": "Pipo didn't know which list, so the email went to everyone, not just your regulars."
+    },
+    {
+      "id": "no_perk",
+      "when": "not_picked:perk",
+      "signals": [
+        "^(?![\\s\\S]*(free coffee|coffee on us|free cup|coffee is free|complimentary coffee))"
+      ],
+      "hint": "You didn't tell Pipo about the regulars' perk.",
+      "explain": "Pipo didn't know about the free coffee, so the email doesn't mention it."
+    },
+    {
+      "id": "no_time",
+      "when": "not_picked:when",
+      "signals": [
+        "^(?![\\s\\S]*\\b(8|eight)\\b)"
+      ],
+      "hint": "You didn't tell Pipo when the sale is on.",
+      "explain": "Pipo didn't know the times, so the email doesn't say when to come."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\b(sent|delivered)\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Asking to see the email first lets you fix it before it reaches your customers.",
+      "explain": "Pipo sent it straight away, so you never got to check it."
+    }
+  ],
+  "lesson": "Say exactly who it's for and what's special for them. Then check it before it's sent."
+}

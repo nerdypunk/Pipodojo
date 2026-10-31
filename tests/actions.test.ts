@@ -22,6 +22,7 @@ describe("tool lessons", () => {
   it("writes arguments the way a person reads them", () => {
     expect(readable(57.4)).toBe("57.40");
     expect(readable([{ name: "Buns", price: 4 }, "Corn"])).toBe("Buns ($4), Corn");
+    expect(readable([{ name: "Bake sale", when: "Thu 3pm" }])).toBe("Bake sale (Thu 3pm)");
     expect(readable(undefined)).toBe("?");
   });
 

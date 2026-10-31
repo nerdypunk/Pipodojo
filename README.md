@@ -35,7 +35,9 @@ Other commands:
 
 ## Playing
 
-Make your Pipo, then explore **Pipodojo Town**, a little 3D floating island. Each person Pipo can help lives somewhere in town: the busy parent at home, the student at the college, the café owner at the café. Click a place to see their three paths, then play a path's lessons. Today the busy parent's Saturday barbecue is playable; the other paths show what's coming.
+Make your Pipo, then explore **Pipodojo Town**, a little 3D floating island. Each person Pipo can help lives somewhere in town: the busy parent at home, the student at the college, the café owner at the café. Click a place to see their three paths, then play a path's lessons. The busy parent (Saturday barbecue, School week, Family day trip) and the café owner (Weekend sale, Unhappy customer, Staff week) are playable: 18 lessons. The student's paths are coming.
+
+In each path, the first lesson is a short answer from Pipo; the next two have Pipo act in a pretend app on its phone: WhatsApp, email, a calendar or an online store.
 
 ## Powered by Muse Spark
 

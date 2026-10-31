@@ -55,6 +55,9 @@ export interface PipoAction {
   app: Tool["app"];
   outcome: Tool["outcome"];
   args: Record<string, unknown>;
+  /** Shop screen wording from the tool, e.g. "TicketHub" and "Visit". */
+  store?: string;
+  whenLabel?: string;
 }
 
 export type PipoRun =

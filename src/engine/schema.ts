@@ -55,7 +55,11 @@ export const ToolSchema = z.strictObject({
   /** Told to the model: when to use this tool. */
   description: text,
   /** Which phone mockup shows the result. */
-  app: z.enum(["whatsapp", "shop"]),
+  app: z.enum(["whatsapp", "shop", "email", "calendar"]),
+  /** The store's name on the shop screen, e.g. "TicketHub" (default FreshCart). */
+  store: text.optional(),
+  /** Label for the shop's "delivery" row, e.g. "Visit" for tickets (default Delivery). */
+  whenLabel: text.optional(),
   /** done: Pipo went ahead (sent, paid). waiting: Pipo is holding it for your OK. */
   outcome: z.enum(["done", "waiting"]),
   /** JSON Schema for the arguments, passed to the model as is. */

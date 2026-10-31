@@ -1,0 +1,124 @@
+{
+  "id": "cafe-07-shifts",
+  "persona": "business",
+  "path": "business-staff",
+  "order": 1,
+  "title": "Plan the shifts",
+  "icon": "🗓️",
+  "recap": "Pipo planned the shifts for Thursday to Saturday.",
+  "funFact": "Agents can message your team for you. Next, Pipo sends the rota to the team chat!",
+  "postcard": "the Bloom Café team high-fiving behind the counter: {answer}",
+  "situation": "Busy days ahead at Bloom Café! Want me to plan who works when?",
+  "facts": [
+    "👥 Team: Ana, Ben and Chloe",
+    "🌅 Ana can't work mornings",
+    "📈 Saturday needs all three",
+    "⏰ Shifts: 7 to 11am, 11am to 3pm"
+  ],
+  "systemPrompt": "You are Pipo, a friendly assistant for the owner of Bloom Café, a small local café. Help with what they ask. When you plan shifts, write one line per day.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "plan_shifts",
+          "label": "Plan Thu to Sat for Ana, Ben and Chloe",
+          "text": "Plan the shifts for Ana, Ben and Chloe for Thursday, Friday and Saturday. Shifts are 7 to 11am and 11am to 3pm.",
+          "quality": "good"
+        },
+        {
+          "id": "rota",
+          "label": "Sort out the rota",
+          "text": "Sort out the rota.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "What does Pipo need to know?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "ana",
+          "label": "Ana can't work mornings",
+          "text": "Ana can't work mornings.",
+          "quality": "good"
+        },
+        {
+          "id": "saturday",
+          "label": "Saturday needs all three",
+          "text": "Saturday is busy, so all three of them work.",
+          "quality": "good"
+        },
+        {
+          "id": "fair",
+          "label": "Share the hours fairly",
+          "text": "Share the hours fairly.",
+          "quality": "neutral"
+        },
+        {
+          "id": "somehow",
+          "label": "Just make it work somehow",
+          "text": "Just make it work somehow.",
+          "quality": "weak",
+          "tip": "\"Make it work somehow\" leaves the hard choices to Pipo. Tell it the rules instead."
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "label": "How should Pipo answer?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "one_line",
+          "label": "One line per day",
+          "text": "Give me one line per day.",
+          "quality": "good"
+        },
+        {
+          "id": "table",
+          "label": "A big detailed table",
+          "text": "Make a big detailed table.",
+          "quality": "weak",
+          "tip": "A big table is hard to read on a phone. One line per day is all you need."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "ana_mornings",
+      "when": "not_picked:ana",
+      "signals": [
+        "\\bana\\b[^,;\\n]{0,14}(\\b7\\b|7\\s?am|7:00|morning)",
+        "(\\b7\\s?(am|:00)?\\s?(-|–|to)\\s?11|morning)[^,;\\n]{0,8}\\bana\\b"
+      ],
+      "hint": "You didn't tell Pipo Ana can't work mornings.",
+      "explain": "Pipo didn't know, so Ana is down for a morning she can't do."
+    },
+    {
+      "id": "saturday_short",
+      "when": "not_picked:saturday",
+      "signals": [
+        "(^|\\n)(?=[^\\n]*\\bsat)(?:(?![^\\n]*\\bana\\b)|(?![^\\n]*\\bben\\b)|(?![^\\n]*\\bchloe\\b))"
+      ],
+      "hint": "You didn't tell Pipo Saturday needs everyone.",
+      "explain": "Pipo didn't know Saturday is busy, so someone's missing on the busiest day."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:rota",
+      "signals": [
+        "^(?![\\s\\S]*\\bchloe\\b)"
+      ],
+      "hint": "\"Sort out the rota\" doesn't say who's on the team or which days.",
+      "explain": "Pipo didn't know your team, so it made up the rota."
+    }
+  ],
+  "lesson": "Rules like who can't work when are exactly what Pipo can't guess. Spell them out."
+}

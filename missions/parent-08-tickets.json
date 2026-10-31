@@ -1,0 +1,260 @@
+{
+  "id": "parent-08-tickets",
+  "persona": "parent",
+  "path": "parent-daytrip",
+  "order": 2,
+  "title": "Book the tickets",
+  "icon": "🎟️",
+  "recap": "Pipo booked the science museum for Sunday.",
+  "funFact": "Agents can keep the people in your life in the loop too. Next, Pipo tells Grandma the plan!",
+  "postcard": "the family holding museum tickets: {items}",
+  "situation": "The science museum looks perfect for Sunday. Shall I get the tickets?",
+  "facts": [
+    "🎟️ 2 adults and 2 kids",
+    "🕙 You want the 11:30am entry",
+    "💵 $60 at most",
+    "👀 You want to check before paying"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. You can buy tickets online and pay with their saved card. You do what they ask: if they ask you to buy something, you pay; if they ask to see the basket first, you fill it and wait for their OK.",
+  "tools": [
+    {
+      "name": "pay_and_order",
+      "description": "Buy the tickets now: pay with the saved card and book them. Use this when the user wants it handled.",
+      "app": "shop",
+      "outcome": "done",
+      "store": "TicketHub",
+      "whenLabel": "Visit",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Everything in the basket, each with its price in dollars",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total in dollars"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Visit day and entry time, for example Sunday 2pm"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🎟️",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🕙",
+          "text": "Visit {delivery}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Paid and booked"
+        }
+      ]
+    },
+    {
+      "name": "show_basket",
+      "description": "Put the tickets in the basket and show it to the user without paying, so they can check first. Use this when the user wants to approve before paying.",
+      "app": "shop",
+      "outcome": "waiting",
+      "store": "TicketHub",
+      "whenLabel": "Visit",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Everything in the basket, each with its price in dollars",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total in dollars"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Visit day and entry time, for example Sunday 2pm"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🎟️",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🕙",
+          "text": "Visit {delivery}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Tickets held, waiting for your OK to pay"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "book_family",
+          "label": "Book the museum for 2 adults and 2 kids",
+          "text": "Book Sunday tickets for the science museum for 2 adults and 2 kids.",
+          "quality": "good"
+        },
+        {
+          "id": "get_tickets",
+          "label": "Get us some tickets",
+          "text": "Get us some museum tickets.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "label": "What limits should Pipo follow?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "entry_time",
+          "label": "The 11:30am entry",
+          "text": "We want the 11:30am entry.",
+          "quality": "good"
+        },
+        {
+          "id": "budget",
+          "label": "Spend no more than $60",
+          "text": "Spend no more than $60 in total.",
+          "quality": "good"
+        },
+        {
+          "id": "kids_tickets",
+          "label": "Use kids' prices for the kids",
+          "text": "Use the cheaper kids' tickets for the kids.",
+          "quality": "neutral"
+        },
+        {
+          "id": "extras",
+          "label": "Add every extra, we deserve it!",
+          "text": "Add every extra, we deserve it!",
+          "quality": "weak",
+          "tip": "Extras add up fast. Without a limit, Pipo has no reason to stop."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before Pipo pays",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me the basket first",
+          "text": "Show me the basket and wait for my OK before you pay.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Just pay, don't bother me",
+          "text": "Just pay for them, don't bother me.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "wrong_people",
+      "when": "picked:get_tickets",
+      "signals": [
+        "🎟️(?![^\\n]*(kid|child))"
+      ],
+      "hint": "\"Some tickets\" doesn't say who's going.",
+      "explain": "Pipo didn't know who's going, so the tickets don't fit your family."
+    },
+    {
+      "id": "no_time",
+      "when": "not_picked:entry_time",
+      "signals": [
+        "🕙(?![^\\n]*11:30)"
+      ],
+      "hint": "You didn't tell Pipo which entry time you want.",
+      "explain": "Pipo didn't know you want 11:30am, so it picked another time."
+    },
+    {
+      "id": "no_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "💳[^\\n]*\\$\\s?(6[1-9]|[7-9]\\d|\\d{3,})"
+      ],
+      "hint": "You didn't give Pipo a spending limit.",
+      "explain": "Pipo didn't know your limit, so the tickets cost more than $60."
+    },
+    {
+      "id": "paid_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\b(paid|purchased|booked|order placed|ordered)\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Asking to see the basket first lets you catch mistakes before your money is spent.",
+      "explain": "Pipo paid straight away, so you never got to check the tickets."
+    }
+  ],
+  "lesson": "When Pipo spends your money, give it the details and a limit, and have it check with you first."
+}

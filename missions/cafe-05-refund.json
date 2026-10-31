@@ -1,0 +1,228 @@
+{
+  "id": "cafe-05-refund",
+  "persona": "business",
+  "path": "business-review",
+  "order": 2,
+  "title": "Sort out a refund",
+  "icon": "💸",
+  "recap": "Pipo emailed Jordan about the refund.",
+  "funFact": "Agents can remember things for you, too. Next, Pipo sets up a follow-up so Jordan feels looked after.",
+  "postcard": "Jordan smiling at an email from Bloom Café: {subject}",
+  "situation": "Jordan replied and shared the receipt. Shall I email them about a refund?",
+  "facts": [
+    "🧾 Order #142: latte, $5.50",
+    "💸 Refund the latte only: $5.50",
+    "🎁 Free drink code: BLOOM1",
+    "👀 You want to read it before it goes"
+  ],
+  "systemPrompt": "You are Pipo, a friendly assistant for the owner of Bloom Café, a small local café. You can send emails for them. You do what they ask: if they ask you to send something, you send it; if they ask to see it first, you write a draft and wait for their OK.",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "Send the email right away. Use this when the user wants it sent.",
+      "app": "email",
+      "outcome": "done",
+      "store": "Café Mail",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the email: a person, an email address or a mailing list"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The subject line, up to 8 words"
+          },
+          "body": {
+            "type": "string",
+            "description": "The email text, up to 45 words"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Sent"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "Write the email and show it to the user without sending it, so they can check it first. Use this when the user wants to read it before it goes out.",
+      "app": "email",
+      "outcome": "waiting",
+      "store": "Café Mail",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the email: a person, an email address or a mailing list"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The subject line, up to 8 words"
+          },
+          "body": {
+            "type": "string",
+            "description": "The email text, up to 45 words"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Draft ready, waiting for your OK to send"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_jordan",
+          "label": "Email Jordan about the latte refund",
+          "text": "Email Jordan (jordan@mail.com) about a refund for the cold latte from order #142.",
+          "quality": "good"
+        },
+        {
+          "id": "email_customer",
+          "label": "Email the customer",
+          "text": "Email the customer about a refund.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "What should the email say?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "amount",
+          "label": "Refund $5.50 for the latte",
+          "text": "Say we're refunding $5.50 for the latte.",
+          "quality": "good"
+        },
+        {
+          "id": "voucher",
+          "label": "Include the free drink code BLOOM1",
+          "text": "Include a free drink code: BLOOM1.",
+          "quality": "good"
+        },
+        {
+          "id": "sorry",
+          "label": "Say sorry again",
+          "text": "Say sorry again for the cold coffee.",
+          "quality": "neutral"
+        },
+        {
+          "id": "refund_all",
+          "label": "Refund everything they ever bought!",
+          "text": "Refund everything they ever bought!",
+          "quality": "weak",
+          "tip": "Generous, but Pipo will promise money you never planned to spend. Give it the exact amount."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before Pipo sends it",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me the email first",
+          "text": "Show me the email before you send it.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Send it now",
+          "text": "Send it now.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:email_customer",
+      "signals": [
+        "📧(?![^\\n]*jordan)"
+      ],
+      "hint": "\"The customer\" doesn't say who should get it.",
+      "explain": "Pipo didn't know who to email, so it isn't addressed to Jordan."
+    },
+    {
+      "id": "no_amount",
+      "when": "not_picked:amount",
+      "signals": [
+        "^(?![\\s\\S]*\\$\\s?5\\.50)"
+      ],
+      "hint": "You didn't tell Pipo how much to refund.",
+      "explain": "Pipo didn't know the amount, so the email promises a refund without the right number."
+    },
+    {
+      "id": "no_voucher",
+      "when": "not_picked:voucher",
+      "signals": [
+        "^(?![\\s\\S]*bloom1)"
+      ],
+      "hint": "You didn't give Pipo the free drink code.",
+      "explain": "Pipo didn't have the code, so Jordan can't claim the free drink."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\b(sent|delivered)\\b(?![^\\n]*wait)"
+      ],
+      "hint": "When money is promised, checking the email first is worth the extra second.",
+      "explain": "Pipo sent it straight away, so you never checked what it promised."
+    }
+  ],
+  "lesson": "When money is involved, give Pipo the exact amount and check what it promises."
+}

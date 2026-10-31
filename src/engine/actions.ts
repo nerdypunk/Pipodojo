@@ -14,7 +14,16 @@ export function toolDefinitions(mission: Mission): ToolDefinition[] {
 export function pickAction(mission: Mission, calls: readonly ToolCall[] | undefined): PipoAction | null {
   for (const call of calls ?? []) {
     const tool = mission.tools?.find((t) => t.name === call.name);
-    if (tool) return { tool: tool.name, app: tool.app, outcome: tool.outcome, args: call.args };
+    if (tool) {
+      return {
+        tool: tool.name,
+        app: tool.app,
+        outcome: tool.outcome,
+        args: call.args,
+        ...(tool.store ? { store: tool.store } : {}),
+        ...(tool.whenLabel ? { whenLabel: tool.whenLabel } : {}),
+      };
+    }
   }
   return null;
 }
@@ -37,8 +46,12 @@ export function readable(value: unknown): string {
   if (typeof value === "string") return value.replace(/\s+/g, " ").trim();
   if (Array.isArray(value)) return value.map(readable).join(", ");
   if (typeof value === "object") {
-    const { name, price } = value as { name?: unknown; price?: unknown };
-    if (name !== undefined) return price !== undefined ? `${readable(name)} ($${readable(price)})` : readable(name);
+    const { name, price, when } = value as { name?: unknown; price?: unknown; when?: unknown };
+    if (name !== undefined) {
+      if (price !== undefined) return `${readable(name)} ($${readable(price)})`;
+      if (when !== undefined) return `${readable(name)} (${readable(when)})`;
+      return readable(name);
+    }
   }
   return String(value);
 }

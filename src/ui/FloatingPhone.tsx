@@ -139,6 +139,54 @@ export function FloatingPhone({ action, flags, status, open, onOpen, onClose, on
   );
 }
 
+/** What the phone's footer says for each app. */
+function footerCopy(action: PipoAction) {
+  const total = readable(action.args.total);
+  const when = readable(action.args.delivery);
+  switch (action.app) {
+    case "whatsapp":
+      return {
+        ask: "Pipo wrote this. Send it?",
+        button: "Send ➤",
+        working: "Pipo is sending it…",
+        approved: "✓✓ Sent! Pipo sent it after your OK.",
+        already: "✅ Already sent",
+        alreadyNote: "Pipo sent it before you could check it.",
+        tone: "bg-emerald-600 hover:bg-emerald-700",
+      };
+    case "email":
+      return {
+        ask: "Pipo wrote this email. Send it?",
+        button: "Send ✉",
+        working: "Pipo is sending it…",
+        approved: "✓ Sent! Pipo sent it after your OK.",
+        already: "✅ Already sent",
+        alreadyNote: "Pipo sent it before you could check it.",
+        tone: "bg-sky-600 hover:bg-sky-700",
+      };
+    case "calendar":
+      return {
+        ask: "Pipo lined these up. Add them?",
+        button: "Add ✓",
+        working: "Pipo is adding them…",
+        approved: "📅 Added after your OK!",
+        already: "✅ Added to the calendar",
+        alreadyNote: "Pipo put these in the calendar for you.",
+        tone: "bg-rose-500 hover:bg-rose-600",
+      };
+    default:
+      return {
+        ask: "Pipo filled the cart. Pay for it?",
+        button: `Pay $${total}`,
+        working: "Pipo is paying…",
+        approved: `🎉 Order placed after your OK!${action.args.delivery === undefined ? "" : ` ${action.whenLabel ?? "Arrives"}: ${when}`}`,
+        already: `✅ Already paid $${total}`,
+        alreadyNote: "Pipo paid before you could check the cart.",
+        tone: "bg-brand-600 hover:bg-brand-700",
+      };
+  }
+}
+
 function PhoneFooter({
   action,
   flags,
@@ -152,16 +200,13 @@ function PhoneFooter({
   onApprove: () => void;
   onLater: () => void;
 }) {
-  const chat = action.app === "whatsapp";
-  const total = readable(action.args.total);
+  const copy = footerCopy(action);
   const flagged = flags.at(-1);
 
   if (status === "review") {
     return (
       <div className="space-y-2 border-t border-gray-100 px-3 pt-2 pb-1">
-        <p className="text-center text-xs font-extrabold text-amber-800">
-          ⏳ {chat ? "Pipo wrote this. Send it?" : "Pipo filled the cart. Pay for it?"}
-        </p>
+        <p className="text-center text-xs font-extrabold text-amber-800">⏳ {copy.ask}</p>
         <div className="flex gap-2">
           <button
             type="button"
@@ -174,9 +219,9 @@ function PhoneFooter({
             type="button"
             onClick={onApprove}
             whileTap={{ scale: 0.94 }}
-            className={`flex-[1.4] rounded-xl py-2 text-sm font-black text-white shadow-sm ${chat ? "bg-emerald-600 hover:bg-emerald-700" : "bg-brand-600 hover:bg-brand-700"}`}
+            className={`flex-[1.4] rounded-xl py-2 text-sm font-black text-white shadow-sm ${copy.tone}`}
           >
-            {chat ? "Send ➤" : `Pay $${total}`}
+            {copy.button}
           </motion.button>
         </div>
       </div>
@@ -187,7 +232,7 @@ function PhoneFooter({
     return (
       <div className="flex items-center justify-center gap-2 border-t border-gray-100 px-3 py-3 text-sm font-extrabold text-brand-700" role="status">
         <span className="h-4 w-4 animate-spin rounded-full border-2 border-brand-200 border-t-brand-600 motion-reduce:animate-none" />
-        {chat ? "Pipo is sending it…" : "Pipo is paying…"}
+        {copy.working}
       </div>
     );
   }
@@ -195,23 +240,16 @@ function PhoneFooter({
   if (status === "approved") {
     return (
       <div className="pop-in border-t border-gray-100 px-3 py-2.5 text-center" role="status">
-        <p className="text-sm font-black text-emerald-700">
-          {chat ? "✓✓ Sent! Pipo sent it after your OK." : "🎉 Order placed after your OK!"}
-        </p>
-        {!chat && <p className="text-xs font-bold text-gray-600">Arrives {readable(action.args.delivery)}</p>}
+        <p className="text-sm font-black text-emerald-700">{copy.approved}</p>
       </div>
     );
   }
 
-  // Pipo went ahead at Check: nothing to approve, and that's the lesson.
+  // Pipo went ahead at Check: nothing to approve, and that's the lesson (when it's flagged).
   return (
     <div className={`border-t border-gray-100 px-3 py-2.5 text-center ${flagged ? "bg-red-50" : "bg-emerald-50"}`}>
-      <p className={`text-sm font-black ${flagged ? "text-red-800" : "text-emerald-800"}`}>
-        {chat ? "✅ Already sent" : `✅ Already paid $${total}`}
-      </p>
-      <p className={`text-xs font-bold ${flagged ? "text-red-700" : "text-emerald-700"}`}>
-        {chat ? "Pipo sent it before you could check it." : "Pipo paid before you could check the cart."}
-      </p>
+      <p className={`text-sm font-black ${flagged ? "text-red-800" : "text-emerald-800"}`}>{copy.already}</p>
+      <p className={`text-xs font-bold ${flagged ? "text-red-700" : "text-emerald-700"}`}>{copy.alreadyNote}</p>
     </div>
   );
 }

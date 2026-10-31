@@ -1,0 +1,237 @@
+{
+  "id": "parent-06-school-calendar",
+  "persona": "parent",
+  "path": "parent-school",
+  "order": 3,
+  "title": "Add school events to the calendar",
+  "icon": "📅",
+  "recap": "Pipo put the school week in the family calendar.",
+  "funFact": "Lunches, the teacher and the calendar: a whole school week handled. Agents shine at the small chores that pile up, and you stay in charge.",
+  "postcard": "a big friendly family calendar on the fridge, filled with {events}",
+  "situation": "The school newsletter is full of dates! Shall I put them in the family calendar?",
+  "facts": [
+    "🚌 Museum trip: Friday, bus leaves 8:30am",
+    "🧁 Bake sale: Thursday 3pm",
+    "👩‍🏫 Parent meeting: Tuesday 5pm",
+    "🔔 You like a reminder the night before"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. You can add events to their family calendar. You do what they ask: if they ask you to add events, you add them; if they ask to see them first, you line them up and wait for their OK.",
+  "tools": [
+    {
+      "name": "add_to_calendar",
+      "description": "Add the events to the calendar now. Use this when the user wants them added.",
+      "app": "calendar",
+      "outcome": "done",
+      "store": "Family calendar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "The events, each with a short name and when it happens (day and time)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "Day and time, for example Tuesday 5pm"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "When to remind, for example 1 hour before"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "Reminder: {reminder}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Added to the calendar"
+        }
+      ]
+    },
+    {
+      "name": "show_events",
+      "description": "Line the events up and show them to the user without adding them, so they can check first. Use this when the user wants to see them before they go in.",
+      "app": "calendar",
+      "outcome": "waiting",
+      "store": "Family calendar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "The events, each with a short name and when it happens (day and time)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "Day and time, for example Tuesday 5pm"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "When to remind, for example 1 hour before"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "Reminder: {reminder}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Lined up, waiting for your OK to add"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "add_all",
+          "label": "Add the trip, bake sale and meeting",
+          "text": "Add these school events to our family calendar: the museum trip, the bake sale and the parent meeting.",
+          "quality": "good"
+        },
+        {
+          "id": "add_stuff",
+          "label": "Put the school stuff in my calendar",
+          "text": "Put the school stuff in my calendar.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "What does Pipo need to know?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "times",
+          "label": "Trip Fri 8:30am, sale Thu 3pm, meeting Tue 5pm",
+          "text": "The museum trip is Friday and the bus leaves at 8:30am. The bake sale is Thursday at 3pm. The parent meeting is Tuesday at 5pm.",
+          "quality": "good"
+        },
+        {
+          "id": "remind",
+          "label": "Remind me the night before",
+          "text": "Remind me the night before each one.",
+          "quality": "good"
+        },
+        {
+          "id": "colours",
+          "label": "Make it colourful!",
+          "text": "Make it colourful!",
+          "quality": "weak",
+          "tip": "Colours are nice, but Pipo still needs the dates and times to get the calendar right."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before Pipo adds them",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me before you add them",
+          "text": "Show me the events before you add them.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Just add them",
+          "text": "Just add them.",
+          "quality": "weak",
+          "tip": "Adding without a look means a wrong time can sit in the calendar unnoticed."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:add_stuff",
+      "signals": [
+        "📅(?![^\\n]*(museum|trip))"
+      ],
+      "hint": "\"The school stuff\" doesn't say which events, so Pipo has to guess.",
+      "explain": "Pipo didn't know which events, so the trip is missing."
+    },
+    {
+      "id": "no_times",
+      "when": "not_picked:times",
+      "signals": [
+        "📅(?![^\\n]*8:30)"
+      ],
+      "hint": "You didn't give Pipo the dates and times.",
+      "explain": "Pipo didn't know the times, so it guessed them (the bus leaves at 8:30!)."
+    },
+    {
+      "id": "no_reminder",
+      "when": "not_picked:remind",
+      "signals": [
+        "🔔(?![^\\n]*(night|evening|day) before)"
+      ],
+      "hint": "You didn't tell Pipo when you like reminders.",
+      "explain": "Pipo didn't know you like a reminder the night before, so it picked its own."
+    },
+    {
+      "id": "added_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\badded\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Asking to see the events first lets you catch a wrong date before it's in the calendar.",
+      "explain": "Pipo added them straight away, so you never got to check them."
+    }
+  ],
+  "lesson": "Give Pipo exact dates and times. It can't read the newsletter in your head."
+}

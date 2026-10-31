@@ -1,0 +1,123 @@
+{
+  "id": "cafe-01-sale-post",
+  "persona": "business",
+  "path": "business-sale",
+  "order": 1,
+  "title": "Write the sale post",
+  "icon": "📸",
+  "recap": "Pipo wrote your weekend sale post.",
+  "funFact": "Agents can email your customers for you, too. Next, Pipo tells your regulars about the sale!",
+  "postcard": "a sign outside Bloom Café announcing the sale: {answer}",
+  "situation": "Big weekend coming! Want me to write the post for your pastry sale?",
+  "facts": [
+    "🥐 All pastries half price",
+    "📅 Saturday and Sunday, 8 to 11am",
+    "📍 Bloom Café, 4 Main St",
+    "📸 It's for your Instagram"
+  ],
+  "systemPrompt": "You are Pipo, a friendly assistant for the owner of Bloom Café, a small local café. Help with what they ask. When you write a social post, write the post itself, line by line.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "write_post",
+          "label": "Write an Instagram post for the pastry sale",
+          "text": "Write an Instagram post for our weekend pastry sale at Bloom Café.",
+          "quality": "good"
+        },
+        {
+          "id": "post_something",
+          "label": "Write a post about the café",
+          "text": "Write a post about the café.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "What does Pipo need to know?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "discount",
+          "label": "All pastries half price",
+          "text": "All pastries are half price.",
+          "quality": "good"
+        },
+        {
+          "id": "when",
+          "label": "Saturday and Sunday, 8 to 11am",
+          "text": "It's on Saturday and Sunday from 8 to 11am.",
+          "quality": "good"
+        },
+        {
+          "id": "hashtags",
+          "label": "Add two hashtags",
+          "text": "Add two hashtags at the end.",
+          "quality": "neutral"
+        },
+        {
+          "id": "best_ever",
+          "label": "Say it's the best sale in the world!",
+          "text": "Say it's the best sale in the world!",
+          "quality": "weak",
+          "tip": "Big claims don't tell people why to come. The deal and the time do."
+        }
+      ]
+    },
+    {
+      "id": "tone",
+      "label": "How should it sound?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "friendly",
+          "label": "Warm, friendly and short",
+          "text": "Keep it warm, friendly and short.",
+          "quality": "good"
+        },
+        {
+          "id": "pushy",
+          "label": "Pushy: BUY NOW!",
+          "text": "Make it pushy: BUY NOW!",
+          "quality": "weak",
+          "tip": "Pushy posts put people off. Friendly and clear works better for a local café."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_discount",
+      "when": "not_picked:discount",
+      "signals": [
+        "^(?![\\s\\S]*(half|50\\s?%|50 percent))"
+      ],
+      "hint": "You didn't tell Pipo what the deal is.",
+      "explain": "Pipo didn't know the deal, so the post doesn't say what's on sale."
+    },
+    {
+      "id": "no_time",
+      "when": "not_picked:when",
+      "signals": [
+        "^(?![\\s\\S]*\\b(8|eight)\\b)"
+      ],
+      "hint": "You didn't tell Pipo when the sale is on.",
+      "explain": "Pipo didn't know the times, so the post doesn't say when to come."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:post_something",
+      "signals": [
+        "^(?![\\s\\S]*bloom)"
+      ],
+      "hint": "\"A post about the café\" doesn't say which café or what the post is for.",
+      "explain": "Pipo didn't know it's Bloom Café's Instagram post, so the post never names the café."
+    }
+  ],
+  "lesson": "Give Pipo the facts your customers need: what, when and where."
+}

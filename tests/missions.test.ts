@@ -59,3 +59,19 @@ describe("lesson schema", () => {
     expect(() => loadMissions({ "wrong-name.json": dinnerMission() })).toThrow(/file name must match/);
   });
 });
+
+describe("paths", () => {
+  it("every lesson belongs to a known path of its persona, and playable paths have lessons 1 to 3", async () => {
+    const { PATHS } = await import("../src/game/paths.ts");
+    const all = loadMissions(readMissionFiles());
+    for (const m of all) {
+      const path = PATHS.find((p) => p.id === m.path);
+      expect(path, `${m.id} has unknown path ${m.path}`).toBeDefined();
+      expect(path!.persona).toBe(m.persona);
+    }
+    for (const path of PATHS) {
+      const orders = all.filter((m) => m.path === path.id).map((m) => m.order);
+      if (orders.length) expect(orders).toEqual([1, 2, 3]);
+    }
+  });
+});

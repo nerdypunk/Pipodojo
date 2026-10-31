@@ -1,0 +1,228 @@
+{
+  "id": "cafe-09-shift-calendar",
+  "persona": "business",
+  "path": "business-staff",
+  "order": 3,
+  "title": "Put shifts on the calendar",
+  "icon": "📆",
+  "recap": "Pipo put the shifts on the team calendar.",
+  "funFact": "Rota planned, sent and in the calendar. That's the weekly admin agents take off your plate, while you stay in charge.",
+  "postcard": "a cosy team calendar on the café wall showing {events}",
+  "situation": "Everyone confirmed! Shall I add the shifts to the team calendar?",
+  "facts": [
+    "📅 Thu: Ben 7–11am, Ana 11am–3pm",
+    "📅 Fri: Chloe 7–11am, Ana 11am–3pm",
+    "📅 Sat: all three, 7am–3pm",
+    "🔔 Remind everyone the evening before"
+  ],
+  "systemPrompt": "You are Pipo, a friendly assistant for the owner of Bloom Café, a small local café. You can add events to the shared team calendar. You do what they ask: if they ask you to add events, you add them; if they ask to see them first, you line them up and wait for their OK.",
+  "tools": [
+    {
+      "name": "add_to_calendar",
+      "description": "Add the events to the calendar now. Use this when the user wants them added.",
+      "app": "calendar",
+      "outcome": "done",
+      "store": "Café team calendar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "The events, each with a short name and when it happens (day and time)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "Day and time, for example Tuesday 5pm"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "When to remind, for example 1 hour before"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "Reminder: {reminder}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Added to the calendar"
+        }
+      ]
+    },
+    {
+      "name": "show_events",
+      "description": "Line the events up and show them to the user without adding them, so they can check first. Use this when the user wants to see them before they go in.",
+      "app": "calendar",
+      "outcome": "waiting",
+      "store": "Café team calendar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "The events, each with a short name and when it happens (day and time)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "Day and time, for example Tuesday 5pm"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "When to remind, for example 1 hour before"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "Reminder: {reminder}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Lined up, waiting for your OK to add"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "add_shifts",
+          "label": "Add this week's shifts to the team calendar",
+          "text": "Add this week's shifts to our shared team calendar, one event per shift.",
+          "quality": "good"
+        },
+        {
+          "id": "add_rota",
+          "label": "Put the rota in",
+          "text": "Put the rota in the calendar.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "What does Pipo need to know?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "times",
+          "label": "Thu Ben/Ana · Fri Chloe/Ana · Sat everyone",
+          "text": "Thursday: Ben 7 to 11am, Ana 11am to 3pm. Friday: Chloe 7 to 11am, Ana 11am to 3pm. Saturday: all three, 7am to 3pm.",
+          "quality": "good"
+        },
+        {
+          "id": "remind",
+          "label": "Remind everyone the evening before",
+          "text": "Remind everyone the evening before their shift.",
+          "quality": "good"
+        },
+        {
+          "id": "year",
+          "label": "Add shifts for the whole year!",
+          "text": "Add shifts for the whole year!",
+          "quality": "weak",
+          "tip": "A whole year of guesses is a lot to fix later. One week, done right, is better."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before Pipo adds them",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me before you add them",
+          "text": "Show me the shifts before you add them.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Just add them",
+          "text": "Just add them.",
+          "quality": "weak",
+          "tip": "Adding without a look means a wrong shift can sit in everyone's calendar."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_times",
+      "when": "not_picked:times",
+      "signals": [
+        "📅(?![^\\n]*chloe)"
+      ],
+      "hint": "You didn't give Pipo the shifts.",
+      "explain": "Pipo didn't have the shifts, so it guessed who works when."
+    },
+    {
+      "id": "no_reminder",
+      "when": "not_picked:remind",
+      "signals": [
+        "🔔(?![^\\n]*(evening|night|day) before)"
+      ],
+      "hint": "You didn't tell Pipo when to remind people.",
+      "explain": "Pipo didn't know you want a reminder the evening before, so it picked its own."
+    },
+    {
+      "id": "added_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\badded\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Asking to see the shifts first lets you catch a mistake before the whole team sees it.",
+      "explain": "Pipo added them straight away, so you never got to check them."
+    }
+  ],
+  "lesson": "Exact shifts plus a quick check means nobody turns up at the wrong time."
+}

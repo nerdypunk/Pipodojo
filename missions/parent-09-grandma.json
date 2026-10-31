@@ -1,0 +1,208 @@
+{
+  "id": "parent-09-grandma",
+  "persona": "parent",
+  "path": "parent-daytrip",
+  "order": 3,
+  "title": "Tell Grandma the plan",
+  "icon": "👵",
+  "recap": "Pipo told Grandma Rosa the plan for Sunday.",
+  "funFact": "Picking, booking and messaging: a whole day trip sorted. Agents are great at plans, and you stay in charge of the money and the messages.",
+  "postcard": "Grandma Rosa waving with an umbrella as the family car arrives: {message}",
+  "situation": "Grandma Rosa wants to come on Sunday! Shall I send her the plan?",
+  "facts": [
+    "👵 Grandma Rosa is coming too",
+    "🚗 You'll pick her up at 10:45am",
+    "🏛️ Science museum, 11:30am entry",
+    "☔ It's raining, so bring an umbrella"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. You can send WhatsApp messages for them. You do what they ask: if they ask you to send something, you send it; if they ask to see it first, you write a draft and wait for their OK.",
+  "tools": [
+    {
+      "name": "send_whatsapp_message",
+      "description": "Send a WhatsApp message right away. Use this when the user wants it sent.",
+      "app": "whatsapp",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the message: a contact, a group chat, or all contacts"
+          },
+          "message": {
+            "type": "string",
+            "description": "The message text, up to 30 words"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Sent"
+        }
+      ]
+    },
+    {
+      "name": "draft_whatsapp_message",
+      "description": "Write the WhatsApp message and show it to the user without sending it, so they can check it first. Use this when the user wants to see it before it goes out.",
+      "app": "whatsapp",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the message: a contact, a group chat, or all contacts"
+          },
+          "message": {
+            "type": "string",
+            "description": "The message text, up to 30 words"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Draft ready, waiting for your OK to send"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "message_grandma",
+          "label": "Message Grandma Rosa the plan",
+          "text": "Send Grandma Rosa a WhatsApp message with Sunday's plan.",
+          "quality": "good"
+        },
+        {
+          "id": "tell_family",
+          "label": "Tell the family about Sunday",
+          "text": "Tell the family about Sunday.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "What should the message say?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "pickup",
+          "label": "We'll pick her up at 10:45am",
+          "text": "Say we'll pick her up at 10:45am.",
+          "quality": "good"
+        },
+        {
+          "id": "where",
+          "label": "Science museum, 11:30am entry",
+          "text": "Say we're going to the science museum for the 11:30am entry.",
+          "quality": "good"
+        },
+        {
+          "id": "umbrella",
+          "label": "Bring an umbrella",
+          "text": "Remind her to bring an umbrella.",
+          "quality": "neutral"
+        },
+        {
+          "id": "caps",
+          "label": "WRITE IT IN CAPITALS SO SHE SEES IT",
+          "text": "WRITE IT IN BIG CAPITAL LETTERS SO SHE SEES IT.",
+          "quality": "weak",
+          "tip": "Capitals feel like shouting. A short message with the time is easier for Grandma to read."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before Pipo sends it",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me the message first",
+          "text": "Show me the message before you send it.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Send it right away",
+          "text": "Send it right away.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:tell_family",
+      "signals": [
+        "📨(?![^\\n]*(grandma|rosa))"
+      ],
+      "hint": "\"The family\" doesn't say who should get it.",
+      "explain": "Pipo didn't know who to message, so it went to the whole family instead of Grandma."
+    },
+    {
+      "id": "no_pickup",
+      "when": "not_picked:pickup",
+      "signals": [
+        "^(?![\\s\\S]*10:45)"
+      ],
+      "hint": "You didn't tell Pipo the pick-up time.",
+      "explain": "Pipo didn't know the pick-up time, so Grandma doesn't know when to be ready."
+    },
+    {
+      "id": "no_place",
+      "when": "not_picked:where",
+      "signals": [
+        "^(?![\\s\\S]*museum)"
+      ],
+      "hint": "You didn't tell Pipo where you're going.",
+      "explain": "Pipo didn't know where you're going, so the message doesn't say."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\b(sent|delivered)\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Asking to see the message first lets you fix it before Grandma reads it.",
+      "explain": "Pipo sent it straight away, so you never got to check it."
+    }
+  ],
+  "lesson": "A good message says who, when and where. Check it before Pipo sends it for you."
+}

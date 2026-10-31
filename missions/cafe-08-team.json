@@ -1,0 +1,208 @@
+{
+  "id": "cafe-08-team",
+  "persona": "business",
+  "path": "business-staff",
+  "order": 2,
+  "title": "Message the team",
+  "icon": "💬",
+  "recap": "Pipo sent the rota to the team chat.",
+  "funFact": "Agents can manage a shared calendar, too. Next, Pipo puts the shifts where the whole team can see them.",
+  "postcard": "phones buzzing in the Bloom Café kitchen with Pipo's message: {message}",
+  "situation": "The rota's ready! Shall I send it to the team chat?",
+  "facts": [
+    "💬 Your \"Café team\" WhatsApp group",
+    "📅 Thu: Ben am, Ana pm · Fri: Chloe am, Ana pm · Sat: all three",
+    "🙋 Ask them to confirm by Wednesday",
+    "👀 You want to check before it's sent"
+  ],
+  "systemPrompt": "You are Pipo, a friendly assistant for the owner of Bloom Café, a small local café. You can send WhatsApp messages for them. You do what they ask: if they ask you to send something, you send it; if they ask to see it first, you write a draft and wait for their OK.",
+  "tools": [
+    {
+      "name": "send_whatsapp_message",
+      "description": "Send a WhatsApp message right away. Use this when the user wants it sent.",
+      "app": "whatsapp",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the message: a contact, a group chat, or all contacts"
+          },
+          "message": {
+            "type": "string",
+            "description": "The message text, up to 30 words"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Sent"
+        }
+      ]
+    },
+    {
+      "name": "draft_whatsapp_message",
+      "description": "Write the WhatsApp message and show it to the user without sending it, so they can check it first. Use this when the user wants to see it before it goes out.",
+      "app": "whatsapp",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the message: a contact, a group chat, or all contacts"
+          },
+          "message": {
+            "type": "string",
+            "description": "The message text, up to 30 words"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Draft ready, waiting for your OK to send"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "message_team",
+          "label": "Send the rota to the Café team group",
+          "text": "Send this week's rota to our \"Café team\" WhatsApp group.",
+          "quality": "good"
+        },
+        {
+          "id": "tell_staff",
+          "label": "Tell the staff",
+          "text": "Tell the staff about the rota.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "What should the message say?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "rota",
+          "label": "Thu Ben/Ana · Fri Chloe/Ana · Sat everyone",
+          "text": "The rota is: Thursday Ben morning, Ana afternoon. Friday Chloe morning, Ana afternoon. Saturday all three.",
+          "quality": "good"
+        },
+        {
+          "id": "confirm",
+          "label": "Ask them to confirm by Wednesday",
+          "text": "Ask everyone to confirm by Wednesday.",
+          "quality": "good"
+        },
+        {
+          "id": "thanks",
+          "label": "Thank them for a great week",
+          "text": "Thank them for a great week.",
+          "quality": "neutral"
+        },
+        {
+          "id": "rota_up",
+          "label": "Just say the rota is up",
+          "text": "Just say the rota is up.",
+          "quality": "weak",
+          "tip": "\"The rota is up\" sends people hunting for it. Put the actual shifts in the message."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before Pipo sends it",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me the message first",
+          "text": "Show me the message before you send it.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Send it right away",
+          "text": "Send it right away.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:tell_staff",
+      "signals": [
+        "📨(?![^\\n]*caf[eé] team)"
+      ],
+      "hint": "\"The staff\" doesn't say where to send it.",
+      "explain": "Pipo didn't know which chat, so it didn't go to the Café team group."
+    },
+    {
+      "id": "no_rota",
+      "when": "not_picked:rota",
+      "signals": [
+        "^(?![\\s\\S]*\\b(thu|thursday)\\b)"
+      ],
+      "hint": "You didn't give Pipo the rota.",
+      "explain": "Pipo didn't have the rota, so the message doesn't say who works when."
+    },
+    {
+      "id": "no_confirm",
+      "when": "not_picked:confirm",
+      "signals": [
+        "^(?![\\s\\S]*\\b(wed|wednesday)\\b)"
+      ],
+      "hint": "You didn't ask Pipo to get confirmations.",
+      "explain": "Pipo didn't know you need answers by Wednesday, so nobody's asked to confirm."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\b(sent|delivered)\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Asking to see the message first lets you fix it before the team reads it.",
+      "explain": "Pipo sent it straight away, so you never got to check it."
+    }
+  ],
+  "lesson": "Put the real details in the message and ask for what you need back. Check before it goes."
+}

@@ -1,0 +1,124 @@
+{
+  "id": "parent-07-day-out",
+  "persona": "parent",
+  "path": "parent-daytrip",
+  "order": 1,
+  "title": "Pick a spot for Sunday",
+  "icon": "🗺️",
+  "recap": "Pipo found a rainy-day spot for Sunday.",
+  "funFact": "Agents can book things for you, but it's your money. Next, Pipo gets the tickets, and you decide when it pays.",
+  "postcard": "the family arriving for a fun rainy Sunday out: {answer}",
+  "situation": "Sunday's free! Want me to find somewhere fun for the family?",
+  "facts": [
+    "👨‍👩‍👧‍👦 2 adults and 2 kids (6 and 9)",
+    "🌧️ Rain all day on Sunday",
+    "💵 Up to $80 for all of you",
+    "🚗 No more than an hour away"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. Help with what they ask. When you suggest a place, your first line names your best pick.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "pick_spot",
+          "label": "Pick one place for a family day out",
+          "text": "Pick one place for a family day out this Sunday, for 2 adults and 2 kids aged 6 and 9.",
+          "quality": "good"
+        },
+        {
+          "id": "somewhere",
+          "label": "Find something fun to do",
+          "text": "Find something fun to do.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "What does Pipo need to know?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "rain",
+          "label": "It's raining all day",
+          "text": "It's going to rain all day.",
+          "quality": "good"
+        },
+        {
+          "id": "budget",
+          "label": "Up to $80 for all of us",
+          "text": "Keep it under $80 for all of us.",
+          "quality": "good"
+        },
+        {
+          "id": "drive",
+          "label": "No more than an hour away",
+          "text": "No more than an hour's drive from home.",
+          "quality": "neutral"
+        },
+        {
+          "id": "famous",
+          "label": "Somewhere everyone talks about!",
+          "text": "Somewhere everyone talks about!",
+          "quality": "weak",
+          "tip": "Popular isn't the same as right for you. Tell Pipo what matters: the weather, the budget, who's coming."
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "label": "How should Pipo answer?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "short",
+          "label": "The place, the cost and why",
+          "text": "Tell me the place, what it costs and one reason, in a few lines.",
+          "quality": "good"
+        },
+        {
+          "id": "options",
+          "label": "Give me lots of options",
+          "text": "Give me lots of options.",
+          "quality": "weak",
+          "tip": "Lots of options means more for you to sort through. Asking for one best pick gets you a decision."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "outdoors",
+      "when": "not_picked:rain",
+      "signals": [
+        "(?<!(indoor|inside|covered|water)[^\\n]{0,20})\\b(park|beach|hike|hiking|picnic|zoo|farm|lake|trails?|gardens?|playground|outdoors?|pumpkin patch|orchard|botanical)\\b"
+      ],
+      "hint": "You didn't tell Pipo it's going to rain.",
+      "explain": "Pipo didn't know about the rain, so it picked somewhere outdoors."
+    },
+    {
+      "id": "no_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "^(?![\\s\\S]*\\$\\s?\\d)",
+        "\\$\\s?(8[1-9]|9\\d|\\d{3,})"
+      ],
+      "hint": "You didn't tell Pipo your budget.",
+      "explain": "Pipo didn't know your budget, so the cost is missing or too high."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:somewhere",
+      "signals": [
+        "^(?![\\s\\S]*\\b(kids?|family|children)\\b)"
+      ],
+      "hint": "\"Something fun\" doesn't say who's going, so Pipo has to guess.",
+      "explain": "Pipo didn't know it's for the family, so it didn't plan for the kids."
+    }
+  ],
+  "lesson": "Tell Pipo the things that rule options out: the weather, the budget, who's coming."
+}

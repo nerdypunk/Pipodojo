@@ -1,4 +1,4 @@
-// The app screen inside Pipo's phone: a chat for messages, a store cart for shopping. Built from
+// The app screen inside Pipo's phone: a chat, a store cart, an email or a calendar. Built from
 // the tool call's arguments and sized to fill the phone. `flags` follow the tool's answer lines,
 // so the part that shows a gap in the prompt is outlined in red. Nothing here is a real app.
 import type { PipoAction } from "../engine/types.ts";
@@ -13,7 +13,10 @@ interface Props {
 const FLAG = "ring-2 ring-red-400 ring-offset-1";
 
 export function PhoneScreen({ action, flags }: Props) {
-  return action.app === "whatsapp" ? <ChatScreen action={action} flags={flags} /> : <ShopScreen action={action} flags={flags} />;
+  if (action.app === "whatsapp") return <ChatScreen action={action} flags={flags} />;
+  if (action.app === "email") return <EmailScreen action={action} flags={flags} />;
+  if (action.app === "calendar") return <CalendarScreen action={action} flags={flags} />;
+  return <ShopScreen action={action} flags={flags} />;
 }
 
 /** A group chat. A draft waits in the typing box; once sent it's a bubble in the chat. */
@@ -87,7 +90,8 @@ function ShopScreen({ action, flags }: Props) {
     <div className="flex h-full flex-col" aria-label={`Shopping cart, total $${total}${paid ? ", paid" : ", waiting for your OK to pay"}`}>
       <div className="flex items-center justify-between bg-brand-700 px-3 py-2.5 text-white">
         <p className="text-sm font-black">
-          <span aria-hidden="true">🛒 </span>FreshCart
+          <span aria-hidden="true">🛒 </span>
+          {action.store ?? "FreshCart"}
         </p>
         <p className="text-[11px] font-bold text-white/80">
           {paid ? "Order placed" : "Your cart"} · {items.length} items
@@ -117,11 +121,86 @@ function ShopScreen({ action, flags }: Props) {
         </p>
         <p className={`flex justify-between rounded-md px-1 text-[13px] font-semibold text-gray-700 ${flags[2] ? FLAG : ""}`}>
           <span>
-            <span aria-hidden="true">🚚 </span>Delivery
+            <span aria-hidden="true">🚚 </span>
+            {action.whenLabel ?? "Delivery"}
           </span>
           <span>{readable(action.args.delivery)}</span>
         </p>
       </div>
+    </div>
+  );
+}
+
+/** An email: a draft waits in the compose view until you send it; once sent it's in Sent. */
+function EmailScreen({ action, flags }: Props) {
+  const to = readable(action.args.to);
+  const subject = readable(action.args.subject);
+  const body = typeof action.args.body === "string" ? action.args.body.trim() : readable(action.args.body);
+  const sent = action.outcome === "done";
+  return (
+    <div className="flex h-full flex-col" aria-label={`Email to ${to}${sent ? ", sent" : ", draft waiting for your OK"}`}>
+      <div className="flex items-center justify-between bg-sky-600 px-3 py-2.5 text-white">
+        <p className="text-sm font-black">
+          <span aria-hidden="true">✉️ </span>
+          {action.store ?? "Mail"}
+        </p>
+        <p className="text-[11px] font-bold text-white/85">{sent ? "Sent" : "Draft"}</p>
+      </div>
+      <div className="space-y-1 border-b border-gray-100 px-3 py-2 text-[13px]">
+        <p className={`truncate rounded-md px-1 font-semibold text-gray-600 ${flags[0] ? FLAG : ""}`}>
+          To: <span className="font-black text-ink">{to}</span>
+        </p>
+        <p className={`truncate rounded-md px-1 font-black text-ink ${flags[1] ? FLAG : ""}`}>{subject}</p>
+      </div>
+      <p
+        className={`m-2 min-h-0 flex-1 overflow-y-auto rounded-xl px-2 py-1.5 text-[13px] leading-snug font-semibold whitespace-pre-line text-ink ${
+          flags[2] ? FLAG : ""
+        }`}
+      >
+        {body}
+      </p>
+      {sent && (
+        <p className="pop-in mx-3 mb-2 rounded-lg bg-emerald-50 px-2 py-1 text-center text-xs font-black text-emerald-700">✓ Delivered</p>
+      )}
+    </div>
+  );
+}
+
+/** A calendar: the events Pipo added (or is waiting to add), each with its day and time. */
+function CalendarScreen({ action, flags }: Props) {
+  const events = Array.isArray(action.args.events) ? action.args.events : [];
+  const added = action.outcome === "done";
+  const reminder = action.args.reminder;
+  return (
+    <div className="flex h-full flex-col" aria-label={`${action.store ?? "Calendar"}, ${events.length} events${added ? " added" : " waiting for your OK"}`}>
+      <div className="flex items-center justify-between bg-rose-500 px-3 py-2.5 text-white">
+        <p className="text-sm font-black">
+          <span aria-hidden="true">📅 </span>
+          {action.store ?? "Calendar"}
+        </p>
+        <p className="text-[11px] font-bold text-white/85">{added ? "Added" : "Not added yet"}</p>
+      </div>
+      <ul className={`min-h-0 flex-1 space-y-1.5 overflow-y-auto px-3 py-2 ${flags[0] ? FLAG : ""}`}>
+        {events.length === 0 && <li className="text-sm font-semibold text-gray-500">No events</li>}
+        {events.map((event, i) => {
+          const { name, when } = (event ?? {}) as { name?: unknown; when?: unknown };
+          return (
+            <li key={i} className={`flex gap-2 rounded-xl px-2 py-1.5 ${added ? "bg-rose-50" : "border-2 border-dashed border-rose-200"}`}>
+              <span className="w-1 shrink-0 rounded-full bg-rose-400" aria-hidden="true" />
+              <span className="min-w-0">
+                <span className="block truncate text-[13px] font-black text-ink">{readable(name ?? event)}</span>
+                <span className="block text-[12px] font-semibold text-gray-600">{when === undefined ? "No time set" : readable(when)}</span>
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+      {reminder !== undefined && (
+        <p className={`mx-3 mb-2 rounded-md px-1 text-[12px] font-bold text-gray-700 ${flags[1] ? FLAG : ""}`}>
+          <span aria-hidden="true">🔔 </span>
+          {readable(reminder)}
+        </p>
+      )}
     </div>
   );
 }
