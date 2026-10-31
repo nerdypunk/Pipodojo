@@ -39,7 +39,11 @@ export function TopBar({ progress, stars, onBack, lesson }: Props) {
           style={{ width: `${percent}%` }}
         />
       </div>
-      <span className="flex items-center gap-1 font-extrabold text-amber-500" aria-label={`${stars} stars`}>
+      {/* Dark pill so the gold star stands out on the light glass */}
+      <span
+        className="flex items-center gap-1 rounded-full bg-brand-900 px-3 py-1 font-extrabold text-amber-300 shadow-sm"
+        aria-label={`${stars} stars`}
+      >
         <span aria-hidden="true">★</span>
         {stars}
       </span>
