@@ -1,12 +1,12 @@
-// Shown between lessons (behind the page sweep) and after the last one: what Pipo got done,
-// your stars, what you learned, and the path so far: finished, next, locked, and the reward.
+// A box on the dark page-sweep panel, shown between lessons and after the last one: what Pipo
+// got done, your stars, what you learned, and the path so far (finished, next, locked, reward).
+// Continue sweeps the panel away into the next lesson.
 import confetti from "canvas-confetti";
 import { useEffect } from "react";
 import type { Mission, RunLog } from "../engine/types.ts";
 import { answerLines } from "../game/feedback.ts";
 import { Button } from "./Button.tsx";
 import { Pipo } from "./Pipo.tsx";
-import { ShaderBorder } from "./ShaderBorder.tsx";
 
 interface Props {
   pathName: string;
@@ -20,8 +20,8 @@ interface Props {
   onBack: () => void;
 }
 
-/** Wait for the page sweep to clear before the confetti starts. */
-const CONFETTI_DELAY_MS = 650;
+/** Let the box pop in before the confetti starts. */
+const CONFETTI_DELAY_MS = 250;
 
 export function LessonComplete({ pathName, lessons, index, log, stars, onContinue, onBack }: Props) {
   const mission = lessons[index]!;
@@ -43,45 +43,40 @@ export function LessonComplete({ pathName, lessons, index, log, stars, onContinu
   }, [won]);
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col justify-center gap-3 p-3 md:px-6 md:py-4">
-      <header className="glass flex items-center gap-3 rounded-2xl py-1.5 pr-4 pl-1.5">
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label="Back to paths"
-          className="flex h-9 w-9 items-center justify-center rounded-xl text-2xl leading-none font-black text-brand-700 transition hover:bg-white/70 focus-visible:outline-3 focus-visible:outline-brand-500"
-        >
-          <span aria-hidden="true">‹</span>
-        </button>
-        <span className="hidden text-lg font-black tracking-tight text-brand-700 sm:inline">Pipodojo</span>
-        <span className="rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-extrabold text-white">{pathName}</span>
-      </header>
+    // Sits on top of the dark page-sweep panel, which stays put until Continue sweeps it away.
+    <div className="fixed inset-0 z-[10000] flex overflow-y-auto p-3 md:p-6">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="lesson-complete-title"
+        className="pop-in m-auto grid w-full max-w-5xl gap-4 rounded-3xl bg-white/95 p-4 shadow-[0_30px_80px_-20px_rgb(0_0_0/0.6)] md:grid-cols-[5fr_6fr] md:gap-6 md:p-6"
+      >
+        <Summary mission={mission} log={log} lessonNumber={index + 1} />
 
-      <main className="grid gap-3 md:grid-cols-[5fr_6fr] md:gap-5">
-        <ShaderBorder mode="done" className="flex flex-col">
-          <Summary mission={mission} log={log} lessonNumber={index + 1} />
-        </ShaderBorder>
-
-        <ShaderBorder mode="build" roundness={0.08} className="flex flex-col">
-          <section className="glass flex flex-1 flex-col gap-4 rounded-3xl p-4 md:p-5" aria-label="Your path">
-            <div>
-              <p className="text-sm font-extrabold text-gray-600">Your path</p>
-              <h2 className="text-2xl font-black text-ink">{next ? `Up next: ${next.title}` : "Path complete!"}</h2>
-            </div>
-            <PathMap lessons={lessons} doneUpTo={index} stars={stars} />
-            <div className="mt-auto flex flex-col gap-2 sm:flex-row sm:justify-end">
-              <Button tone="plain" className="w-full sm:w-auto" onClick={onBack}>
+        <section className="flex flex-col gap-4" aria-label="Your path">
+          <div>
+            <p className="text-sm font-extrabold text-gray-600">{pathName} path</p>
+            <h2 className="text-2xl font-black text-ink">{next ? `Up next: ${next.title}` : "Path complete!"}</h2>
+          </div>
+          <PathMap lessons={lessons} doneUpTo={index} stars={stars} />
+          <div className="mt-auto flex flex-col gap-2 sm:flex-row sm:justify-end">
+            {next ? (
+              <>
+                <Button tone="plain" className="w-full sm:w-auto" onClick={onBack}>
+                  Back to paths
+                </Button>
+                <Button className="w-full sm:w-56" onClick={onContinue} autoFocus>
+                  Continue
+                </Button>
+              </>
+            ) : (
+              <Button className="w-full sm:w-56" onClick={onBack} autoFocus>
                 Back to paths
               </Button>
-              {next && (
-                <Button className="w-full sm:w-56" onClick={onContinue}>
-                  Start lesson {index + 2}
-                </Button>
-              )}
-            </div>
-          </section>
-        </ShaderBorder>
-      </main>
+            )}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
@@ -89,7 +84,7 @@ export function LessonComplete({ pathName, lessons, index, log, stars, onContinu
 function Summary({ mission, log, lessonNumber }: { mission: Mission; log: RunLog; lessonNumber: number }) {
   const won = log.score.stars;
   return (
-    <section className="glass flex flex-1 flex-col gap-3 rounded-3xl p-3 md:p-4" aria-label="Lesson complete">
+    <section className="flex flex-col gap-3" aria-label="Lesson complete">
       {/* Celebration: Pipo and the stars you earned */}
       <div className="relative flex flex-col items-center gap-1 rounded-2xl bg-[radial-gradient(circle_at_50%_40%,#5a46e0_0%,#2d2470_55%,#1b1640_100%)] px-4 py-4 text-white">
         <Pipo mood={won === 1 ? "oops" : "happy"} className="h-20 w-20 drop-shadow-[0_8px_18px_rgba(0,0,0,0.35)] md:h-24 md:w-24" />
@@ -105,10 +100,12 @@ function Summary({ mission, log, lessonNumber }: { mission: Mission; log: RunLog
             </span>
           ))}
         </p>
-        <p className="text-xl font-black">Lesson {lessonNumber} complete!</p>
+        <p id="lesson-complete-title" className="text-xl font-black">
+          Lesson {lessonNumber} complete!
+        </p>
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 rounded-2xl bg-white/90 p-4 shadow-sm">
+      <div className="flex flex-1 flex-col gap-3 rounded-2xl bg-brand-50/70 p-4">
         <div className="flex items-center gap-2">
           <span className="text-2xl" aria-hidden="true">
             {mission.icon ?? "✅"}
@@ -124,7 +121,7 @@ function Summary({ mission, log, lessonNumber }: { mission: Mission; log: RunLog
               <li
                 key={i}
                 className={`flex items-center gap-2.5 rounded-xl px-3 py-1.5 text-[15px] leading-snug font-bold ${
-                  line.flagged ? "bg-red-50 text-red-900 ring-2 ring-red-300" : "bg-brand-50"
+                  line.flagged ? "bg-red-50 text-red-900 ring-2 ring-red-300" : "bg-white"
                 }`}
               >
                 <span className="text-lg" aria-hidden="true">
