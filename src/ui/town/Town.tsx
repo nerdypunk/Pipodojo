@@ -12,6 +12,9 @@ import type { PlaceId } from "../../game/townLayout.ts";
 import { Pipo } from "../Pipo.tsx";
 import type { PlaceTag } from "./TownCanvas.tsx";
 
+const REPO_URL = "https://github.com/nerdypunk/Pipodojo";
+const SITE_URL = "https://nerdypunk.dev";
+
 const loadCanvas = () => import("./TownCanvas.tsx");
 const TownCanvas = lazy(loadCanvas);
 
@@ -140,7 +143,7 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
 
       {/* Bottom: the same places as buttons, and who powers Pipo. On tall phone screens the island
           sits mid-screen, so lift these up to tuck under it instead of hugging the bottom edge. */}
-      <nav className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 p-3 max-sm:bottom-[11dvh] md:p-6" aria-label="Places in town">
+      <nav className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 p-3 max-sm:bottom-[8dvh] md:p-6" aria-label="Places in town">
         <div className="glass grid w-full max-w-sm grid-cols-2 gap-1 rounded-2xl p-1.5 sm:flex sm:w-auto sm:max-w-none sm:gap-1.5">
           {PERSONAS.map((persona) => (
             <button
@@ -163,9 +166,24 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
             </button>
           ))}
         </div>
-        <p className="inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1 text-xs font-extrabold text-brand-800 ring-1 ring-white">
-          <span aria-hidden="true">⚡</span> Pipo is powered by Meta's Muse Spark
-        </p>
+        <div className="flex flex-col items-center gap-1 rounded-2xl bg-white/70 px-3 py-1.5 text-center text-xs font-extrabold text-brand-800 ring-1 ring-white sm:flex-row sm:gap-2 sm:rounded-full sm:py-1">
+          <p className="inline-flex items-center gap-1.5">
+            <span aria-hidden="true">⚡</span> Pipo is powered by Meta's Muse Spark
+          </p>
+          <span className="hidden text-brand-300 sm:inline" aria-hidden="true">
+            ·
+          </span>
+          <p className="font-bold text-gray-600">
+            An{" "}
+            <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="font-extrabold text-brand-700 underline underline-offset-2 hover:text-brand-900">
+              open source project
+            </a>{" "}
+            by{" "}
+            <a href={SITE_URL} target="_blank" rel="noopener noreferrer" className="font-extrabold text-brand-700 underline underline-offset-2 hover:text-brand-900">
+              nerdypunk.dev
+            </a>
+          </p>
+        </div>
       </nav>
     </div>
   );
