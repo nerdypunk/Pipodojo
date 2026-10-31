@@ -10,32 +10,60 @@ interface Props {
   stage: StageMode;
   /** Stars once Pipo has answered, for the status island. */
   stars: number | null;
-  /** Pipo's answer once it's in; until then Pipo shows the lesson's request. */
+  /** Pipo's answer once it's in; until then the mission panel shows Pipo's request. */
   answer: AnswerLine[] | null;
 }
 
 const LINE_DELAY_MS = 150;
 
-/** Left card: Pipo on stage, what Pipo says, and what you know. */
+/** Left card, split in half: Pipo on stage on top, the mission you're on below. */
 export function PipoScene({ mission, mood, stage, stars, answer }: Props) {
   return (
-    <section className="glass flex flex-1 flex-col gap-3 rounded-3xl p-3 md:p-4" aria-label="The situation">
-      <PipoStage title={mission.title} mode={stage} mood={mood} stars={stars} />
+    <section className="glass flex flex-1 flex-col gap-3 rounded-3xl p-3 md:p-4" aria-label="Your mission">
+      <PipoStage mode={stage} mood={mood} stars={stars} />
+      <MissionPanel mission={mission} answer={answer} />
+    </section>
+  );
+}
 
-      {answer ? <AnswerCard lines={answer} /> : <SpeechBubble>{mission.situation}</SpeechBubble>}
+function MissionPanel({ mission, answer }: { mission: Mission; answer: AnswerLine[] | null }) {
+  return (
+    <div className="relative flex flex-1 basis-0 flex-col gap-3 rounded-2xl bg-white/90 p-4 shadow-sm">
+      {/* Tail pointing up at Pipo: this is Pipo talking to you */}
+      <span className="absolute -top-1.5 left-1/2 h-3.5 w-3.5 -translate-x-1/2 rotate-45 bg-white/90" aria-hidden="true" />
+
+      <div className="relative">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-extrabold tracking-wide text-white">
+          <span aria-hidden="true">🎯</span> Your mission
+        </span>
+        <h1 className="mt-1 text-2xl leading-tight font-black text-ink md:text-[28px]">{mission.title}</h1>
+      </div>
+
+      {answer ? (
+        <div>
+          <p className="mb-1.5 text-sm font-extrabold text-gray-600">Pipo's answer</p>
+          <AnswerCard lines={answer} />
+        </div>
+      ) : (
+        <p className="text-lg leading-snug font-semibold text-ink md:text-xl">{mission.situation}</p>
+      )}
 
       {mission.facts.length > 0 && (
-        <div className="px-1">
-          <p className="mb-1.5 text-sm font-extrabold text-ink md:mb-2 md:text-base">What you know</p>
-          <ul className="flex flex-wrap gap-1.5">
+        <div className="mt-auto border-t border-brand-100 pt-3">
+          <p className="mb-1.5 text-sm font-extrabold text-gray-600">What you know</p>
+          <ul className="flex flex-wrap gap-2">
             {mission.facts.map((fact) => {
               const { emoji, text } = splitEmoji(fact);
               return (
                 <li
                   key={fact}
-                  className="flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1 text-sm font-bold text-brand-900 md:px-3.5 md:py-1.5 md:text-base"
+                  className="flex items-center gap-2 rounded-xl bg-brand-50 px-3 py-1.5 text-[15px] font-bold text-brand-900 ring-1 ring-brand-200 md:px-3.5 md:py-2 md:text-base"
                 >
-                  {emoji && <span aria-hidden="true">{emoji}</span>}
+                  {emoji && (
+                    <span className="text-lg" aria-hidden="true">
+                      {emoji}
+                    </span>
+                  )}
                   {text}
                 </li>
               );
@@ -43,16 +71,6 @@ export function PipoScene({ mission, mood, stage, stars, answer }: Props) {
           </ul>
         </div>
       )}
-    </section>
-  );
-}
-
-function SpeechBubble({ children }: { children: string }) {
-  return (
-    <div className="relative mt-1 rounded-2xl bg-white px-4 py-2.5 text-base leading-snug font-semibold shadow-sm md:py-3 md:text-xl">
-      {/* Tail pointing up at Pipo */}
-      <span className="absolute -top-1.5 left-1/2 h-3.5 w-3.5 -translate-x-1/2 rotate-45 bg-white" aria-hidden="true" />
-      <span className="relative">{children}</span>
     </div>
   );
 }
@@ -63,8 +81,8 @@ function AnswerCard({ lines }: { lines: AnswerLine[] }) {
       {lines.map((line, i) => (
         <li
           key={i}
-          className={`pop-in flex items-center gap-2.5 rounded-xl px-3 py-1.5 text-[15px] leading-snug font-bold shadow-sm md:py-2 md:text-base ${
-            line.flagged ? "bg-red-50 text-red-900 ring-2 ring-red-300" : "bg-white"
+          className={`pop-in flex items-center gap-2.5 rounded-xl px-3 py-1.5 text-[15px] leading-snug font-bold md:py-2 md:text-base ${
+            line.flagged ? "bg-red-50 text-red-900 ring-2 ring-red-300" : "bg-brand-50"
           }`}
           style={{ animationDelay: `${i * LINE_DELAY_MS}ms` }}
         >
