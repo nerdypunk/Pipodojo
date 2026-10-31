@@ -188,6 +188,7 @@ export function App() {
           streak={streakDays}
           onContinue={() => leaveBox({ kind: "lesson", persona: finished.persona, path: finished.path, index: finished.index + 1 })}
           onBack={() => leaveBox({ kind: "paths", persona: finished.persona })}
+          onTown={() => leaveBox({ kind: "town" })}
         />
       )}
     </PipoLookContext.Provider>

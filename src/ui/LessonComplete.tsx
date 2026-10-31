@@ -26,12 +26,14 @@ interface Props {
   streak: number;
   onContinue: () => void;
   onBack: () => void;
+  /** After the last lesson: straight back to town. */
+  onTown: () => void;
 }
 
 /** Let the box pop in before the confetti starts. */
 const CONFETTI_DELAY_MS = 250;
 
-export function LessonComplete({ pathName, lessons, index, log, stars, postcard, brag, streak, onContinue, onBack }: Props) {
+export function LessonComplete({ pathName, lessons, index, log, stars, postcard, brag, streak, onContinue, onBack, onTown }: Props) {
   const mission = lessons[index]!;
   const next = lessons[index + 1];
   const won = log.score.stars;
@@ -161,16 +163,26 @@ export function LessonComplete({ pathName, lessons, index, log, stars, postcard,
           </section>
 
           {/* 5. Move on */}
-          <div className="flex gap-2">
-            <Button tone="plain" className="flex-1 sm:flex-none" onClick={onBack}>
-              Back to paths
-            </Button>
-            {next && (
+          {next ? (
+            <div className="flex gap-2">
+              <Button tone="plain" className="flex-1 sm:flex-none" onClick={onBack}>
+                Back to paths
+              </Button>
               <Button className="flex-1" onClick={onContinue} autoFocus>
                 Continue
               </Button>
-            )}
-          </div>
+            </div>
+          ) : (
+            // The path is done: heading home to town is the main way on.
+            <div className="flex flex-col-reverse gap-2 sm:flex-row">
+              <Button tone="plain" className="sm:flex-none" onClick={onBack}>
+                Other paths
+              </Button>
+              <Button className="flex-1" onClick={onTown}>
+                <span aria-hidden="true">🏘️ </span>Back to town
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -58,15 +58,19 @@ export function PathPicker({ persona, stars, onStart, onBack }: Props) {
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col justify-center gap-5 p-3 md:p-6">
       <header className="relative flex flex-col items-center gap-1.5 text-center">
+        {/* A chunky, easy-to-spot way home: in the flow on phones, pinned top-left on bigger screens */}
         <button
           type="button"
           onClick={onBack}
-          className="glass absolute top-0 left-0 flex items-center gap-1 rounded-full py-1.5 pr-4 pl-3 text-sm font-extrabold text-brand-700 transition hover:bg-white/80"
+          className="mb-1 flex items-center gap-2 self-start rounded-2xl border-b-4 border-brand-800 bg-brand-600 py-2.5 pr-5 pl-3.5 text-base font-black text-white shadow-[0_10px_24px_-8px_rgb(45_36_112/0.6)] transition hover:bg-brand-700 active:translate-y-0.5 active:border-b-2 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand-500 motion-reduce:transition-none md:absolute md:top-0 md:left-0 md:mb-0"
         >
-          <span aria-hidden="true" className="text-lg leading-none">
+          <span aria-hidden="true" className="text-xl leading-none">
             ‹
           </span>
-          Town
+          <span aria-hidden="true" className="text-xl leading-none">
+            🏘️
+          </span>
+          Back to town
         </button>
         <Pipo mood="happy" className="h-16 w-16 drop-shadow-[0_6px_16px_rgba(45,36,112,0.35)]" />
         <p className="text-sm font-black tracking-wide text-brand-700 uppercase">
