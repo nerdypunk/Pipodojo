@@ -13,9 +13,12 @@ export function readMissionFiles(): Record<string, unknown> {
   return files;
 }
 
-export function refundMission(): Mission {
-  return parseMission(readMissionFiles()["biz-01-refund.json"], "biz-01-refund.json");
+export function dinnerMission(): Mission {
+  return parseMission(readMissionFiles()["parent-01-dinner.json"], "parent-01-dinner.json");
 }
+
+/** The best prompt for the dinner lesson. */
+export const BEST_DINNER = ["plan_dinner", "vegetarian", "budget", "short_list"];
 
 /** A fake model that replies from a script and remembers every request. */
 export function scriptedClient(replies: (ModelReply | Error)[]) {
@@ -32,12 +35,6 @@ export function scriptedClient(replies: (ModelReply | Error)[]) {
   };
   return { client, requests };
 }
-
-export const call = (id: string, name: string, args: unknown = {}) => ({
-  id,
-  name,
-  arguments: typeof args === "string" ? args : JSON.stringify(args),
-});
 
 /** A clock that advances 100 ms every time it is read. */
 export function fakeClock() {

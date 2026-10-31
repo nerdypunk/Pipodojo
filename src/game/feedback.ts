@@ -1,50 +1,30 @@
 // Player-facing result copy. Friendly, plain, never blames the player.
-import type { Mission, RunLog, Score } from "../engine/types.ts";
+import type { Mission, Score } from "../engine/types.ts";
 
 export function resultHeadline(stars: Score["stars"]): string {
-  return ["Oops, that one got through.", "Safe call!", "Nice work!", "Perfect run!"][stars]!;
+  return { 1: "Pipo missed something", 2: "Nice! Pipo did well", 3: "Perfect prompt!" }[stars];
 }
 
-function labels(mission: Mission, ids: readonly string[]): string {
-  const names = ids.map((id) => mission.tools.find((t) => t.id === id)?.label ?? id);
-  return names.length <= 1 ? (names[0] ?? "") : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
-}
-
-/** Short lines for the "What just happened" card, most important first. */
-export function resultNotes(mission: Mission, log: RunLog): string[] {
-  const { score, gateDecision: decision } = log;
-  const flaws = mission.gate.flaws.filter((f) => score.activeFlaws.includes(f.id));
+/** Short lines for the result card, most important first. */
+export function resultNotes(mission: Mission, score: Score): string[] {
   const notes: string[] = [];
-
-  if (decision.type === "fix") {
-    const fix = mission.gate.fixes.find((f) => f.id === decision.fixId);
-    if (fix) notes.push(fix.result);
-  } else if (flaws.length && decision.type === "stop") {
-    notes.push("Good catch. You stopped it before it went out.");
-  } else if (flaws.length) {
-    notes.push("It went out with a problem.");
-  } else if (decision.type === "approve") {
-    notes.push("The draft was fine, so approving was the right call.");
+  for (const flaw of mission.flaws) {
+    if (score.visibleFlaws.includes(flaw.id)) notes.push(flaw.explain);
+    else if (score.missedFlaws.includes(flaw.id)) notes.push(flaw.hint);
   }
-  if (!flaws.length && decision.type !== "approve") {
-    notes.push("This draft was actually fine, so approving would have been OK too.");
+  for (const piece of mission.slots.flatMap((s) => s.pieces)) {
+    if (score.weakPicks.includes(piece.id) && piece.tip) notes.push(piece.tip);
   }
-
-  for (const flaw of flaws) notes.push(flaw.explain);
-
-  if (score.missingRequired.length) {
-    notes.push(`Pipo didn't have ${labels(mission, score.missingRequired)}. Try equipping it next time.`);
-  }
-  const options = mission.brief.flatMap((s) => s.options);
-  for (const id of score.poorPicks) {
-    const option = options.find((o) => o.id === id);
-    if (option) notes.push(option.tip ?? `"${option.label}" made your prompt weaker.`);
-  }
-  if (!score.checks.goodBrief && !score.poorPicks.length) {
-    notes.push("A clearer goal in your prompt helps Pipo focus.");
-  }
-  if (score.trapsEquipped.length) {
-    notes.push(`${labels(mission, score.trapsEquipped)} gave Pipo more power than this job needed.`);
-  }
+  if (score.stars === 3) notes.push("Your prompt had everything Pipo needed.");
   return notes;
+}
+
+/** Light cleanup so a model's markdown reads as plain text on the card. */
+export function plainAnswer(answer: string): string {
+  return answer
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/__(.+?)__/g, "$1")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/^\s*[*-]\s+/gm, "• ")
+    .trim();
 }

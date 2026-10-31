@@ -1,5 +1,5 @@
 // HTTP model client for an OpenAI-style Chat Completions endpoint (our /api/chat proxy).
-import type { ModelClient, ModelReply, ToolCall } from "./types.ts";
+import type { ModelClient, ModelReply } from "./types.ts";
 
 export type FetchLike = (url: string, init: RequestInit) => Promise<Response>;
 
@@ -45,22 +45,10 @@ export function createHttpModelClient({ url, fetch, timeoutMs }: HttpModelClient
 /** Normalizes a Chat Completions response. Throws ModelCallError if the shape is wrong. */
 export function parseReply(json: unknown): ModelReply {
   const message = (json as { choices?: { message?: unknown }[] } | null)?.choices?.[0]?.message as
-    | { content?: unknown; tool_calls?: unknown }
+    | { content?: unknown }
     | undefined;
   if (!message || typeof message !== "object") throw new ModelCallError("Model reply had no message");
 
   const content = typeof message.content === "string" && message.content.trim() ? message.content : null;
-  const rawCalls = Array.isArray(message.tool_calls) ? message.tool_calls : [];
-  const toolCalls: ToolCall[] = rawCalls.flatMap((c: unknown, i) => {
-    const call = c as { id?: unknown; function?: { name?: unknown; arguments?: unknown } };
-    if (typeof call?.function?.name !== "string") return [];
-    return [
-      {
-        id: typeof call.id === "string" ? call.id : `call_${i}`,
-        name: call.function.name,
-        arguments: typeof call.function.arguments === "string" ? call.function.arguments : "",
-      },
-    ];
-  });
-  return { content, toolCalls };
+  return { content };
 }

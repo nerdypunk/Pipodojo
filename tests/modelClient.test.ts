@@ -1,30 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { createHttpModelClient, ModelCallError, parseReply } from "../src/engine/modelClient.ts";
 
-const request = { messages: [{ role: "user" as const, content: "hi" }], tools: [] };
+const request = { messages: [{ role: "user" as const, content: "hi" }] };
 
 describe("parseReply", () => {
-  it("normalizes tool calls from the Meta API shape", () => {
+  it("reads the answer from the Meta API shape", () => {
     const reply = parseReply({
-      choices: [
-        {
-          finish_reason: "tool_calls",
-          message: {
-            content: "I'll look up order #1042 for you.",
-            tool_calls: [{ id: "call_1", type: "function", function: { name: "orders_lookup", arguments: '{"order_number":"1042"}' } }],
-          },
-        },
-      ],
+      choices: [{ finish_reason: "stop", message: { role: "assistant", content: "Mushroom pasta!", refusal: null } }],
     });
-    expect(reply).toEqual({
-      content: "I'll look up order #1042 for you.",
-      toolCalls: [{ id: "call_1", name: "orders_lookup", arguments: '{"order_number":"1042"}' }],
-    });
+    expect(reply).toEqual({ content: "Mushroom pasta!" });
   });
 
-  it("treats empty content as null and skips nameless calls", () => {
-    const reply = parseReply({ choices: [{ message: { content: "  ", tool_calls: [{ id: "x" }] } }] });
-    expect(reply).toEqual({ content: null, toolCalls: [] });
+  it("treats empty content as null", () => {
+    expect(parseReply({ choices: [{ message: { content: "  " } }] })).toEqual({ content: null });
+    expect(parseReply({ choices: [{ message: { content: null } }] })).toEqual({ content: null });
   });
 
   it("throws on a reply with no message", () => {
@@ -64,7 +53,7 @@ describe("createHttpModelClient", () => {
         return Response.json({ choices: [{ message: { content: "done" } }] });
       },
     });
-    expect(await client.complete(request)).toEqual({ content: "done", toolCalls: [] });
+    expect(await client.complete(request)).toEqual({ content: "done" });
     expect(sent).toEqual(request);
   });
 });

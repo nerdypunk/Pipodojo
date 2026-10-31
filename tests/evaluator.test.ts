@@ -1,112 +1,80 @@
 import { describe, expect, it } from "vitest";
-import { activeFlaws, conditionHolds, evaluate, signalsMatch } from "../src/engine/evaluator.ts";
-import type { Draft, Setup } from "../src/engine/types.ts";
-import { refundMission } from "./helpers.ts";
+import { conditionHolds, evaluate, signalsMatch, visibleFlaws } from "../src/engine/evaluator.ts";
+import { BEST_DINNER, dinnerMission } from "./helpers.ts";
 
-const mission = refundMission();
-const ALL_REQUIRED = ["orders_lookup", "store_policy", "email_draft"];
-const GOOD_PICKS = ["specific", "follow_policy", "no_promises", "warm"];
-const best: Setup = { equipped: ALL_REQUIRED, picks: GOOD_PICKS };
-const noPolicy: Setup = { equipped: ["orders_lookup", "email_draft"], picks: GOOD_PICKS };
-const vague: Setup = { equipped: ALL_REQUIRED, picks: ["vague", "warm"] };
-const pleaser: Setup = { equipped: ALL_REQUIRED, picks: [...GOOD_PICKS, "please_customer"] };
-const withTrap: Setup = { equipped: [...ALL_REQUIRED, "issue_refund"], picks: GOOD_PICKS };
+const mission = dinnerMission();
+const noVeg = BEST_DINNER.filter((p) => p !== "vegetarian");
+const noBudget = BEST_DINNER.filter((p) => p !== "budget");
 
-const draft = (body: string): Draft => ({ source: "send_email", fields: { body }, text: body });
-const promise = draft("Good news! We will refund your $80 right away.");
-const decline = draft("Your order is past our 30-day window, but we can offer store credit.");
+const meatyPlan = "Menu: roast chicken with potatoes and salad. Shopping list: chicken, potatoes, lettuce. Total about $45.";
+const veggiePlan = "Menu: mushroom pasta, garlic bread, salad. Everything is vegetarian. Total about $48.";
+const noPricePlan = "Menu: mushroom risotto, salad, tiramisu. Shopping list: rice, mushrooms, lettuce.";
 
-describe("flaw conditions", () => {
-  it("tool_missing holds only when the tool is off", () => {
-    expect(conditionHolds("tool_missing:store_policy", noPolicy)).toBe(true);
-    expect(conditionHolds("tool_missing:store_policy", best)).toBe(false);
-  });
-
-  it("picked and not_picked follow the brief", () => {
-    expect(conditionHolds("picked:vague", vague)).toBe(true);
-    expect(conditionHolds("picked:vague", best)).toBe(false);
-    expect(conditionHolds("not_picked:follow_policy", vague)).toBe(true);
-    expect(conditionHolds("not_picked:follow_policy", best)).toBe(false);
+describe("conditions and signals", () => {
+  it("picked and not_picked follow the player's pieces", () => {
+    expect(conditionHolds("not_picked:vegetarian", noVeg)).toBe(true);
+    expect(conditionHolds("not_picked:vegetarian", BEST_DINNER)).toBe(false);
+    expect(conditionHolds("picked:help_dinner", ["help_dinner"])).toBe(true);
   });
 
   it("signals are case-insensitive, and no signals always match", () => {
-    expect(signalsMatch(["money back"], "You'll get your MONEY BACK")).toBe(true);
-    expect(signalsMatch(["money back"], "store credit")).toBe(false);
+    expect(signalsMatch(["steak"], "STEAK night")).toBe(true);
+    expect(signalsMatch(["steak"], "pasta")).toBe(false);
     expect(signalsMatch(undefined, "")).toBe(true);
   });
 });
 
-describe("activeFlaws", () => {
-  it("activates when the setup is weak and the draft shows the mistake", () => {
-    expect(activeFlaws(mission, noPolicy, promise).map((f) => f.id)).toEqual(["promises_refund"]);
+describe("visibleFlaws", () => {
+  it("shows when the missing fact changed Pipo's answer", () => {
+    expect(visibleFlaws(mission, noVeg, meatyPlan).map((f) => f.id)).toEqual(["no_vegetarian"]);
   });
 
-  it("stays quiet when the setup is weak but the draft is safe", () => {
-    expect(activeFlaws(mission, noPolicy, draft("Thanks, we'll look into it."))).toEqual([]);
+  it("stays hidden when Pipo happened to get it right anyway", () => {
+    expect(visibleFlaws(mission, noVeg, veggiePlan)).toEqual([]);
   });
 
-  it("stays quiet in a good setup even if the draft mentions a refund", () => {
-    expect(activeFlaws(mission, best, promise)).toEqual([]);
-  });
-
-  it("a vague-goal draft that skips the order details is generic", () => {
-    expect(activeFlaws(mission, vague, decline).map((f) => f.id)).toEqual(["generic_reply"]);
+  it("never applies when the fact was in the prompt", () => {
+    expect(visibleFlaws(mission, BEST_DINNER, meatyPlan)).toEqual([]);
   });
 });
 
 describe("evaluate", () => {
-  it("best setup, clean draft, approve: 3 stars", () => {
-    const score = evaluate(mission, best, decline, { type: "approve" });
-    expect(score.stars).toBe(3);
-    expect(score.activeFlaws).toEqual([]);
+  it("a clean prompt is 3 stars", () => {
+    expect(evaluate(mission, BEST_DINNER, veggiePlan)).toEqual({
+      stars: 3,
+      weakPicks: [],
+      missedFlaws: [],
+      visibleFlaws: [],
+    });
   });
 
-  it("approving a flawed draft: 0 stars, unsafe", () => {
-    const score = evaluate(mission, noPolicy, promise, { type: "approve" });
-    expect(score.stars).toBe(0);
-    expect(score.checks.safeOutcome).toBe(false);
-  });
-
-  it("an incorrect fix (send as is) on a flawed draft is unsafe too", () => {
-    const score = evaluate(mission, noPolicy, promise, { type: "fix", fixId: "send_anyway" });
-    expect(score.checks.safeOutcome).toBe(false);
-  });
-
-  it("catching the flaw in a weak setup: safe, but capped at 1 star", () => {
-    const stop = evaluate(mission, noPolicy, promise, { type: "stop" });
-    expect(stop.stars).toBe(1);
-    expect(stop.checks.correctDecision).toBe(true);
-    expect(stop.missingRequired).toEqual(["store_policy"]);
-
-    const fix = evaluate(mission, noPolicy, promise, { type: "fix", fixId: "check_policy" });
-    expect(fix.stars).toBe(1);
-  });
-
-  it("vague goal caps at 1 star even when caught", () => {
-    expect(evaluate(mission, vague, decline, { type: "stop" }).stars).toBe(1);
-  });
-
-  it("stopping a clean draft is safe but not the best call: 2 stars", () => {
-    const score = evaluate(mission, best, decline, { type: "stop" });
-    expect(score.stars).toBe(2);
-    expect(score.checks.correctDecision).toBe(false);
-  });
-
-  it("a poor rule makes Pipo bend the policy even with every tool: caught is 1 star", () => {
-    expect(activeFlaws(mission, pleaser, promise).map((f) => f.id)).toEqual(["people_pleaser"]);
-    const score = evaluate(mission, pleaser, promise, { type: "stop" });
+  it("a gap that shows up in the answer is 1 star", () => {
+    const score = evaluate(mission, noVeg, meatyPlan);
     expect(score.stars).toBe(1);
-    expect(score.poorPicks).toEqual(["please_customer"]);
-    expect(score.checks.goodBrief).toBe(false);
+    expect(score.visibleFlaws).toEqual(["no_vegetarian"]);
   });
 
-  it("a trap tool costs the third star", () => {
-    const score = evaluate(mission, withTrap, decline, { type: "approve" });
+  it("a gap that didn't show up is 2 stars", () => {
+    const score = evaluate(mission, noVeg, veggiePlan);
     expect(score.stars).toBe(2);
-    expect(score.trapsEquipped).toEqual(["issue_refund"]);
+    expect(score.missedFlaws).toEqual(["no_vegetarian"]);
+    expect(score.visibleFlaws).toEqual([]);
   });
 
-  it("no draft at all scores like a clean draft for signal-based flaws", () => {
-    expect(evaluate(mission, noPolicy, null, { type: "approve" }).activeFlaws).toEqual([]);
+  it("a weak piece costs the third star", () => {
+    expect(evaluate(mission, [...BEST_DINNER, "amazing"], veggiePlan).stars).toBe(2);
+  });
+
+  it("a missing budget shows up when the plan has no prices", () => {
+    expect(evaluate(mission, noBudget, noPricePlan).visibleFlaws).toEqual(["no_budget"]);
+    expect(evaluate(mission, noBudget, veggiePlan).visibleFlaws).toEqual([]);
+  });
+
+  it("a vague goal shows up when Pipo plans for the wrong number of people", () => {
+    const vague = ["help_dinner", "vegetarian", "budget", "short_list"];
+    expect(evaluate(mission, vague, "A vegetarian dinner for you and Sam. Serves 4. About $45.").visibleFlaws).toEqual([
+      "vague_goal",
+    ]);
+    expect(evaluate(mission, vague, veggiePlan).visibleFlaws).toEqual([]);
   });
 });

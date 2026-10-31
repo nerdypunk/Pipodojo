@@ -1,6 +1,6 @@
 # Pipodojo
 
-**Learn to use AI agents, one tap at a time.** Pipodojo is a Duolingo-style game where people with no technical background learn to use an AI agent: give Pipo, a little robot agent, the right tools, build a clear prompt by tapping options (no typing), and catch it when it goes wrong.
+**Learn to use AI agents, one tap at a time.** Pipodojo is a Duolingo-style game where people with no technical background learn to prompt a personal AI agent. Pipo, a little robot assistant powered by Meta's Muse Spark, gets a real-life request. You build the prompt by tapping ready-made pieces (no typing), then see what Pipo does with it. Leave out something that matters and you'll see it in Pipo's answer.
 
 Built solo for the Meta Global AI Developer Hackathon (Indie Developer track), Oct 27 to Nov 4, 2026.
 
@@ -24,11 +24,11 @@ Other commands:
 
 - `npm test` runs the tests.
 - `npm run build` builds the site into `dist`.
-- `npm run check:mission -- biz-01-refund --runs 5` plays a mission's key setups against the live API and reports how often each flaw shows up.
+- `npm run check:mission -- parent-01-dinner --runs 5` plays a lesson's key prompts against the live API and reports how often each gap shows up in Pipo's answer.
 
 ## How it works
 
-- `missions/*.json`: one file per mission, validated with Zod. Adding a mission needs no code changes.
-- `src/engine`: pure TypeScript game engine (agent loop, simulated tools, rule-based scoring). No React.
+- `missions/*.json`: one file per lesson (the situation, the prompt pieces, and what goes wrong when a piece is missing), validated with Zod. Adding a lesson needs no code changes.
+- `src/engine`: pure TypeScript game engine (prompt building, asking Pipo, rule-based stars). No React. A model never scores the player.
 - `src/ui`: the screens.
 - `functions/api/chat.js`: the only server code. It holds the API key, picks the model, and caps cost.

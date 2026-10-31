@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+/* Always the bright, light game look, whatever the device's dark mode. */
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-white text-gray-900 antialiased;
+}

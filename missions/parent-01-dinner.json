@@ -1,0 +1,82 @@
+{
+  "id": "parent-01-dinner",
+  "persona": "parent",
+  "order": 1,
+  "title": "Dinner with friends",
+  "situation": "Friends are coming over Saturday. Tell me what you need!",
+  "facts": ["6 people are coming", "Sam is vegetarian", "Your budget is $60"],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. Help with what they ask.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        { "id": "plan_dinner", "label": "Plan dinner for 6 friends on Saturday", "text": "Plan a dinner for 6 friends this Saturday.", "quality": "good" },
+        { "id": "help_dinner", "label": "Help me with dinner", "text": "Help me with dinner.", "quality": "weak" }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "What Pipo needs to know",
+      "pick": "many",
+      "pieces": [
+        { "id": "vegetarian", "label": "Sam is vegetarian", "text": "One of my friends, Sam, is vegetarian.", "quality": "good" },
+        { "id": "budget", "label": "Keep it under $60", "text": "Keep the total under $60.", "quality": "good" },
+        {
+          "id": "amazing",
+          "label": "Make it amazing",
+          "text": "Make it amazing!",
+          "quality": "weak",
+          "tip": "\"Make it amazing\" sounds nice, but it gives Pipo nothing concrete to work with."
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "label": "What should the answer look like?",
+      "pick": "one",
+      "pieces": [
+        { "id": "short_list", "label": "The menu and a short shopping list", "text": "Give me the menu and a short shopping list.", "quality": "good" },
+        {
+          "id": "everything",
+          "label": "Tell me everything",
+          "text": "Tell me everything I should know.",
+          "quality": "weak",
+          "tip": "\"Tell me everything\" gets you a long answer that's hard to use."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_vegetarian",
+      "when": "not_picked:vegetarian",
+      "signals": ["\\b(steaks?|chicken|beef|pork|lamb|salmon|fish|bacon|sausages?|turkey|shrimp|prawns?|burgers?|ribs|ham|meatballs?|tuna|pepperoni|prosciutto)\\b"],
+      "hint": "You didn't tell Pipo that Sam is vegetarian.",
+      "explain": "Pipo didn't know Sam is vegetarian, so the menu has meat in it."
+    },
+    {
+      "id": "no_budget",
+      "when": "not_picked:budget",
+      "signals": ["^(?![\\s\\S]*\\$\\s?\\d)"],
+      "hint": "You didn't tell Pipo your budget.",
+      "explain": "Pipo didn't know your budget, so the plan has no prices at all."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:help_dinner",
+      "signals": [
+        "\\bserves\\s*(1|2|3|4|5|7|8|9|10)\\b",
+        "\\b(dinner|menu|meal|food)\\s+for\\s+(2|3|4|5|two|three|four|five)\\b",
+        "\\bfor you and sam\\b",
+        "\\byou \\+ sam\\b",
+        "how many (people|guests|friends)"
+      ],
+      "hint": "\"Help me with dinner\" doesn't say who's coming or when, so Pipo has to guess.",
+      "explain": "Pipo didn't know 6 people are coming, so it planned for the wrong number."
+    }
+  ],
+  "lesson": "Pipo only knows what you tell it. Put the facts that matter in your prompt."
+}
