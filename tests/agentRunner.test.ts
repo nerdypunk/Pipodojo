@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { askPipo } from "../src/engine/agentRunner.ts";
+import { ANSWER_STYLE, askPipo } from "../src/engine/agentRunner.ts";
 import { BEST_DINNER, dinnerMission, fakeClock, scriptedClient } from "./helpers.ts";
 
 const mission = dinnerMission();
@@ -15,12 +15,12 @@ describe("askPipo", () => {
     const run = await result;
     expect(run).toEqual({
       status: "answered",
-      prompt: "Plan a dinner for 6 friends this Saturday. One of my friends, Sam, is vegetarian. Keep the total under $60. Give me the menu and a short shopping list.",
+      prompt: "Plan a barbecue for 6 friends this Saturday. One of my friends, Sam, is vegetarian. Keep the total under $60. Give me the menu and a short shopping list.",
       answer: "Mushroom pasta!",
       ms: 100,
     });
     expect(requests[0]!.messages).toEqual([
-      { role: "system", content: mission.systemPrompt },
+      { role: "system", content: `${mission.systemPrompt}\n\n${ANSWER_STYLE}` },
       { role: "user", content: run.prompt },
     ]);
   });

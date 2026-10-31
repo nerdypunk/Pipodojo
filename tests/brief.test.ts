@@ -27,7 +27,7 @@ describe("togglePick", () => {
 describe("buildPrompt", () => {
   it("joins the pieces in slot order, whatever order they were tapped", () => {
     expect(buildPrompt(mission, ["short_list", "budget", "plan_dinner", "vegetarian"])).toBe(
-      "Plan a dinner for 6 friends this Saturday. One of my friends, Sam, is vegetarian. Keep the total under $60. Give me the menu and a short shopping list.",
+      "Plan a barbecue for 6 friends this Saturday. One of my friends, Sam, is vegetarian. Keep the total under $60. Give me the menu and a short shopping list.",
     );
   });
 

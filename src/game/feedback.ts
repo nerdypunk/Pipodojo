@@ -1,4 +1,5 @@
 // Player-facing result copy. Friendly, plain, never blames the player.
+import { signalsMatch } from "../engine/evaluator.ts";
 import type { Mission, Score } from "../engine/types.ts";
 
 export function resultHeadline(stars: Score["stars"]): string {
@@ -17,6 +18,33 @@ export function resultNotes(mission: Mission, score: Score): string[] {
   }
   if (score.stars === 3) notes.push("Your prompt had everything Pipo needed.");
   return notes;
+}
+
+export interface AnswerLine {
+  emoji: string;
+  text: string;
+  /** The line shows a gap in the player's prompt (e.g. meat on a vegetarian menu). */
+  flagged: boolean;
+}
+
+const LEADING_EMOJI = /^(\p{Extended_Pictographic}(?:️|‍\p{Extended_Pictographic})*)\s*/u;
+
+/** Pipo's answer as card lines. Gaps that point at specific lines get flagged. */
+export function answerLines(mission: Mission, score: Score, answer: string): AnswerLine[] {
+  const lines = plainAnswer(answer)
+    .split("\n")
+    .map((l) => l.replace(/^•\s*/, "").trim())
+    .filter(Boolean);
+  const flagged = new Set<number>();
+  for (const flaw of mission.flaws.filter((f) => score.visibleFlaws.includes(f.id))) {
+    const hits = lines.flatMap((line, i) => (signalsMatch(flaw.signals, line) ? [i] : []));
+    // A signal that matches every line is about something missing, not a line to point at.
+    if (hits.length < lines.length) hits.forEach((i) => flagged.add(i));
+  }
+  return lines.map((line, i) => {
+    const emoji = LEADING_EMOJI.exec(line)?.[1] ?? "";
+    return { emoji, text: line.slice(emoji.length).trim(), flagged: flagged.has(i) };
+  });
 }
 
 /** Light cleanup so a model's markdown reads as plain text on the card. */

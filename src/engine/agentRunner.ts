@@ -10,9 +10,14 @@ export interface RunOptions {
   now: Clock;
 }
 
+/** Every lesson's answer is a tiny game card, not a chat reply. */
+export const ANSWER_STYLE =
+  "Answer like a quick game card, not a chat. Reply with 3 or 4 short lines and nothing else. " +
+  "Each line starts with one emoji and has at most 8 words. No intro, no closing, no questions, no markdown.";
+
 export function buildMessages(mission: Mission, prompt: string): ChatMessage[] {
   return [
-    { role: "system", content: mission.systemPrompt },
+    { role: "system", content: `${mission.systemPrompt}\n\n${ANSWER_STYLE}` },
     { role: "user", content: prompt },
   ];
 }

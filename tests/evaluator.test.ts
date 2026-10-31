@@ -6,9 +6,9 @@ const mission = dinnerMission();
 const noVeg = BEST_DINNER.filter((p) => p !== "vegetarian");
 const noBudget = BEST_DINNER.filter((p) => p !== "budget");
 
-const meatyPlan = "Menu: roast chicken with potatoes and salad. Shopping list: chicken, potatoes, lettuce. Total about $45.";
-const veggiePlan = "Menu: mushroom pasta, garlic bread, salad. Everything is vegetarian. Total about $48.";
-const noPricePlan = "Menu: mushroom risotto, salad, tiramisu. Shopping list: rice, mushrooms, lettuce.";
+const meatyPlan = "👥 Barbecue for 6\n🍔 Burgers, corn, slaw\n💰 Total about $45";
+const veggiePlan = "👥 Barbecue for 6\n🌽 Veggie burgers, corn, slaw\n💰 Total about $48";
+const noPricePlan = "👥 Barbecue for 6\n🌽 Veggie burgers, corn\n🛒 Buns, patties, corn";
 
 describe("conditions and signals", () => {
   it("picked and not_picked follow the player's pieces", () => {
@@ -72,9 +72,8 @@ describe("evaluate", () => {
 
   it("a vague goal shows up when Pipo plans for the wrong number of people", () => {
     const vague = ["help_dinner", "vegetarian", "budget", "short_list"];
-    expect(evaluate(mission, vague, "A vegetarian dinner for you and Sam. Serves 4. About $45.").visibleFlaws).toEqual([
-      "vague_goal",
-    ]);
+    const forFour = "👥 Barbecue for 4 people\n🌽 Veggie burgers\n💰 About $45";
+    expect(evaluate(mission, vague, forFour).visibleFlaws).toEqual(["vague_goal"]);
     expect(evaluate(mission, vague, veggiePlan).visibleFlaws).toEqual([]);
   });
 });
