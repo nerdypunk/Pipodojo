@@ -7,7 +7,9 @@ import { missions } from "../../app/missions.ts";
 import type { Persona } from "../../engine/types.ts";
 import { pathsOf } from "../../game/paths.ts";
 import type { PipoLook } from "../../game/pipoLook.ts";
-import { PERSONAS } from "../../game/personas.ts";
+import { personasIn } from "../../game/personas.ts";
+import { useLang } from "../../i18n/index.tsx";
+import { LangSwitch } from "../LangSwitch.tsx";
 import type { PlaceId } from "../../game/townLayout.ts";
 import { Pipo } from "../Pipo.tsx";
 import type { PlaceTag } from "./TownCanvas.tsx";
@@ -50,11 +52,13 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
   // The 3D places set a pointer cursor on hover; never leave it behind.
   useEffect(() => () => void (document.body.style.cursor = ""), []);
   const total = Object.values(stars).reduce((sum, s) => sum + s, 0);
+  const { lang, t } = useLang();
+  const personas = personasIn(lang);
 
   const tags = useMemo(() => {
     const result = {} as Record<PlaceId, PlaceTag>;
-    for (const persona of PERSONAS) {
-      const paths = pathsOf(persona.id);
+    for (const persona of personas) {
+      const paths = pathsOf(persona.id, lang);
       const playable = missions.filter((m) => m.persona === persona.id);
       const earned = playable.reduce((sum, m) => sum + (stars[m.id] ?? 0), 0);
       const finished = paths.filter((path) => {
@@ -63,15 +67,18 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
       }).length;
       result[persona.id] = {
         title: `${persona.emoji} ${persona.name}`,
-        sub: `${persona.blurb} ${paths.length} paths.`,
+        sub: t.town.tagSub(persona.blurb, paths.length),
         ...(playable.length > 0 ? { progress: `★ ${earned}/${playable.length * 3}` } : {}),
         ...(finished > 0 ? { badge: `🏅${finished > 1 ? `×${finished}` : ""}` } : {}),
         open: true,
+        visit: t.town.visit,
       };
     }
-    result.garage = { title: "🔧 Pipo's garage", sub: "Change how your Pipo looks.", open: true };
+    result.garage = { title: `🔧 ${t.town.garage}`, sub: t.town.garageSub, open: true, visit: t.town.visit };
     return result;
-  }, [stars]);
+    // personas and t follow lang
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stars, lang]);
 
   const go = (id: PlaceId) => {
     if (id === "garage") onGarage();
@@ -114,39 +121,40 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
       {/* Top: title, stars and the garage */}
       <header className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3 md:gap-3 md:p-6">
         <div className="glass pointer-events-auto min-w-0 rounded-2xl px-3 py-2 md:px-4 md:py-2.5">
-          <p className="text-[11px] font-black tracking-wide text-brand-700 uppercase md:text-xs">Pipodojo Town</p>
-          <h1 className="text-lg leading-tight font-black text-ink md:text-2xl">Who should Pipo help?</h1>
-          <p className="hidden text-sm font-semibold text-gray-600 sm:block">Click a place in town to see their paths.</p>
+          <p className="text-[11px] font-black tracking-wide text-brand-700 uppercase md:text-xs">{t.town.kicker}</p>
+          <h1 className="text-lg leading-tight font-black text-ink md:text-2xl">{t.town.title}</h1>
+          <p className="hidden text-sm font-semibold text-gray-600 sm:block">{t.town.hint}</p>
         </div>
         <div className="pointer-events-auto flex shrink-0 flex-col items-end gap-2 sm:flex-row sm:items-center">
-          <span className="glass flex items-center gap-1 rounded-full px-3 py-2 text-sm font-black text-orange-600" title="Days in a row">
+          <span className="glass flex items-center gap-1 rounded-full px-3 py-2 text-sm font-black text-orange-600" title={t.town.streakTitle}>
             <span aria-hidden="true">🔥</span>
-            {streak} <span className="sr-only">day streak</span>
+            {streak} <span className="sr-only">{t.town.streak}</span>
           </span>
           <span className="glass flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-black text-brand-800">
             <span className="text-amber-500" aria-hidden="true">
               ★
             </span>
-            {total} <span className="sr-only">stars</span>
+            {total} <span className="sr-only">{t.town.stars}</span>
           </span>
           <button
             type="button"
             onClick={() => select("garage")}
             className="glass flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-extrabold text-brand-700 transition hover:bg-white/80 md:px-4"
-            aria-label="Pipo's garage"
+            aria-label={t.town.garage}
           >
             <span aria-hidden="true">🔧</span>
-            <span className="hidden sm:inline">Pipo's garage</span>
+            <span className="hidden sm:inline">{t.town.garage}</span>
           </button>
+          <LangSwitch />
         </div>
       </header>
 
       {/* Bottom: the same places as buttons, and who powers Pipo. On tall phone screens the island
           sits mid-screen, so lift these up to tuck under it instead of hugging the bottom edge. */}
-      <nav className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 p-3 max-sm:bottom-[8dvh] md:p-6" aria-label="Places in town">
+      <nav className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 p-3 max-sm:bottom-[8dvh] md:p-6" aria-label={t.town.places}>
         {/* Four equal, chunky buttons (2×2 on phones, a row on wider screens) that press down when tapped. */}
         <div className="grid w-full max-w-sm grid-cols-2 gap-2 sm:flex sm:w-auto sm:max-w-none">
-          {PERSONAS.map((persona) => {
+          {personas.map((persona) => {
             const on = hovered === persona.id;
             return (
               <button
@@ -168,7 +176,7 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
                   {persona.emoji}
                 </span>
                 <span className="min-w-0 flex-1">{persona.name}</span>
-                {tags[persona.id].badge && <span aria-label="Path complete">{tags[persona.id].badge}</span>}
+                {tags[persona.id].badge && <span aria-label={t.town.pathComplete}>{tags[persona.id].badge}</span>}
                 <span className={`text-lg leading-none ${on ? "text-white/80" : "text-brand-400"}`} aria-hidden="true">
                   ›
                 </span>
@@ -183,7 +191,7 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
             <span className="w-4 text-center" aria-hidden="true">
               ⚡
             </span>
-            Pipo is powered by Meta's Muse Spark
+            {t.common.poweredBy}
           </p>
           <span className="hidden text-brand-300 sm:inline" aria-hidden="true">
             ·
@@ -193,11 +201,11 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
               💻
             </span>
             <span>
-            An{" "}
+            {t.common.openSourceA}{" "}
             <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="text-brand-700 underline underline-offset-2 hover:text-brand-900">
-              open source project
+              {t.common.openSourceLink}
             </a>{" "}
-            by{" "}
+            {t.common.openSourceBy}{" "}
             <a href={SITE_URL} target="_blank" rel="noopener noreferrer" className="text-brand-700 underline underline-offset-2 hover:text-brand-900">
               nerdypunk.dev
             </a>
@@ -210,10 +218,11 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
 }
 
 function Loading() {
+  const { t } = useLang();
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
       <Pipo mood="thinking" className="h-28 w-28" />
-      <p className="glass rounded-full px-4 py-1.5 text-sm font-extrabold text-brand-700">Building the town…</p>
+      <p className="glass rounded-full px-4 py-1.5 text-sm font-extrabold text-brand-700">{t.town.loading}</p>
     </div>
   );
 }

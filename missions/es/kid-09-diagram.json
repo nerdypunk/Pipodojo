@@ -1,0 +1,233 @@
+{
+  "id": "kid-09-diagram",
+  "lang": "es",
+  "persona": "kid",
+  "path": "kid-homework",
+  "order": 3,
+  "title": "Dibuja un diagrama",
+  "icon": "💧",
+  "recap": "Pipo Code dibujó el ciclo del agua para tu cartel.",
+  "funFact": "Aprender, graficar, dibujar diagramas: tarea lista, y tú hiciste la parte de pensar. Los agentes de programación son grandes ayudantes cuando tú eres quien manda.",
+  "postcard": "a bright science poster of the water cycle with clouds, rain and a river: {steps}",
+  "situation": "¡Tu cartel de ciencias necesita un diagrama! ¿Dibujo el ciclo del agua?",
+  "facts": [
+    "💧 Cartel del ciclo del agua para ciencias",
+    "🪜 Tu clase aprendió 5 pasos, con transpiración",
+    "✏️ Una etiqueta corta en cada paso",
+    "👀 Revísalo antes de que vaya en el cartel"
+  ],
+  "systemPrompt": "Eres Pipo Code, un ayudante de programación amigable en la computadora de alguien de 10 años. Haces los diagramas de su tarea con tus herramientas. Haces lo que te pide: si te pide agregarlo al cartel, lo haces; si te pide verlo primero, lo preparas y esperas su OK.",
+  "tools": [
+    {
+      "name": "add_to_poster",
+      "description": "Dibuja el diagrama y agrégalo al cartel de la persona de inmediato. Úsala cuando la persona lo quiera agregar ya.",
+      "app": "chart",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "El título del diagrama"
+          },
+          "steps": {
+            "type": "array",
+            "description": "Los pasos en orden, cada uno con un nombre corto y una nota corta",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Una etiqueta corta, de hasta 5 palabras"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "steps"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🔄",
+          "text": "{title}"
+        },
+        {
+          "emoji": "🪜",
+          "text": "{steps}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Agregado a tu cartel"
+        }
+      ]
+    },
+    {
+      "name": "show_diagram",
+      "description": "Dibuja el diagrama y muéstraselo a la persona sin agregarlo, para que pueda revisarlo primero. Úsala cuando la persona quiera verlo primero.",
+      "app": "chart",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "El título del diagrama"
+          },
+          "steps": {
+            "type": "array",
+            "description": "Los pasos en orden, cada uno con un nombre corto y una nota corta",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Una etiqueta corta, de hasta 5 palabras"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "steps"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🔄",
+          "text": "{title}"
+        },
+        {
+          "emoji": "🪜",
+          "text": "{steps}"
+        },
+        {
+          "emoji": "👀",
+          "text": "Diagrama listo, esperando tu OK"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo Code?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "diagram",
+          "label": "Dibuja un diagrama del ciclo del agua para mi cartel",
+          "text": "Dibuja un diagrama del ciclo del agua para mi cartel de ciencias.",
+          "quality": "good"
+        },
+        {
+          "id": "poster",
+          "label": "Haz mi cartel de ciencias",
+          "text": "Haz mi cartel de ciencias.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "¿Qué necesita saber Pipo Code?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "four_steps",
+          "label": "Nuestros 5 pasos, con transpiración",
+          "text": "Usa los 5 pasos que aprendió mi clase, en orden: evaporación, transpiración (el agua de las plantas), condensación, precipitación y acumulación.",
+          "quality": "good"
+        },
+        {
+          "id": "labels",
+          "label": "Una etiqueta corta en cada paso",
+          "text": "Ponle una etiqueta corta y sencilla a cada paso.",
+          "quality": "neutral"
+        },
+        {
+          "id": "extra",
+          "label": "Agrega 10 pasos más para que se vea inteligente",
+          "text": "Agrega 10 pasos más para que se vea inteligente.",
+          "quality": "weak",
+          "tip": "Más pasos hacen que un diagrama sea más difícil de leer, no más inteligente. Los 5 pasos que aprendió tu clase son lo que tu profe quiere ver."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que vaya en el cartel",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstramelo antes de agregarlo",
+          "text": "Muéstrame el diagrama antes de agregarlo a mi cartel.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Agrégalo de inmediato",
+          "text": "Agrégalo a mi cartel de inmediato.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "wrong_steps",
+      "when": "not_picked:four_steps",
+      "signals": [
+        "🪜(?![^\\n]*transpiraci)"
+      ],
+      "hint": "No le dijiste a Pipo Code los pasos que aprendió tu clase.",
+      "explain": "Pipo Code no sabía los 5 pasos de tu clase, así que falta la transpiración."
+    },
+    {
+      "id": "too_many",
+      "when": "picked:extra",
+      "signals": [
+        "🪜([^\\n]*,){6}"
+      ],
+      "hint": "Los pasos de más hacen que el diagrama sea más difícil de leer.",
+      "explain": "Pipo Code metió pasos de más, así que el diagrama es difícil de seguir."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:poster",
+      "signals": [
+        "🔄(?![^\\n]*agua)"
+      ],
+      "hint": "\"Haz mi cartel de ciencias\" no dice de qué se trata.",
+      "explain": "Pipo Code no sabía que es el ciclo del agua, así que dibujó otra cosa."
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])agregad[oa](?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Revisar el diagrama primero te deja arreglarlo antes de que esté en el cartel.",
+      "explain": "Pipo Code lo agregó de inmediato, así que nunca lo revisaste."
+    }
+  ],
+  "lesson": "Dile a Pipo Code exactamente qué mostrar y revísalo antes de que vaya en tu cartel."
+}

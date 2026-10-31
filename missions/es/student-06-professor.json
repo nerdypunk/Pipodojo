@@ -1,0 +1,229 @@
+{
+  "id": "student-06-professor",
+  "lang": "es",
+  "persona": "student",
+  "path": "student-project",
+  "order": 3,
+  "title": "Escríbele a la profesora",
+  "icon": "✉️",
+  "recap": "Pipo le pidió a la profesora Okafor una nueva fecha.",
+  "funFact": "Repartir el trabajo, escribirle al grupo y pedir ayuda: eso es trabajo en equipo con un agente. Pipo escribe; tú te mantienes amable y al mando.",
+  "postcard": "Professor Okafor smiling at an email: {subject}",
+  "situation": "Ay, no, Tom está enfermo. ¿Quieres que le escriba a la profesora Okafor sobre la presentación?",
+  "facts": [
+    "👩‍🏫 La profesora Okafor",
+    "🤒 Tom está enfermo esta semana",
+    "📅 Pide presentar el lunes en vez del viernes",
+    "👀 Quieres leerlo antes de que se envíe"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de un estudiante universitario. Puedes enviar correos por él. Haces lo que te pide: si te pide enviar algo, lo envías; si te pide verlo primero, escribes un borrador y esperas su OK.",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "Envía el correo de inmediato. Úsala cuando la persona quiere que se envíe.",
+      "app": "email",
+      "outcome": "done",
+      "store": "Correo de la uni",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el correo: una persona, una dirección de correo o una lista de correo"
+          },
+          "subject": {
+            "type": "string",
+            "description": "El asunto en español, de hasta 8 palabras"
+          },
+          "body": {
+            "type": "string",
+            "description": "El texto del correo en español, de hasta 45 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Enviado"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "Escribe el correo y muéstraselo a la persona sin enviarlo, para que lo revise primero. Úsala cuando la persona quiere leerlo antes de que salga.",
+      "app": "email",
+      "outcome": "waiting",
+      "store": "Correo de la uni",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el correo: una persona, una dirección de correo o una lista de correo"
+          },
+          "subject": {
+            "type": "string",
+            "description": "El asunto en español, de hasta 8 palabras"
+          },
+          "body": {
+            "type": "string",
+            "description": "El texto del correo en español, de hasta 45 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Borrador listo, esperando tu OK para enviarlo"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_prof",
+          "label": "Escríbele a la profesora Okafor sobre nuestra presentación",
+          "text": "Escríbele un correo a la profesora Okafor sobre nuestra presentación del cambio climático.",
+          "quality": "good"
+        },
+        {
+          "id": "email_teacher",
+          "label": "Escríbele al profe",
+          "text": "Escríbele un correo al profe sobre la presentación.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "¿Qué debe decir el correo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "reason",
+          "label": "Tom está enfermo esta semana",
+          "text": "Explica que Tom está enfermo esta semana.",
+          "quality": "good"
+        },
+        {
+          "id": "new_date",
+          "label": "Pide presentar el lunes",
+          "text": "Pregunta si podemos presentar el lunes en vez del viernes.",
+          "quality": "good"
+        },
+        {
+          "id": "polite",
+          "label": "Da las gracias",
+          "text": "Agradécele su ayuda.",
+          "quality": "neutral"
+        },
+        {
+          "id": "demand",
+          "label": "Dile que necesitamos más tiempo, y punto",
+          "text": "Dile que necesitamos más tiempo, y punto.",
+          "quality": "weak",
+          "tip": "Exigir casi nunca funciona con los profesores. Pedirlo con amabilidad, con un motivo y una nueva fecha, suele funcionar."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo lo envíe",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstrame el correo primero",
+          "text": "Muéstrame el correo antes de enviarlo.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Envíalo ahora",
+          "text": "Envíalo ahora.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:email_teacher",
+      "signals": [
+        "📧(?![^\\n]*okafor)"
+      ],
+      "hint": "\"El profe\" no dice quién debe recibirlo.",
+      "explain": "Pipo no sabía a quién escribirle, así que no va dirigido a la profesora Okafor."
+    },
+    {
+      "id": "no_reason",
+      "when": "not_picked:reason",
+      "signals": [
+        "^(?![\\s\\S]*(enferm|indispuest|salud|malito))"
+      ],
+      "hint": "No le dijiste a Pipo por qué necesitan más tiempo.",
+      "explain": "Pipo no sabía que Tom está enfermo, así que el correo no da ningún motivo."
+    },
+    {
+      "id": "no_date",
+      "when": "not_picked:new_date",
+      "signals": [
+        "^(?![\\s\\S]*(?<![a-záéíóúñü])lun(es)?(?![a-záéíóúñü]))"
+      ],
+      "hint": "No le dijiste a Pipo la nueva fecha que quieres.",
+      "explain": "Pipo no sabía que quieres el lunes, así que la profesora tiene que adivinar."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(enviad[oa]s?|entregad[oa]s?)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Si pides ver el correo primero, puedes revisar el tono antes de que tu profesora lo lea.",
+      "explain": "Pipo lo envió de inmediato, así que nunca pudiste revisarlo."
+    }
+  ],
+  "lesson": "Un buen pedido tiene un motivo y una nueva fecha clara. Revisa el tono antes de que salga."
+}

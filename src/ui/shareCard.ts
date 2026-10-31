@@ -1,6 +1,7 @@
 // The end-of-path share card: a 1080x1350 image (Instagram portrait size) drawn on a canvas.
 // Big brag headline, what your agent did, the Muse Image postcard, your streak, stars and badge.
 // Everything is drawn here in the browser, so it costs nothing and works offline.
+import type { Strings } from "../i18n/en.ts";
 
 export interface ShareInfo {
   /** e.g. "My AI agent just handled a whole school week 🎒" */
@@ -15,6 +16,8 @@ export interface ShareInfo {
   postcard: string | null;
   /** Shown in the footer, e.g. "pipodojo.pages.dev". */
   site: string;
+  /** The card's words, in the player's language. */
+  words: Strings["card"];
 }
 
 const W = 1080;
@@ -97,14 +100,15 @@ export async function drawShareCard(info: ShareInfo): Promise<Blob> {
   ctx.fillStyle = "#ffffff";
   ctx.font = `900 54px ${FONT}`;
   ctx.fillText("Pipodojo", 72, 118);
-  pill(ctx, `🔥 ${info.streak}-day streak`, W - 72, 66, "#ff7a1a", "#ffffff", 36, true);
+  const w = info.words;
+  pill(ctx, w.streak(info.streak), W - 72, 66, "#ff7a1a", "#ffffff", 36, true);
 
   // The brag
   ctx.font = `900 80px ${FONT}`;
   ctx.fillStyle = "#ffffff";
-  ctx.fillText("I just learned to", 72, 250);
+  ctx.fillText(w.line1, 72, 250);
   ctx.fillStyle = "#ffd166";
-  ctx.fillText("prompt AI agents!", 72, 338);
+  ctx.fillText(w.line2, 72, 338);
   ctx.font = `700 40px ${FONT}`;
   ctx.fillStyle = "rgba(255,255,255,0.88)";
   wrap(ctx, info.brag, W - 144)
@@ -146,7 +150,7 @@ export async function drawShareCard(info: ShareInfo): Promise<Blob> {
   ctx.translate(cx + size / 2 - 40, cy + size / 2 - 10);
   ctx.rotate(0.08);
   ctx.font = `900 34px ${FONT}`;
-  const badge = `🏅 ${info.pathName} Pro`;
+  const badge = w.pro(info.pathName);
   const bw = ctx.measureText(badge).width + 56;
   ctx.shadowColor = "rgba(20,14,60,0.35)";
   ctx.shadowBlur = 20;
@@ -160,11 +164,11 @@ export async function drawShareCard(info: ShareInfo): Promise<Blob> {
   ctx.restore();
 
   // Stats and footer
-  const left = pill(ctx, `★ ${info.stars} of ${info.maxStars} stars`, 72, 1176, "rgba(255,255,255,0.92)", "#4936bd", 32);
-  pill(ctx, `✅ ${info.lessons} lessons done`, 72 + left + 18, 1176, "rgba(255,255,255,0.92)", "#4936bd", 32);
+  const left = pill(ctx, w.stars(info.stars, info.maxStars), 72, 1176, "rgba(255,255,255,0.92)", "#4936bd", 32);
+  pill(ctx, w.lessons(info.lessons), 72 + left + 18, 1176, "rgba(255,255,255,0.92)", "#4936bd", 32);
   ctx.font = `700 28px ${FONT}`;
   ctx.fillStyle = "rgba(255,255,255,0.75)";
-  ctx.fillText(`⚡ Pipo is powered by Meta's Muse Spark · ${info.site}`, 72, 1300);
+  ctx.fillText(w.footer(info.site), 72, 1300);
 
   return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("No image"))), "image/jpeg", 0.92));
 }

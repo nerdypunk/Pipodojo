@@ -1,0 +1,229 @@
+{
+  "id": "cafe-05-refund",
+  "lang": "es",
+  "persona": "business",
+  "path": "business-review",
+  "order": 2,
+  "title": "Resuelve un reembolso",
+  "icon": "💸",
+  "recap": "Pipo le escribió a Jordan sobre el reembolso.",
+  "funFact": "Los agentes también pueden recordarte cosas. Ahora Pipo prepara un seguimiento para que Jordan se sienta bien atendido.",
+  "postcard": "Jordan smiling at an email from Bloom Café: {subject}",
+  "situation": "Jordan respondió y compartió el recibo. ¿Le escribo sobre un reembolso?",
+  "facts": [
+    "🧾 Pedido #142: latte, $5.50",
+    "💸 Reembolsar solo el latte: $5.50",
+    "🎁 Código de bebida gratis: BLOOM1",
+    "👀 Quieres leerlo antes de que se envíe"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente amigable para la dueña o el dueño de Bloom Café, una pequeña cafetería de barrio. Puedes enviar correos por ellos. Haces lo que te piden: si te piden enviar algo, lo envías; si piden verlo primero, escribes un borrador y esperas su OK.",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "Envía el correo de inmediato. Úsala cuando la persona quiere que se envíe.",
+      "app": "email",
+      "outcome": "done",
+      "store": "Café Mail",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el correo: una persona, una dirección de correo o una lista de correo"
+          },
+          "subject": {
+            "type": "string",
+            "description": "El asunto, en español, de hasta 8 palabras"
+          },
+          "body": {
+            "type": "string",
+            "description": "El texto del correo, en español, de hasta 45 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Enviado"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "Escribe el correo y muéstraselo a la persona sin enviarlo, para que lo revise primero. Úsala cuando la persona quiere leerlo antes de que salga.",
+      "app": "email",
+      "outcome": "waiting",
+      "store": "Café Mail",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el correo: una persona, una dirección de correo o una lista de correo"
+          },
+          "subject": {
+            "type": "string",
+            "description": "El asunto, en español, de hasta 8 palabras"
+          },
+          "body": {
+            "type": "string",
+            "description": "El texto del correo, en español, de hasta 45 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Borrador listo, esperando tu OK para enviarlo"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_jordan",
+          "label": "Escríbele a Jordan sobre el reembolso del latte",
+          "text": "Envíale un correo a Jordan (jordan@mail.com) sobre un reembolso por el latte frío del pedido #142.",
+          "quality": "good"
+        },
+        {
+          "id": "email_customer",
+          "label": "Escríbele al cliente",
+          "text": "Envíale un correo al cliente sobre un reembolso.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "¿Qué debe decir el correo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "amount",
+          "label": "Reembolso de $5.50 por el latte",
+          "text": "Di que le reembolsamos $5.50 por el latte.",
+          "quality": "good"
+        },
+        {
+          "id": "voucher",
+          "label": "Incluye el código de bebida gratis BLOOM1",
+          "text": "Incluye un código de bebida gratis: BLOOM1.",
+          "quality": "good"
+        },
+        {
+          "id": "sorry",
+          "label": "Pide disculpas otra vez",
+          "text": "Pide disculpas otra vez por el café frío.",
+          "quality": "neutral"
+        },
+        {
+          "id": "refund_all",
+          "label": "¡Reembolsa todo lo que ha comprado!",
+          "text": "¡Reembolsa todo lo que ha comprado alguna vez!",
+          "quality": "weak",
+          "tip": "Es generoso, pero Pipo va a prometer dinero que nunca pensaste gastar. Dale la cantidad exacta."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo lo envíe",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstrame el correo primero",
+          "text": "Muéstrame el correo antes de enviarlo.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Envíalo ya",
+          "text": "Envíalo ya.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:email_customer",
+      "signals": [
+        "📧(?![^\\n]*jordan)"
+      ],
+      "hint": "\"El cliente\" no dice quién debe recibirlo.",
+      "explain": "Pipo no sabía a quién escribirle, así que el correo no va dirigido a Jordan."
+    },
+    {
+      "id": "no_amount",
+      "when": "not_picked:amount",
+      "signals": [
+        "^(?![\\s\\S]*(\\$\\s?5[.,]50|5[.,]50\\s?(d[oó]lares|usd)))"
+      ],
+      "hint": "No le dijiste a Pipo cuánto reembolsar.",
+      "explain": "Pipo no sabía la cantidad, así que el correo promete un reembolso sin la cifra correcta."
+    },
+    {
+      "id": "no_voucher",
+      "when": "not_picked:voucher",
+      "signals": [
+        "^(?![\\s\\S]*bloom1)"
+      ],
+      "hint": "No le diste a Pipo el código de bebida gratis.",
+      "explain": "Pipo no tenía el código, así que Jordan no puede pedir su bebida gratis."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(enviad[oa]|entregad[oa])(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Cuando se promete dinero, revisar el correo primero vale ese segundo extra.",
+      "explain": "Pipo lo envió de inmediato, así que nunca revisaste lo que prometía."
+    }
+  ],
+  "lesson": "Cuando hay dinero de por medio, dale a Pipo la cantidad exacta y revisa lo que promete."
+}

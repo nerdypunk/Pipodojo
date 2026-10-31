@@ -3,12 +3,8 @@ import { signalsMatch } from "../engine/evaluator.ts";
 import type { Mission, Score } from "../engine/types.ts";
 import { splitEmoji } from "./emoji.ts";
 
-export function resultHeadline(stars: Score["stars"]): string {
-  return { 1: "Pipo missed something", 2: "Nice! Pipo did well", 3: "Perfect prompt!" }[stars];
-}
-
-/** Short lines for the result card, most important first. */
-export function resultNotes(mission: Mission, score: Score): string[] {
+/** Short lines for the result card, most important first. `allGood` is the 3-star line, in the player's language. */
+export function resultNotes(mission: Mission, score: Score, allGood: string): string[] {
   const notes: string[] = [];
   for (const flaw of mission.flaws) {
     if (score.visibleFlaws.includes(flaw.id)) notes.push(flaw.explain);
@@ -17,7 +13,7 @@ export function resultNotes(mission: Mission, score: Score): string[] {
   for (const piece of mission.slots.flatMap((s) => s.pieces)) {
     if (score.weakPicks.includes(piece.id) && piece.tip) notes.push(piece.tip);
   }
-  if (score.stars === 3) notes.push("Your prompt had everything Pipo needed.");
+  if (score.stars === 3) notes.push(allGood);
   return notes;
 }
 

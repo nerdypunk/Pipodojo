@@ -1,0 +1,124 @@
+{
+  "id": "cafe-01-sale-post",
+  "lang": "es",
+  "persona": "business",
+  "path": "business-sale",
+  "order": 1,
+  "title": "Escribe el post de la oferta",
+  "icon": "📸",
+  "recap": "Pipo escribió el post de tu oferta de fin de semana.",
+  "funFact": "Los agentes también pueden enviarles correos a tus clientes por ti. ¡Ahora Pipo les cuenta de la oferta a tus clientes frecuentes!",
+  "postcard": "a sign outside Bloom Café announcing the sale: {answer}",
+  "situation": "¡Se viene un gran fin de semana! ¿Escribo el post para tu oferta de pan dulce?",
+  "facts": [
+    "🥐 Todo el pan dulce a mitad de precio",
+    "📅 Sábado y domingo, de 8 a 11am",
+    "📍 Bloom Café, 4 Main St",
+    "📸 Es para tu Instagram"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente amigable para la dueña o el dueño de Bloom Café, una pequeña cafetería de barrio. Ayuda con lo que te pidan. Cuando escribas un post para redes sociales, escribe el post mismo, línea por línea.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "write_post",
+          "label": "Escribe un post de Instagram para la oferta de pan dulce",
+          "text": "Escribe un post de Instagram para nuestra oferta de pan dulce de este fin de semana en Bloom Café.",
+          "quality": "good"
+        },
+        {
+          "id": "post_something",
+          "label": "Escribe un post sobre la cafetería",
+          "text": "Escribe un post sobre la cafetería.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "¿Qué necesita saber Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "discount",
+          "label": "Todo el pan dulce a mitad de precio",
+          "text": "Todo el pan dulce está a mitad de precio.",
+          "quality": "good"
+        },
+        {
+          "id": "when",
+          "label": "Sábado y domingo, de 8 a 11am",
+          "text": "Es el sábado y el domingo, de 8 a 11am.",
+          "quality": "good"
+        },
+        {
+          "id": "hashtags",
+          "label": "Agrega dos hashtags",
+          "text": "Agrega dos hashtags al final.",
+          "quality": "neutral"
+        },
+        {
+          "id": "best_ever",
+          "label": "¡Di que es la mejor oferta del mundo!",
+          "text": "¡Di que es la mejor oferta del mundo!",
+          "quality": "weak",
+          "tip": "Las frases exageradas no le dicen a la gente por qué venir. La oferta y el horario sí."
+        }
+      ]
+    },
+    {
+      "id": "tone",
+      "label": "¿Cómo debe sonar?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "friendly",
+          "label": "Cálido, amigable y corto",
+          "text": "Que sea cálido, amigable y corto.",
+          "quality": "good"
+        },
+        {
+          "id": "pushy",
+          "label": "Insistente: ¡COMPRA YA!",
+          "text": "Que sea insistente: ¡COMPRA YA!",
+          "quality": "weak",
+          "tip": "Los posts insistentes alejan a la gente. Para una cafetería de barrio funciona mejor algo amigable y claro."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_discount",
+      "when": "not_picked:discount",
+      "signals": [
+        "^(?![\\s\\S]*(mitad|50\\s?%|50 por ciento|medio precio|2\\s?x\\s?1))"
+      ],
+      "hint": "No le dijiste a Pipo cuál es la oferta.",
+      "explain": "Pipo no sabía cuál es la oferta, así que el post no dice qué tiene descuento."
+    },
+    {
+      "id": "no_time",
+      "when": "not_picked:when",
+      "signals": [
+        "^(?![\\s\\S]*(?<![a-záéíóúñü\\d])(8|ocho)(?![a-záéíóúñü\\d]))"
+      ],
+      "hint": "No le dijiste a Pipo cuándo es la oferta.",
+      "explain": "Pipo no sabía el horario, así que el post no dice cuándo venir."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:post_something",
+      "signals": [
+        "^(?![\\s\\S]*bloom)"
+      ],
+      "hint": "\"Un post sobre la cafetería\" no dice de qué cafetería ni para qué es el post.",
+      "explain": "Pipo no sabía que es el post de Instagram de Bloom Café, así que nunca nombra la cafetería."
+    }
+  ],
+  "lesson": "Dale a Pipo los datos que tus clientes necesitan: qué, cuándo y dónde."
+}

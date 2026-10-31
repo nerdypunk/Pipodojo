@@ -1,7 +1,7 @@
 // Plays a lesson's key prompts against the live API and reports how often each flaw shows up.
 // Goes through the real proxy code (functions/api/chat.js) with the key from .dev.vars.
 //
-//   npm run check:mission -- parent-01-dinner --runs 5 [--setup best] [--out results.json]
+//   npm run check:mission -- parent-01-dinner --runs 5 [--setup best] [--lang es] [--out results.json]
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { onRequest } from "../functions/api/chat.js";
@@ -22,6 +22,8 @@ const missionId = argv.find((a, i) => !a.startsWith("--") && !argv[i - 1]?.start
 const runs = Number(flag("runs") ?? 3);
 const outPath = flag("out");
 const onlySetup = flag("setup");
+/** "es" checks the Spanish twin in missions/es. */
+const lang = flag("lang") === "es" ? "es" : "en";
 
 function readDevVars(): Record<string, string> {
   const env: Record<string, string> = {};
@@ -48,9 +50,10 @@ export function keySetups(mission: Mission): Record<string, string[]> {
 }
 
 async function main() {
+  const dir = lang === "es" ? join(root, "missions", "es") : join(root, "missions");
   const files: Record<string, unknown> = {};
-  for (const name of readdirSync(join(root, "missions")).filter((n) => n.endsWith(".json"))) {
-    files[name] = JSON.parse(readFileSync(join(root, "missions", name), "utf8"));
+  for (const name of readdirSync(dir).filter((n) => n.endsWith(".json"))) {
+    files[name] = JSON.parse(readFileSync(join(dir, name), "utf8"));
   }
   const mission = loadMissions(files).find((m) => m.id === missionId);
   if (!mission) throw new Error(`No mission "${missionId}"`);
@@ -62,7 +65,7 @@ async function main() {
     fetch: (url, init) => onRequest({ request: new Request(url, init), env }),
   });
 
-  console.log(`Lesson ${mission.id}, model ${env["MODEL_ID"] ?? "muse-spark-1.2 (default)"}, ${runs} runs per setup\n`);
+  console.log(`Lesson ${mission.id} (${lang}), model ${env["MODEL_ID"] ?? "muse-spark-1.2 (default)"}, ${runs} runs per setup\n`);
   const results: unknown[] = [];
 
   for (const [key, picks] of Object.entries(keySetups(mission))) {

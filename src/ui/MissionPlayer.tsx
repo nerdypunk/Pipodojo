@@ -16,6 +16,7 @@ import { PipoScene } from "./PipoScene.tsx";
 import { ShaderBorder } from "./ShaderBorder.tsx";
 import { TopBar } from "./TopBar.tsx";
 import { UnderTheHood } from "./UnderTheHood.tsx";
+import { useLang } from "../i18n/index.tsx";
 
 type Phase =
   | { name: "build" }
@@ -39,6 +40,7 @@ interface Props {
 
 export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
   const [phase, setPhase] = useState<Phase>({ name: "build" });
+  const { t } = useLang();
   const [picks, setPicks] = useState<string[]>([]);
   const [nudge, setNudge] = useState<string | null>(null);
   const [bestStars, setBestStars] = useState(0);
@@ -51,7 +53,7 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
   async function check() {
     if (!isPromptReady(mission, picks)) {
       const missing = emptySlots(mission, picks).map((s) => `"${s.label}"`);
-      setNudge(`Pick a piece for ${missing.join(" and ")} first.`);
+      setNudge(t.lesson.nudge(missing));
       return;
     }
     setNudge(null);
@@ -136,7 +138,7 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
         <ShaderBorder mode={borderMode} roundness={0.08} className="flex flex-col">
           <section
             className="glass flex flex-1 flex-col gap-3 rounded-3xl p-3 md:gap-4 md:p-5"
-            aria-label="Build your message to Pipo"
+            aria-label={t.lesson.buildMessage}
           >
             <PromptCard prompt={buildPrompt(mission, picks)} />
             {/* Locked while Pipo thinks (the glow stays bright), faded once the answer is in.
@@ -167,7 +169,7 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
             >
               {phase.name === "build" && <ActionBar state="build" nudge={nudge} onCheck={check} />}
               {thinking && <ActionBar state="thinking" />}
-              {result && <ActionBar state="result" mission={mission} score={result.score} onTryAgain={tryAgain} next={{ label: "Continue", onGo: () => onFinish(result) }} />}
+              {result && <ActionBar state="result" mission={mission} score={result.score} onTryAgain={tryAgain} next={{ label: t.common.continue, onGo: () => onFinish(result) }} />}
               {phase.name === "failed" && <ActionBar state="failed" onTryAgain={tryAgain} />}
             </div>
           </section>

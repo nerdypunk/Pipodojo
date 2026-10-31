@@ -1,0 +1,125 @@
+{
+  "id": "student-01-study-plan",
+  "lang": "es",
+  "persona": "student",
+  "path": "student-exams",
+  "order": 1,
+  "title": "Arma un plan de estudio",
+  "icon": "📚",
+  "recap": "Pipo planeó tus días de estudio.",
+  "funFact": "Los agentes pueden apartar tiempo en tu calendario para que el plan sí se cumpla. ¡Ahora Pipo agenda tus sesiones de estudio!",
+  "postcard": "a student at a cosy library desk with Pipo, the plan on the wall: {answer}",
+  "situation": "¡Se vienen los exámenes! ¿Quieres que planee tus días de estudio?",
+  "facts": [
+    "📅 Hoy es jueves",
+    "🧬 Examen de Biología el lunes, de Historia el miércoles",
+    "⏱️ Máximo 3 horas de estudio al día",
+    "💼 Trabajas todo el sábado"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de un estudiante universitario. Ayuda con lo que te pida. Cuando planees días de estudio, empieza cada línea con el día o los días que cubre.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "plan_study",
+          "label": "Planea mi estudio para los exámenes del lunes y el miércoles",
+          "text": "Planea mis días de estudio, empezando hoy (jueves), para mi examen de Biología del lunes y mi examen de Historia del miércoles.",
+          "quality": "good"
+        },
+        {
+          "id": "help_study",
+          "label": "Ayúdame a estudiar",
+          "text": "Ayúdame a estudiar para mis exámenes.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "¿Qué necesita saber Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "hours",
+          "label": "Máximo 3 horas al día",
+          "text": "Puedo estudiar 3 horas al día como máximo.",
+          "quality": "good"
+        },
+        {
+          "id": "shift",
+          "label": "Trabajo todo el sábado",
+          "text": "Trabajo todo el sábado, así que ese día no puedo estudiar.",
+          "quality": "good"
+        },
+        {
+          "id": "breaks",
+          "label": "Recuérdame tomar descansos",
+          "text": "Recuérdame tomar descansos.",
+          "quality": "neutral"
+        },
+        {
+          "id": "allnighter",
+          "label": "¡Me desvelo estudiando si hace falta!",
+          "text": "¡Me desvelo estudiando toda la noche si hace falta!",
+          "quality": "weak",
+          "tip": "Desvelarte hace los exámenes más difíciles, no más fáciles. Pipo planea mejor con tus límites reales."
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "label": "¿Cómo debe responder Pipo?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "short",
+          "label": "Corto, con las horas de cada día",
+          "text": "Hazlo corto y dime las horas de estudio de cada día.",
+          "quality": "good"
+        },
+        {
+          "id": "detailed",
+          "label": "Todo el detalle, hora por hora",
+          "text": "Dame todo el detalle, hora por hora.",
+          "quality": "weak",
+          "tip": "Un plan hora por hora es difícil de seguir. Es mejor un plan corto que sí vas a cumplir."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "saturday_study",
+      "when": "not_picked:shift",
+      "signals": [
+        "(^|\\n)(?![^\\n]*(trabaj|turno|libre|descans|sin estudi|no estudi|pausa|chamba))[^\\n]*(?<![a-záéíóúñü])s[aá]b(ado)?(?![a-záéíóúñü])"
+      ],
+      "hint": "No le dijiste a Pipo que trabajas el sábado.",
+      "explain": "Pipo no sabía de tu turno, así que planeó estudiar el sábado."
+    },
+    {
+      "id": "too_long",
+      "when": "not_picked:hours",
+      "signals": [
+        "(?<![a-záéíóúñü\\d:.,])([4-9]|1[0-2]|cuatro|cinco|seis|siete|ocho|nueve|diez)\\s?(h|hrs?|horas?)(?![a-záéíóúñü])",
+        "(^|\\n)[^\\n]*(?<![\\d:.,])([2-9]\\s?(h|hrs?|horas?)(?![a-záéíóúñü])[^\\n]*(?<![\\d:.,])[2-9]|[3-9]\\s?(h|hrs?|horas?)(?![a-záéíóúñü])[^\\n]*(?<![\\d:.,])[1-9]|1\\s?(h|hrs?|horas?)(?![a-záéíóúñü])[^\\n]*(?<![\\d:.,])[3-9])\\s?(h|hrs?|horas?)(?![a-záéíóúñü])"
+      ],
+      "hint": "No le dijiste a Pipo cuánto tiempo puedes estudiar.",
+      "explain": "Pipo no sabía tu límite, así que algunos días tienen más de 3 horas."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:help_study",
+      "signals": [
+        "^(?![\\s\\S]*(bio|histori))"
+      ],
+      "hint": "\"Ayúdame a estudiar\" no dice qué exámenes tienes ni cuándo.",
+      "explain": "Pipo no sabía de tus exámenes, así que el plan no está armado alrededor de ellos."
+    }
+  ],
+  "lesson": "Pipo planea con los límites que le das: tu tiempo, tu trabajo y las fechas de tus exámenes."
+}

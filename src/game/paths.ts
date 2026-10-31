@@ -1,22 +1,26 @@
 // Each persona has three paths of three lessons. A path is playable once its lessons exist in
 // /missions (matched by the lesson's "path" id); the rest show their lesson names as coming soon.
-import type { Persona } from "../engine/types.ts";
+import type { Lang, Persona } from "../engine/types.ts";
 
-export interface PathCard {
-  id: string;
-  persona: Persona;
+interface PathText {
   name: string;
   /** The shareable one-liner for the end-of-path card, e.g. "My AI agent just handled a whole school week". */
   brag: string;
-  emoji: string;
   blurb: string;
   /** Lesson names, shown on the card (and as "coming soon" until the lessons are built). */
   lessons: readonly string[];
+}
+
+export interface PathCard extends PathText {
+  id: string;
+  persona: Persona;
+  emoji: string;
   /** Card art tint, from the purple-blue family. */
   tint: string;
 }
 
-export const PATHS: readonly PathCard[] = [
+/** English text inline; `es` holds the Spanish. */
+const DATA: readonly (PathCard & { es: PathText })[] = [
   // Busy parent
   {
     id: "parent-barbecue",
@@ -27,6 +31,7 @@ export const PATHS: readonly PathCard[] = [
     blurb: "Friends are coming over. Pipo plans the food, sends the invites and does the shopping.",
     lessons: ["Plan the menu", "Invite your friends", "Order the groceries"],
     tint: "from-brand-400 to-brand-700",
+    es: { name: "Parrillada del sábado", brag: "Mi agente de IA planeó, invitó y compró todo para una parrillada 🍔", blurb: "Vienen amigos. Pipo planea la comida, envía las invitaciones y hace las compras.", lessons: ["Planea el menú","Invita a tus amigos","Pide el súper"] },
   },
   {
     id: "parent-school",
@@ -37,6 +42,7 @@ export const PATHS: readonly PathCard[] = [
     blurb: "A busy week at school. Pipo plans lunches, answers the teacher and fills the calendar.",
     lessons: ["Plan the week's lunches", "Reply about the field trip", "Add school events to the calendar"],
     tint: "from-sky-400 to-brand-600",
+    es: { name: "Semana de escuela", brag: "Mi agente de IA se encargó de toda una semana de escuela 🎒", blurb: "Una semana ocupada en la escuela. Pipo planea los almuerzos, le responde a la maestra y llena el calendario.", lessons: ["Planea los almuerzos de la semana","Responde sobre la excursión","Agrega los eventos de la escuela al calendario"] },
   },
   {
     id: "parent-daytrip",
@@ -47,6 +53,7 @@ export const PATHS: readonly PathCard[] = [
     blurb: "A rainy Sunday. Pipo picks a spot, books the tickets and tells Grandma the plan.",
     lessons: ["Pick a spot for Sunday", "Book the tickets", "Tell Grandma the plan"],
     tint: "from-amber-300 to-brand-600",
+    es: { name: "Paseo en familia", brag: "Mi agente de IA planeó nuestro domingo lluvioso 🚗", blurb: "Un domingo lluvioso. Pipo elige un lugar, compra los boletos y le cuenta el plan a la abuela.", lessons: ["Elige un lugar para el domingo","Compra los boletos","Cuéntale el plan a la abuela"] },
   },
   // Student
   {
@@ -58,6 +65,7 @@ export const PATHS: readonly PathCard[] = [
     blurb: "Exams are close. Pipo makes a study plan, books study time and quizzes you.",
     lessons: ["Make a study plan", "Book study sessions", "Quiz me"],
     tint: "from-sky-400 to-brand-600",
+    es: { name: "Semana de exámenes", brag: "Mi agente de IA me preparó para la semana de exámenes 📚", blurb: "Se acercan los exámenes. Pipo arma un plan de estudio, aparta tiempo para estudiar y te hace preguntas.", lessons: ["Arma un plan de estudio","Aparta sesiones de estudio","Hazme preguntas"] },
   },
   {
     id: "student-project",
@@ -68,6 +76,7 @@ export const PATHS: readonly PathCard[] = [
     blurb: "Four people, one project. Pipo splits the work, messages the group and emails the professor.",
     lessons: ["Split the tasks", "Message the group", "Email the professor"],
     tint: "from-brand-400 to-fuchsia-500",
+    es: { name: "Proyecto en equipo", brag: "Mi agente de IA organizó todo nuestro proyecto en equipo 🧩", blurb: "Cuatro personas, un proyecto. Pipo reparte el trabajo, le escribe al grupo y le manda un correo al profesor.", lessons: ["Reparte las tareas","Escríbele al grupo","Mándale un correo al profesor"] },
   },
   {
     id: "student-job",
@@ -78,6 +87,7 @@ export const PATHS: readonly PathCard[] = [
     blurb: "Time to earn a little. Pipo polishes your CV, emails Bloom Café and helps you practise.",
     lessons: ["Polish your CV", "Email about the job", "Practise the interview"],
     tint: "from-emerald-300 to-brand-600",
+    es: { name: "Primer trabajo", brag: "Mi agente de IA me ayudó a buscar mi primer trabajo 💼", blurb: "Hora de ganar un poco. Pipo mejora tu CV, le escribe a Bloom Café y te ayuda a practicar.", lessons: ["Mejora tu CV","Escribe por el trabajo","Practica la entrevista"] },
   },
   // Café owner
   {
@@ -89,6 +99,7 @@ export const PATHS: readonly PathCard[] = [
     blurb: "Half-price pastries this weekend. Pipo writes the post, emails regulars and restocks.",
     lessons: ["Write the sale post", "Email your regulars", "Restock the shelves"],
     tint: "from-fuchsia-400 to-brand-700",
+    es: { name: "Oferta del fin de semana", brag: "Mi agente de IA manejó la oferta del fin de semana de mi café 🥐", blurb: "Pan dulce a mitad de precio este fin de semana. Pipo escribe la publicación, les escribe a tus clientes frecuentes y resurte.", lessons: ["Escribe la publicación de la oferta","Escríbeles a tus clientes frecuentes","Resurte los estantes"] },
   },
   {
     id: "business-review",
@@ -99,6 +110,7 @@ export const PATHS: readonly PathCard[] = [
     blurb: "A one-star review. Pipo replies kindly, sorts out a refund and plans a warm welcome back.",
     lessons: ["Reply to the review", "Sort out a refund", "Follow up next week"],
     tint: "from-rose-300 to-brand-600",
+    es: { name: "Cliente molesto", brag: "Mi agente de IA convirtió una reseña de una estrella en un cliente feliz ☕", blurb: "Una reseña de una estrella. Pipo responde con amabilidad, resuelve un reembolso y prepara una cálida bienvenida de vuelta.", lessons: ["Responde la reseña","Resuelve un reembolso","Da seguimiento la próxima semana"] },
   },
   {
     id: "business-staff",
@@ -109,6 +121,7 @@ export const PATHS: readonly PathCard[] = [
     blurb: "Busy days at the café. Pipo plans shifts, messages the team and fills the calendar.",
     lessons: ["Plan the shifts", "Message the team", "Put shifts on the calendar"],
     tint: "from-sky-300 to-brand-700",
+    es: { name: "Semana del equipo", brag: "Mi agente de IA organizó la semana del equipo de mi café 🗓️", blurb: "Días ocupados en el café. Pipo planea los turnos, le escribe al equipo y llena el calendario.", lessons: ["Planea los turnos","Escríbele al equipo","Pon los turnos en el calendario"] },
   },
   // Young coder (Pipo Code on the laptop)
   {
@@ -120,6 +133,7 @@ export const PATHS: readonly PathCard[] = [
     blurb: "A website about Nugget the hamster. Pipo Code plans it, builds it and fixes a bug.",
     lessons: ["Plan your website", "Build the home page", "Fix a bug"],
     tint: "from-amber-300 to-orange-500",
+    es: { name: "Mi primera página web", brag: "Hice mi primera página web con un agente de IA que programa 🌐", blurb: "Una página sobre Nugget el hámster. Pipo Code la planea, la construye y arregla un error.", lessons: ["Planea tu página","Construye la página de inicio","Arregla un error"] },
   },
   {
     id: "kid-game",
@@ -130,6 +144,7 @@ export const PATHS: readonly PathCard[] = [
     blurb: "Candy Climb, an obstacle course in BlockStudio. Design it, build a level, add a shop.",
     lessons: ["Design your game", "Build the first level", "Add a shop"],
     tint: "from-fuchsia-400 to-violet-600",
+    es: { name: "Haz un juego", brag: "Hice mi propio juego con un agente de IA que programa 🎮", blurb: "Candy Climb, una carrera de obstáculos en BlockStudio. Diséñalo, construye un nivel y agrega una tienda.", lessons: ["Diseña tu juego","Construye el primer nivel","Agrega una tienda"] },
   },
   {
     id: "kid-homework",
@@ -140,8 +155,20 @@ export const PATHS: readonly PathCard[] = [
     blurb: "Pipo Code helps you learn, then makes a chart and a diagram for your homework.",
     lessons: ["Learn, don't copy", "Make a chart", "Draw a diagram"],
     tint: "from-emerald-300 to-sky-500",
+    es: { name: "Ayuda con la tarea", brag: "Mi agente de IA me ayudó a aprender, no a copiar 📊", blurb: "Pipo Code te ayuda a aprender y luego hace una gráfica y un diagrama para tu tarea.", lessons: ["Aprende, no copies","Haz una gráfica","Dibuja un diagrama"] },
   },
 ];
 
-export const pathsOf = (persona: Persona) => PATHS.filter((p) => p.persona === persona);
-export const pathById = (id: string) => PATHS.find((p) => p.id === id);
+const inLang = (card: (typeof DATA)[number], lang: Lang): PathCard => {
+  const { es, ...base } = card;
+  return lang === "es" ? { ...base, ...es } : base;
+};
+
+/** All paths in English. */
+export const PATHS: readonly PathCard[] = DATA.map((card) => inLang(card, "en"));
+
+export const pathsOf = (persona: Persona, lang: Lang = "en") => DATA.filter((p) => p.persona === persona).map((p) => inLang(p, lang));
+export const pathById = (id: string, lang: Lang = "en") => {
+  const card = DATA.find((p) => p.id === id);
+  return card && inLang(card, lang);
+};

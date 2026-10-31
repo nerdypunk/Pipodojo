@@ -1,0 +1,104 @@
+{
+  "id": "kid-01-site-plan",
+  "lang": "es",
+  "persona": "kid",
+  "path": "kid-site",
+  "order": 1,
+  "title": "Planea tu sitio web",
+  "icon": "🗺️",
+  "recap": "Pipo Code planeó el sitio web de Nugget.",
+  "funFact": "Los agentes de programación como Pipo Code pueden escribir el código por ti, y tú sigues siendo quien diseña. ¡Ahora Pipo Code construye la página de inicio!",
+  "postcard": "Kai and Pipo at a laptop showing a cheerful website about Nugget the hamster: {answer}",
+  "situation": "¡Hola, Kai! ¿Quieres hacer un sitio web? Te ayudo a planearlo.",
+  "facts": [
+    "🐹 Sobre tu hámster, Nugget",
+    "🌻 Nugget tiene 2 años y le encantan las semillas de girasol",
+    "📄 3 páginas: inicio, fotos, datos curiosos",
+    "🙈 En internet eres solo \"Kai\""
+  ],
+  "systemPrompt": "Eres Pipo Code, un ayudante de programación amigable en la computadora de alguien de 10 años. Ayuda con lo que te pida, con palabras sencillas. Cuando planees un sitio web, escribe una línea por página.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo Code?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "plan_site",
+          "label": "Planea un sitio web sobre mi hámster, Nugget",
+          "text": "Planea un sitio web sobre mi hámster, Nugget.",
+          "quality": "good"
+        },
+        {
+          "id": "make_site",
+          "label": "Hazme un sitio web",
+          "text": "Hazme un sitio web.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "¿Qué necesita saber Pipo Code?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "pages",
+          "label": "3 páginas: inicio, fotos, datos curiosos",
+          "text": "Necesita 3 páginas: inicio, fotos y datos curiosos.",
+          "quality": "good"
+        },
+        {
+          "id": "facts",
+          "label": "Nugget tiene 2 años y le encantan las semillas de girasol",
+          "text": "Nugget tiene 2 años y le encantan las semillas de girasol.",
+          "quality": "good"
+        },
+        {
+          "id": "first_name",
+          "label": "Usa solo mi nombre, Kai",
+          "text": "Usa solo mi nombre, Kai.",
+          "quality": "neutral"
+        },
+        {
+          "id": "coolest",
+          "label": "¡Que sea el sitio más genial del universo!",
+          "text": "¡Que sea el sitio más genial del universo!",
+          "quality": "weak",
+          "tip": "\"El sitio más genial\" no le dice a Pipo Code qué construir. Las páginas y los datos, sí."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:make_site",
+      "signals": [
+        "^(?![\\s\\S]*(nugget|h[aá]mster))"
+      ],
+      "hint": "\"Hazme un sitio web\" no dice de qué se trata.",
+      "explain": "Pipo Code no sabía que es sobre Nugget, así que planeó otro sitio web."
+    },
+    {
+      "id": "no_pages",
+      "when": "not_picked:pages",
+      "signals": [
+        "^(?![\\s\\S]*(datos? (curios|divertid)|curiosidad))"
+      ],
+      "hint": "No le dijiste a Pipo Code qué páginas quieres.",
+      "explain": "Pipo Code no sabía tus páginas, así que eligió las suyas."
+    },
+    {
+      "id": "no_facts",
+      "when": "not_picked:facts",
+      "signals": [
+        "^(?![\\s\\S]*girasol)"
+      ],
+      "hint": "No le contaste nada de Nugget a Pipo Code.",
+      "explain": "Pipo Code no sabía nada de Nugget, así que el sitio no tiene nada especial sobre Nugget."
+    }
+  ],
+  "lesson": "Pipo Code construye lo que describes. Dale las páginas y los datos."
+}

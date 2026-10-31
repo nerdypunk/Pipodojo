@@ -1,0 +1,125 @@
+{
+  "id": "parent-07-day-out",
+  "lang": "es",
+  "persona": "parent",
+  "path": "parent-daytrip",
+  "order": 1,
+  "title": "Elige un lugar para el domingo",
+  "icon": "🗺️",
+  "recap": "Pipo encontró un lugar para un domingo lluvioso.",
+  "funFact": "Los agentes pueden reservar cosas por ti, pero el dinero es tuyo. ¡Ahora Pipo consigue las entradas, y tú decides cuándo paga!",
+  "postcard": "the family arriving for a fun rainy Sunday out: {answer}",
+  "situation": "¡El domingo está libre! ¿Quieres que busque algo divertido para la familia?",
+  "facts": [
+    "👨‍👩‍👧‍👦 2 adultos y 2 niños (de 6 y 9 años)",
+    "🌧️ Lluvia todo el domingo",
+    "💵 Hasta $80 para todos",
+    "🚗 A no más de una hora de casa"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Ayuda con lo que te pidan. Cuando sugieras un lugar, tu primera línea dice cuál es tu mejor opción.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "pick_spot",
+          "label": "Elige un lugar para un día en familia",
+          "text": "Elige un lugar para pasar el día en familia este domingo, para 2 adultos y 2 niños de 6 y 9 años.",
+          "quality": "good"
+        },
+        {
+          "id": "somewhere",
+          "label": "Busca algo divertido que hacer",
+          "text": "Busca algo divertido que hacer.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "¿Qué necesita saber Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "rain",
+          "label": "Va a llover todo el día",
+          "text": "Va a llover todo el día.",
+          "quality": "good"
+        },
+        {
+          "id": "budget",
+          "label": "Hasta $80 para todos",
+          "text": "Que no pase de $80 para todos.",
+          "quality": "good"
+        },
+        {
+          "id": "drive",
+          "label": "A no más de una hora",
+          "text": "A no más de una hora manejando desde la casa.",
+          "quality": "neutral"
+        },
+        {
+          "id": "famous",
+          "label": "¡Un lugar del que todos hablen!",
+          "text": "¡Un lugar del que todos hablen!",
+          "quality": "weak",
+          "tip": "Popular no es lo mismo que ideal para ti. Dile a Pipo lo que importa: el clima, el presupuesto, quiénes van."
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "label": "¿Cómo debe responder Pipo?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "short",
+          "label": "El lugar, el costo y por qué",
+          "text": "Dime el lugar, cuánto cuesta y una razón, en pocas líneas.",
+          "quality": "good"
+        },
+        {
+          "id": "options",
+          "label": "Dame muchas opciones",
+          "text": "Dame muchas opciones.",
+          "quality": "weak",
+          "tip": "Muchas opciones es más para que tú revises. Si pides la mejor opción, recibes una decisión."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "outdoors",
+      "when": "not_picked:rain",
+      "signals": [
+        "(?<![a-záéíóúñü])(parques?|playas?|caminatas?|senderismo|senderos?|picnic|zool[oó]gico|zoo|granjas?|lagos?|jard[ií]n(es)?|aire libre|huertos?|bot[aá]nico|calabazas|bosques?|cerros?)(?![a-záéíóúñü])(?![^\\n]{0,25}(techad|cubiert|bajo techo|interior|indoor|trampol[ií]n|acu[aá]tico))"
+      ],
+      "hint": "No le dijiste a Pipo que va a llover.",
+      "explain": "Pipo no sabía de la lluvia, así que eligió un lugar al aire libre."
+    },
+    {
+      "id": "no_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "^(?![\\s\\S]*\\$\\s?\\d)",
+        "\\$\\s?(8[1-9]|9\\d|\\d{3,})"
+      ],
+      "hint": "No le dijiste a Pipo tu presupuesto.",
+      "explain": "Pipo no sabía tu presupuesto, así que falta el costo o es muy alto."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:somewhere",
+      "signals": [
+        "^(?![\\s\\S]*(?<![a-záéíóúñü])(niñ[oa]s?|ni[nñ]os|familia(r|res)?|hij[oa]s?|peques|infantil(es)?)(?![a-záéíóúñü]))"
+      ],
+      "hint": "\"Algo divertido\" no dice quiénes van, así que Pipo tiene que adivinar.",
+      "explain": "Pipo no sabía que es para la familia, así que no pensó en los niños."
+    }
+  ],
+  "lesson": "Dile a Pipo lo que descarta opciones: el clima, el presupuesto, quiénes van."
+}

@@ -1,0 +1,117 @@
+{
+  "id": "parent-01-dinner",
+  "lang": "es",
+  "persona": "parent",
+  "path": "parent-barbecue",
+  "order": 1,
+  "title": "Parrillada del sábado",
+  "icon": "🍔",
+  "recap": "Pipo planeó tu parrillada: el menú y una lista corta de compras.",
+  "funFact": "Hasta ahora Pipo solo ha hablado contigo. Pero los agentes como Muse de Meta también pueden conectarse a tus apps y hacer cosas por ti, como enviar mensajes. ¡Ahora Pipo envía las invitaciones por ti!",
+  "postcard": "Pipo grilling at a sunny backyard barbecue for six happy friends, the table set with {answer}",
+  "situation": "¡Hola! Me dicen que el sábado vienen amigos a una parrillada. ¿Cómo te ayudo?",
+  "facts": [
+    "👥 Vienen 6 personas",
+    "🥕 Sam es vegetariano",
+    "💵 Tu presupuesto es de $60"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Ayuda con lo que te pidan. Cuando planees comida, tu primera línea dice para cuántas personas es.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "plan_dinner",
+          "label": "Planea una parrillada para 6 amigos este sábado",
+          "text": "Planea una parrillada para 6 amigos este sábado.",
+          "quality": "good"
+        },
+        {
+          "id": "help_dinner",
+          "label": "Ayúdame con la parrillada",
+          "text": "Ayúdame con la parrillada.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "¿Qué necesita saber Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "vegetarian",
+          "label": "Mi amigo Sam es vegetariano",
+          "text": "Uno de mis amigos, Sam, es vegetariano.",
+          "quality": "good"
+        },
+        {
+          "id": "budget",
+          "label": "Que el total sea menos de $60",
+          "text": "Que el total sea menos de $60.",
+          "quality": "good"
+        },
+        {
+          "id": "amazing",
+          "label": "¡Que quede increíble!",
+          "text": "¡Que quede increíble!",
+          "quality": "weak",
+          "tip": "\"Que quede increíble\" suena bien, pero no le da a Pipo nada concreto con qué trabajar."
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "label": "¿Cómo debe responder Pipo?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "short_list",
+          "label": "El menú y una lista corta de compras",
+          "text": "Dame el menú y una lista corta de compras.",
+          "quality": "good"
+        },
+        {
+          "id": "everything",
+          "label": "Dime todo",
+          "text": "Dime todo lo que debería saber.",
+          "quality": "weak",
+          "tip": "\"Dime todo\" no dice qué necesitas de vuelta. Si pides algo específico, recibes una respuesta que puedes usar."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_vegetarian",
+      "when": "not_picked:vegetarian",
+      "signals": [
+        "(?<![a-záéíóúñü])(bistecs?|filetes?|pollo|res|carnes?|cerdo|cordero|salm[oó]n|pescado|tocino|salchichas?|hot ?dogs?|chorizos?|pavo|camar[oó]n(es)?|hamburguesas?|costillas|jam[oó]n|alb[oó]ndigas|at[uú]n|brochetas?|alitas|arrachera|pechugas?|morcillas?|entra[ñn]as?|muslos?|sirloin|picanha)(?![a-záéíóúñü])(?![ -](vegetarian|vegan|vegetal|de (frijol|champi|hongo|tofu|soya|lenteja|garbanzo|verdura)))"
+      ],
+      "hint": "No le dijiste a Pipo que Sam es vegetariano.",
+      "explain": "Pipo no sabía que Sam es vegetariano, así que el menú tiene carne."
+    },
+    {
+      "id": "no_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "^(?![\\s\\S]*\\$\\s?\\d)"
+      ],
+      "hint": "No le dijiste a Pipo tu presupuesto.",
+      "explain": "Pipo no sabía tu presupuesto, así que el plan no tiene ningún precio."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:help_dinner",
+      "signals": [
+        "^(?![\\s\\S]*(?<![a-záéíóúñü\\d])(6|seis)(?![a-záéíóúñü\\d]))"
+      ],
+      "hint": "\"Ayúdame con la parrillada\" no dice cuántas personas vienen, así que Pipo tiene que adivinar.",
+      "explain": "Pipo no sabía que vienen 6 personas, así que adivinó para cuántos cocinar."
+    }
+  ],
+  "lesson": "Pipo solo sabe lo que tú le dices. Pon en tu mensaje los datos que importan."
+}

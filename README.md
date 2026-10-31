@@ -44,6 +44,14 @@ In each path, the first lesson is a short answer from Pipo; the next two have Pi
 
 The young coder uses **Pipo Code**, a coding agent on a laptop, to build a website about a hamster, make an obstacle-course game in BlockStudio (a pretend game studio) and make charts and diagrams for homework. Each laptop app shows a live preview and a code view. They're drawn by the game from Pipo's choices, so nothing the model writes is ever run. These lessons also teach staying safe: no personal details online, no real money in games, and learning instead of copying.
 
+## English and Spanish
+
+The whole game plays in English or Latin American Spanish; the 🌐 button on the first screen and in town switches it, and a first visit follows the browser's language.
+
+- Screen text lives in `src/i18n/en.ts` and `src/i18n/es.ts`. The Spanish file must match the English one entry for entry, or the build fails.
+- Each lesson in `/missions` has a Spanish twin in `/missions/es` with the same ids, pieces and scoring rules, only the words and the answer checks rewritten for Spanish. `tests/spanish.test.ts` keeps every twin in step, and a missing twin falls back to English.
+- Spanish lessons tell Pipo to answer in Spanish. Check one live with `npm run check:mission -- cafe-01-sale-post --lang es`.
+
 ## Powered by Muse Spark
 
 Pipo's answers come live from Meta's **Muse Spark** model through the Meta Model API. Pipodojo uses the `muse-spark-1.2-contributor` tier everywhere, locally and deployed: it costs less, and in return Meta may use the prompts to improve its models. Players never type, so every prompt is built from the game's own preset pieces and nothing personal is sent. Pipo's role and answer format come from each lesson file; the stars are worked out by the game's own rules, never by a model.

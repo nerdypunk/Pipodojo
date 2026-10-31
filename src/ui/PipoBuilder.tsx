@@ -3,7 +3,9 @@
 // in code, so it's instant and free; the look also goes into the end-of-path postcard prompt.
 import { motion, useReducedMotion } from "motion/react";
 import { BODIES, COLORS, HEADS, paletteOf, type PipoLook } from "../game/pipoLook.ts";
+import { useLang } from "../i18n/index.tsx";
 import { Button } from "./Button.tsx";
+import { LangSwitch } from "./LangSwitch.tsx";
 import { Pipo } from "./Pipo.tsx";
 import { ShaderBorder } from "./ShaderBorder.tsx";
 
@@ -18,20 +20,23 @@ interface Props {
 
 export function PipoBuilder({ look, onChange, onDone, first }: Props) {
   const still = useReducedMotion();
+  const { lang, t } = useLang();
+  const label = (option: { label: string; es: string }) => (lang === "es" ? option.es : option.label);
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col justify-center gap-3 p-3 md:px-6 md:py-4">
       <header className="glass flex items-center gap-3 rounded-2xl py-1.5 pr-4 pl-1.5">
         <span className="pl-2.5 text-lg font-black tracking-tight text-brand-700">Pipodojo</span>
-        <span className="rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-extrabold text-white">{first ? "Welcome!" : "Pipo's garage"}</span>
+        <span className="rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-extrabold text-white">{first ? t.builder.welcome : t.builder.garage}</span>
         <span className="ml-auto hidden items-center gap-1.5 text-xs font-extrabold text-brand-800 sm:inline-flex">
-          <span aria-hidden="true">⚡</span> Pipo is powered by Meta's Muse Spark
+          <span aria-hidden="true">⚡</span> {t.common.poweredBy}
         </span>
+        <LangSwitch className="ml-auto py-1.5 sm:ml-0" />
       </header>
 
       <main className="grid gap-3 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-5">
         {/* Live preview */}
         <ShaderBorder mode="build" className="flex flex-col">
-          <section className="glass flex flex-1 flex-col gap-3 rounded-3xl p-3 md:p-4" aria-label="Your Pipo">
+          <section className="glass flex flex-1 flex-col gap-3 rounded-3xl p-3 md:p-4" aria-label={t.builder.yourPipo}>
             <div className="relative flex min-h-56 flex-1 items-center justify-center overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_50%_45%,#5a46e0_0%,#2d2470_55%,#1b1640_100%)]">
               <motion.div
                 key={`${look.head}-${look.body}-${look.color}`}
@@ -43,35 +48,35 @@ export function PipoBuilder({ look, onChange, onDone, first }: Props) {
               </motion.div>
             </div>
             <div className="rounded-2xl bg-white/90 p-4">
-              <p className="text-xs font-extrabold tracking-wide text-brand-700 uppercase">{first ? "Meet your agent" : "New look?"}</p>
-              <h1 className="text-2xl font-black text-ink md:text-3xl">Make Pipo yours</h1>
-              <p className="font-semibold text-gray-600">Pipo is the agent you'll guide around town. Pick a look!</p>
+              <p className="text-xs font-extrabold tracking-wide text-brand-700 uppercase">{first ? t.builder.meet : t.builder.newLook}</p>
+              <h1 className="text-2xl font-black text-ink md:text-3xl">{t.builder.title}</h1>
+              <p className="font-semibold text-gray-600">{t.builder.intro}</p>
             </div>
           </section>
         </ShaderBorder>
 
         {/* Choices */}
         <ShaderBorder mode="build" roundness={0.08} className="flex flex-col">
-          <section className="glass flex flex-1 flex-col gap-4 rounded-3xl p-4 md:p-5" aria-label="Pick a look">
-            <Choice label="Head">
+          <section className="glass flex flex-1 flex-col gap-4 rounded-3xl p-4 md:p-5" aria-label={t.builder.pickLook}>
+            <Choice label={t.builder.head}>
               {HEADS.map((head) => (
-                <Tile key={head.id} on={look.head === head.id} label={head.label} onPick={() => onChange((l) => ({ ...l, head: head.id }))}>
+                <Tile key={head.id} on={look.head === head.id} label={label(head)} onPick={() => onChange((l) => ({ ...l, head: head.id }))}>
                   <Pipo look={{ ...look, head: head.id }} className="h-14 w-14" />
                 </Tile>
               ))}
             </Choice>
-            <Choice label="Body">
+            <Choice label={t.builder.body}>
               {BODIES.map((body) => (
-                <Tile key={body.id} on={look.body === body.id} label={body.label} onPick={() => onChange((l) => ({ ...l, body: body.id }))}>
+                <Tile key={body.id} on={look.body === body.id} label={label(body)} onPick={() => onChange((l) => ({ ...l, body: body.id }))}>
                   <Pipo look={{ ...look, body: body.id }} className="h-14 w-14" />
                 </Tile>
               ))}
             </Choice>
-            <Choice label="Colours">
+            <Choice label={t.builder.colours}>
               {COLORS.map((color) => {
                 const [light, mid, dark] = paletteOf(color.id).shell;
                 return (
-                  <Tile key={color.id} on={look.color === color.id} label={color.label} onPick={() => onChange((l) => ({ ...l, color: color.id }))}>
+                  <Tile key={color.id} on={look.color === color.id} label={label(color)} onPick={() => onChange((l) => ({ ...l, color: color.id }))}>
                     <span
                       className="h-12 w-12 rounded-full shadow-inner ring-2 ring-white"
                       style={{ background: `linear-gradient(160deg, ${light}, ${mid} 55%, ${dark})` }}
@@ -83,7 +88,7 @@ export function PipoBuilder({ look, onChange, onDone, first }: Props) {
             </Choice>
             <div className="mt-auto flex gap-2 border-t border-white/70 pt-4">
               <Button className="flex-1" onClick={onDone}>
-                {first ? "Let's go to town" : "Back to town"}
+                {first ? t.builder.go : t.builder.back}
               </Button>
             </div>
           </section>

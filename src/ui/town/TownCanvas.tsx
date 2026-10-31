@@ -20,6 +20,8 @@ export interface PlaceTag {
   progress?: string;
   /** Shown on the tag, e.g. "🏅" when a path here is complete. */
   badge?: string;
+  /** "Tap or click to visit ›", in the player's language. */
+  visit?: string;
   /** False for places you can't visit yet. */
   open: boolean;
 }
@@ -418,7 +420,7 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
           {hovered && (
             <div className="pop-in w-40 rounded-2xl bg-ink/90 px-3 py-2 text-center text-[11px] font-bold text-white shadow-xl sm:w-48 sm:text-xs">
               {tag.sub}
-              {tag.open && <span className="mt-1 block text-[11px] font-black text-amber-300">Tap or click to visit ›</span>}
+              {tag.open && tag.visit && <span className="mt-1 block text-[11px] font-black text-amber-300">{tag.visit}</span>}
             </div>
           )}
           <div className="pop-in" style={{ animationDelay: `${delay + 0.35}s` }}>

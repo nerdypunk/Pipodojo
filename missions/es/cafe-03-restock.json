@@ -1,0 +1,260 @@
+{
+  "id": "cafe-03-restock",
+  "lang": "es",
+  "persona": "business",
+  "path": "business-sale",
+  "order": 3,
+  "title": "Surte la despensa",
+  "icon": "📦",
+  "recap": "Pipo dejó listos los insumos de repostería para la oferta.",
+  "funFact": "Post, correo e insumos: tu oferta está lista. Los agentes pueden encargarse de muchas tareas pequeñas de un negocio mientras tú tomas las decisiones.",
+  "postcard": "a delivery van unloading {items} at Bloom Café",
+  "situation": "¡Pan dulce a mitad de precio significa hornear muchísimo! ¿Pido los insumos?",
+  "facts": [
+    "📝 Harina, mantequilla, azúcar, huevos, chocolate",
+    "🚚 Debe llegar a más tardar el viernes a las 5pm",
+    "💵 $100 como máximo",
+    "👀 Quieres ver el pedido antes de pagar"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente amigable para la dueña o el dueño de Bloom Café, una pequeña cafetería de barrio. Puedes hacer pedidos a proveedores en línea y pagar con la tarjeta guardada de la cafetería. Haces lo que te piden: si te piden pedir algo, pagas y haces el pedido; si piden ver el carrito primero, lo llenas y esperas su OK.",
+  "tools": [
+    {
+      "name": "pay_and_order",
+      "description": "Compra los insumos ahora: paga con la tarjeta guardada y haz el pedido. Úsala cuando la persona quiere que te encargues.",
+      "app": "shop",
+      "outcome": "done",
+      "store": "BakeSupply",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Todo lo que hay en el carrito, con nombres en español y el precio de cada cosa en dólares",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total en dólares"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Día y hora de entrega, en español, por ejemplo jueves 2pm"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛒",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "Entrega: {delivery}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Pagado y pedido"
+        }
+      ]
+    },
+    {
+      "name": "show_basket",
+      "description": "Llena el carrito y muéstraselo a la persona sin pagar, para que lo revise primero. Úsala cuando la persona quiere aprobarlo antes de pagar.",
+      "app": "shop",
+      "outcome": "waiting",
+      "store": "BakeSupply",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Todo lo que hay en el carrito, con nombres en español y el precio de cada cosa en dólares",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total en dólares"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Día y hora de entrega, en español, por ejemplo jueves 2pm"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛒",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "Entrega: {delivery}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Carrito listo, esperando tu OK para pagar"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "order_list",
+          "label": "Pide la lista de repostería para la oferta",
+          "text": "Pide mi lista de repostería para 200 piezas de pan dulce para la oferta del fin de semana: harina, mantequilla, azúcar, huevos y chocolate.",
+          "quality": "good"
+        },
+        {
+          "id": "order_stuff",
+          "label": "Pide lo que necesitamos",
+          "text": "Pide lo que necesitamos.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "label": "¿Qué límites debe seguir Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "deliver_by",
+          "label": "Que llegue a más tardar el viernes a las 5pm",
+          "text": "Tiene que llegar a más tardar el viernes a las 5pm.",
+          "quality": "good"
+        },
+        {
+          "id": "budget",
+          "label": "No gastes más de $100",
+          "text": "No gastes más de $100 en total.",
+          "quality": "good"
+        },
+        {
+          "id": "bulk",
+          "label": "Tamaños grandes si salen más baratos",
+          "text": "Compra tamaños grandes si salen más baratos.",
+          "quality": "neutral"
+        },
+        {
+          "id": "premium",
+          "label": "¡Solo las marcas más finas!",
+          "text": "¡Solo las marcas más finas!",
+          "quality": "weak",
+          "tip": "\"Las marcas más finas\" le dice a Pipo que gaste más, no cuánto puedes pagar."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo pague",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstrame el carrito primero",
+          "text": "Muéstrame el carrito y espera mi OK antes de pagar.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Solo págalo",
+          "text": "Solo págalo, no hace falta que me lo muestres.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:order_stuff",
+      "signals": [
+        "🛒(?![^\\n]*(harina|mantequilla))"
+      ],
+      "hint": "\"Lo que necesitamos\" no dice qué pedir.",
+      "explain": "Pipo no sabía qué pedir, así que al carrito le falta tu lista de repostería."
+    },
+    {
+      "id": "no_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "💳[^\\n]*\\$\\s?(10[1-9]|1[1-9]\\d|[2-9]\\d\\d|\\d{1,3},\\d{3}|\\d{4,})"
+      ],
+      "hint": "No le diste a Pipo un límite de gasto.",
+      "explain": "Pipo no sabía tu límite, así que el pedido cuesta más de $100."
+    },
+    {
+      "id": "no_delivery_time",
+      "when": "not_picked:deliver_by",
+      "signals": [
+        "🚚(?![^\\n]*viernes)",
+        "🚚[^\\n]*viernes[^\\n]*((?<![\\d:])([6-9]|1[01])(:\\d\\d)?\\s?(pm|p\\.\\s?m\\.|de la (tarde|noche))|(?<![\\d:])(1[89]|2[0-3]):\\d\\d)"
+      ],
+      "hint": "No le dijiste a Pipo cuándo tienen que llegar los insumos.",
+      "explain": "Pipo no sabía cuándo los necesitas, así que la entrega llega demasiado tarde para hornear."
+    },
+    {
+      "id": "paid_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(pagad[oa]|comprad[oa]|pedido (hecho|realizado|confirmado))(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Si pides ver el carrito primero, puedes detectar errores antes de gastar el dinero de la cafetería.",
+      "explain": "Pipo pagó de inmediato, así que nunca pudiste revisar el pedido."
+    }
+  ],
+  "lesson": "Cuando Pipo gasta el dinero de la cafetería, dale límites y pídele que te consulte antes de pagar."
+}

@@ -1,0 +1,125 @@
+{
+  "id": "cafe-07-shifts",
+  "lang": "es",
+  "persona": "business",
+  "path": "business-staff",
+  "order": 1,
+  "title": "Planea los turnos",
+  "icon": "🗓️",
+  "recap": "Pipo planeó los turnos de jueves a sábado.",
+  "funFact": "Los agentes pueden escribirle a tu equipo por ti. ¡Ahora Pipo manda el horario al chat del equipo!",
+  "postcard": "the Bloom Café team high-fiving behind the counter: {answer}",
+  "situation": "¡Se vienen días movidos en Bloom Café! ¿Quieres que planee quién trabaja cuándo?",
+  "facts": [
+    "👥 Equipo: Ana, Ben y Chloe",
+    "🌅 Ana no puede trabajar en las mañanas",
+    "📈 El sábado se necesitan los tres",
+    "⏰ Turnos: de 7 a 11am y de 11am a 3pm"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente amigable para la dueña o el dueño de Bloom Café, una pequeña cafetería de barrio. Ayuda con lo que te pidan. Cuando planees turnos, escribe una línea por día.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "plan_shifts",
+          "label": "Planea de jueves a sábado para Ana, Ben y Chloe",
+          "text": "Planea los turnos de Ana, Ben y Chloe para el jueves, el viernes y el sábado. Los turnos son de 7 a 11am y de 11am a 3pm.",
+          "quality": "good"
+        },
+        {
+          "id": "rota",
+          "label": "Organiza el horario",
+          "text": "Organiza el horario.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "¿Qué necesita saber Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "ana",
+          "label": "Ana no puede trabajar en las mañanas",
+          "text": "Ana no puede trabajar en las mañanas.",
+          "quality": "good"
+        },
+        {
+          "id": "saturday",
+          "label": "El sábado se necesitan los tres",
+          "text": "El sábado hay mucho trabajo, así que trabajan los tres.",
+          "quality": "good"
+        },
+        {
+          "id": "fair",
+          "label": "Reparte las horas de forma justa",
+          "text": "Reparte las horas de forma justa.",
+          "quality": "neutral"
+        },
+        {
+          "id": "somehow",
+          "label": "Haz que funcione como sea",
+          "text": "Haz que funcione como sea.",
+          "quality": "weak",
+          "tip": "\"Como sea\" le deja a Pipo las decisiones difíciles. Mejor dile las reglas."
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "label": "¿Cómo debe responder Pipo?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "one_line",
+          "label": "Una línea por día",
+          "text": "Dame una línea por día.",
+          "quality": "good"
+        },
+        {
+          "id": "table",
+          "label": "Una tabla grande y detallada",
+          "text": "Haz una tabla grande y detallada.",
+          "quality": "weak",
+          "tip": "Una tabla grande cuesta leerla en el celular. Con una línea por día te basta."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "ana_mornings",
+      "when": "not_picked:ana",
+      "signals": [
+        "(?<![a-záéíóúñü])ana(?![a-záéíóúñü])(?:(?! y )[^,;·|/\\n]){0,14}((?<![\\d:])7(?!\\d)|mañana|manana)",
+        "((?<![\\d:])7\\s?(am|a\\.\\s?m\\.|:00)?\\s?(-|–|a)\\s?11|mañana|manana)(?:(?! y )[^,;·|/\\n]){0,8}(?<![a-záéíóúñü])ana(?![a-záéíóúñü])"
+      ],
+      "hint": "No le dijiste a Pipo que Ana no puede trabajar en las mañanas.",
+      "explain": "Pipo no lo sabía, así que puso a Ana en una mañana que no puede cubrir."
+    },
+    {
+      "id": "saturday_short",
+      "when": "not_picked:saturday",
+      "signals": [
+        "(^|\\n)(?=[^\\n]*(?<![a-záéíóúñü])s[aá]b)(?![^\\n]*(los tres|las tres|todo el equipo|todos))(?:(?![^\\n]*(?<![a-záéíóúñü])ana(?![a-záéíóúñü]))|(?![^\\n]*(?<![a-záéíóúñü])ben(?![a-záéíóúñü]))|(?![^\\n]*(?<![a-záéíóúñü])chloe(?![a-záéíóúñü])))"
+      ],
+      "hint": "No le dijiste a Pipo que el sábado se necesita a todos.",
+      "explain": "Pipo no sabía que el sábado hay mucho trabajo, así que falta alguien en el día más movido."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:rota",
+      "signals": [
+        "^(?![\\s\\S]*(?<![a-záéíóúñü])chloe(?![a-záéíóúñü]))"
+      ],
+      "hint": "\"Organiza el horario\" no dice quién está en el equipo ni qué días.",
+      "explain": "Pipo no conocía a tu equipo, así que inventó el horario."
+    }
+  ],
+  "lesson": "Reglas como quién no puede trabajar cuándo son justo lo que Pipo no puede adivinar. Díselas claramente."
+}

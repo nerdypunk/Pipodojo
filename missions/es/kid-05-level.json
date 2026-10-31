@@ -1,0 +1,261 @@
+{
+  "id": "kid-05-level",
+  "lang": "es",
+  "persona": "kid",
+  "path": "kid-game",
+  "order": 2,
+  "title": "Construye el primer nivel",
+  "icon": "🧱",
+  "recap": "Pipo Code construyó el nivel 1 de Candy Climb.",
+  "funFact": "Muchos juegos tienen tiendas. Una buena tienda es justa y nunca les pide dinero real a los niños. ¡Ahora Pipo Code agrega una tienda!",
+  "postcard": "a blocky candy level with lollipop platforms and checkpoint flags: {obstacles}",
+  "situation": "¡Candy Climb, nivel 1! ¿Lo construyo en BlockStudio?",
+  "facts": [
+    "🧱 El nivel 1 tiene 6 obstáculos",
+    "🚩 Un punto de control cada 2 obstáculos (3 en total)",
+    "🐢 Empieza fácil: nada que se mueva en el nivel 1",
+    "🧪 Pruébalo antes de publicarlo"
+  ],
+  "systemPrompt": "Eres Pipo Code, un ayudante de programación amigable en la computadora de alguien de 10 años. Construyes su juego con tus herramientas. Haces lo que te pide: si te pide publicarlo, lo haces; si te pide probarlo primero, lo preparas y esperas su OK.",
+  "tools": [
+    {
+      "name": "publish_level",
+      "description": "Construye el nivel en BlockStudio y publícalo para todos de inmediato. Úsala cuando la persona lo quiera publicado ya.",
+      "app": "game",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "El nombre del juego y del nivel"
+          },
+          "theme": {
+            "type": "string",
+            "description": "Cómo se ve el nivel, en pocas palabras"
+          },
+          "obstacles": {
+            "type": "array",
+            "description": "Los obstáculos en orden, cada uno en pocas palabras",
+            "items": {
+              "type": "string"
+            }
+          },
+          "checkpoints": {
+            "type": "integer",
+            "description": "Cuántos puntos de control tiene el nivel"
+          },
+          "goal": {
+            "type": "string",
+            "description": "Lo que el jugador debe alcanzar para terminar"
+          }
+        },
+        "required": [
+          "name",
+          "theme",
+          "obstacles",
+          "checkpoints",
+          "goal"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🎮",
+          "text": "{name}"
+        },
+        {
+          "emoji": "🧱",
+          "text": "{obstacles}"
+        },
+        {
+          "emoji": "🚩",
+          "text": "Puntos de control: {checkpoints}"
+        },
+        {
+          "emoji": "🏁",
+          "text": "Meta: {goal}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Publicado en BlockStudio"
+        }
+      ]
+    },
+    {
+      "name": "playtest_level",
+      "description": "Construye el nivel en BlockStudio para que la persona lo pruebe, sin publicarlo. Úsala cuando la persona quiera probarlo primero.",
+      "app": "game",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "El nombre del juego y del nivel"
+          },
+          "theme": {
+            "type": "string",
+            "description": "Cómo se ve el nivel, en pocas palabras"
+          },
+          "obstacles": {
+            "type": "array",
+            "description": "Los obstáculos en orden, cada uno en pocas palabras",
+            "items": {
+              "type": "string"
+            }
+          },
+          "checkpoints": {
+            "type": "integer",
+            "description": "Cuántos puntos de control tiene el nivel"
+          },
+          "goal": {
+            "type": "string",
+            "description": "Lo que el jugador debe alcanzar para terminar"
+          }
+        },
+        "required": [
+          "name",
+          "theme",
+          "obstacles",
+          "checkpoints",
+          "goal"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🎮",
+          "text": "{name}"
+        },
+        {
+          "emoji": "🧱",
+          "text": "{obstacles}"
+        },
+        {
+          "emoji": "🚩",
+          "text": "Puntos de control: {checkpoints}"
+        },
+        {
+          "emoji": "🏁",
+          "text": "Meta: {goal}"
+        },
+        {
+          "emoji": "🧪",
+          "text": "Listo para probar, esperando tu OK"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo Code?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "build_level",
+          "label": "Construye el nivel 1 de Candy Climb",
+          "text": "Construye el nivel 1 de Candy Climb en BlockStudio: una pista de obstáculos de dulces con 6 obstáculos.",
+          "quality": "good"
+        },
+        {
+          "id": "build",
+          "label": "Construye mi juego",
+          "text": "Construye mi juego.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "label": "¿Qué reglas debe seguir el nivel?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "checkpoints",
+          "label": "3 puntos de control, uno cada 2 obstáculos",
+          "text": "Pon un punto de control después de cada 2 obstáculos, o sea 3 en total.",
+          "quality": "good"
+        },
+        {
+          "id": "easy",
+          "label": "Empieza fácil: nada que se mueva",
+          "text": "Empieza fácil: plataformas anchas y nada que se mueva o gire en el nivel 1.",
+          "quality": "good"
+        },
+        {
+          "id": "jump",
+          "label": "Agrega un trampolín",
+          "text": "Agrega un trampolín en algún lugar.",
+          "quality": "neutral"
+        },
+        {
+          "id": "lava",
+          "label": "¡Llénalo de lava!",
+          "text": "¡Llénalo de lava!",
+          "quality": "weak",
+          "tip": "Lava por todos lados en el nivel 1 hace que los jugadores se rindan. Empieza fácil y ve subiendo."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de publicarlo",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Déjame probarlo primero",
+          "text": "Déjame probarlo antes de que lo publiques.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Publícalo de inmediato",
+          "text": "Publícalo de inmediato.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_checkpoints",
+      "when": "not_picked:checkpoints",
+      "signals": [
+        "🚩 Puntos de control: (?!3(?!\\d))"
+      ],
+      "hint": "No le dijiste a Pipo Code dónde van los puntos de control.",
+      "explain": "Pipo Code no sabía tu regla de puntos de control, así que los jugadores vuelven a empezar desde muy atrás."
+    },
+    {
+      "id": "too_hard",
+      "when": "not_picked:easy",
+      "signals": [
+        "🧱[^\\n]*(balance|gira|m[oó]vil|se mueve|movimiento|movedi|rota|desliz|resbal|p[eé]ndulo|cinta transportadora|rodante|esquiva|lava|mortal|picos?(?![a-záéíóúñü])|pinchos?|p[uú]as)"
+      ],
+      "hint": "No le dijiste a Pipo Code que empiece fácil.",
+      "explain": "Pipo Code no sabía que el nivel 1 debe ser fácil, así que ya tiene obstáculos difíciles que se mueven."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:build",
+      "signals": [
+        "🎮(?![^\\n]*candy)"
+      ],
+      "hint": "\"Construye mi juego\" no dice qué juego ni qué nivel.",
+      "explain": "Pipo Code no sabía que es Candy Climb, así que construyó otra cosa."
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])publicad[oa](?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Probarlo primero te deja encontrar las partes aburridas o imposibles.",
+      "explain": "Pipo Code lo publicó de inmediato, así que nunca lo probaste."
+    }
+  ],
+  "lesson": "Las reglas, como los puntos de control y la dificultad, hacen divertido un juego. Pruébalo antes de publicarlo."
+}

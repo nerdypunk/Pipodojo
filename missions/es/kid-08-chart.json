@@ -1,0 +1,248 @@
+{
+  "id": "kid-08-chart",
+  "lang": "es",
+  "persona": "kid",
+  "path": "kid-homework",
+  "order": 2,
+  "title": "Haz una gráfica",
+  "icon": "📊",
+  "recap": "Pipo Code hizo una gráfica de barras de tu encuesta de frutas.",
+  "funFact": "Los diagramas explican cómo funcionan las cosas en un solo dibujo. ¡Ahora Pipo Code dibuja el ciclo del agua para tu cartel!",
+  "postcard": "a colourful bar chart of favourite fruits pinned on a classroom wall: {bars}",
+  "situation": "¡Le preguntaste a tu clase cuál es su fruta favorita! ¿Quieres una gráfica?",
+  "facts": [
+    "📋 La encuesta de tu clase: fruta favorita",
+    "🍎 Manzanas 8 · Plátanos 5 · Uvas 7 · Mango 4",
+    "🏷️ Título: Nuestras frutas favoritas",
+    "👀 Revísala antes de compartirla"
+  ],
+  "systemPrompt": "Eres Pipo Code, un ayudante de programación amigable en la computadora de alguien de 10 años. Haces las gráficas de su tarea con tus herramientas. Haces lo que te pide: si te pide compartirla, lo haces; si te pide verla primero, la preparas y esperas su OK.",
+  "tools": [
+    {
+      "name": "share_chart",
+      "description": "Haz la gráfica y compártela con la clase de inmediato. Úsala cuando la persona la quiera compartir ya.",
+      "app": "chart",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "El título de la gráfica"
+          },
+          "bars": {
+            "type": "array",
+            "description": "Una barra por respuesta, con su número",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "value"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "bars"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📊",
+          "text": "{title}"
+        },
+        {
+          "emoji": "📈",
+          "text": "{bars}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Compartida con la clase"
+        }
+      ]
+    },
+    {
+      "name": "show_chart",
+      "description": "Haz la gráfica y muéstrasela a la persona sin compartirla, para que pueda revisarla primero. Úsala cuando la persona quiera verla primero.",
+      "app": "chart",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "El título de la gráfica"
+          },
+          "bars": {
+            "type": "array",
+            "description": "Una barra por respuesta, con su número",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "value"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "bars"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📊",
+          "text": "{title}"
+        },
+        {
+          "emoji": "📈",
+          "text": "{bars}"
+        },
+        {
+          "emoji": "👀",
+          "text": "Gráfica lista, esperando tu OK"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo Code?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "make_chart",
+          "label": "Haz una gráfica de barras de mi encuesta de frutas",
+          "text": "Haz una gráfica de barras de la encuesta de mi clase sobre la fruta favorita.",
+          "quality": "good"
+        },
+        {
+          "id": "make_picture",
+          "label": "Haz un dibujo para mi tarea",
+          "text": "Haz un dibujo para mi tarea.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "data",
+      "label": "¿Qué necesita saber Pipo Code?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "numbers",
+          "label": "Manzanas 8, plátanos 5, uvas 7, mango 4",
+          "text": "Los resultados: manzanas 8, plátanos 5, uvas 7, mango 4.",
+          "quality": "good"
+        },
+        {
+          "id": "title",
+          "label": "Ponle de título \"Nuestras frutas favoritas\"",
+          "text": "Ponle de título \"Nuestras frutas favoritas\".",
+          "quality": "good"
+        },
+        {
+          "id": "sorted",
+          "label": "La barra más grande primero",
+          "text": "Pon primero la barra más grande.",
+          "quality": "neutral"
+        },
+        {
+          "id": "fake",
+          "label": "Haz los números más grandes para que se vea genial",
+          "text": "Haz los números más grandes para que se vea genial.",
+          "quality": "weak",
+          "tip": "Cambiar los números hace que la gráfica esté mal. Una gráfica solo sirve si muestra lo que pasó de verdad."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de compartirla",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstramela antes de compartirla",
+          "text": "Muéstrame la gráfica antes de compartirla.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Compártela con la clase ya",
+          "text": "Compártela con la clase ya.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_data",
+      "when": "not_picked:numbers",
+      "signals": [
+        "📈(?![^\\n]*mangos? \\(4\\))"
+      ],
+      "hint": "No le diste a Pipo Code los resultados de tu encuesta.",
+      "explain": "Pipo Code no tenía tus números, así que los inventó."
+    },
+    {
+      "id": "fake_numbers",
+      "when": "picked:fake",
+      "signals": [
+        "📈[^\\n]*manzanas? \\((?!8\\))\\d+"
+      ],
+      "hint": "Cambiar los números hace que la gráfica no sea verdad.",
+      "explain": "Pipo Code cambió tus números, así que la gráfica no muestra lo que dijo tu clase."
+    },
+    {
+      "id": "no_title",
+      "when": "not_picked:title",
+      "signals": [
+        "📊(?![^\\n]*nuestras frutas favoritas)"
+      ],
+      "hint": "No le diste a Pipo Code el título.",
+      "explain": "Pipo Code no sabía tu título, así que eligió uno propio."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:make_picture",
+      "signals": [
+        "📈(?![^\\n]*(manzana|pl[aá]tano|banana))"
+      ],
+      "hint": "\"Un dibujo para mi tarea\" no dice qué mostrar.",
+      "explain": "Pipo Code no sabía que es tu encuesta de frutas, así que la gráfica muestra otra cosa."
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])compartid[oa]s?(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Revisar la gráfica primero te deja encontrar un error antes de que la vea la clase.",
+      "explain": "Pipo Code la compartió de inmediato, así que nunca la revisaste."
+    }
+  ],
+  "lesson": "Dale a Pipo Code tus números reales y revisa la gráfica antes de compartirla."
+}

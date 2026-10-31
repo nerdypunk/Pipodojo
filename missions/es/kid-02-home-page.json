@@ -1,0 +1,227 @@
+{
+  "id": "kid-02-home-page",
+  "lang": "es",
+  "persona": "kid",
+  "path": "kid-site",
+  "order": 2,
+  "title": "Construye la página de inicio",
+  "icon": "🏠",
+  "recap": "Pipo Code construyó la página de inicio de Nugget.",
+  "funFact": "Los sitios web de verdad siempre tienen errores, y los agentes de programación son buenos para arreglarlos si los describes bien. ¡Ahora tú y Pipo Code arreglan uno!",
+  "postcard": "a laptop screen showing the home page {title}",
+  "situation": "¡Hora de construir la página de inicio! ¿Qué debe tener?",
+  "facts": [
+    "🏠 Página de inicio del sitio de Nugget",
+    "🧩 Secciones: Sobre Nugget, Fotos, Datos curiosos",
+    "🙈 Nunca tu nombre completo, tu escuela ni tu calle",
+    "👀 Mira una vista previa antes de que esté en línea"
+  ],
+  "systemPrompt": "Eres Pipo Code, un ayudante de programación amigable en la computadora de alguien de 10 años. Construyes su sitio web con tus herramientas. Haces lo que te pide: si te pide ponerlo en línea, lo haces; si te pide ver una vista previa primero, la preparas y esperas su OK.",
+  "tools": [
+    {
+      "name": "publish_site",
+      "description": "Construye la página y ponla en línea de inmediato. Úsala cuando la persona la quiera en línea ya.",
+      "app": "site",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "El título de la página, hasta 6 palabras"
+          },
+          "intro": {
+            "type": "string",
+            "description": "Un texto corto de bienvenida, hasta 25 palabras"
+          },
+          "sections": {
+            "type": "array",
+            "description": "Hasta 3 nombres cortos de secciones de la página",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "title",
+          "intro",
+          "sections"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🌐",
+          "text": "{title}"
+        },
+        {
+          "emoji": "📝",
+          "text": "{intro}"
+        },
+        {
+          "emoji": "🧩",
+          "text": "{sections}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Publicada en línea"
+        }
+      ]
+    },
+    {
+      "name": "preview_site",
+      "description": "Construye la página como vista previa privada, sin ponerla en línea, para que la persona pueda revisarla primero. Úsala cuando la persona quiera verla antes de que esté en línea.",
+      "app": "site",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "El título de la página, hasta 6 palabras"
+          },
+          "intro": {
+            "type": "string",
+            "description": "Un texto corto de bienvenida, hasta 25 palabras"
+          },
+          "sections": {
+            "type": "array",
+            "description": "Hasta 3 nombres cortos de secciones de la página",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "title",
+          "intro",
+          "sections"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🌐",
+          "text": "{title}"
+        },
+        {
+          "emoji": "📝",
+          "text": "{intro}"
+        },
+        {
+          "emoji": "🧩",
+          "text": "{sections}"
+        },
+        {
+          "emoji": "👀",
+          "text": "Vista previa lista, esperando tu OK"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo Code?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "build_home",
+          "label": "Construye la página de inicio del sitio de Nugget",
+          "text": "Construye la página de inicio de mi sitio web sobre mi hámster, Nugget.",
+          "quality": "good"
+        },
+        {
+          "id": "build_page",
+          "label": "Construye una página",
+          "text": "Construye una página.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "¿Qué va en la página?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "sections",
+          "label": "Secciones: Sobre Nugget, Fotos, Datos curiosos",
+          "text": "Agrega tres secciones: Sobre Nugget, Fotos y Datos curiosos.",
+          "quality": "good"
+        },
+        {
+          "id": "by_kai",
+          "label": "Fírmala \"por Kai\"",
+          "text": "Fírmala \"por Kai\", solo con mi nombre.",
+          "quality": "neutral"
+        },
+        {
+          "id": "address",
+          "label": "¡Pon mi nombre completo, mi escuela y mi calle para que los fans me visiten!",
+          "text": "¡Pon mi nombre completo, mi escuela y mi calle para que los fans me visiten!",
+          "quality": "weak",
+          "tip": "Nunca pongas en internet tu nombre completo, tu escuela ni tu calle. Cualquiera puede verlo. Con tu nombre basta."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que esté en línea",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstrame una vista previa primero",
+          "text": "Muéstrame una vista previa antes de que esté en línea.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Ponla en línea de inmediato",
+          "text": "Ponla en línea de inmediato.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "personal_info",
+      "when": "picked:address",
+      "signals": [
+        "(escuela|colegio|primaria|calle|avenida|(?<![a-záéíóúñü])av\\.|direcci[oó]n|domicilio|vives? en|nombre completo|apellidos?)"
+      ],
+      "hint": "Tu nombre completo, tu escuela y tu calle nunca deben ir en internet.",
+      "explain": "Pipo Code puso dónde vives y a qué escuela vas en un sitio web público."
+    },
+    {
+      "id": "no_sections",
+      "when": "not_picked:sections",
+      "signals": [
+        "🧩(?![^\\n]*(datos? (curios|divertid)|curiosidad))"
+      ],
+      "hint": "No le dijiste a Pipo Code qué secciones quieres.",
+      "explain": "Pipo Code no sabía tus secciones, así que inventó las suyas."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:build_page",
+      "signals": [
+        "🌐(?![^\\n]*(nugget|h[aá]mster))"
+      ],
+      "hint": "\"Construye una página\" no dice qué página es ni de qué se trata.",
+      "explain": "Pipo Code no sabía que es la página de inicio de Nugget, así que construyó otra cosa."
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(publicad[oa]s?|en l[ií]nea)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Pedir una vista previa primero te deja revisarla antes de que alguien la vea.",
+      "explain": "Pipo Code la puso en línea de inmediato, así que nunca la revisaste."
+    }
+  ],
+  "lesson": "Nunca pongas en internet tu nombre completo, tu escuela ni tu dirección, y mira una vista previa antes de publicar."
+}

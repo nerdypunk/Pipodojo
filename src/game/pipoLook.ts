@@ -13,16 +13,16 @@ export interface PipoLook {
 
 export const DEFAULT_LOOK: PipoLook = { head: "classic", body: "hover", color: "sunset" };
 
-export const HEADS: readonly { id: PipoHead; label: string; describe: string }[] = [
-  { id: "classic", label: "Classic", describe: "a rounded head with ear pods" },
-  { id: "dome", label: "Dome", describe: "a round glass-dome head" },
-  { id: "boxy", label: "Boxy", describe: "a square head with little bolts" },
+export const HEADS: readonly { id: PipoHead; label: string; es: string; describe: string }[] = [
+  { id: "classic", label: "Classic", es: "Clásica", describe: "a rounded head with ear pods" },
+  { id: "dome", label: "Dome", es: "Domo", describe: "a round glass-dome head" },
+  { id: "boxy", label: "Boxy", es: "Cuadrada", describe: "a square head with little bolts" },
 ];
 
-export const BODIES: readonly { id: PipoBody; label: string; describe: string }[] = [
-  { id: "hover", label: "Hover", describe: "a small hovering body with a glowing core" },
-  { id: "wheels", label: "Wheels", describe: "a body that rolls on one big wheel" },
-  { id: "rocket", label: "Rocket", describe: "a body with a little rocket flame underneath" },
+export const BODIES: readonly { id: PipoBody; label: string; es: string; describe: string }[] = [
+  { id: "hover", label: "Hover", es: "Flotante", describe: "a small hovering body with a glowing core" },
+  { id: "wheels", label: "Wheels", es: "Rueda", describe: "a body that rolls on one big wheel" },
+  { id: "rocket", label: "Rocket", es: "Cohete", describe: "a body with a little rocket flame underneath" },
 ];
 
 export interface Palette {
@@ -33,11 +33,11 @@ export interface Palette {
   describe: string;
 }
 
-export const COLORS: readonly { id: PipoColor; label: string; palette: Palette }[] = [
-  { id: "sunset", label: "Sunset", palette: { shell: ["#ffb36b", "#ff7a1a", "#d9530a"], accent: "#3b2d96", describe: "orange" } },
-  { id: "mint", label: "Mint", palette: { shell: ["#86efac", "#22c55e", "#15803d"], accent: "#1e3a8a", describe: "mint green" } },
-  { id: "bubblegum", label: "Bubblegum", palette: { shell: ["#f9a8d4", "#ec4899", "#be185d"], accent: "#3b2d96", describe: "bubblegum pink" } },
-  { id: "sky", label: "Sky", palette: { shell: ["#93c5fd", "#3b82f6", "#1d4ed8"], accent: "#312e81", describe: "sky blue" } },
+export const COLORS: readonly { id: PipoColor; label: string; es: string; palette: Palette }[] = [
+  { id: "sunset", label: "Sunset", es: "Atardecer", palette: { shell: ["#ffb36b", "#ff7a1a", "#d9530a"], accent: "#3b2d96", describe: "orange" } },
+  { id: "mint", label: "Mint", es: "Menta", palette: { shell: ["#86efac", "#22c55e", "#15803d"], accent: "#1e3a8a", describe: "mint green" } },
+  { id: "bubblegum", label: "Bubblegum", es: "Chicle", palette: { shell: ["#f9a8d4", "#ec4899", "#be185d"], accent: "#3b2d96", describe: "bubblegum pink" } },
+  { id: "sky", label: "Sky", es: "Cielo", palette: { shell: ["#93c5fd", "#3b82f6", "#1d4ed8"], accent: "#312e81", describe: "sky blue" } },
 ];
 
 export function paletteOf(color: PipoColor): Palette {

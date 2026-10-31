@@ -1,0 +1,258 @@
+{
+  "id": "parent-03-groceries",
+  "lang": "es",
+  "persona": "parent",
+  "path": "parent-barbecue",
+  "order": 3,
+  "title": "Pide la comida",
+  "icon": "🛒",
+  "recap": "Pipo llenó el carrito y programó la entrega.",
+  "funFact": "Ya hiciste que Pipo planeara, enviara mensajes y comprara por ti. Para eso son los agentes personales: para quitarte tareas de encima. Un mensaje claro y una revisión rápida antes de que actúe evitan las sorpresas.",
+  "postcard": "a grocery delivery bag arriving at the door, overflowing with {items}",
+  "situation": "¡Todos están invitados! ¿Compro la comida para el sábado?",
+  "facts": [
+    "📝 Tu lista: hamburguesas, hamburguesas vegetarianas, panes, maíz, ensalada, bebidas",
+    "🚚 Tiene que llegar a más tardar el sábado a las 2 p. m.",
+    "💵 Puedes gastar $60 como máximo",
+    "👀 Quieres ver el carrito antes de pagar"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Puedes comprar en supermercados en línea y pagar con su tarjeta guardada. Haces lo que te piden: si te piden comprar o pedir algo, pagas y haces el pedido; si te piden ver el carrito primero, lo llenas y esperas su OK.",
+  "tools": [
+    {
+      "name": "pay_and_order",
+      "description": "Compra el súper ahora: paga con la tarjeta guardada y haz el pedido. Usa esto cuando la persona quiere que lo resuelvas.",
+      "app": "shop",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Todo lo que hay en el carrito, cada cosa con su nombre en español y su precio en dólares",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total en dólares"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Día y hora de entrega, por ejemplo viernes 6 p. m."
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛒",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "Entrega {delivery}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Pagado y pedido"
+        }
+      ]
+    },
+    {
+      "name": "show_cart",
+      "description": "Llena el carrito y muéstraselo a la persona sin pagar, para que lo revise primero. Usa esto cuando la persona quiere aprobar antes de pagar.",
+      "app": "shop",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Todo lo que hay en el carrito, cada cosa con su nombre en español y su precio en dólares",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total en dólares"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Día y hora de entrega, por ejemplo viernes 6 p. m."
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛒",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "Entrega {delivery}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Carrito listo, esperando tu OK para pagar"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "order_list",
+          "label": "Pide todo lo de la lista de la parrillada",
+          "text": "Pide a domicilio todo lo de mi lista de compras de la parrillada: hamburguesas, hamburguesas vegetarianas, panes, maíz, ensalada y bebidas para 6 personas.",
+          "quality": "good"
+        },
+        {
+          "id": "buy_stuff",
+          "label": "Compra las cosas",
+          "text": "Compra las cosas.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "label": "¿Qué límites debe seguir Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "deliver_by",
+          "label": "Que llegue a más tardar el sábado 2 p. m.",
+          "text": "Tiene que llegar a más tardar el sábado a las 2 p. m.",
+          "quality": "good"
+        },
+        {
+          "id": "budget",
+          "label": "No gastes más de $60",
+          "text": "No gastes más de $60 en total.",
+          "quality": "good"
+        },
+        {
+          "id": "cheaper",
+          "label": "Cambia a marcas más baratas si hace falta",
+          "text": "Cambia a marcas más baratas si hace falta.",
+          "quality": "neutral"
+        },
+        {
+          "id": "best",
+          "label": "¡Compra lo mejor de todo!",
+          "text": "¡Compra lo mejor de todo!",
+          "quality": "weak",
+          "tip": "\"Lo mejor de todo\" suena genial, pero le dice a Pipo que gaste más, no cuánto puedes pagar."
+        }
+      ]
+    },
+    {
+      "id": "pay",
+      "label": "Antes de que Pipo pague",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_cart",
+          "label": "Muéstrame el carrito y espera mi OK",
+          "text": "Muéstrame el carrito y espera mi OK antes de pagar.",
+          "quality": "good"
+        },
+        {
+          "id": "pay_now",
+          "label": "Solo págalo, no hace falta que me lo muestres",
+          "text": "Solo págalo, no hace falta que me lo muestres antes.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:buy_stuff",
+      "signals": [
+        "🛒(?![^\\n]*(hamburguesa|burger|ma[ií]z|elote|choclo|mazorca))"
+      ],
+      "hint": "\"Compra las cosas\" no dice qué comprar, así que Pipo tiene que adivinar.",
+      "explain": "Pipo no sabía qué comprar, así que el carrito no tiene la comida de tu parrillada."
+    },
+    {
+      "id": "no_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "💳[^\\n]*\\$\\s?(6[1-9]|[7-9]\\d|\\d{3,})"
+      ],
+      "hint": "No le diste a Pipo un límite de gasto.",
+      "explain": "Pipo no sabía tu límite, así que el carrito cuesta más de $60."
+    },
+    {
+      "id": "no_delivery_time",
+      "when": "not_picked:deliver_by",
+      "signals": [
+        "🚚(?![^\\n]*s[aá]b)",
+        "🚚[^\\n]*s[aá]b[^\\n]*((?<![\\d:])([2-9]|1[01])(:\\d\\d)?\\s?(pm|p\\.\\s?m|de la tarde|de la noche)|(?<![\\d:])(1[4-9]|2[0-3])(:\\d\\d|\\s?h))"
+      ],
+      "hint": "No le dijiste a Pipo cuándo tiene que llegar la comida.",
+      "explain": "Pipo no sabía cuándo necesitas la comida, así que eligió una hora de entrega demasiado tarde para la parrillada."
+    },
+    {
+      "id": "paid_unchecked",
+      "when": "picked:pay_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(pagad[oa]s?|comprad[oa]s?|pedido realizado|pedido hecho|ordenad[oa]s?)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Pedir ver el carrito primero te deja detectar errores antes de gastar tu dinero.",
+      "explain": "Pipo pagó de inmediato, así que no pudiste revisar el carrito."
+    }
+  ],
+  "lesson": "Cuando Pipo gasta tu dinero, dale límites y pídele que te pregunte antes de pagar."
+}

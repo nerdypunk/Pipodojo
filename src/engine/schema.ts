@@ -18,6 +18,9 @@ const regexSource = z.string().min(1).refine((source) => {
 
 export const PersonaSchema = z.enum(["business", "student", "parent", "kid"]);
 
+/** The game's languages. English lessons live in /missions, Spanish ones in /missions/es. */
+export const LangSchema = z.enum(["en", "es"]);
+
 /** One tappable prompt piece: `label` is the tile, `text` is the words it adds to the prompt. */
 export const PieceSchema = z.strictObject({
   id,
@@ -72,6 +75,8 @@ export const ToolSchema = z.strictObject({
 export const MissionSchema = z
   .strictObject({
     id,
+    /** The language the lesson (and so Pipo's answer) is in. English when left out. */
+    lang: LangSchema.optional(),
     persona: PersonaSchema,
     /** The path this lesson belongs to, e.g. "parent-barbecue" (see src/game/paths.ts). */
     path: id,

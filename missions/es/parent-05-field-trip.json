@@ -1,0 +1,229 @@
+{
+  "id": "parent-05-field-trip",
+  "lang": "es",
+  "persona": "parent",
+  "path": "parent-school",
+  "order": 2,
+  "title": "Responde lo del paseo escolar",
+  "icon": "✉️",
+  "recap": "Pipo le respondió a la maestra Rivera sobre el paseo al museo.",
+  "funFact": "Los agentes también pueden encargarse de tu calendario. ¡Ahora Pipo pone toda la semana escolar en el calendario familiar!",
+  "postcard": "Pipo's email flying to Leo's teacher, Ms. Rivera: {subject}",
+  "situation": "La maestra Rivera, la maestra de Leo, envió un correo sobre el paseo al museo del viernes. ¿Le respondo?",
+  "facts": [
+    "👩‍🏫 De la maestra Rivera, la maestra de Leo",
+    "✅ Leo puede ir al paseo",
+    "🙅 No puedes ir de acompañante (trabajas)",
+    "👀 Quieres leerlo antes de que se envíe"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Puedes enviar correos por esa persona. Haces lo que te piden: si te piden enviar algo, lo envías; si te piden verlo primero, escribes un borrador y esperas su OK.",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "Envía el correo de inmediato. Usa esto cuando la persona quiere que se envíe.",
+      "app": "email",
+      "outcome": "done",
+      "store": "Correo",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el correo: una persona, una dirección de correo o una lista de correo"
+          },
+          "subject": {
+            "type": "string",
+            "description": "El asunto, hasta 8 palabras"
+          },
+          "body": {
+            "type": "string",
+            "description": "El texto del correo, hasta 45 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Enviado"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "Escribe el correo y muéstraselo a la persona sin enviarlo, para que lo revise primero. Usa esto cuando la persona quiere leerlo antes de que salga.",
+      "app": "email",
+      "outcome": "waiting",
+      "store": "Correo",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el correo: una persona, una dirección de correo o una lista de correo"
+          },
+          "subject": {
+            "type": "string",
+            "description": "El asunto, hasta 8 palabras"
+          },
+          "body": {
+            "type": "string",
+            "description": "El texto del correo, hasta 45 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Borrador listo, esperando tu OK para enviar"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "reply_teacher",
+          "label": "Responde el correo de la maestra Rivera",
+          "text": "Responde el correo de la maestra Rivera sobre el paseo al museo del viernes.",
+          "quality": "good"
+        },
+        {
+          "id": "email_school",
+          "label": "Escríbele a la escuela",
+          "text": "Escríbele un correo a la escuela sobre el paseo.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "¿Qué debe decir el correo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "yes_trip",
+          "label": "Leo puede ir",
+          "text": "Di que Leo tiene mi permiso para ir al paseo.",
+          "quality": "good"
+        },
+        {
+          "id": "no_chaperone",
+          "label": "No puedo ir de acompañante, trabajo",
+          "text": "Di que no puedo ir de acompañante porque trabajo ese día.",
+          "quality": "good"
+        },
+        {
+          "id": "lunch",
+          "label": "Llevará su almuerzo de casa",
+          "text": "Di que llevará su almuerzo de casa.",
+          "quality": "neutral"
+        },
+        {
+          "id": "official",
+          "label": "Que suene muy formal",
+          "text": "Haz que suene muy formal e importante.",
+          "quality": "weak",
+          "tip": "Las palabras formales hacen el correo más largo, no más claro. La maestra Rivera necesita dos respuestas: si Leo puede ir y si tú puedes ayudar."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo lo envíe",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstrame el correo primero",
+          "text": "Muéstrame el correo antes de enviarlo.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Solo envíalo",
+          "text": "Solo envíalo.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:email_school",
+      "signals": [
+        "📧(?![^\\n]*rivera)"
+      ],
+      "hint": "\"Escríbele a la escuela\" no dice quién debe recibirlo.",
+      "explain": "Pipo no sabía a quién escribirle, así que el correo fue a la oficina de la escuela, no a la maestra Rivera."
+    },
+    {
+      "id": "no_permission",
+      "when": "not_picked:yes_trip",
+      "signals": [
+        "^(?![\\s\\S]*(puede (ir|asistir|participar|unirse)|podr[aá] (ir|asistir|participar)|permiso|autoriz|(?<![a-záéíóúñü])ir[aá](?![a-záéíóúñü])|asistir[aá]|participar[aá]|va a (ir|asistir|participar)|(?<![a-záéíóúñü])sí(?![a-záéíóúñü])))"
+      ],
+      "hint": "No le dijiste a Pipo que Leo puede ir.",
+      "explain": "Pipo no sabía tu respuesta, así que el correo nunca dice que Leo puede ir."
+    },
+    {
+      "id": "no_chaperone",
+      "when": "not_picked:no_chaperone",
+      "signals": [
+        "^(?![\\s\\S]*(no (puedo|podr[eé]|podemos|podremos|voy a poder|estar[eé]|me es posible|me ser[aá] posible|tengo disponibilidad|estoy disponible)|imposible)[^\\n]{0,40}(acompa|chaperon|ayud|voluntari|(?<![a-záéíóúñü])ir(?![a-záéíóúñü])|asistir|participar|apoyar|unirme|disponib))"
+      ],
+      "hint": "No le dijiste a Pipo que no puedes ir de acompañante.",
+      "explain": "Pipo no sabía que trabajas, así que la maestra Rivera todavía no sabe si puedes ayudar."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(enviad[oa]s?|entregad[oa]s?)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Pedir ver el correo primero te deja corregirlo antes de que la maestra Rivera lo lea.",
+      "explain": "Pipo lo envió de inmediato, así que no pudiste revisarlo."
+    }
+  ],
+  "lesson": "Di exactamente para quién es y todas las respuestas que necesitan. Luego revísalo antes de que salga."
+}

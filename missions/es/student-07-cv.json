@@ -1,0 +1,104 @@
+{
+  "id": "student-07-cv",
+  "lang": "es",
+  "persona": "student",
+  "path": "student-job",
+  "order": 1,
+  "title": "Pule tu CV",
+  "icon": "📄",
+  "recap": "Pipo escribió lo más destacado de tu CV.",
+  "funFact": "Los agentes también pueden escribir correos de trabajo por ti. ¡Ahora Pipo le escribe a Bloom Café!",
+  "postcard": "a student proudly holding a neat CV outside Bloom Café: {answer}",
+  "situation": "¡Bloom Café busca barista! ¿Quieres que pula tu CV?",
+  "facts": [
+    "☕ Un trabajo de barista en Bloom Café",
+    "🥫 1 año de voluntariado en el banco de alimentos",
+    "🗣️ Hablas inglés y español",
+    "📅 Libre los fines de semana"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de un estudiante universitario. Ayuda con lo que te pida. Cuando escribas lo más destacado de un CV, escribe viñetas cortas sobre la persona.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "cv",
+          "label": "Lo destacado de mi CV para barista en Bloom Café",
+          "text": "Escribe lo más destacado de mi CV para un trabajo de barista en Bloom Café.",
+          "quality": "good"
+        },
+        {
+          "id": "cv_better",
+          "label": "Mejora mi CV",
+          "text": "Mejora mi CV.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "¿Qué necesita saber Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "volunteer",
+          "label": "1 año de voluntariado en el banco de alimentos",
+          "text": "Hice un año de voluntariado en el banco de alimentos.",
+          "quality": "good"
+        },
+        {
+          "id": "spanish",
+          "label": "Hablo inglés y español",
+          "text": "Hablo inglés y español.",
+          "quality": "good"
+        },
+        {
+          "id": "weekends",
+          "label": "Libre los fines de semana",
+          "text": "Tengo libres los fines de semana.",
+          "quality": "neutral"
+        },
+        {
+          "id": "exaggerate",
+          "label": "¡Di que soy barista de talla mundial!",
+          "text": "¡Di que soy barista de talla mundial!",
+          "quality": "weak",
+          "tip": "Las habilidades inventadas se caen en la entrevista. Tu experiencia real, bien contada, es suficiente."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_volunteer",
+      "when": "not_picked:volunteer",
+      "signals": [
+        "^(?![\\s\\S]*(banco( de)? alimentos|voluntari))"
+      ],
+      "hint": "No le contaste a Pipo de tu voluntariado.",
+      "explain": "Pipo no sabía lo del banco de alimentos, así que falta tu mejor experiencia."
+    },
+    {
+      "id": "no_spanish",
+      "when": "not_picked:spanish",
+      "signals": [
+        "^(?![\\s\\S]*espa[ñn]ol)"
+      ],
+      "hint": "No le dijiste a Pipo que hablas español.",
+      "explain": "Pipo no sabía que hablas español, así que el CV no lo menciona."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:cv_better",
+      "signals": [
+        "^(?![\\s\\S]*(barista|caf))"
+      ],
+      "hint": "\"Mejora mi CV\" no dice para qué trabajo es.",
+      "explain": "Pipo no sabía el trabajo, así que el CV no está pensado para un puesto de barista."
+    }
+  ],
+  "lesson": "Dile a Pipo el trabajo y tu experiencia real. Lo honesto y concreto le gana a lo impresionante."
+}

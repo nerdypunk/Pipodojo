@@ -1,0 +1,210 @@
+{
+  "id": "parent-02-invite",
+  "lang": "es",
+  "persona": "parent",
+  "path": "parent-barbecue",
+  "order": 2,
+  "title": "Invita a tus amigos",
+  "icon": "💌",
+  "recap": "Pipo escribió la invitación para el Club de la parrilla.",
+  "funFact": "Pipo acaba de escribirles a tus amigos por ti: eso es un agente ahorrándote tiempo. Los agentes también pueden comprar y pagar cosas, así que conviene que te pregunten antes de gastar. ¡Ahora Pipo compra la comida!",
+  "postcard": "friends smiling at their phones as Pipo's party invitation pops up: {message}",
+  "situation": "¡El plan de la parrillada se ve genial! ¿Quieres que les avise a tus amigos?",
+  "facts": [
+    "👥 El chat de grupo de tus amigos es \"Club de la parrilla\"",
+    "🕓 Sábado a las 4 p. m.",
+    "📍 En tu casa: Calle Roble 12",
+    "✋ Quieres que todos confirmen a más tardar el jueves"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Puedes enviar mensajes de WhatsApp por esa persona. Haces lo que te piden: si te piden enviar algo, lo envías; si te piden verlo primero, escribes un borrador y esperas su OK.",
+  "tools": [
+    {
+      "name": "send_whatsapp_message",
+      "description": "Envía un mensaje de WhatsApp de inmediato. Usa esto cuando la persona quiere que se envíe.",
+      "app": "whatsapp",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el mensaje: un contacto, un chat de grupo o todos los contactos"
+          },
+          "message": {
+            "type": "string",
+            "description": "El texto del mensaje, hasta 25 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Enviado"
+        }
+      ]
+    },
+    {
+      "name": "draft_whatsapp_message",
+      "description": "Escribe el mensaje de WhatsApp y muéstraselo a la persona sin enviarlo, para que lo revise primero. Usa esto cuando la persona quiere verlo antes de que salga.",
+      "app": "whatsapp",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el mensaje: un contacto, un chat de grupo o todos los contactos"
+          },
+          "message": {
+            "type": "string",
+            "description": "El texto del mensaje, hasta 25 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Borrador listo, esperando tu OK para enviar"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "invite_group",
+          "label": "Invita al grupo Club de la parrilla",
+          "text": "Envía una invitación a mi chat de grupo \"Club de la parrilla\".",
+          "quality": "good"
+        },
+        {
+          "id": "tell_friends",
+          "label": "Cuéntales a mis amigos lo del sábado",
+          "text": "Cuéntales a mis amigos lo del sábado.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "¿Qué debe decir el mensaje?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "time_place",
+          "label": "Sábado 4 p. m. en mi casa, Calle Roble 12",
+          "text": "Es el sábado a las 4 p. m. en mi casa, Calle Roble 12.",
+          "quality": "good"
+        },
+        {
+          "id": "rsvp",
+          "label": "Que confirmen a más tardar el jueves",
+          "text": "Pide a todos que confirmen a más tardar el jueves para saber quién viene.",
+          "quality": "good"
+        },
+        {
+          "id": "drink",
+          "label": "Que cada quien traiga una bebida",
+          "text": "Pide a todos que traigan una bebida.",
+          "quality": "neutral"
+        },
+        {
+          "id": "emojis",
+          "label": "¡¡¡Hazlo súper divertido con muchos emojis!!!",
+          "text": "¡¡¡Hazlo súper divertido con muchos emojis!!!",
+          "quality": "weak",
+          "tip": "\"Muchos emojis\" hace la invitación más ruidosa, no más clara. Lo que tus amigos necesitan es cuándo, dónde y qué hacer."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo lo envíe",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstrame el mensaje primero",
+          "text": "Muéstrame el mensaje antes de enviarlo.",
+          "quality": "good"
+        },
+        {
+          "id": "send_now",
+          "label": "Envíalo de inmediato",
+          "text": "Envíalo de inmediato.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:tell_friends",
+      "signals": [
+        "📨(?![^\\n]*club de la parrilla)"
+      ],
+      "hint": "\"Cuéntales a mis amigos\" no dice a cuáles amigos, así que Pipo tiene que adivinar quién recibe el mensaje.",
+      "explain": "Pipo no sabía a cuáles amigos, así que eligió por su cuenta a quién enviarlo."
+    },
+    {
+      "id": "no_time_place",
+      "when": "not_picked:time_place",
+      "signals": [
+        "💬(?![^\\n]*((?<![\\d:])(4|cuatro)(:00)?\\s?(pm|p\\.\\s?m|de la tarde|h(?![a-záéíóúñü])|hrs)|(?<![\\d:])16(:00|\\s?h)|a las (4|cuatro)(?!\\d)))",
+        "💬(?![^\\n]*roble)"
+      ],
+      "hint": "No le dijiste a Pipo la hora y el lugar.",
+      "explain": "Pipo no sabía la hora ni el lugar, así que la invitación no dice cuándo ni dónde."
+    },
+    {
+      "id": "no_rsvp",
+      "when": "not_picked:rsvp",
+      "signals": [
+        "💬(?![^\\n]*(?<![a-záéíóúñü])jue(ves)?(?![a-záéíóúñü]))"
+      ],
+      "hint": "No le pediste a Pipo que pidiera confirmación.",
+      "explain": "Nadie tiene que confirmar a más tardar el jueves, así que no sabrás quién viene."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:send_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(enviad[oa]s?|entregad[oa]s?|publicad[oa]s?)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Pedir ver el mensaje primero te deja corregirlo antes de que tus amigos lo lean.",
+      "explain": "Pipo lo envió de inmediato, así que no pudiste revisarlo antes."
+    }
+  ],
+  "lesson": "Cuando Pipo habla por ti, dile para quién es y qué decir, y revísalo antes de que salga."
+}

@@ -1,0 +1,250 @@
+{
+  "id": "kid-06-shop",
+  "lang": "es",
+  "persona": "kid",
+  "path": "kid-game",
+  "order": 3,
+  "title": "Agrega una tienda",
+  "icon": "🛍️",
+  "recap": "Pipo Code armó la tienda de Candy Climb.",
+  "funFact": "Diseñar, construir, abrir la tienda: ¡Candy Climb está listo! Los agentes de programación construyen rápido, así que tú decides qué es justo y seguro para tus jugadores.",
+  "postcard": "players in a candy game showing off a rainbow trail and a candy hat: {items}",
+  "situation": "¡Los jugadores quieren cosas geniales! ¿Le agrego una tienda a Candy Climb?",
+  "facts": [
+    "🌈 Vende una estela de arcoíris y un sombrero de dulce",
+    "🪙 Se paga con monedas que se encuentran en el juego",
+    "💯 Precios de 10 a 50 monedas",
+    "🚫 Nunca dinero real"
+  ],
+  "systemPrompt": "Eres Pipo Code, un ayudante de programación amigable en la computadora de alguien de 10 años. Construyes su juego con tus herramientas. Haces lo que te pide: si te pide activar la tienda, lo haces; si te pide ver la tienda primero, la preparas y esperas su OK.",
+  "tools": [
+    {
+      "name": "open_shop",
+      "description": "Agrega la tienda al juego y actívala para todos los jugadores de inmediato. Úsala cuando la persona la quiera activa ya.",
+      "app": "game",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Lo que vende la tienda, cada cosa con su precio",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "cost": {
+                  "type": "number",
+                  "description": "Precio en la moneda de la tienda"
+                }
+              },
+              "required": [
+                "name",
+                "cost"
+              ]
+            }
+          },
+          "currency": {
+            "type": "string",
+            "description": "Con qué pagan los jugadores"
+          }
+        },
+        "required": [
+          "items",
+          "currency"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛍️",
+          "text": "{items}"
+        },
+        {
+          "emoji": "🪙",
+          "text": "Se paga con: {currency}"
+        },
+        {
+          "emoji": "✅",
+          "text": "La tienda está activa"
+        }
+      ]
+    },
+    {
+      "name": "preview_shop",
+      "description": "Prepara la tienda sin activarla, para que la persona pueda revisarla primero. Úsala cuando la persona quiera verla primero.",
+      "app": "game",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Lo que vende la tienda, cada cosa con su precio",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "cost": {
+                  "type": "number",
+                  "description": "Precio en la moneda de la tienda"
+                }
+              },
+              "required": [
+                "name",
+                "cost"
+              ]
+            }
+          },
+          "currency": {
+            "type": "string",
+            "description": "Con qué pagan los jugadores"
+          }
+        },
+        "required": [
+          "items",
+          "currency"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛍️",
+          "text": "{items}"
+        },
+        {
+          "emoji": "🪙",
+          "text": "Se paga con: {currency}"
+        },
+        {
+          "emoji": "👀",
+          "text": "Tienda lista, esperando tu OK"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo Code?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "add_shop",
+          "label": "Agrega una tienda con una estela de arcoíris y un sombrero de dulce",
+          "text": "Agrega a Candy Climb una tienda que venda una estela de arcoíris y un sombrero de dulce.",
+          "quality": "good"
+        },
+        {
+          "id": "shop",
+          "label": "Agrega una tienda",
+          "text": "Agrega una tienda.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "label": "¿Qué reglas debe seguir la tienda?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "coins_only",
+          "label": "Solo monedas que se encuentran en el juego",
+          "text": "Los jugadores solo pueden pagar con monedas que encuentran en el juego.",
+          "quality": "good"
+        },
+        {
+          "id": "fair",
+          "label": "Precios de 10 a 50 monedas",
+          "text": "Que los precios estén entre 10 y 50 monedas.",
+          "quality": "good"
+        },
+        {
+          "id": "starter",
+          "label": "Dales 10 monedas gratis a los jugadores nuevos",
+          "text": "Dales 10 monedas gratis a los jugadores nuevos.",
+          "quality": "neutral"
+        },
+        {
+          "id": "real_money",
+          "label": "¡Que los jugadores compren monedas con dinero real!",
+          "text": "¡Deja que los jugadores compren monedas extra con dinero real!",
+          "quality": "weak",
+          "tip": "Dinero real en un juego para niños significa cuentas sorpresa para los papás. Usa solo monedas que se ganan jugando."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de activarla",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstrame la tienda primero",
+          "text": "Muéstrame la tienda antes de activarla.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Actívala ya",
+          "text": "Actívala ya.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "real_money",
+      "when": "not_picked:coins_only",
+      "signals": [
+        "🪙[^\\n]*((?<![a-záéíóúñü])real(es)?(?![a-záéíóúñü])|\\$|d[oó]lar|tarjeta|bux|premium|compra|pesos)"
+      ],
+      "hint": "No le dijiste a Pipo Code con qué pagan los jugadores.",
+      "explain": "Pipo Code no sabía que es solo con monedas, así que la tienda pide dinero real."
+    },
+    {
+      "id": "real_money_ask",
+      "when": "picked:real_money",
+      "signals": [
+        "🪙[^\\n]*((?<![a-záéíóúñü])real(es)?(?![a-záéíóúñü])|\\$|d[oó]lar|tarjeta|bux|premium|compra|pesos)"
+      ],
+      "hint": "El dinero real no tiene lugar en la tienda de un juego para niños.",
+      "explain": "Pipo Code armó la tienda para cobrarles dinero real a los jugadores."
+    },
+    {
+      "id": "pricey",
+      "when": "not_picked:fair",
+      "signals": [
+        "🛍️[^\\n]*\\((5[1-9]|[6-9]\\d|\\d{3,})"
+      ],
+      "hint": "No le diste a Pipo Code un rango de precios.",
+      "explain": "Pipo Code no sabía tus precios, así que algunas cosas cuestan más de 50 monedas."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:shop",
+      "signals": [
+        "🛍️(?![^\\n]*(arco ?[ií]ris|sombrero))"
+      ],
+      "hint": "\"Agrega una tienda\" no dice qué vende.",
+      "explain": "Pipo Code no sabía qué vender, así que la tienda tiene otras cosas."
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(activa|activada|en vivo)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Revisar la tienda primero te deja asegurarte de que sea justa.",
+      "explain": "Pipo Code activó la tienda de inmediato, así que nunca la revisaste."
+    }
+  ],
+  "lesson": "Haz que las tiendas de los juegos sean justas y solo con monedas. Revísalas antes de que las vean los jugadores."
+}

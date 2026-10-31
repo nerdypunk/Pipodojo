@@ -4,6 +4,7 @@ import type { AnswerLine } from "../game/feedback.ts";
 import type { Mood } from "./Pipo.tsx";
 import { PipoStage, type StageMode } from "./PipoStage.tsx";
 import { isLaptopApp } from "./LaptopApps.tsx";
+import { useLang } from "../i18n/index.tsx";
 
 interface Props {
   mission: Mission;
@@ -23,8 +24,9 @@ const LINE_DELAY_MS = 150;
 
 /** Left card, split in half: Pipo on stage on top, the mission you're on below. */
 export function PipoScene({ mission, mood, stage, stars, answer, action, onOpenPhone }: Props) {
+  const { t } = useLang();
   return (
-    <section className="glass flex flex-1 flex-col gap-3 rounded-3xl p-3 md:p-4" aria-label="Your mission">
+    <section className="glass flex flex-1 flex-col gap-3 rounded-3xl p-3 md:p-4" aria-label={t.lesson.mission}>
       <PipoStage mode={stage} mood={mood} stars={stars} />
       <MissionPanel mission={mission} answer={answer} action={action} onOpenPhone={onOpenPhone} />
     </section>
@@ -42,6 +44,7 @@ function MissionPanel({
   action?: PipoAction | undefined;
   onOpenPhone?: (() => void) | undefined;
 }) {
+  const { t } = useLang();
   return (
     <div className="relative flex flex-1 basis-0 flex-col gap-3 rounded-2xl bg-white/90 p-4 shadow-sm">
       {/* Tail pointing up at Pipo: this is Pipo talking to you */}
@@ -49,7 +52,7 @@ function MissionPanel({
 
       <div className="relative">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-extrabold tracking-wide text-white">
-          <span aria-hidden="true">🎯</span> Your mission
+          <span aria-hidden="true">🎯</span> {t.lesson.mission}
         </span>
         <h1 className="mt-1 text-2xl leading-tight font-black text-ink md:text-[28px]">{mission.title}</h1>
       </div>
@@ -57,7 +60,7 @@ function MissionPanel({
       {answer ? (
         <div>
           <div className="mb-1.5 flex items-center justify-between gap-2">
-            <p className="text-sm font-extrabold text-gray-600">{action ? (isLaptopApp(action.app) ? "What Pipo Code built" : "What Pipo did on your phone") : "Pipo's answer"}</p>
+            <p className="text-sm font-extrabold text-gray-600">{action ? (isLaptopApp(action.app) ? t.lesson.codeBuilt : t.lesson.phoneDid) : t.lesson.pipoAnswer}</p>
             {onOpenPhone && (
               <button
                 type="button"
@@ -65,7 +68,7 @@ function MissionPanel({
                 className="rounded-full bg-ink px-3 py-1 text-xs font-extrabold text-white hover:bg-brand-800"
               >
                 <span aria-hidden="true">{action && isLaptopApp(action.app) ? "💻 " : "📱 "}</span>
-                Open Pipo's {action && isLaptopApp(action.app) ? "laptop" : "phone"}
+                {action && isLaptopApp(action.app) ? t.lesson.openLaptop : t.lesson.openPhone}
               </button>
             )}
           </div>
@@ -77,7 +80,7 @@ function MissionPanel({
 
       {mission.facts.length > 0 && (
         <div className="mt-auto border-t border-brand-100 pt-3">
-          <p className="mb-1.5 text-sm font-extrabold text-gray-600">What you know</p>
+          <p className="mb-1.5 text-sm font-extrabold text-gray-600">{t.lesson.whatYouKnow}</p>
           <ul className="flex flex-wrap gap-2">
             {mission.facts.map((fact) => {
               const { emoji, text } = splitEmoji(fact);
@@ -107,8 +110,9 @@ function MissionPanel({
 
 /** `short`: one line each, for when the phone already shows the full details. */
 function AnswerCard({ lines, short = false }: { lines: AnswerLine[]; short?: boolean }) {
+  const { t } = useLang();
   return (
-    <ul className="space-y-1.5" aria-label="Pipo's answer">
+    <ul className="space-y-1.5" aria-label={t.lesson.pipoAnswer}>
       {lines.map((line, i) => (
         <li
           key={i}

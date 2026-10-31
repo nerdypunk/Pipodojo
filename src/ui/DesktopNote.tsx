@@ -2,6 +2,7 @@
 // play. Shown once per device (dismissing it is remembered when storage allows).
 import { motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
+import { useLang } from "../i18n/index.tsx";
 
 const KEY = "pipodojo.desktop-note";
 
@@ -17,6 +18,7 @@ function shouldShow(): boolean {
 export function DesktopNote() {
   const [open, setOpen] = useState(shouldShow);
   const still = useReducedMotion();
+  const { t } = useLang();
   if (!open) return null;
 
   const dismiss = () => {
@@ -39,10 +41,10 @@ export function DesktopNote() {
         💻
       </span>
       <p className="flex-1 text-sm leading-snug font-bold">
-        Pipodojo runs better on a desktop. <span className="font-semibold text-white/75">You can still play here!</span>
+        {t.desktopNote.title} <span className="font-semibold text-white/75">{t.desktopNote.sub}</span>
       </p>
       <button type="button" onClick={dismiss} className="rounded-xl bg-white px-3 py-1.5 text-sm font-black text-ink">
-        Got it
+        {t.desktopNote.ok}
       </button>
     </motion.div>
   );

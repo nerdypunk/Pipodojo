@@ -3,7 +3,7 @@
 // In lessons with tools, Pipo acts in a pretend app (a tool call) and the action becomes the answer.
 import { actionAnswer, pickAction, toolDefinitions } from "./actions.ts";
 import { buildPrompt, isPromptReady } from "./brief.ts";
-import type { ChatMessage, Clock, Mission, ModelClient, ModelRequest, PipoAction, PipoRun } from "./types.ts";
+import type { ChatMessage, Clock, Lang, Mission, ModelClient, ModelRequest, PipoAction, PipoRun } from "./types.ts";
 
 export interface RunOptions {
   mission: Mission;
@@ -12,22 +12,49 @@ export interface RunOptions {
   now: Clock;
 }
 
-/** Every lesson's answer is a tiny game card, not a chat reply. */
-export const ANSWER_STYLE =
-  "Answer like a quick game card, not a chat. Reply with 3 or 4 short lines and nothing else. " +
-  "Each line starts with one emoji and has at most 8 words. No intro, no closing, no questions, no markdown.";
+/** What the engine itself says to Pipo, in each language. A lesson's `lang` picks the set. */
+export const PHRASES = {
+  en: {
+    /** Every lesson's answer is a tiny game card, not a chat reply. */
+    answerStyle:
+      "Answer like a quick game card, not a chat. Reply with 3 or 4 short lines and nothing else. " +
+      "Each line starts with one emoji and has at most 8 words. No intro, no closing, no questions, no markdown.",
+    /** In lessons with tools: act through a tool instead of describing what you would do. */
+    toolStyle:
+      "You act through your tools: the user only sees what your tools do, never a text reply. " +
+      "Do the task by calling exactly one of your tools, filling in every field. Don't ask questions; " +
+      "if something wasn't said, decide it yourself.",
+    /** Sent once if Pipo replied in text in a lesson with tools. */
+    nudge: "Please do it now by calling one of your tools.",
+    /** What the player "says" when they tap Send or Pay on Pipo's phone. */
+    approve: "Looks good, go ahead and do it now.",
+    /** Pipo's own turn before the approval: the held action. */
+    waiting: "It's ready and I'm waiting for your OK:",
+  },
+  es: {
+    answerStyle:
+      "Responde como una tarjeta rápida de juego, no como un chat. Responde con 3 o 4 líneas cortas y nada más. " +
+      "Cada línea empieza con un emoji y tiene como máximo 8 palabras. Sin introducción, sin despedida, sin preguntas, sin markdown. " +
+      "Escribe siempre en español latinoamericano.",
+    toolStyle:
+      "Actúas con tus herramientas: la persona solo ve lo que hacen tus herramientas, nunca una respuesta en texto. " +
+      "Haz la tarea llamando exactamente a una de tus herramientas y llena cada campo en español latinoamericano. " +
+      "No hagas preguntas; si algo no se dijo, decídelo tú.",
+    nudge: "Por favor, hazlo ahora llamando a una de tus herramientas.",
+    approve: "Se ve bien, adelante, hazlo ahora.",
+    waiting: "Está listo y espero tu OK:",
+  },
+} as const satisfies Record<Lang, Record<string, string>>;
 
-/** In lessons with tools: act through a tool instead of describing what you would do. */
-export const TOOL_STYLE =
-  "You act through your tools: the user only sees what your tools do, never a text reply. " +
-  "Do the task by calling exactly one of your tools, filling in every field. Don't ask questions; " +
-  "if something wasn't said, decide it yourself.";
+export const phrasesFor = (mission: Mission) => PHRASES[mission.lang ?? "en"];
 
-/** Sent once if Pipo replied in text in a lesson with tools. */
-export const TOOL_NUDGE = "Please do it now by calling one of your tools.";
+export const ANSWER_STYLE = PHRASES.en.answerStyle;
+export const TOOL_STYLE = PHRASES.en.toolStyle;
+export const TOOL_NUDGE = PHRASES.en.nudge;
 
 export function buildMessages(mission: Mission, prompt: string): ChatMessage[] {
-  const style = mission.tools?.length ? `${ANSWER_STYLE}\n\n${TOOL_STYLE}` : ANSWER_STYLE;
+  const say = phrasesFor(mission);
+  const style = mission.tools?.length ? `${say.answerStyle}\n\n${say.toolStyle}` : say.answerStyle;
   return [
     { role: "system", content: `${mission.systemPrompt}\n\n${style}` },
     { role: "user", content: prompt },
@@ -40,7 +67,7 @@ export function buildRequest(mission: Mission, prompt: string): ModelRequest {
 }
 
 /** What the player "says" when they tap Send or Pay on Pipo's phone. */
-export const APPROVE_MESSAGE = "Looks good, go ahead and do it now.";
+export const APPROVE_MESSAGE = PHRASES.en.approve;
 
 /**
  * The player approved an action Pipo was holding (a draft or a cart). Pipo is asked to go ahead
@@ -63,8 +90,8 @@ export async function approveAction(opts: {
       ...request,
       messages: [
         ...request.messages,
-        { role: "assistant", content: `It's ready and I'm waiting for your OK:\n${actionAnswer(mission, action)}` },
-        { role: "user", content: APPROVE_MESSAGE },
+        { role: "assistant", content: `${phrasesFor(mission).waiting}\n${actionAnswer(mission, action)}` },
+        { role: "user", content: phrasesFor(mission).approve },
       ],
     });
     const next = pickAction(mission, reply.toolCalls);
@@ -86,7 +113,11 @@ export async function askPipo({ mission, picks, client, now }: RunOptions): Prom
     if (request.tools && !pickAction(mission, reply.toolCalls)) {
       reply = await client.complete({
         ...request,
-        messages: [...request.messages, { role: "assistant", content: reply.content ?? "" }, { role: "user", content: TOOL_NUDGE }],
+        messages: [
+          ...request.messages,
+          { role: "assistant", content: reply.content ?? "" },
+          { role: "user", content: phrasesFor(mission).nudge },
+        ],
       });
     }
     const ms = Math.round(now() - started);

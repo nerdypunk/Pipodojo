@@ -1,0 +1,212 @@
+{
+  "id": "kid-03-bug",
+  "lang": "es",
+  "persona": "kid",
+  "path": "kid-site",
+  "order": 3,
+  "title": "Arregla un error",
+  "icon": "🐞",
+  "recap": "Pipo Code arregló el botón Más fotos.",
+  "funFact": "Planear, construir, arreglar: así se hacen los sitios web de verdad. Los agentes de programación escriben el código, y tú decides qué es seguro compartir.",
+  "postcard": "Pipo and Kai cheering as a glowing More photos button works on a phone, {problem}",
+  "situation": "¡Ay, no! El abuelo dice que un botón de tu sitio no funciona. ¿Quieres que lo arregle?",
+  "facts": [
+    "🐞 El botón \"Más fotos\" no hace nada",
+    "📱 Solo en celulares; en la computadora funciona bien",
+    "📄 Está en la página de fotos",
+    "👀 Revisa el arreglo antes de que esté en línea"
+  ],
+  "systemPrompt": "Eres Pipo Code, un ayudante de programación amigable en la computadora de alguien de 10 años. Construyes su sitio web con tus herramientas. Haces lo que te pide: si te pide poner el arreglo en línea, lo haces; si te pide ver el arreglo primero, lo preparas y esperas su OK.",
+  "tools": [
+    {
+      "name": "fix_and_publish",
+      "description": "Arregla el error y pon el sitio arreglado en línea de inmediato. Úsala cuando la persona lo quiera arreglado en vivo.",
+      "app": "site",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "problem": {
+            "type": "string",
+            "description": "El error, en una oración corta"
+          },
+          "fix": {
+            "type": "string",
+            "description": "Lo que cambiaste, en una oración corta"
+          },
+          "page": {
+            "type": "string",
+            "description": "En qué página está el arreglo"
+          }
+        },
+        "required": [
+          "problem",
+          "fix",
+          "page"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🐞",
+          "text": "{problem}"
+        },
+        {
+          "emoji": "🔧",
+          "text": "{fix}"
+        },
+        {
+          "emoji": "📄",
+          "text": "{page}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Arreglado y publicado"
+        }
+      ]
+    },
+    {
+      "name": "prepare_fix",
+      "description": "Prepara el arreglo sin ponerlo en línea, para que la persona pueda revisarlo primero. Úsala cuando la persona quiera ver el arreglo primero.",
+      "app": "site",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "problem": {
+            "type": "string",
+            "description": "El error, en una oración corta"
+          },
+          "fix": {
+            "type": "string",
+            "description": "Lo que cambiaste, en una oración corta"
+          },
+          "page": {
+            "type": "string",
+            "description": "En qué página está el arreglo"
+          }
+        },
+        "required": [
+          "problem",
+          "fix",
+          "page"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🐞",
+          "text": "{problem}"
+        },
+        {
+          "emoji": "🔧",
+          "text": "{fix}"
+        },
+        {
+          "emoji": "📄",
+          "text": "{page}"
+        },
+        {
+          "emoji": "👀",
+          "text": "Arreglo listo, esperando tu OK"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo Code?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "fix_button",
+          "label": "Arregla el botón Más fotos de la página de fotos",
+          "text": "Arregla el botón \"Más fotos\" de la página de fotos de mi sitio.",
+          "quality": "good"
+        },
+        {
+          "id": "fix_it",
+          "label": "Mi sitio está roto, arréglalo",
+          "text": "Mi sitio está roto, arréglalo.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "¿Qué necesita saber Pipo Code?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "phones",
+          "label": "Solo falla en celulares",
+          "text": "Solo falla en celulares; en la computadora sí funciona.",
+          "quality": "good"
+        },
+        {
+          "id": "nothing",
+          "label": "Al tocarlo no pasa nada",
+          "text": "Cuando lo tocas, no pasa nada.",
+          "quality": "neutral"
+        },
+        {
+          "id": "rebuild",
+          "label": "¡Mejor vuelve a hacer todo el sitio!",
+          "text": "¡Mejor vuelve a hacer todo el sitio!",
+          "quality": "weak",
+          "tip": "Volver a hacer todo puede romper las partes que sí funcionaban. Mejor describe ese único problema."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que esté en línea",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstrame el arreglo primero",
+          "text": "Muéstrame el arreglo antes de que esté en línea.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Arréglalo en vivo",
+          "text": "Arréglalo en vivo y ya.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:fix_it",
+      "signals": [
+        "🐞(?![^\\n]*(bot[oó]n|foto))"
+      ],
+      "hint": "\"Está roto\" no dice qué es lo que está roto.",
+      "explain": "Pipo Code no sabía cuál era el error, así que arregló otra cosa."
+    },
+    {
+      "id": "no_phone",
+      "when": "not_picked:phones",
+      "signals": [
+        "^(?![\\s\\S]*(celular|m[oó]vil|tel[eé]fono|smartphone|phone|toca|toque|t[aá]ctil|touch|(?<![a-záéíóúñü])tap(?![a-záéíóúñü])|pantallas? peque))"
+      ],
+      "hint": "No le dijiste a Pipo Code que solo falla en celulares.",
+      "explain": "Pipo Code no sabía que es un problema de celulares, así que el arreglo quizá no sirva."
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(publicad[oa]|en vivo|en l[ií]nea)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Pedir ver el arreglo primero te deja probarlo antes que el abuelo.",
+      "explain": "Pipo Code cambió el sitio en vivo de inmediato, así que nunca probaste el arreglo."
+    }
+  ],
+  "lesson": "Describe un error con detalle: qué pasa, dónde y cuándo. Luego revisa el arreglo."
+}

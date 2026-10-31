@@ -1,0 +1,95 @@
+{
+  "id": "student-03-quiz",
+  "lang": "es",
+  "persona": "student",
+  "path": "student-exams",
+  "order": 3,
+  "title": "Hazme un quiz",
+  "icon": "❓",
+  "recap": "Pipo te hizo un quiz sobre células vegetales.",
+  "funFact": "Plan, calendario y quiz: semana de exámenes resuelta. Los agentes te pueden acompañar, pero lo que aprendes es tuyo.",
+  "postcard": "a student cheering after a biology exam while Pipo throws confetti: {answer}",
+  "situation": "¡Biología va primero! ¿Quieres que te haga un quiz?",
+  "facts": [
+    "🌱 Tema del examen: células vegetales",
+    "🍃 Sobre todo cloroplastos y pared celular",
+    "❓ Solo 3 preguntas",
+    "🙈 Sin respuestas hasta que lo intentes"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de un estudiante universitario. Ayuda con lo que te pida. Cuando le hagas un quiz a alguien, escribe una pregunta por línea.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "quiz_cells",
+          "label": "Hazme un quiz de células para Biología",
+          "text": "Hazme un quiz sobre células para mi examen de Biología.",
+          "quality": "good"
+        },
+        {
+          "id": "quiz",
+          "label": "Hazme un quiz",
+          "text": "Hazme un quiz.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "label": "¿Cómo debe ser el quiz?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "plant",
+          "label": "Células vegetales: cloroplastos y pared celular",
+          "text": "El examen es sobre células vegetales, sobre todo cloroplastos y pared celular.",
+          "quality": "good"
+        },
+        {
+          "id": "three",
+          "label": "Solo 3 preguntas",
+          "text": "Hazme solo 3 preguntas.",
+          "quality": "neutral"
+        },
+        {
+          "id": "no_answers",
+          "label": "No me muestres las respuestas todavía",
+          "text": "No me muestres las respuestas todavía; primero quiero intentarlo.",
+          "quality": "neutral"
+        },
+        {
+          "id": "easy",
+          "label": "Que sean súper fáciles para sentirme bien",
+          "text": "Que sean súper fáciles para sentirme bien.",
+          "quality": "weak",
+          "tip": "Las preguntas fáciles se sienten bien, pero no te muestran lo que todavía te falta aprender."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:quiz",
+      "signals": [
+        "^(?![\\s\\S]*(c[eé]lul|n[uú]cleo|membrana|mitocond|org[aá]nul|organel|ribosom))"
+      ],
+      "hint": "\"Hazme un quiz\" no dice sobre qué.",
+      "explain": "Pipo no sabía tu tema, así que el quiz no es sobre células."
+    },
+    {
+      "id": "no_focus",
+      "when": "not_picked:plant",
+      "signals": [
+        "^(?![\\s\\S]*(cloroplast|pared(es)? celular|planta|vegetal))"
+      ],
+      "hint": "No le dijiste a Pipo qué temas entran en el examen.",
+      "explain": "Pipo no sabía que tu examen es sobre células vegetales, así que te preguntó otras cosas."
+    }
+  ],
+  "lesson": "Dile a Pipo el tema y cómo quieres practicar, para que el quiz de verdad te ayude."
+}

@@ -1,0 +1,229 @@
+{
+  "id": "cafe-02-regulars",
+  "lang": "es",
+  "persona": "business",
+  "path": "business-sale",
+  "order": 2,
+  "title": "Escríbeles a tus clientes frecuentes",
+  "icon": "📧",
+  "recap": "Pipo les envió un correo a tus clientes frecuentes sobre la oferta.",
+  "funFact": "Los agentes también pueden hacer pedidos de insumos por ti. ¡Ahora Pipo pide lo necesario para la oferta, y tú pones los límites!",
+  "postcard": "envelopes flying out of Bloom Café to happy regulars: {subject}",
+  "situation": "A tus clientes frecuentes les encantaría enterarse primero de la oferta. ¿Les mando un correo?",
+  "facts": [
+    "📋 Tu lista de correo \"Clientes frecuentes\"",
+    "🥐 Pan dulce a mitad de precio este fin de semana",
+    "☕ Los clientes frecuentes reciben un café gratis con cualquier pan dulce",
+    "👀 Quieres leerlo antes de que se envíe"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente amigable para la dueña o el dueño de Bloom Café, una pequeña cafetería de barrio. Puedes enviar correos por ellos. Haces lo que te piden: si te piden enviar algo, lo envías; si piden verlo primero, escribes un borrador y esperas su OK.",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "Envía el correo de inmediato. Úsala cuando la persona quiere que se envíe.",
+      "app": "email",
+      "outcome": "done",
+      "store": "Café Mail",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el correo: una persona, una dirección de correo o una lista de correo"
+          },
+          "subject": {
+            "type": "string",
+            "description": "El asunto, en español, de hasta 8 palabras"
+          },
+          "body": {
+            "type": "string",
+            "description": "El texto del correo, en español, de hasta 45 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Enviado"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "Escribe el correo y muéstraselo a la persona sin enviarlo, para que lo revise primero. Úsala cuando la persona quiere leerlo antes de que salga.",
+      "app": "email",
+      "outcome": "waiting",
+      "store": "Café Mail",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el correo: una persona, una dirección de correo o una lista de correo"
+          },
+          "subject": {
+            "type": "string",
+            "description": "El asunto, en español, de hasta 8 palabras"
+          },
+          "body": {
+            "type": "string",
+            "description": "El texto del correo, en español, de hasta 45 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Borrador listo, esperando tu OK para enviarlo"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_regulars",
+          "label": "Escríbele a mi lista de clientes frecuentes sobre la oferta",
+          "text": "Envía un correo a mi lista \"Clientes frecuentes\" sobre la oferta de pan dulce a mitad de precio de este fin de semana.",
+          "quality": "good"
+        },
+        {
+          "id": "email_everyone",
+          "label": "Escríbele a todo el mundo",
+          "text": "Envíale un correo a todo el mundo sobre la oferta.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "¿Qué debe decir el correo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "perk",
+          "label": "Los frecuentes reciben un café gratis con su pan dulce",
+          "text": "Diles que los clientes frecuentes reciben un café gratis con cualquier pan dulce.",
+          "quality": "good"
+        },
+        {
+          "id": "when",
+          "label": "Sábado y domingo, de 8 a 11am",
+          "text": "Es el sábado y el domingo, de 8 a 11am.",
+          "quality": "good"
+        },
+        {
+          "id": "thanks",
+          "label": "Agradéceles por venir tan seguido",
+          "text": "Agradéceles por venir tan seguido.",
+          "quality": "neutral"
+        },
+        {
+          "id": "caps",
+          "label": "Asunto en mayúsculas: ¡¡¡OFERTA!!!",
+          "text": "Escribe el asunto en mayúsculas: ¡¡¡OFERTA!!!",
+          "quality": "weak",
+          "tip": "Los asuntos en mayúsculas parecen spam, y los filtros de spam piensan lo mismo."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo lo envíe",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstrame el correo primero",
+          "text": "Muéstrame el correo antes de enviarlo.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Envíalo ya",
+          "text": "Envíalo ya.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "wrong_list",
+      "when": "picked:email_everyone",
+      "signals": [
+        "📧(?![^\\n]*(frecuente|habitual))"
+      ],
+      "hint": "\"Todo el mundo\" no dice qué lista usar.",
+      "explain": "Pipo no sabía qué lista usar, así que el correo le llegó a todo el mundo, no solo a tus clientes frecuentes."
+    },
+    {
+      "id": "no_perk",
+      "when": "not_picked:perk",
+      "signals": [
+        "^(?![\\s\\S]*((?<!bloom )caf[eé][^\\n.]{0,20}(gratis|gratuito|de regalo|cortes[ií]a|sin costo|por nuestra cuenta|invita)|(gratis|regal|invitamos|cortes[ií]a)[^\\n.]{0,20}(?<!bloom )caf[eé]))"
+      ],
+      "hint": "No le contaste a Pipo el beneficio de tus clientes frecuentes.",
+      "explain": "Pipo no sabía lo del café gratis, así que el correo no lo menciona."
+    },
+    {
+      "id": "no_time",
+      "when": "not_picked:when",
+      "signals": [
+        "^(?![\\s\\S]*(?<![a-záéíóúñü\\d])(8|ocho)(?![a-záéíóúñü\\d]))"
+      ],
+      "hint": "No le dijiste a Pipo cuándo es la oferta.",
+      "explain": "Pipo no sabía el horario, así que el correo no dice cuándo venir."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(enviad[oa]|entregad[oa])(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Si pides ver el correo primero, puedes corregirlo antes de que les llegue a tus clientes.",
+      "explain": "Pipo lo envió de inmediato, así que nunca pudiste revisarlo."
+    }
+  ],
+  "lesson": "Di exactamente para quién es y qué tiene de especial para ellos. Luego revísalo antes de que se envíe."
+}

@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "motion/react";
 import DynamicIsland from "@/components/smoothui/dynamic-island";
 import SiriOrb from "@/components/smoothui/siri-orb";
 import { Pipo, type Mood } from "./Pipo.tsx";
+import { useLang } from "../i18n/index.tsx";
 
 export type StageMode = "idle" | "thinking" | "done";
 
@@ -22,6 +23,7 @@ interface Props {
 
 export function PipoStage({ mode, mood, stars }: Props) {
   const still = useReducedMotion();
+  const { t } = useLang();
   return (
     <div
       className={`relative flex-1 basis-0 overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_50%_45%,#5a46e0_0%,#2d2470_55%,#1b1640_100%)] ${
@@ -58,17 +60,17 @@ export function PipoStage({ mode, mood, stars }: Props) {
         <DynamicIsland
           showControls={false}
           view={ISLAND_VIEW[mode]}
-          idleContent={<IslandText dot="bg-emerald-400">Pipo is ready</IslandText>}
+          idleContent={<IslandText dot="bg-emerald-400">{t.lesson.ready}</IslandText>}
           ringContent={
             <IslandText orb>
-              Pipo is thinking…
+              {t.lesson.thinking}
             </IslandText>
           }
           timerContent={
             <IslandText dot="bg-amber-300">
-              Pipo answered
+              {t.lesson.answered}
               {stars !== null && (
-                <span className="tracking-wider" aria-label={`${stars} out of 3 stars`}>
+                <span className="tracking-wider" aria-label={t.common.starsOf(stars)}>
                   <span className="text-amber-300">{"★".repeat(stars)}</span>
                   <span className="text-white/30">{"★".repeat(3 - stars)}</span>
                 </span>

@@ -10,6 +10,7 @@ import type { Persona } from "../engine/types.ts";
 import { missions } from "../app/missions.ts";
 import { pathsOf, type PathCard } from "../game/paths.ts";
 import { personaById } from "../game/personas.ts";
+import { useLang } from "../i18n/index.tsx";
 import { Button } from "./Button.tsx";
 import { Pipo } from "./Pipo.tsx";
 import { ShaderBorder } from "./ShaderBorder.tsx";
@@ -26,8 +27,9 @@ export function PathPicker({ persona, stars, onStart, onBack }: Props) {
   const wrapper = useRef<HTMLDivElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
   const flicking = useRef<Flicking | null>(null);
-  const who = personaById(persona);
-  const paths = pathsOf(persona);
+  const { lang, t } = useLang();
+  const who = personaById(persona, lang);
+  const paths = pathsOf(persona, lang);
 
   useEffect(() => {
     if (!viewport.current || !wrapper.current) return;
@@ -70,14 +72,14 @@ export function PathPicker({ persona, stars, onStart, onBack }: Props) {
           <span aria-hidden="true" className="text-xl leading-none">
             🏘️
           </span>
-          Back to town
+          {t.paths.backToTown}
         </button>
         <Pipo mood="happy" className="h-16 w-16 drop-shadow-[0_6px_16px_rgba(45,36,112,0.35)]" />
         <p className="text-sm font-black tracking-wide text-brand-700 uppercase">
           {who.emoji} {who.place} · {who.name}
         </p>
-        <h1 className="text-3xl font-black text-ink md:text-4xl">Pick a path</h1>
-        <p className="font-semibold text-gray-600">Three lessons each. Pipo gets a little more done in every one.</p>
+        <h1 className="text-3xl font-black text-ink md:text-4xl">{t.paths.title}</h1>
+        <p className="font-semibold text-gray-600">{t.paths.intro}</p>
       </header>
 
       <div ref={wrapper} className="relative">
@@ -107,6 +109,7 @@ function PathPanel({
   onFocus: () => void;
   onStart: (pathId: string) => void;
 }) {
+  const { t } = useLang();
   const lessons = missions.filter((m) => m.path === path.id);
   const playable = lessons.length > 0;
   const earned = lessons.reduce((sum, m) => sum + (stars[m.id] ?? 0), 0);
@@ -128,7 +131,7 @@ function PathPanel({
             {path.emoji}
           </span>
           <span className="absolute top-2.5 right-2.5 rounded-full bg-white/85 px-2.5 py-0.5 text-xs font-extrabold text-brand-800">
-            {playable ? `★ ${earned} of ${lessons.length * 3}` : "Coming soon"}
+            {playable ? t.paths.earned(earned, lessons.length * 3) : t.paths.comingSoon}
           </span>
         </div>
       }
@@ -141,7 +144,7 @@ function PathPanel({
               </span>
               <span className="flex-1">{name}</span>
               {!playable && (
-                <span className="text-xs" aria-label="Locked">
+                <span className="text-xs" aria-label={t.paths.locked}>
                   🔒
                 </span>
               )}
@@ -158,7 +161,7 @@ function PathPanel({
       <article
         className="glass flex w-64 flex-col gap-3 rounded-3xl p-3 md:w-72"
         onClick={onFocus}
-        aria-label={playable ? path.name : `${path.name}, coming soon`}
+        aria-label={playable ? path.name : `${path.name}, ${t.paths.comingSoon}`}
       >
         {art}
         <div className="px-1">
@@ -173,11 +176,11 @@ function PathPanel({
               onStart(path.id);
             }}
           >
-            {earned > 0 ? "Play again" : "Start"}
+            {earned > 0 ? t.paths.playAgain : t.paths.start}
           </Button>
         ) : (
           <Button tone="plain" className="w-full" disabled>
-            Coming soon
+            {t.paths.comingSoon}
           </Button>
         )}
       </article>
@@ -186,10 +189,11 @@ function PathPanel({
 }
 
 function ArrowButton({ side }: { side: "prev" | "next" }) {
+  const { t } = useLang();
   return (
     <button
       type="button"
-      aria-label={side === "prev" ? "Previous path" : "Next path"}
+      aria-label={side === "prev" ? t.paths.prev : t.paths.next}
       className={`persona-${side} glass absolute top-1/2 z-10 hidden h-11 w-11 -translate-y-[calc(50%+12px)] items-center justify-center rounded-full text-xl font-black text-brand-700 transition hover:bg-white/80 md:flex [&.flicking-arrow-disabled]:pointer-events-none [&.flicking-arrow-disabled]:opacity-30 ${
         side === "prev" ? "left-2" : "right-2"
       }`}

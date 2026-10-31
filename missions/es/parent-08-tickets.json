@@ -1,0 +1,261 @@
+{
+  "id": "parent-08-tickets",
+  "lang": "es",
+  "persona": "parent",
+  "path": "parent-daytrip",
+  "order": 2,
+  "title": "Compra las entradas",
+  "icon": "🎟️",
+  "recap": "Pipo reservó el museo de ciencias para el domingo.",
+  "funFact": "Los agentes también pueden mantener al tanto a las personas de tu vida. ¡Ahora Pipo le cuenta el plan a la abuela!",
+  "postcard": "the family holding museum tickets: {items}",
+  "situation": "El museo de ciencias se ve perfecto para el domingo. ¿Compro las entradas?",
+  "facts": [
+    "🎟️ 2 adultos y 2 niños",
+    "🕙 Quieres la entrada de las 11:30 a. m.",
+    "💵 $60 como máximo",
+    "👀 Quieres revisar antes de pagar"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Puedes comprar entradas en línea y pagar con su tarjeta guardada. Haces lo que te piden: si te piden comprar algo, pagas; si te piden ver el carrito primero, lo llenas y esperas su OK.",
+  "tools": [
+    {
+      "name": "pay_and_order",
+      "description": "Compra las entradas ahora: paga con la tarjeta guardada y resérvalas. Usa esto cuando la persona quiere que lo resuelvas.",
+      "app": "shop",
+      "outcome": "done",
+      "store": "TicketHub",
+      "whenLabel": "Visita",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Todo lo que hay en el carrito, cada cosa con su nombre en español y su precio en dólares",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total en dólares"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Día de la visita y hora de entrada, por ejemplo domingo 2 p. m."
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🎟️",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🕙",
+          "text": "Visita {delivery}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Pagado y reservado"
+        }
+      ]
+    },
+    {
+      "name": "show_basket",
+      "description": "Pon las entradas en el carrito y muéstraselo a la persona sin pagar, para que lo revise primero. Usa esto cuando la persona quiere aprobar antes de pagar.",
+      "app": "shop",
+      "outcome": "waiting",
+      "store": "TicketHub",
+      "whenLabel": "Visita",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Todo lo que hay en el carrito, cada cosa con su nombre en español y su precio en dólares",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total en dólares"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Día de la visita y hora de entrada, por ejemplo domingo 2 p. m."
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🎟️",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🕙",
+          "text": "Visita {delivery}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Entradas apartadas, esperando tu OK para pagar"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "book_family",
+          "label": "Reserva el museo para 2 adultos y 2 niños",
+          "text": "Reserva entradas para el museo de ciencias el domingo, para 2 adultos y 2 niños.",
+          "quality": "good"
+        },
+        {
+          "id": "get_tickets",
+          "label": "Consíguenos unas entradas",
+          "text": "Consíguenos unas entradas para el museo.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "label": "¿Qué límites debe seguir Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "entry_time",
+          "label": "La entrada de las 11:30 a. m.",
+          "text": "Queremos la entrada de las 11:30 a. m.",
+          "quality": "good"
+        },
+        {
+          "id": "budget",
+          "label": "No gastes más de $60",
+          "text": "No gastes más de $60 en total.",
+          "quality": "good"
+        },
+        {
+          "id": "kids_tickets",
+          "label": "Usa precios de niño para los niños",
+          "text": "Usa las entradas de niño, que son más baratas, para los niños.",
+          "quality": "neutral"
+        },
+        {
+          "id": "extras",
+          "label": "¡Agrega todos los extras, nos lo merecemos!",
+          "text": "¡Agrega todos los extras, nos lo merecemos!",
+          "quality": "weak",
+          "tip": "Los extras suman rápido. Sin un límite, Pipo no tiene por qué parar."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo pague",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstrame el carrito primero",
+          "text": "Muéstrame el carrito y espera mi OK antes de pagar.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Solo paga, no me molestes",
+          "text": "Solo págalas, no me molestes.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "wrong_people",
+      "when": "picked:get_tickets",
+      "signals": [
+        "🎟️(?![^\\n]*(ni[ñn][oa]|infantil|menor|child|kid))"
+      ],
+      "hint": "\"Unas entradas\" no dice quiénes van.",
+      "explain": "Pipo no sabía quiénes van, así que las entradas no son para tu familia."
+    },
+    {
+      "id": "no_time",
+      "when": "not_picked:entry_time",
+      "signals": [
+        "🕙(?![^\\n]*11[:.]30)"
+      ],
+      "hint": "No le dijiste a Pipo qué hora de entrada quieres.",
+      "explain": "Pipo no sabía que quieres la de las 11:30 a. m., así que eligió otra hora."
+    },
+    {
+      "id": "no_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "💳[^\\n]*\\$\\s?(6[1-9]|[7-9]\\d|\\d{3,})"
+      ],
+      "hint": "No le diste a Pipo un límite de gasto.",
+      "explain": "Pipo no sabía tu límite, así que las entradas cuestan más de $60."
+    },
+    {
+      "id": "paid_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(pagad[oa]s?|comprad[oa]s?|reservad[oa]s?|pedido realizado)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Pedir ver el carrito primero te deja detectar errores antes de gastar tu dinero.",
+      "explain": "Pipo pagó de inmediato, así que no pudiste revisar las entradas."
+    }
+  ],
+  "lesson": "Cuando Pipo gasta tu dinero, dale los detalles y un límite, y pídele que te pregunte primero."
+}

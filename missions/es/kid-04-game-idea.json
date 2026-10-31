@@ -1,0 +1,104 @@
+{
+  "id": "kid-04-game-idea",
+  "lang": "es",
+  "persona": "kid",
+  "path": "kid-game",
+  "order": 1,
+  "title": "Diseña tu juego",
+  "icon": "💡",
+  "recap": "Pipo Code diseñó Candy Climb contigo.",
+  "funFact": "Los agentes de programación pueden construir juegos por ti en un estudio como BlockStudio. ¡Ahora Pipo Code construye el primer nivel!",
+  "postcard": "a colourful candy obstacle course game on a laptop, Pipo jumping across lollipops: {answer}",
+  "situation": "¡Hagamos un juego en BlockStudio! ¿Cuál es tu idea?",
+  "facts": [
+    "🍭 Candy Climb: una pista de obstáculos",
+    "🧒 Para jugadores de 8 a 10 años",
+    "⏱️ Unos 5 minutos para terminarlo",
+    "🧱 Hecho en BlockStudio"
+  ],
+  "systemPrompt": "Eres Pipo Code, un ayudante de programación amigable en la computadora de alguien de 10 años. Ayuda con lo que te pida, con palabras sencillas. Cuando diseñes un juego, escribe una línea corta por cada idea.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo Code?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "design",
+          "label": "Diseña Candy Climb, una pista de obstáculos de dulces",
+          "text": "Diseña mi juego de BlockStudio, Candy Climb, una pista de obstáculos con tema de dulces.",
+          "quality": "good"
+        },
+        {
+          "id": "game",
+          "label": "Haz un juego genial",
+          "text": "Haz un juego genial.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "¿Qué necesita saber Pipo Code?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "age",
+          "label": "Para jugadores de 8 a 10 años",
+          "text": "Es para jugadores de 8 a 10 años, así que no muy difícil.",
+          "quality": "good"
+        },
+        {
+          "id": "time",
+          "label": "Unos 5 minutos para terminarlo",
+          "text": "Debe tomar unos 5 minutos terminarlo.",
+          "quality": "good"
+        },
+        {
+          "id": "levels",
+          "label": "3 niveles",
+          "text": "Ponle 3 niveles.",
+          "quality": "neutral"
+        },
+        {
+          "id": "impossible",
+          "label": "¡Hazlo súper imposible!",
+          "text": "¡Hazlo súper imposible!",
+          "quality": "weak",
+          "tip": "Los juegos imposibles hacen que los jugadores se rindan. Lo divertido es \"difícil, pero sí puedo\"."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:game",
+      "signals": [
+        "^(?![\\s\\S]*(candy|dulce|caramel|golosina|paleta|chupet|chocola|chicle|az[uú]car|piruleta|gomita|bomb[oó]n))"
+      ],
+      "hint": "\"Un juego genial\" no dice qué tipo de juego es.",
+      "explain": "Pipo Code no conocía tu idea, así que diseñó otro juego."
+    },
+    {
+      "id": "too_hard",
+      "when": "not_picked:age",
+      "signals": [
+        "^(?![\\s\\S]*((?<![a-záéíóúñü])f[aá]cil|(?<![a-záéíóúñü])ni[ñn][oa]s?(?![a-záéíóúñü])|principiante|suave|tranquil|sencill|(?<![a-záéíóúñü\\d])8(?![a-záéíóúñü\\d])))"
+      ],
+      "hint": "No le dijiste a Pipo Code quién va a jugar.",
+      "explain": "Pipo Code no sabía que es para niños de 8 a 10 años, así que no lo hizo fácil."
+    },
+    {
+      "id": "no_time",
+      "when": "not_picked:time",
+      "signals": [
+        "^(?![\\s\\S]*((?<![\\d])5(?![\\d])|cinco))"
+      ],
+      "hint": "No le dijiste a Pipo Code cuánto debe durar.",
+      "explain": "Pipo Code no sabía que debe durar 5 minutos, así que adivinó cuánto dura."
+    }
+  ],
+  "lesson": "Dile a Pipo Code quién va a jugar y cuánto debe durar. Eso cambia todo el juego."
+}

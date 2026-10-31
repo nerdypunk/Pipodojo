@@ -1,0 +1,253 @@
+{
+  "id": "cafe-06-follow-up",
+  "lang": "es",
+  "persona": "business",
+  "path": "business-review",
+  "order": 3,
+  "title": "Seguimiento la próxima semana",
+  "icon": "🔔",
+  "recap": "Pipo preparó un seguimiento para la próxima visita de Jordan.",
+  "funFact": "Una mala reseña se convirtió en un cliente fiel. Los agentes pueden ayudarte a cuidar a la gente, y tú decides qué decir y cuánto gastar.",
+  "postcard": "the café owner greeting Jordan at the door with a hot oat latte, the calendar showing {events}",
+  "situation": "¿Quieres recibir a Jordan como se merece? Puedo agregar un recordatorio para su próxima visita.",
+  "facts": [
+    "📅 Jordan viene los martes",
+    "🕗 Como a las 8am",
+    "☕ El pedido de Jordan: latte de avena, extra caliente",
+    "🔔 Un recordatorio 15 minutos antes"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente amigable para la dueña o el dueño de Bloom Café, una pequeña cafetería de barrio. Puedes agregar eventos al calendario de la cafetería. Haces lo que te piden: si te piden agregar eventos, los agregas; si piden verlos primero, los preparas y esperas su OK.",
+  "tools": [
+    {
+      "name": "add_to_calendar",
+      "description": "Agrega los eventos al calendario ahora. Úsala cuando la persona quiere que se agreguen.",
+      "app": "calendar",
+      "outcome": "done",
+      "store": "Calendario del café",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "Los eventos, cada uno con un nombre corto en español y cuándo ocurre (día y hora)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "Día y hora en español, por ejemplo martes 5pm"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "Cuándo avisar, en español, por ejemplo 1 hora antes"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "Recordatorio: {reminder}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Agregado al calendario"
+        }
+      ]
+    },
+    {
+      "name": "show_events",
+      "description": "Prepara los eventos y muéstraselos a la persona sin agregarlos, para que los revise primero. Úsala cuando la persona quiere verlos antes de que se agreguen.",
+      "app": "calendar",
+      "outcome": "waiting",
+      "store": "Calendario del café",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "Los eventos, cada uno con un nombre corto en español y cuándo ocurre (día y hora)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "Día y hora en español, por ejemplo martes 5pm"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "Cuándo avisar, en español, por ejemplo 1 hora antes"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "Recordatorio: {reminder}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Todo listo, esperando tu OK para agregarlo"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "plan_follow_up",
+          "label": "Agrega un seguimiento para la próxima visita de Jordan",
+          "text": "Agrega un evento al calendario de la cafetería para darle la bienvenida a Jordan en su próxima visita.",
+          "quality": "good"
+        },
+        {
+          "id": "remember",
+          "label": "Acuérdate de lo de Jordan",
+          "text": "Acuérdate de lo de Jordan.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "¿Qué necesita saber Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "tuesday",
+          "label": "El próximo martes a las 8am",
+          "text": "Jordan viene los martes como a las 8am, así que ponlo el próximo martes a las 8am.",
+          "quality": "good"
+        },
+        {
+          "id": "order",
+          "label": "Anota: latte de avena, extra caliente",
+          "text": "En el nombre del evento, anota el pedido de Jordan: latte de avena, extra caliente.",
+          "quality": "good"
+        },
+        {
+          "id": "remind",
+          "label": "Avísame 15 minutos antes",
+          "text": "Avísame 15 minutos antes.",
+          "quality": "good"
+        },
+        {
+          "id": "party",
+          "label": "¡Organiza una fiesta sorpresa!",
+          "text": "¡Organiza una fiesta sorpresa para Jordan!",
+          "quality": "weak",
+          "tip": "Una fiesta es demasiado por un café frío. Lo pequeño y personal es lo que hace que un cliente se sienta bien atendido."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo lo agregue",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstramelo antes de agregarlo",
+          "text": "Muéstrame el evento antes de agregarlo.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Solo agrégalo",
+          "text": "Solo agrégalo.",
+          "quality": "weak",
+          "tip": "Si lo agregas sin revisarlo, un día equivocado puede quedarse en el calendario sin que nadie lo note."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:remember",
+      "signals": [
+        "📅(?![^\\n]*jordan)"
+      ],
+      "hint": "\"Lo de Jordan\" no dice qué hay que recordar.",
+      "explain": "Pipo no sabía qué planear, así que el evento no tiene sentido."
+    },
+    {
+      "id": "no_time",
+      "when": "not_picked:tuesday",
+      "signals": [
+        "📅(?![^\\n]*(?<![a-záéíóúñü])mar(tes)?(?![a-záéíóúñü]))"
+      ],
+      "hint": "No le dijiste a Pipo cuándo viene Jordan.",
+      "explain": "Pipo no sabía que Jordan viene los martes, así que eligió otro día."
+    },
+    {
+      "id": "no_order",
+      "when": "not_picked:order",
+      "signals": [
+        "^(?![\\s\\S]*avena)"
+      ],
+      "hint": "No le diste a Pipo el pedido de Jordan.",
+      "explain": "Pipo no sabía el pedido de Jordan, así que al recordatorio le falta el toque personal."
+    },
+    {
+      "id": "no_reminder",
+      "when": "not_picked:remind",
+      "signals": [
+        "🔔(?![^\\n]*(?<!\\d)(15|quince)(?![a-záéíóúñü\\d]))"
+      ],
+      "hint": "No le dijiste a Pipo cuándo avisarte.",
+      "explain": "Pipo no sabía que quieres el aviso 15 minutos antes, así que eligió su propio horario."
+    },
+    {
+      "id": "added_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(agregad[oa]s?|añadid[oa]s?)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Si pides ver el evento primero, puedes detectar un día equivocado.",
+      "explain": "Pipo lo agregó de inmediato, así que nunca pudiste revisarlo."
+    }
+  ],
+  "lesson": "Días, horas y detalles exactos convierten un \"acuérdate de esto\" en un plan con el que Pipo puede actuar."
+}

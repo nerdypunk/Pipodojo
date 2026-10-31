@@ -1,0 +1,124 @@
+{
+  "id": "parent-04-lunches",
+  "lang": "es",
+  "persona": "parent",
+  "path": "parent-school",
+  "order": 1,
+  "title": "Planea los almuerzos de la semana",
+  "icon": "🥪",
+  "recap": "Pipo planeó una semana de almuerzos vegetarianos para Mia y Leo.",
+  "funFact": "Los agentes como Muse de Meta también pueden escribir correos por ti. ¡Ahora Pipo le responde a la maestra de Leo sobre el paseo escolar!",
+  "postcard": "Pipo packing colourful lunch boxes for two kids: {answer}",
+  "situation": "¡Volvieron las clases! ¿Quieres que planee los almuerzos de los niños para esta semana?",
+  "facts": [
+    "👧 Dos hijos: Mia y Leo",
+    "🥦 Los dos son vegetarianos",
+    "🏫 El viernes no hay clases (día de maestros)",
+    "⏱️ 10 minutos para preparar cada almuerzo"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Ayuda con lo que te pidan. Cuando planees comidas, pon dos días en cada línea y empieza la línea con esos días.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "plan_lunches",
+          "label": "Planea los almuerzos de Mia y Leo de esta semana",
+          "text": "Planea los almuerzos escolares de mis dos hijos, Mia y Leo, para esta semana.",
+          "quality": "good"
+        },
+        {
+          "id": "help_lunch",
+          "label": "Ayúdame con los almuerzos",
+          "text": "Ayúdame con los almuerzos escolares.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "¿Qué necesita saber Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "veggie",
+          "label": "Los dos son vegetarianos",
+          "text": "Mis dos hijos son vegetarianos.",
+          "quality": "good"
+        },
+        {
+          "id": "no_friday",
+          "label": "El viernes no hay clases",
+          "text": "El viernes no hay clases, así que solo de lunes a jueves.",
+          "quality": "good"
+        },
+        {
+          "id": "quick",
+          "label": "Cada almuerzo en 10 minutos o menos",
+          "text": "Cada almuerzo tiene que prepararse en 10 minutos o menos.",
+          "quality": "neutral"
+        },
+        {
+          "id": "fancy",
+          "label": "¡Que sean súper elegantes!",
+          "text": "¡Que sean súper elegantes!",
+          "quality": "weak",
+          "tip": "\"Súper elegantes\" suena divertido, pero lo elegante toma un tiempo que no tienes en una mañana de escuela."
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "label": "¿Cómo debe responder Pipo?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "short",
+          "label": "Corto y sencillo",
+          "text": "Que sea corto y sencillo.",
+          "quality": "good"
+        },
+        {
+          "id": "essay",
+          "label": "Explica todo sobre comer sano",
+          "text": "Explica todo sobre la alimentación sana para niños.",
+          "quality": "weak",
+          "tip": "Una clase no es un plan de almuerzos. Si pides algo corto, recibes una lista con la que puedes ir de compras."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_veggie",
+      "when": "not_picked:veggie",
+      "signals": [
+        "(?<![a-záéíóúñü])(?<!sin )(pollo|pavo|jam[oó]n|res|carnes?|cerdo|tocino|salami|pepperoni|peperoni|at[uú]n|salm[oó]n|pescado|salchichas?|hot ?dogs?|alb[oó]ndigas|camar[oó]n(es)?|chorizo|pechuga|milanesas?|nuggets?|mortadela|lomo)(?![a-záéíóúñü])(?![ -](vegetal|vegetarian|vegan|de (soya|soja|tofu|lenteja|garbanzo|frijol|verdura|champi|hongo|berenjena|calabac|avena|quinoa|coliflor)))"
+      ],
+      "hint": "No le dijiste a Pipo que los niños son vegetarianos.",
+      "explain": "Pipo no sabía que los niños son vegetarianos, así que hay carne en los almuerzos."
+    },
+    {
+      "id": "friday_lunch",
+      "when": "not_picked:no_friday",
+      "signals": [
+        "(^|\\n)(?![^\\n]*(no hay clase|sin clase|no hay escuela|sin escuela|libre|descanso|d[ií]a de(l)? maestr|en casa|no hay almuerzo|sin almuerzo))[^\\n]*(?<![a-záéíóúñü])vie(rnes)?(?![a-záéíóúñü])"
+      ],
+      "hint": "No le dijiste a Pipo que el viernes no hay clases.",
+      "explain": "Pipo no sabía que el viernes es día libre, así que planeó un almuerzo que nadie necesita."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:help_lunch",
+      "signals": [
+        "^(?![\\s\\S]*(?<![a-záéíóúñü])leo(?![a-záéíóúñü]))"
+      ],
+      "hint": "\"Ayúdame con los almuerzos\" no dice para quién son, así que Pipo tiene que adivinar.",
+      "explain": "Pipo no sabía para quién son los almuerzos, así que adivinó."
+    }
+  ],
+  "lesson": "Dile a Pipo los límites que importan: alergias y qué días necesitas de verdad."
+}

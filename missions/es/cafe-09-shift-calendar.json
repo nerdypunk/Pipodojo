@@ -1,0 +1,229 @@
+{
+  "id": "cafe-09-shift-calendar",
+  "lang": "es",
+  "persona": "business",
+  "path": "business-staff",
+  "order": 3,
+  "title": "Pon los turnos en el calendario",
+  "icon": "📆",
+  "recap": "Pipo puso los turnos en el calendario del equipo.",
+  "funFact": "Horario planeado, enviado y en el calendario. Ese es el papeleo semanal que los agentes te quitan de encima, mientras tú sigues al mando.",
+  "postcard": "a cosy team calendar on the café wall showing {events}",
+  "situation": "¡Todos confirmaron! ¿Agrego los turnos al calendario del equipo?",
+  "facts": [
+    "📅 Jue: Ben 7–11am, Ana 11am–3pm",
+    "📅 Vie: Chloe 7–11am, Ana 11am–3pm",
+    "📅 Sáb: los tres, 7am–3pm",
+    "🔔 Recordarles a todos la noche anterior"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente amigable para la dueña o el dueño de Bloom Café, una pequeña cafetería de barrio. Puedes agregar eventos al calendario compartido del equipo. Haces lo que te piden: si te piden agregar eventos, los agregas; si piden verlos primero, los preparas y esperas su OK.",
+  "tools": [
+    {
+      "name": "add_to_calendar",
+      "description": "Agrega los eventos al calendario ahora. Úsala cuando la persona quiere que se agreguen.",
+      "app": "calendar",
+      "outcome": "done",
+      "store": "Calendario del equipo",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "Los eventos, cada uno con un nombre corto en español y cuándo ocurre (día y hora)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "Día y hora en español, por ejemplo martes 5pm"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "Cuándo avisar, en español, por ejemplo 1 hora antes"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "Recordatorio: {reminder}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Agregado al calendario"
+        }
+      ]
+    },
+    {
+      "name": "show_events",
+      "description": "Prepara los eventos y muéstraselos a la persona sin agregarlos, para que los revise primero. Úsala cuando la persona quiere verlos antes de que se agreguen.",
+      "app": "calendar",
+      "outcome": "waiting",
+      "store": "Calendario del equipo",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "Los eventos, cada uno con un nombre corto en español y cuándo ocurre (día y hora)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "Día y hora en español, por ejemplo martes 5pm"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "Cuándo avisar, en español, por ejemplo 1 hora antes"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "Recordatorio: {reminder}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Todo listo, esperando tu OK para agregarlos"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "add_shifts",
+          "label": "Agrega los turnos de esta semana al calendario del equipo",
+          "text": "Agrega los turnos de esta semana a nuestro calendario compartido del equipo, un evento por turno.",
+          "quality": "good"
+        },
+        {
+          "id": "add_rota",
+          "label": "Mete el horario",
+          "text": "Mete el horario en el calendario.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "¿Qué necesita saber Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "times",
+          "label": "Jue Ben/Ana · Vie Chloe/Ana · Sáb todos",
+          "text": "Jueves: Ben de 7 a 11am, Ana de 11am a 3pm. Viernes: Chloe de 7 a 11am, Ana de 11am a 3pm. Sábado: los tres, de 7am a 3pm.",
+          "quality": "good"
+        },
+        {
+          "id": "remind",
+          "label": "Recuérdales a todos la noche anterior",
+          "text": "Recuérdales a todos la noche anterior a su turno.",
+          "quality": "good"
+        },
+        {
+          "id": "year",
+          "label": "¡Agrega turnos para todo el año!",
+          "text": "¡Agrega turnos para todo el año!",
+          "quality": "weak",
+          "tip": "Un año entero de suposiciones es mucho que corregir después. Mejor una semana bien hecha."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo los agregue",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstramelos antes de agregarlos",
+          "text": "Muéstrame los turnos antes de agregarlos.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Solo agrégalos",
+          "text": "Solo agrégalos.",
+          "quality": "weak",
+          "tip": "Si los agregas sin revisarlos, un turno equivocado puede quedarse en el calendario de todos."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_times",
+      "when": "not_picked:times",
+      "signals": [
+        "📅(?![^\\n]*chloe)"
+      ],
+      "hint": "No le diste a Pipo los turnos.",
+      "explain": "Pipo no tenía los turnos, así que adivinó quién trabaja cuándo."
+    },
+    {
+      "id": "no_reminder",
+      "when": "not_picked:remind",
+      "signals": [
+        "🔔(?![^\\n]*((noche|tarde|d[ií]a) (anterior|antes)|v[ií]spera))"
+      ],
+      "hint": "No le dijiste a Pipo cuándo avisarle a la gente.",
+      "explain": "Pipo no sabía que quieres el recordatorio la noche anterior, así que eligió su propio horario."
+    },
+    {
+      "id": "added_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(agregad[oa]s?|añadid[oa]s?)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Si pides ver los turnos primero, puedes detectar un error antes de que lo vea todo el equipo.",
+      "explain": "Pipo los agregó de inmediato, así que nunca pudiste revisarlos."
+    }
+  ],
+  "lesson": "Turnos exactos y una revisión rápida hacen que nadie llegue a la hora equivocada."
+}

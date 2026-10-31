@@ -1,0 +1,124 @@
+{
+  "id": "cafe-04-review",
+  "lang": "es",
+  "persona": "business",
+  "path": "business-review",
+  "order": 1,
+  "title": "Responde la reseña",
+  "icon": "⭐",
+  "recap": "Pipo escribió una respuesta amable a la reseña de Jordan.",
+  "funFact": "Los agentes también pueden escribirles directamente a tus clientes. ¡Ahora Pipo se encarga del reembolso de Jordan, con cuidado!",
+  "postcard": "Pipo serving Jordan a steaming hot coffee with a smile, {answer}",
+  "situation": "Uy, una reseña de una estrella de Jordan. ¿Quieres que escriba una respuesta?",
+  "facts": [
+    "⭐ Jordan: \"Café frío y 20 minutos de espera\"",
+    "🧑‍🍳 Esa mañana les faltaba personal",
+    "☕ Quieres ofrecerle una bebida gratis la próxima vez",
+    "🌍 Todo el mundo puede leer la respuesta"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente amigable para la dueña o el dueño de Bloom Café, una pequeña cafetería de barrio. Ayuda con lo que te pidan. Cuando respondas una reseña, escribe la respuesta misma, línea por línea.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "reply_jordan",
+          "label": "Responde la reseña de Jordan",
+          "text": "Escribe una respuesta pública a la reseña de una estrella de Jordan sobre el café frío y los 20 minutos de espera.",
+          "quality": "good"
+        },
+        {
+          "id": "reply_bad",
+          "label": "Responde la reseña mala",
+          "text": "Responde la reseña mala.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "¿Qué debe decir la respuesta?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "sorry",
+          "label": "Disculpas por la espera y el café frío",
+          "text": "Pide disculpas por la larga espera y el café frío.",
+          "quality": "neutral"
+        },
+        {
+          "id": "offer",
+          "label": "Ofrece una bebida gratis la próxima vez",
+          "text": "Ofrécele a Jordan una bebida gratis en su próxima visita.",
+          "quality": "good"
+        },
+        {
+          "id": "reason",
+          "label": "Esa mañana nos faltaba personal",
+          "text": "Menciona que esa mañana nos faltaba personal.",
+          "quality": "neutral"
+        },
+        {
+          "id": "blame",
+          "label": "Di que no fue nuestra culpa",
+          "text": "Di que no fue nuestra culpa.",
+          "quality": "weak",
+          "tip": "Si te defiendes en público, quienes lo lean se ponen del lado del cliente. Una respuesta amable lo recupera."
+        }
+      ]
+    },
+    {
+      "id": "tone",
+      "label": "¿Cómo debe sonar?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "kind",
+          "label": "Amable y corta",
+          "text": "Que sea amable y corta.",
+          "quality": "good"
+        },
+        {
+          "id": "long",
+          "label": "Larga y detallada",
+          "text": "Que sea larga y detallada.",
+          "quality": "weak",
+          "tip": "Las respuestas largas parecen excusas. Lo que notan los demás clientes es que sea corta y amable."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_offer",
+      "when": "not_picked:offer",
+      "signals": [
+        "^(?![\\s\\S]*(gratis|gratuit|cortes[ií]a|por nuestra cuenta|de la casa|regal|sin costo|invit[a-záéíóúñü]*( a)? (un|una|el|tu|la) (caf|bebida)))"
+      ],
+      "hint": "No le dijiste a Pipo que quieres compensarlo.",
+      "explain": "Pipo no sabía lo de la bebida gratis, así que la respuesta no ofrece nada."
+    },
+    {
+      "id": "blame",
+      "when": "picked:blame",
+      "signals": [
+        "(no fue (nuestra )?culpa|no es (nuestra )?culpa|ajen[oa]s? a nosotros|fuera de nuestro control|fuera de nuestras manos|imprevist|debido a|se debi[oó] a|causad[oa] por|deber[ií]as haber|pudiste haber|podr[ií]as haber)"
+      ],
+      "hint": "Decir que no fue tu culpa suena a la defensiva en público.",
+      "explain": "Pipo le dio excusas a Jordan, y todo el mundo puede leerlo."
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:reply_bad",
+      "signals": [
+        "^(?![\\s\\S]*(jordan|fr[ií][oa]|(?<![a-záéíóúñü])espera(?![a-záéíóúñü])|20 min|demora|tardanza))"
+      ],
+      "hint": "\"La reseña mala\" no dice qué reseña es ni qué salió mal.",
+      "explain": "Pipo no sabía de qué reseña se trata, así que la respuesta es genérica."
+    }
+  ],
+  "lesson": "Dile a Pipo el tono y lo que quieres ofrecer. Así escribe lo que tú dirías, no lo que adivina."
+}

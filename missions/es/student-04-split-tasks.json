@@ -1,0 +1,104 @@
+{
+  "id": "student-04-split-tasks",
+  "lang": "es",
+  "persona": "student",
+  "path": "student-project",
+  "order": 1,
+  "title": "Repartan las tareas",
+  "icon": "🧩",
+  "recap": "Pipo repartió el proyecto sobre el clima entre los cuatro.",
+  "funFact": "Los agentes pueden escribirle a tu grupo por ti. ¡Ahora Pipo manda el plan al chat del grupo!",
+  "postcard": "four students high-fiving around a laptop with a climate change presentation: {answer}",
+  "situation": "¡Gran proyecto en equipo! ¿Quieres que reparta el trabajo?",
+  "facts": [
+    "👥 Tú, Priya, Tom y Lee",
+    "🌍 Una presentación sobre el cambio climático",
+    "📅 Se entrega el viernes a las 9 a. m.",
+    "🎨 A Lee se le da muy bien el diseño"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de un estudiante universitario. Ayuda con lo que te pida. Cuando repartas trabajo, escribe una línea por persona, empezando con su nombre.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "split",
+          "label": "Reparte el proyecto del clima entre los cuatro",
+          "text": "Reparte nuestra presentación sobre el cambio climático entre los cuatro: yo, Priya, Tom y Lee.",
+          "quality": "good"
+        },
+        {
+          "id": "divide",
+          "label": "Divide el trabajo",
+          "text": "Divide el trabajo.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "¿Qué necesita saber Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "deadline",
+          "label": "Se entrega el viernes a las 9 a. m.",
+          "text": "Se entrega el viernes a las 9 a. m.",
+          "quality": "good"
+        },
+        {
+          "id": "design",
+          "label": "A Lee se le da muy bien el diseño",
+          "text": "A Lee se le da muy bien el diseño, así que Lee debería hacer las diapositivas.",
+          "quality": "good"
+        },
+        {
+          "id": "fair",
+          "label": "Que sea justo",
+          "text": "Que sea justo.",
+          "quality": "neutral"
+        },
+        {
+          "id": "easiest",
+          "label": "¡Dame la parte más fácil!",
+          "text": "¡Dame la parte más fácil!",
+          "quality": "weak",
+          "tip": "Quedarte con la parte más fácil no hace un buen plan, y tu grupo lo va a notar."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:divide",
+      "signals": [
+        "^(?![\\s\\S]*priya)"
+      ],
+      "hint": "\"Divide el trabajo\" no dice quiénes están en el grupo ni de qué es el proyecto.",
+      "explain": "Pipo no conocía a tu grupo, así que se inventó el plan."
+    },
+    {
+      "id": "no_deadline",
+      "when": "not_picked:deadline",
+      "signals": [
+        "^(?![\\s\\S]*(?<![a-záéíóúñü])vie(rnes)?(?![a-záéíóúñü]))"
+      ],
+      "hint": "No le dijiste a Pipo la fecha de entrega.",
+      "explain": "Pipo no sabía que se entrega el viernes, así que el plan no tiene fechas."
+    },
+    {
+      "id": "lee_design",
+      "when": "not_picked:design",
+      "signals": [
+        "(^|\\n)(?![^\\n]*(diapositiva|dise[ñn]|visual|slide|l[aá]mina|gr[aá]fic))[^a-záéíóúñü\\n]*lee(?![a-záéíóúñü])"
+      ],
+      "hint": "No le dijiste a Pipo en qué es bueno Lee.",
+      "explain": "Pipo no sabía que a Lee se le da muy bien el diseño, así que le tocó otra tarea."
+    }
+  ],
+  "lesson": "Dile a Pipo quién está en el equipo, en qué es bueno cada uno y la fecha de entrega."
+}

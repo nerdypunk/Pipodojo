@@ -1,0 +1,104 @@
+{
+  "id": "kid-07-learn",
+  "lang": "es",
+  "persona": "kid",
+  "path": "kid-homework",
+  "order": 1,
+  "title": "Aprende, no copies",
+  "icon": "🍊",
+  "recap": "Pipo Code te explicó las estaciones con una naranja y una lámpara.",
+  "funFact": "Los agentes de programación pueden convertir datos en gráficas. ¡Ahora Pipo Code convierte la encuesta de tu clase en una gráfica!",
+  "postcard": "an orange circling a glowing lamp on a desk, Pipo pointing and Kai smiling: {answer}",
+  "situation": "¡Hora de la tarea! ¿En qué estás trabajando?",
+  "facts": [
+    "📚 Tarea: ¿por qué hay estaciones del año?",
+    "🧒 Tienes 10 años",
+    "🍊 Te gustan los ejemplos con una naranja y una lámpara",
+    "✍️ Vas a escribir la respuesta por tu cuenta"
+  ],
+  "systemPrompt": "Eres Pipo Code, un ayudante de programación amigable en la computadora de alguien de 10 años. Ayuda con lo que te pida, con palabras sencillas. Cuando expliques algo, usa pasos cortos.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo Code?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "explain",
+          "label": "Explícame por qué hay estaciones",
+          "text": "Explícame por qué hay estaciones del año, para que yo escriba mi propia respuesta.",
+          "quality": "good"
+        },
+        {
+          "id": "do_it",
+          "label": "Escribe la respuesta de mi tarea por mí",
+          "text": "Escribe la respuesta de mi tarea por mí.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "¿Qué necesita saber Pipo Code?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "age",
+          "label": "Tengo 10 años, usa palabras sencillas",
+          "text": "Tengo 10 años, así que usa palabras sencillas.",
+          "quality": "good"
+        },
+        {
+          "id": "example",
+          "label": "Usa una naranja y una lámpara",
+          "text": "Explícalo con una naranja y una lámpara.",
+          "quality": "good"
+        },
+        {
+          "id": "question",
+          "label": "Hazme una pregunta al final",
+          "text": "Hazme una pregunta al final para ver si lo entendí.",
+          "quality": "neutral"
+        },
+        {
+          "id": "big_words",
+          "label": "Usa palabras científicas difíciles para impresionar a mi profe",
+          "text": "Usa palabras científicas difíciles para impresionar a mi profe.",
+          "quality": "weak",
+          "tip": "Las palabras que no entiendes no van a impresionar a tu profe. Las palabras sencillas que sabes explicar, sí."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_example",
+      "when": "not_picked:example",
+      "signals": [
+        "^(?![\\s\\S]*(naranja|l[aá]mpara))"
+      ],
+      "hint": "No le dijiste a Pipo Code qué tipo de ejemplo te gusta.",
+      "explain": "Pipo Code no sabía que te gustan la naranja y la lámpara, así que el ejemplo es más difícil de imaginar."
+    },
+    {
+      "id": "hard_words",
+      "when": "not_picked:age",
+      "signals": [
+        "(?<![a-záéíóúñü])(axial|oblicuidad|solsticios?|equinoccios?|perihelio|afelio|insolaci[oó]n|hemisferios?)(?![a-záéíóúñü])"
+      ],
+      "hint": "No le dijiste a Pipo Code cuántos años tienes.",
+      "explain": "Pipo Code no sabía que tienes 10 años, así que usó palabras científicas difíciles."
+    },
+    {
+      "id": "copied",
+      "when": "picked:do_it",
+      "signals": [
+        "(?<![a-záéíóúñü])((hay|tenemos|existen) (las )?estaciones( del a[ñn]o)? porque|(las )?estaciones( del a[ñn]o)? (ocurren|pasan|suceden|existen|cambian|se deben|son causadas|se producen|se forman|se dan) )"
+      ],
+      "hint": "Si le pides a Pipo Code que escriba tu respuesta, no la aprendes.",
+      "explain": "Pipo Code escribió la respuesta para que la copiaras, así que no hiciste la parte de pensar."
+    }
+  ],
+  "lesson": "Usa a Pipo Code para entender, no para copiar. Pide palabras sencillas y un ejemplo que te guste."
+}

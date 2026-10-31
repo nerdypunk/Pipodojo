@@ -1,0 +1,244 @@
+{
+  "id": "student-02-study-sessions",
+  "lang": "es",
+  "persona": "student",
+  "path": "student-exams",
+  "order": 2,
+  "title": "Agenda tus sesiones de estudio",
+  "icon": "📅",
+  "recap": "Pipo agendó tus sesiones de estudio.",
+  "funFact": "Los agentes también pueden ponerte a prueba, y esa es una de las mejores formas de aprender. ¡Ahora Pipo te hace un quiz!",
+  "postcard": "a calendar full of study sessions: {events}",
+  "situation": "¿Quieres que ponga tus sesiones de estudio en tu calendario para que sí se cumplan?",
+  "facts": [
+    "🧬 Biología: vie y dom, de 2 a 4 p. m.",
+    "📜 Historia: martes, de 6 a 8 p. m.",
+    "📍 En la biblioteca del campus",
+    "🔔 Un recordatorio 30 minutos antes"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de un estudiante universitario. Puedes agregar eventos a su calendario. Haces lo que te pide: si te pide agregar eventos, los agregas; si te pide verlos primero, los preparas y esperas su OK.",
+  "tools": [
+    {
+      "name": "add_to_calendar",
+      "description": "Agrega los eventos al calendario ahora mismo. Úsala cuando la persona quiere que se agreguen.",
+      "app": "calendar",
+      "outcome": "done",
+      "store": "Calendario de la uni",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "Los eventos, cada uno con un nombre corto en español y cuándo es (día y hora)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "Día y hora en español, por ejemplo martes 5 p. m."
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "Cuándo avisar, en español, por ejemplo 1 hora antes"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "Recordatorio: {reminder}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Agregado al calendario"
+        }
+      ]
+    },
+    {
+      "name": "show_events",
+      "description": "Prepara los eventos y muéstraselos a la persona sin agregarlos, para que los revise primero. Úsala cuando la persona quiere verlos antes de que entren al calendario.",
+      "app": "calendar",
+      "outcome": "waiting",
+      "store": "Calendario de la uni",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "Los eventos, cada uno con un nombre corto en español y cuándo es (día y hora)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "Día y hora en español, por ejemplo martes 5 p. m."
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "Cuándo avisar, en español, por ejemplo 1 hora antes"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "Recordatorio: {reminder}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Listos, esperando tu OK para agregarlos"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "book_sessions",
+          "label": "Agrega mis sesiones de estudio a mi calendario",
+          "text": "Agrega mis sesiones de estudio a mi calendario, un evento por sesión.",
+          "quality": "good"
+        },
+        {
+          "id": "add_study",
+          "label": "Pon tiempo de estudio en mi calendario",
+          "text": "Pon tiempo de estudio en mi calendario.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "¿Qué necesita saber Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "times",
+          "label": "Bio vie y dom 2–4 p. m., Historia mar 6–8 p. m.",
+          "text": "Biología el viernes y el domingo de 2 a 4 p. m., e Historia el martes de 6 a 8 p. m.",
+          "quality": "good"
+        },
+        {
+          "id": "library",
+          "label": "Pon \"Biblioteca\" en cada uno",
+          "text": "Pon \"Biblioteca\" en el nombre de cada evento, porque ahí voy a estudiar.",
+          "quality": "good"
+        },
+        {
+          "id": "remind",
+          "label": "Recuérdamelo 30 minutos antes",
+          "text": "Recuérdame 30 minutos antes de cada una.",
+          "quality": "good"
+        },
+        {
+          "id": "everyday",
+          "label": "¡Estudiar todos los días, todo el día!",
+          "text": "¡Agenda estudio todos los días, todo el día!",
+          "quality": "weak",
+          "tip": "Un calendario lleno de bloques de estudio termina ignorado. Unas pocas sesiones reales que sí vas a cumplir funcionan mejor."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo las agregue",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstramelas antes de agregarlas",
+          "text": "Muéstrame las sesiones antes de agregarlas.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Solo agrégalas",
+          "text": "Solo agrégalas.",
+          "quality": "weak",
+          "tip": "Si las agregas sin revisarlas, una hora equivocada puede quedarse en tu calendario sin que lo notes."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_times",
+      "when": "not_picked:times",
+      "signals": [
+        "📅(?![^\\n]*(?<![a-záéíóúñü])mar(tes)?(?![a-záéíóúñü]))"
+      ],
+      "hint": "No le diste a Pipo los días y las horas.",
+      "explain": "Pipo no tenía tus horarios, así que los adivinó."
+    },
+    {
+      "id": "no_place",
+      "when": "not_picked:library",
+      "signals": [
+        "📅(?![^\\n]*(bibliotec|librar))"
+      ],
+      "hint": "No le dijiste a Pipo dónde vas a estudiar.",
+      "explain": "Pipo no sabía que estudias en la biblioteca, así que los eventos no dicen dónde."
+    },
+    {
+      "id": "no_reminder",
+      "when": "not_picked:remind",
+      "signals": [
+        "🔔(?![^\\n]*((?<!\\d)30(?!\\d)|media hora))"
+      ],
+      "hint": "No le dijiste a Pipo cuándo avisarte.",
+      "explain": "Pipo no sabía que quieres el aviso 30 minutos antes, así que eligió por su cuenta."
+    },
+    {
+      "id": "added_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(agregad[oa]s?|añadid[oa]s?)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Si pides ver las sesiones primero, puedes detectar una hora equivocada.",
+      "explain": "Pipo las agregó de inmediato, así que nunca pudiste revisarlas."
+    }
+  ],
+  "lesson": "Días, horas y lugares exactos convierten un plan de estudio en sesiones que sí pasan."
+}

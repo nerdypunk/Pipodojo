@@ -1,9 +1,10 @@
 // Engine types. Pure TypeScript: no React, no browser APIs.
 import type { z } from "zod";
-import type { FlawSchema, MissionSchema, PersonaSchema, PieceSchema, SlotSchema, ToolSchema } from "./schema.ts";
+import type { FlawSchema, LangSchema, MissionSchema, PersonaSchema, PieceSchema, SlotSchema, ToolSchema } from "./schema.ts";
 
 // ---- Lessons ----
 export type Mission = z.infer<typeof MissionSchema>;
+export type Lang = z.infer<typeof LangSchema>;
 export type Persona = z.infer<typeof PersonaSchema>;
 export type Slot = z.infer<typeof SlotSchema>;
 export type Piece = z.infer<typeof PieceSchema>;

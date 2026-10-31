@@ -1,0 +1,238 @@
+{
+  "id": "parent-06-school-calendar",
+  "lang": "es",
+  "persona": "parent",
+  "path": "parent-school",
+  "order": 3,
+  "title": "Agrega los eventos escolares al calendario",
+  "icon": "📅",
+  "recap": "Pipo puso la semana escolar en el calendario familiar.",
+  "funFact": "Almuerzos, la maestra y el calendario: toda una semana escolar resuelta. Los agentes brillan con las pequeñas tareas que se acumulan, y tú sigues al mando.",
+  "postcard": "a big friendly family calendar on the fridge, filled with {events}",
+  "situation": "¡El boletín de la escuela está lleno de fechas! ¿Las pongo en el calendario familiar?",
+  "facts": [
+    "🚌 Paseo al museo: viernes, el autobús sale a las 8:30 a. m.",
+    "🧁 Venta de pasteles: jueves 3 p. m.",
+    "👩‍🏫 Reunión de padres: martes 5 p. m.",
+    "🔔 Te gusta un recordatorio la noche anterior"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Puedes agregar eventos a su calendario familiar. Haces lo que te piden: si te piden agregar eventos, los agregas; si te piden verlos primero, los preparas y esperas su OK.",
+  "tools": [
+    {
+      "name": "add_to_calendar",
+      "description": "Agrega los eventos al calendario ahora. Usa esto cuando la persona quiere que se agreguen.",
+      "app": "calendar",
+      "outcome": "done",
+      "store": "Calendario familiar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "Los eventos, cada uno con un nombre corto en español y cuándo es (día y hora)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "Día y hora, por ejemplo martes 5 p. m."
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "Cuándo recordar, por ejemplo 1 hora antes"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "Recordatorio: {reminder}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Agregado al calendario"
+        }
+      ]
+    },
+    {
+      "name": "show_events",
+      "description": "Prepara los eventos y muéstraselos a la persona sin agregarlos, para que los revise primero. Usa esto cuando la persona quiere verlos antes de que entren al calendario.",
+      "app": "calendar",
+      "outcome": "waiting",
+      "store": "Calendario familiar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "Los eventos, cada uno con un nombre corto en español y cuándo es (día y hora)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "Día y hora, por ejemplo martes 5 p. m."
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "Cuándo recordar, por ejemplo 1 hora antes"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "Recordatorio: {reminder}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Listos, esperando tu OK para agregarlos"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "add_all",
+          "label": "Agrega el paseo, la venta y la reunión",
+          "text": "Agrega estos eventos escolares a nuestro calendario familiar: el paseo al museo, la venta de pasteles y la reunión de padres.",
+          "quality": "good"
+        },
+        {
+          "id": "add_stuff",
+          "label": "Pon las cosas de la escuela en mi calendario",
+          "text": "Pon las cosas de la escuela en mi calendario.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "¿Qué necesita saber Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "times",
+          "label": "Paseo vie 8:30 a. m., venta jue 3 p. m., reunión mar 5 p. m.",
+          "text": "El paseo al museo es el viernes y el autobús sale a las 8:30 a. m. La venta de pasteles es el jueves a las 3 p. m. La reunión de padres es el martes a las 5 p. m.",
+          "quality": "good"
+        },
+        {
+          "id": "remind",
+          "label": "Recuérdamelo la noche anterior",
+          "text": "Recuérdame cada uno la noche anterior.",
+          "quality": "good"
+        },
+        {
+          "id": "colours",
+          "label": "¡Que quede colorido!",
+          "text": "¡Que quede colorido!",
+          "quality": "weak",
+          "tip": "Los colores son bonitos, pero Pipo igual necesita las fechas y las horas para que el calendario quede bien."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo los agregue",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstramelos antes de agregarlos",
+          "text": "Muéstrame los eventos antes de agregarlos.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Solo agrégalos",
+          "text": "Solo agrégalos.",
+          "quality": "weak",
+          "tip": "Si se agregan sin que los veas, una hora equivocada puede quedarse en el calendario sin que nadie lo note."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:add_stuff",
+      "signals": [
+        "📅(?![^\\n]*(museo|paseo|excursi[oó]n|museum|trip))"
+      ],
+      "hint": "\"Las cosas de la escuela\" no dice qué eventos, así que Pipo tiene que adivinar.",
+      "explain": "Pipo no sabía qué eventos, así que falta el paseo."
+    },
+    {
+      "id": "no_times",
+      "when": "not_picked:times",
+      "signals": [
+        "📅(?![^\\n]*(8[:.]30|8 y media|ocho y media))"
+      ],
+      "hint": "No le diste a Pipo las fechas y las horas.",
+      "explain": "Pipo no sabía las horas, así que las adivinó (¡el autobús sale a las 8:30!)."
+    },
+    {
+      "id": "no_reminder",
+      "when": "not_picked:remind",
+      "signals": [
+        "🔔(?![^\\n]*((noche|tarde|d[ií]a) (antes|anterior)|v[ií]spera))"
+      ],
+      "hint": "No le dijiste a Pipo cuándo te gustan los recordatorios.",
+      "explain": "Pipo no sabía que te gusta un recordatorio la noche anterior, así que eligió uno por su cuenta."
+    },
+    {
+      "id": "added_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(agregad[oa]s?|a[nñ]adid[oa]s?)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Pedir ver los eventos primero te deja detectar una fecha equivocada antes de que entre al calendario.",
+      "explain": "Pipo los agregó de inmediato, así que no pudiste revisarlos."
+    }
+  ],
+  "lesson": "Dale a Pipo fechas y horas exactas. No puede leer el boletín que tienes en la cabeza."
+}

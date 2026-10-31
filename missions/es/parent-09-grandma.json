@@ -1,0 +1,209 @@
+{
+  "id": "parent-09-grandma",
+  "lang": "es",
+  "persona": "parent",
+  "path": "parent-daytrip",
+  "order": 3,
+  "title": "Cuéntale el plan a la abuela",
+  "icon": "👵",
+  "recap": "Pipo le contó a la abuela Rosa el plan del domingo.",
+  "funFact": "Elegir, reservar y avisar: todo un día de paseo resuelto. Los agentes son geniales para los planes, y tú sigues a cargo del dinero y de los mensajes.",
+  "postcard": "Grandma Rosa waving with an umbrella as the family car arrives: {message}",
+  "situation": "¡La abuela Rosa quiere venir el domingo! ¿Le envío el plan?",
+  "facts": [
+    "👵 La abuela Rosa también viene",
+    "🚗 Pasarás por ella a las 10:45 a. m.",
+    "🏛️ Museo de ciencias, entrada a las 11:30 a. m.",
+    "☔ Está lloviendo, así que hay que llevar paraguas"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Puedes enviar mensajes de WhatsApp por esa persona. Haces lo que te piden: si te piden enviar algo, lo envías; si te piden verlo primero, escribes un borrador y esperas su OK.",
+  "tools": [
+    {
+      "name": "send_whatsapp_message",
+      "description": "Envía un mensaje de WhatsApp de inmediato. Usa esto cuando la persona quiere que se envíe.",
+      "app": "whatsapp",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el mensaje: un contacto, un chat de grupo o todos los contactos"
+          },
+          "message": {
+            "type": "string",
+            "description": "El texto del mensaje, hasta 30 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Enviado"
+        }
+      ]
+    },
+    {
+      "name": "draft_whatsapp_message",
+      "description": "Escribe el mensaje de WhatsApp y muéstraselo a la persona sin enviarlo, para que lo revise primero. Usa esto cuando la persona quiere verlo antes de que salga.",
+      "app": "whatsapp",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el mensaje: un contacto, un chat de grupo o todos los contactos"
+          },
+          "message": {
+            "type": "string",
+            "description": "El texto del mensaje, hasta 30 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Borrador listo, esperando tu OK para enviar"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "message_grandma",
+          "label": "Envíale el plan a la abuela Rosa",
+          "text": "Envíale a la abuela Rosa un mensaje de WhatsApp con el plan del domingo.",
+          "quality": "good"
+        },
+        {
+          "id": "tell_family",
+          "label": "Cuéntale a la familia lo del domingo",
+          "text": "Cuéntale a la familia lo del domingo.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "¿Qué debe decir el mensaje?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "pickup",
+          "label": "Pasamos por ella a las 10:45 a. m.",
+          "text": "Dile que pasamos por ella a las 10:45 a. m.",
+          "quality": "good"
+        },
+        {
+          "id": "where",
+          "label": "Museo de ciencias, entrada 11:30 a. m.",
+          "text": "Dile que vamos al museo de ciencias, a la entrada de las 11:30 a. m.",
+          "quality": "good"
+        },
+        {
+          "id": "umbrella",
+          "label": "Que lleve paraguas",
+          "text": "Recuérdale que lleve paraguas.",
+          "quality": "neutral"
+        },
+        {
+          "id": "caps",
+          "label": "ESCRÍBELO EN MAYÚSCULAS PARA QUE LO VEA",
+          "text": "ESCRÍBELO EN MAYÚSCULAS GRANDES PARA QUE LO VEA.",
+          "quality": "weak",
+          "tip": "Las mayúsculas se sienten como gritos. Un mensaje corto con la hora es más fácil de leer para la abuela."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo lo envíe",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstrame el mensaje primero",
+          "text": "Muéstrame el mensaje antes de enviarlo.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Envíalo de inmediato",
+          "text": "Envíalo de inmediato.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:tell_family",
+      "signals": [
+        "📨(?![^\\n]*(abuel|rosa|grandma))"
+      ],
+      "hint": "\"La familia\" no dice quién debe recibirlo.",
+      "explain": "Pipo no sabía a quién escribirle, así que el mensaje fue a toda la familia en vez de a la abuela."
+    },
+    {
+      "id": "no_pickup",
+      "when": "not_picked:pickup",
+      "signals": [
+        "^(?![\\s\\S]*(10[:.]45|11 menos cuarto|once menos cuarto|diez cuarenta y cinco))"
+      ],
+      "hint": "No le dijiste a Pipo a qué hora pasas por ella.",
+      "explain": "Pipo no sabía a qué hora pasas por ella, así que la abuela no sabe cuándo estar lista."
+    },
+    {
+      "id": "no_place",
+      "when": "not_picked:where",
+      "signals": [
+        "^(?![\\s\\S]*(museo|museum))"
+      ],
+      "hint": "No le dijiste a Pipo adónde van.",
+      "explain": "Pipo no sabía adónde van, así que el mensaje no lo dice."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(enviad[oa]s?|entregad[oa]s?)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Pedir ver el mensaje primero te deja corregirlo antes de que la abuela lo lea.",
+      "explain": "Pipo lo envió de inmediato, así que no pudiste revisarlo."
+    }
+  ],
+  "lesson": "Un buen mensaje dice quién, cuándo y dónde. Revísalo antes de que Pipo lo envíe por ti."
+}

@@ -10,6 +10,7 @@ import { postcardFileName, type Postcard } from "../app/postcard.ts";
 import { Peel, type PeelInstance } from "../vendor/peel/index.ts";
 import { Pipo } from "./Pipo.tsx";
 import { ShareSheet } from "./ShareSheet.tsx";
+import { useLang } from "../i18n/index.tsx";
 
 interface Props {
   pathName: string;
@@ -35,6 +36,8 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
   const [big, setBig] = useState(false);
   const [sharing, setSharing] = useState(false);
   const [still] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const { t } = useLang();
+  const r = t.reward;
 
   // Refs, not state, so the peel.js handlers (set up once) always see the latest values.
   const opened = useRef(false);
@@ -120,37 +123,37 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
       <div
         ref={el}
         className={`peel relative h-44 w-full cursor-grab rounded-2xl select-none ${still || !Peel?.supported ? "peel-ready" : ""}`}
-        aria-label={open ? `${pathName} Pro badge and your postcard` : "A wrapped reward. Peel the corner to open it."}
+        aria-label={open ? r.opened(pathName) : r.wrapped}
         role="img"
       >
         {/* The reward underneath: the postcard and the badge */}
         <div className="peel-bottom flex items-center gap-3 rounded-2xl bg-gradient-to-br from-amber-100 via-white to-brand-100 p-3 ring-2 ring-amber-300">
           <div className="relative aspect-square h-24 shrink-0 overflow-hidden sm:h-full rounded-xl bg-brand-900 shadow-md ring-2 ring-white">
             {ready ? (
-              <img src={ready.src} alt="Your postcard: Pipo and your path, painted" className="h-full w-full object-cover" />
+              <img src={ready.src} alt={r.postcardAlt} className="h-full w-full object-cover" />
             ) : postcard ? (
               <div className="postcard-painting flex h-full w-full flex-col items-center justify-center gap-1 p-2 text-center">
                 <span className="text-3xl" aria-hidden="true">🎨</span>
-                <span className="text-xs font-extrabold text-white">Painting…</span>
+                <span className="text-xs font-extrabold text-white">{r.painting}</span>
               </div>
             ) : (
               <Pipo mood="happy" className="h-full w-full p-2" />
             )}
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-black tracking-wider text-amber-700 uppercase">Badge unlocked</p>
-            <p className="text-xl leading-tight font-black text-ink sm:text-2xl">🏅 {pathName} Pro</p>
+            <p className="text-xs font-black tracking-wider text-amber-700 uppercase">{r.badge}</p>
+            <p className="text-xl leading-tight font-black text-ink sm:text-2xl">{r.pro(pathName)}</p>
             <p className="text-sm font-bold text-gray-700">
-              {lessons} lessons · <span className="text-amber-500">★</span> {stars} of {lessons * 3} stars
+              {r.tally(lessons, stars, lessons * 3).lessons} · <span className="text-amber-500">★</span> {r.tally(lessons, stars, lessons * 3).stars}
             </p>
             <p className="text-xs font-semibold text-gray-600 sm:text-sm" aria-live="polite">
               {!postcard
-                ? "You can hand everyday chores to an agent now."
+                ? r.noPostcard
                 : !ready
-                  ? "Pipo is painting your postcard…"
+                  ? r.paintingPostcard
                   : ready.painted
-                    ? "🎨 Your postcard, painted by Meta's Muse Image."
-                    : "🎨 A postcard from Pipo."}
+                    ? r.painted
+                    : r.fromPipo}
             </p>
           </div>
         </div>
@@ -162,7 +165,7 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
             <div className="absolute inset-x-0 top-1/2 h-8 -translate-y-1/2 bg-amber-300/90" aria-hidden="true" />
             <div className="absolute inset-0 flex items-center justify-center">
               <p className="rounded-full bg-white px-4 py-2 text-sm font-black text-brand-800 shadow-md">
-                🎁 Peel the corner to open your reward
+                {r.peel}
               </p>
             </div>
           </div>
@@ -178,7 +181,7 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
           onClick={still || !Peel?.supported ? reveal : finishPeel}
           className="text-sm font-extrabold text-brand-700 underline decoration-2 underline-offset-2 hover:text-brand-900"
         >
-          Or tap here to open it
+          {r.tapToOpen}
         </button>
       ) : (
         <div className="flex flex-col gap-2">
@@ -188,7 +191,7 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
             onClick={() => setSharing(true)}
             className="pop-in flex items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(115deg,#ff7a1a,#ffb547)] py-3 text-base font-black text-white shadow-[0_10px_24px_-10px_rgb(255_122_26/0.8)] transition hover:brightness-105 active:translate-y-px"
           >
-            <span aria-hidden="true">📣</span> Share your win
+            <span aria-hidden="true">📣</span> {r.share}
           </button>
         {ready && (
           <div className="flex justify-center gap-4">
@@ -197,14 +200,14 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
               onClick={() => setBig(true)}
               className="text-sm font-extrabold text-brand-700 underline decoration-2 underline-offset-2 hover:text-brand-900"
             >
-              🔍 See it big
+              {r.seeBig}
             </button>
             <a
               href={ready.src}
               download={postcardFileName(ready.src)}
               className="text-sm font-extrabold text-brand-700 underline decoration-2 underline-offset-2 hover:text-brand-900"
             >
-              ⬇ Save postcard
+              {r.save}
             </a>
           </div>
         )}
@@ -229,6 +232,7 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
 
 /** The postcard at full size over everything. Tap anywhere or press Escape to close. */
 function BigPostcard({ src, still, onClose }: { src: string; still: boolean; onClose: () => void }) {
+  const { t } = useLang();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
@@ -238,7 +242,7 @@ function BigPostcard({ src, still, onClose }: { src: string; still: boolean; onC
     <motion.div
       role="dialog"
       aria-modal="true"
-      aria-label="Your postcard"
+      aria-label={t.reward.yourPostcard}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -247,14 +251,14 @@ function BigPostcard({ src, still, onClose }: { src: string; still: boolean; onC
     >
       <motion.img
         src={src}
-        alt="Your postcard: Pipo and your path, painted"
+        alt={t.reward.postcardAlt}
         initial={still ? false : { scale: 0.9, rotate: -2 }}
         animate={{ scale: 1, rotate: 0 }}
         transition={{ type: "spring", bounce: 0.35, duration: 0.5 }}
         className="max-h-[80dvh] max-w-full rounded-2xl shadow-2xl ring-4 ring-white"
       />
       <button type="button" autoFocus className="rounded-full bg-white px-4 py-1.5 text-sm font-extrabold text-brand-700">
-        Close
+        {t.common.close}
       </button>
     </motion.div>
   );

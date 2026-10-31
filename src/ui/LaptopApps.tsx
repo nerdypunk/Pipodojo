@@ -5,6 +5,7 @@
 import { useState } from "react";
 import { readable } from "../engine/actions.ts";
 import type { PipoAction } from "../engine/types.ts";
+import { useLang } from "../i18n/index.tsx";
 
 interface Props {
   action: PipoAction;
@@ -29,7 +30,8 @@ const detail = (v: unknown) => {
 
 export function LaptopScreen({ action, flags }: Props) {
   const [tab, setTab] = useState<"preview" | "code">("preview");
-  const { title, code } = describe(action);
+  const { t: words } = useLang();
+  const { title, code } = describe(action, words.laptop.shop);
   return (
     <div className="flex h-full flex-col bg-[#1b1640]">
       {/* Pipo Code's window bar */}
@@ -49,9 +51,9 @@ export function LaptopScreen({ action, flags }: Props) {
               role="tab"
               aria-selected={tab === t}
               onClick={() => setTab(t)}
-              className={`rounded-md px-2 py-0.5 text-[11px] font-black capitalize ${tab === t ? "bg-white text-ink" : "text-white/70 hover:text-white"}`}
+              className={`rounded-md px-2 py-0.5 text-[11px] font-black ${tab === t ? "bg-white text-ink" : "text-white/70 hover:text-white"}`}
             >
-              {t}
+              {t === "preview" ? words.laptop.preview : words.laptop.code}
             </button>
           ))}
         </span>
@@ -78,13 +80,14 @@ function Preview({ action, flags }: Props) {
 function SiteView({ action, flags }: Props) {
   const a = action.args;
   const live = action.outcome === "done";
-  const art = /hamster|nugget/i.test(`${text(a.title)} ${text(a.intro)}`) ? "🐹" : "✨";
+  const { t } = useLang();
+  const art = /h[aá]mster|nugget/i.test(`${text(a.title)} ${text(a.intro)}`) ? "🐹" : "✨";
   const slug = text(a.title).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "my-site";
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-2 border-b border-gray-100 bg-gray-50 px-2 py-1 text-[10px] font-bold text-gray-500">
         <span aria-hidden="true">{live ? "🌐" : "🔒"}</span>
-        <span className="truncate">{live ? `${slug}.pipo.site` : "Preview (only you can see this)"}</span>
+        <span className="truncate">{live ? `${slug}.pipo.site` : t.laptop.previewOnly}</span>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto bg-gradient-to-b from-amber-50 to-white p-3">
         <h3 className={`rounded-md px-1 text-center text-lg leading-tight font-black text-orange-600 ${flags[0] ? FLAG : ""}`}>{text(a.title)}</h3>
@@ -107,14 +110,15 @@ function SiteView({ action, flags }: Props) {
 /** A bug fix: what was wrong, and the change Pipo made. */
 function FixView({ action, flags }: Props) {
   const a = action.args;
+  const { t } = useLang();
   return (
     <div className="flex h-full flex-col gap-2 overflow-y-auto p-3 text-[12px]">
       <div className={`rounded-xl bg-rose-50 p-2 ${flags[0] ? FLAG : ""}`}>
-        <p className="text-[10px] font-black tracking-wide text-rose-600 uppercase">🐞 The bug</p>
+        <p className="text-[10px] font-black tracking-wide text-rose-600 uppercase">{t.laptop.bug}</p>
         <p className="font-semibold text-ink">{text(a.problem)}</p>
       </div>
       <div className={`rounded-xl bg-emerald-50 p-2 ${flags[1] ? FLAG : ""}`}>
-        <p className="text-[10px] font-black tracking-wide text-emerald-700 uppercase">🔧 The fix</p>
+        <p className="text-[10px] font-black tracking-wide text-emerald-700 uppercase">{t.laptop.fix}</p>
         <p className="font-semibold text-ink">{text(a.fix)}</p>
       </div>
       <p className={`rounded-md px-1 text-[11px] font-bold text-gray-500 ${flags[2] ? FLAG : ""}`}>📄 {text(a.page)}</p>
@@ -129,6 +133,7 @@ function LevelView({ action, flags }: Props) {
   const checkpoints = Number.parseInt(String(a.checkpoints), 10);
   const cps = Number.isFinite(checkpoints) ? Math.min(Math.max(checkpoints, 0), 5) : 0;
   const n = Math.max(obstacles.length, 1);
+  const { t } = useLang();
   return (
     <div className="flex h-full flex-col">
       <div className={`flex items-center justify-between px-3 py-1.5 text-[11px] font-black text-ink ${flags[0] ? FLAG : ""}`}>
@@ -136,12 +141,12 @@ function LevelView({ action, flags }: Props) {
         <span className="text-gray-500">{text(a.theme)}</span>
       </div>
       <div className="relative min-h-0 flex-1 overflow-hidden bg-gradient-to-b from-sky-200 to-pink-100">
-        <svg viewBox="0 0 300 120" className="h-full w-full" aria-label={`Level with ${obstacles.length} obstacles and ${cps} checkpoints`}>
+        <svg viewBox="0 0 300 120" className="h-full w-full" aria-label={t.laptop.levelLabel(obstacles.length, cps)}>
           {obstacles.map((o, i) => {
             const x = 20 + (i * 260) / n;
             const y = 80 - (i % 2) * 18;
             const label = named(o).toLowerCase();
-            const danger = /lava|kill|spike/.test(label);
+            const danger = /lava|kill|spike|pico|pincho|espina|mortal|fuego/.test(label);
             return (
               <g key={i}>
                 <rect x={x} y={y} width={30} height={10} rx={3} fill={danger ? "#ff5a5a" : "#a78bfa"} />
@@ -167,8 +172,8 @@ function LevelView({ action, flags }: Props) {
         </svg>
       </div>
       <div className="space-y-0.5 px-3 py-1.5 text-[11px] font-bold text-gray-700">
-        <p className={`rounded px-1 ${flags[1] ? FLAG : ""}`}>🧱 {obstacles.map(named).join(", ") || "No obstacles"}</p>
-        <p className={`rounded px-1 ${flags[2] ? FLAG : ""}`}>🚩 {cps} checkpoints</p>
+        <p className={`rounded px-1 ${flags[1] ? FLAG : ""}`}>🧱 {obstacles.map(named).join(", ") || t.laptop.noObstacles}</p>
+        <p className={`rounded px-1 ${flags[2] ? FLAG : ""}`}>🚩 {t.laptop.checkpoints(cps)}</p>
         <p className={`rounded px-1 ${flags[3] ? FLAG : ""}`}>🏁 {text(a.goal)}</p>
       </div>
     </div>
@@ -178,9 +183,10 @@ function LevelView({ action, flags }: Props) {
 /** The in-game shop: items with prices, and what players pay with. */
 function ShopView({ action, flags }: Props) {
   const a = action.args;
+  const { t } = useLang();
   return (
     <div className="flex h-full flex-col bg-gradient-to-b from-violet-50 to-white">
-      <p className="px-3 py-1.5 text-[11px] font-black text-ink">🧱 BlockStudio · Shop</p>
+      <p className="px-3 py-1.5 text-[11px] font-black text-ink">🧱 BlockStudio · {t.laptop.shop}</p>
       <ul className={`grid min-h-0 flex-1 grid-cols-2 gap-2 overflow-y-auto px-3 py-1 ${flags[0] ? FLAG : ""}`}>
         {list(a.items).map((item, i) => (
           <li key={i} className="flex flex-col items-center rounded-xl bg-white p-2 text-center shadow-sm">
@@ -192,7 +198,7 @@ function ShopView({ action, flags }: Props) {
           </li>
         ))}
       </ul>
-      <p className={`mx-3 mb-2 rounded-md px-1 text-[11px] font-bold text-gray-600 ${flags[1] ? FLAG : ""}`}>Pay with: {text(a.currency)}</p>
+      <p className={`mx-3 mb-2 rounded-md px-1 text-[11px] font-bold text-gray-600 ${flags[1] ? FLAG : ""}`}>{t.laptop.payWith} {text(a.currency)}</p>
     </div>
   );
 }
@@ -231,10 +237,11 @@ function DiagramView({ action, flags }: Props) {
   const a = action.args;
   const steps = list(a.steps).slice(0, 6);
   const n = Math.max(steps.length, 1);
+  const { t } = useLang();
   return (
     <div className="flex h-full flex-col p-2">
       <p className={`rounded-md px-1 text-center text-[13px] font-black text-ink ${flags[0] ? FLAG : ""}`}>{text(a.title)}</p>
-      <svg viewBox="0 0 300 150" className={`min-h-0 flex-1 rounded-md ${flags[1] ? FLAG : ""}`} aria-label={`Diagram with ${steps.length} steps`}>
+      <svg viewBox="0 0 300 150" className={`min-h-0 flex-1 rounded-md ${flags[1] ? FLAG : ""}`} aria-label={t.laptop.diagramLabel(steps.length)}>
         <defs>
           <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto">
             <path d="M0 0 L10 5 L0 10 z" fill="#8c7dfb" />
@@ -276,7 +283,7 @@ function DiagramView({ action, flags }: Props) {
 }
 
 /** The project name for the window bar, and a tidy code view of what Pipo built. */
-function describe(action: PipoAction): { title: string; code: string } {
+function describe(action: PipoAction, shopTitle: string): { title: string; code: string } {
   const a = action.args;
   if (action.app === "site") {
     if (a.problem !== undefined) {
@@ -291,7 +298,7 @@ function describe(action: PipoAction): { title: string; code: string } {
   if (action.app === "game") {
     if (a.items !== undefined) {
       const items = list(a.items).map((i) => `  { name = "${named(i)}", price = ${readable(detail(i) ?? 0)} },`).join("\n");
-      return { title: "Shop", code: `-- BlockStudio shop\nlocal shop = {\n${items}\n}\nshop.currency = "${text(a.currency)}"` };
+      return { title: shopTitle, code: `-- BlockStudio shop\nlocal shop = {\n${items}\n}\nshop.currency = "${text(a.currency)}"` };
     }
     const obstacles = list(a.obstacles).map((o) => `level:add("${named(o)}")`).join("\n");
     return {

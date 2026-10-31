@@ -4,7 +4,8 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import { readable } from "../engine/actions.ts";
-import { APPROVE_MESSAGE, TOOL_NUDGE } from "../engine/agentRunner.ts";
+import { phrasesFor } from "../engine/agentRunner.ts";
+import { useLang, type Strings } from "../i18n/index.tsx";
 import { callKind, type CallRecord } from "../engine/trace.ts";
 import type { Mission, Score } from "../engine/types.ts";
 
@@ -28,6 +29,7 @@ export function UnderTheHood({ mission, prompt, calls, waiting, score }: Props) 
     }
   });
   const still = useReducedMotion();
+  const { t } = useLang();
   const toggle = () => {
     setOpen((o) => {
       try {
@@ -40,7 +42,7 @@ export function UnderTheHood({ mission, prompt, calls, waiting, score }: Props) 
   };
 
   return (
-    <section className="flex flex-col items-center gap-2" aria-label="Under the hood">
+    <section className="flex flex-col items-center gap-2" aria-label={t.hood.title}>
       <button
         type="button"
         onClick={toggle}
@@ -48,10 +50,10 @@ export function UnderTheHood({ mission, prompt, calls, waiting, score }: Props) 
         className="glass flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-extrabold text-brand-700 transition hover:bg-white/80"
       >
         <span aria-hidden="true">🔧</span>
-        Under the hood
+        {t.hood.title}
         {calls.length > 0 && (
           <span className="rounded-full bg-brand-600 px-2 text-xs text-white">
-            {calls.length} Muse Spark {calls.length === 1 ? "call" : "calls"}
+            {t.hood.calls(calls.length)}
           </span>
         )}
         <span aria-hidden="true" className={`transition-transform ${open ? "rotate-180" : ""}`}>
@@ -70,31 +72,29 @@ export function UnderTheHood({ mission, prompt, calls, waiting, score }: Props) 
             className="glass w-full rounded-3xl p-3 md:p-4"
           >
             <ol className="flex flex-col gap-2 md:flex-row md:items-stretch md:overflow-x-auto md:pb-1">
-              <Step icon="🧩" title="Your pieces became this message" still={still} index={0}>
-                <Quote>{prompt || "Tap some pieces to build it."}</Quote>
+              <Step icon="🧩" title={t.hood.pieces} still={still} index={0}>
+                <Quote>{prompt || t.hood.piecesEmpty}</Quote>
               </Step>
 
               {calls.map((call, i) => (
-                <Step key={i} icon="⚡" title={callTitle(call)} meta={`${(call.ms / 1000).toFixed(1)}s`} still={still} index={i + 1}>
-                  <CallBody mission={mission} call={call} />
+                <Step key={i} icon="⚡" title={callTitle(mission, call, t)} meta={`${(call.ms / 1000).toFixed(1)}s`} still={still} index={i + 1}>
+                  <CallBody mission={mission} call={call} t={t} />
                 </Step>
               ))}
 
               {waiting && (
-                <Step icon="⏳" title="Waiting for Muse Spark…" still={still} index={calls.length + 1}>
-                  <p className="animate-pulse text-sm font-semibold text-gray-500">The message is on its way to Meta's model.</p>
+                <Step icon="⏳" title={t.hood.waiting} still={still} index={calls.length + 1}>
+                  <p className="animate-pulse text-sm font-semibold text-gray-500">{t.hood.waitingSub}</p>
                 </Step>
               )}
 
               {score && (
-                <Step icon="📏" title="Scored by our rules, not a model" still={still} index={calls.length + 2}>
+                <Step icon="📏" title={t.hood.scored} still={still} index={calls.length + 2}>
                   <p className="text-sm font-semibold text-gray-600">
-                    {mission.flaws.length} checks on your pieces and Pipo's answer.{" "}
-                    {score.missedFlaws.length === 0
-                      ? "Nothing missing."
-                      : `${score.missedFlaws.length} thing${score.missedFlaws.length === 1 ? "" : "s"} missing.`}
+                    {t.hood.checks(mission.flaws.length)}{" "}
+                    {score.missedFlaws.length === 0 ? t.hood.nothingMissing : t.hood.missing(score.missedFlaws.length)}
                   </p>
-                  <p className="mt-1 text-lg tracking-widest text-amber-500" aria-label={`${score.stars} of 3 stars`}>
+                  <p className="mt-1 text-lg tracking-widest text-amber-500" aria-label={t.common.starsOf(score.stars)}>
                     {"★".repeat(score.stars)}
                     <span className="text-gray-300">{"★".repeat(3 - score.stars)}</span>
                   </p>
@@ -103,7 +103,7 @@ export function UnderTheHood({ mission, prompt, calls, waiting, score }: Props) 
 
               {calls.length === 0 && !waiting && (
                 <li className="flex items-center px-2 text-sm font-semibold text-gray-500">
-                  Press Check to see the real calls to Muse Spark.
+                  {t.hood.pressCheck}
                 </li>
               )}
             </ol>
@@ -114,15 +114,20 @@ export function UnderTheHood({ mission, prompt, calls, waiting, score }: Props) 
   );
 }
 
-function callTitle(call: CallRecord): string {
-  const kind = callKind(call, TOOL_NUDGE, APPROVE_MESSAGE);
-  if (kind === "nudge") return "Asked again to use an app";
-  if (kind === "approve") return "You tapped OK, Pipo finishes it";
-  return "Sent to Muse Spark";
+function kindOf(mission: Mission, call: CallRecord) {
+  const say = phrasesFor(mission);
+  return callKind(call, say.nudge, say.approve);
 }
 
-function CallBody({ mission, call }: { mission: Mission; call: CallRecord }) {
-  const kind = callKind(call, TOOL_NUDGE, APPROVE_MESSAGE);
+function callTitle(mission: Mission, call: CallRecord, t: Strings): string {
+  const kind = kindOf(mission, call);
+  if (kind === "nudge") return t.hood.nudged;
+  if (kind === "approve") return t.hood.approved;
+  return t.hood.sent;
+}
+
+function CallBody({ mission, call, t }: { mission: Mission; call: CallRecord; t: Strings }) {
+  const kind = kindOf(mission, call);
   const tools = call.request.tools?.map((t) => t.function.name) ?? [];
   const toolCall = call.reply?.toolCalls?.[0];
   return (
@@ -132,7 +137,7 @@ function CallBody({ mission, call }: { mission: Mission; call: CallRecord }) {
       )}
       <p className="font-semibold text-gray-600">
         {kind === "ask" ? (
-          <>Pipo's instructions + your message{tools.length > 0 && " + app actions it may use:"}</>
+          <>{t.hood.instructions}{tools.length > 0 && t.hood.withTools}</>
         ) : (
           <Quote>{call.request.messages.at(-1)?.content ?? ""}</Quote>
         )}
@@ -146,7 +151,7 @@ function CallBody({ mission, call }: { mission: Mission; call: CallRecord }) {
           ))}
         </div>
       )}
-      <p className="font-extrabold text-ink">Came back with:</p>
+      <p className="font-extrabold text-ink">{t.hood.cameBack}</p>
       {toolCall ? (
         <div className="rounded-xl bg-ink/90 p-2 font-mono text-[11px] leading-relaxed text-white">
           <span className="text-amber-300">{toolCall.name}</span>(
@@ -158,10 +163,10 @@ function CallBody({ mission, call }: { mission: Mission; call: CallRecord }) {
           )
         </div>
       ) : call.reply ? (
-        <Quote>{call.reply.content ?? "(nothing)"}</Quote>
+        <Quote>{call.reply.content ?? t.hood.nothing}</Quote>
       ) : (
         <p className="font-semibold text-gray-500">
-          No answer this time{mission.tools?.length ? ", so it was finished on this device." : "."}
+          {t.hood.noAnswer}{mission.tools?.length ? t.hood.finishedHere : "."}
         </p>
       )}
     </div>

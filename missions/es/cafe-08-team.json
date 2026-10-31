@@ -1,0 +1,209 @@
+{
+  "id": "cafe-08-team",
+  "lang": "es",
+  "persona": "business",
+  "path": "business-staff",
+  "order": 2,
+  "title": "Escríbele al equipo",
+  "icon": "💬",
+  "recap": "Pipo mandó el horario al chat del equipo.",
+  "funFact": "Los agentes también pueden manejar un calendario compartido. Ahora Pipo pone los turnos donde todo el equipo pueda verlos.",
+  "postcard": "phones buzzing in the Bloom Café kitchen with Pipo's message: {message}",
+  "situation": "¡El horario está listo! ¿Lo mando al chat del equipo?",
+  "facts": [
+    "💬 Tu grupo de WhatsApp \"Equipo Café\"",
+    "📅 Jue: Ben mañana, Ana tarde · Vie: Chloe mañana, Ana tarde · Sáb: los tres",
+    "🙋 Pídeles que confirmen a más tardar el miércoles",
+    "👀 Quieres revisarlo antes de que se envíe"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente amigable para la dueña o el dueño de Bloom Café, una pequeña cafetería de barrio. Puedes enviar mensajes de WhatsApp por ellos. Haces lo que te piden: si te piden enviar algo, lo envías; si piden verlo primero, escribes un borrador y esperas su OK.",
+  "tools": [
+    {
+      "name": "send_whatsapp_message",
+      "description": "Envía un mensaje de WhatsApp de inmediato. Úsala cuando la persona quiere que se envíe.",
+      "app": "whatsapp",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el mensaje: un contacto, un chat de grupo o todos los contactos"
+          },
+          "message": {
+            "type": "string",
+            "description": "El texto del mensaje, en español, de hasta 30 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Enviado"
+        }
+      ]
+    },
+    {
+      "name": "draft_whatsapp_message",
+      "description": "Escribe el mensaje de WhatsApp y muéstraselo a la persona sin enviarlo, para que lo revise primero. Úsala cuando la persona quiere verlo antes de que salga.",
+      "app": "whatsapp",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el mensaje: un contacto, un chat de grupo o todos los contactos"
+          },
+          "message": {
+            "type": "string",
+            "description": "El texto del mensaje, en español, de hasta 30 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Borrador listo, esperando tu OK para enviarlo"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "message_team",
+          "label": "Manda el horario al grupo Equipo Café",
+          "text": "Manda el horario de esta semana a nuestro grupo de WhatsApp \"Equipo Café\".",
+          "quality": "good"
+        },
+        {
+          "id": "tell_staff",
+          "label": "Avísale al personal",
+          "text": "Avísale al personal sobre el horario.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "¿Qué debe decir el mensaje?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "rota",
+          "label": "Jue Ben/Ana · Vie Chloe/Ana · Sáb todos",
+          "text": "El horario es: jueves, Ben en la mañana y Ana en la tarde. Viernes, Chloe en la mañana y Ana en la tarde. Sábado, los tres.",
+          "quality": "good"
+        },
+        {
+          "id": "confirm",
+          "label": "Pídeles que confirmen a más tardar el miércoles",
+          "text": "Pídeles a todos que confirmen a más tardar el miércoles.",
+          "quality": "good"
+        },
+        {
+          "id": "thanks",
+          "label": "Agradéceles por una gran semana",
+          "text": "Agradéceles por una gran semana.",
+          "quality": "neutral"
+        },
+        {
+          "id": "rota_up",
+          "label": "Solo di que ya está el horario",
+          "text": "Solo di que ya está publicado el horario.",
+          "quality": "weak",
+          "tip": "\"Ya está el horario\" hace que la gente tenga que buscarlo. Pon los turnos de verdad en el mensaje."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo lo envíe",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstrame el mensaje primero",
+          "text": "Muéstrame el mensaje antes de enviarlo.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Envíalo de inmediato",
+          "text": "Envíalo de inmediato.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:tell_staff",
+      "signals": [
+        "📨(?![^\\n]*equipo caf[eé])"
+      ],
+      "hint": "\"El personal\" no dice a dónde enviarlo.",
+      "explain": "Pipo no sabía a qué chat, así que no llegó al grupo Equipo Café."
+    },
+    {
+      "id": "no_rota",
+      "when": "not_picked:rota",
+      "signals": [
+        "^(?![\\s\\S]*(?<![a-záéíóúñü])jue(ves)?(?![a-záéíóúñü]))"
+      ],
+      "hint": "No le diste a Pipo el horario.",
+      "explain": "Pipo no tenía el horario, así que el mensaje no dice quién trabaja cuándo."
+    },
+    {
+      "id": "no_confirm",
+      "when": "not_picked:confirm",
+      "signals": [
+        "^(?![\\s\\S]*(?<![a-záéíóúñü])mi[eé](rcoles)?(?![a-záéíóúñü]))"
+      ],
+      "hint": "No le pediste a Pipo que consiguiera confirmaciones.",
+      "explain": "Pipo no sabía que necesitas respuesta a más tardar el miércoles, así que nadie tiene que confirmar."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(enviad[oa]|entregad[oa])(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Si pides ver el mensaje primero, puedes corregirlo antes de que el equipo lo lea.",
+      "explain": "Pipo lo envió de inmediato, así que nunca pudiste revisarlo."
+    }
+  ],
+  "lesson": "Pon los detalles reales en el mensaje y pide lo que necesitas de vuelta. Revísalo antes de que salga."
+}

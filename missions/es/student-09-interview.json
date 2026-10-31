@@ -1,0 +1,95 @@
+{
+  "id": "student-09-interview",
+  "lang": "es",
+  "persona": "student",
+  "path": "student-job",
+  "order": 3,
+  "title": "Practica la entrevista",
+  "icon": "🎤",
+  "recap": "Pipo te ayudó a practicar para la entrevista.",
+  "funFact": "CV, correo y práctica de entrevista: estás listo para tu primer trabajo. Los agentes te ayudan a prepararte; el trabajo es todo tuyo.",
+  "postcard": "a student shaking hands with Bloom Café's owner, Pipo cheering: {answer}",
+  "situation": "¡Bloom Café quiere conocerte! ¿Practicamos la entrevista?",
+  "facts": [
+    "☕ Entrevista de barista en Bloom Café",
+    "🥐 Son conocidos por su repostería y sus lattes de avena",
+    "💡 Un consejo corto para cada pregunta",
+    "🗣️ Vas a responder con tus propias palabras"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de un estudiante universitario. Ayuda con lo que te pida. Cuando ayudes a alguien a practicar, escribe una línea por pregunta.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "practise",
+          "label": "Ayúdame a practicar mi entrevista de barista en Bloom Café",
+          "text": "Ayúdame a practicar para mi entrevista de barista en Bloom Café.",
+          "quality": "good"
+        },
+        {
+          "id": "interview",
+          "label": "Ayúdame con una entrevista",
+          "text": "Ayúdame con una entrevista.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "label": "¿Cómo debe ayudarte Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "known_for",
+          "label": "Son conocidos por su repostería y sus lattes de avena",
+          "text": "Bloom Café es conocido por su repostería y sus lattes de avena, así que pregúntame sobre eso también.",
+          "quality": "good"
+        },
+        {
+          "id": "tips",
+          "label": "Un consejo corto para cada una",
+          "text": "Agrega un consejo corto para cada pregunta, no una respuesta completa.",
+          "quality": "neutral"
+        },
+        {
+          "id": "three",
+          "label": "3 preguntas probables",
+          "text": "Dame 3 preguntas que probablemente me van a hacer.",
+          "quality": "neutral"
+        },
+        {
+          "id": "answers",
+          "label": "Escribe mis respuestas para memorizarlas",
+          "text": "Escribe mis respuestas para que me las aprenda de memoria.",
+          "quality": "weak",
+          "tip": "Las respuestas memorizadas suenan robóticas. Los consejos te ayudan a responder con tus propias palabras."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:interview",
+      "signals": [
+        "^(?![\\s\\S]*(barista|caf|cliente|bebida))"
+      ],
+      "hint": "\"Una entrevista\" no dice para qué trabajo.",
+      "explain": "Pipo no sabía el trabajo, así que las preguntas no son sobre ser barista."
+    },
+    {
+      "id": "no_research",
+      "when": "not_picked:known_for",
+      "signals": [
+        "^(?![\\s\\S]*(pan dulce|panader|reposter|pastel|bolle|croissant|cuern|medialuna|avena|oat))"
+      ],
+      "hint": "No le dijiste a Pipo por qué es conocido Bloom Café.",
+      "explain": "Pipo no sabía de la repostería ni de los lattes de avena, así que la práctica es genérica."
+    }
+  ],
+  "lesson": "Pídele a Pipo práctica y consejos, no un guion. Tus propias palabras son las que ganan entrevistas."
+}

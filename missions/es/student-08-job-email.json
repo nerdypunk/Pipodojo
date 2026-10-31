@@ -1,0 +1,229 @@
+{
+  "id": "student-08-job-email",
+  "lang": "es",
+  "persona": "student",
+  "path": "student-job",
+  "order": 2,
+  "title": "Escribe por el trabajo",
+  "icon": "📧",
+  "recap": "Pipo le escribió a Bloom Café por el trabajo.",
+  "funFact": "Los agentes también te pueden ayudar a practicar. ¡Ahora Pipo te prepara para la entrevista!",
+  "postcard": "Bloom Café's owner reading a job email with a smile: {subject}",
+  "situation": "Tu CV está listo. ¿Le escribo a Bloom Café?",
+  "facts": [
+    "📧 hiring@bloomcafe.com",
+    "📎 Tu CV va adjunto",
+    "📅 Libre los fines de semana y los martes en la tarde",
+    "👀 Quieres leerlo antes de que se envíe"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de un estudiante universitario. Puedes enviar correos por él. Haces lo que te pide: si te pide enviar algo, lo envías; si te pide verlo primero, escribes un borrador y esperas su OK.",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "Envía el correo de inmediato. Úsala cuando la persona quiere que se envíe.",
+      "app": "email",
+      "outcome": "done",
+      "store": "Correo",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el correo: una persona, una dirección de correo o una lista de correo"
+          },
+          "subject": {
+            "type": "string",
+            "description": "El asunto en español, de hasta 8 palabras"
+          },
+          "body": {
+            "type": "string",
+            "description": "El texto del correo en español, de hasta 45 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Enviado"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "Escribe el correo y muéstraselo a la persona sin enviarlo, para que lo revise primero. Úsala cuando la persona quiere leerlo antes de que salga.",
+      "app": "email",
+      "outcome": "waiting",
+      "store": "Correo",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el correo: una persona, una dirección de correo o una lista de correo"
+          },
+          "subject": {
+            "type": "string",
+            "description": "El asunto en español, de hasta 8 palabras"
+          },
+          "body": {
+            "type": "string",
+            "description": "El texto del correo en español, de hasta 45 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Borrador listo, esperando tu OK para enviarlo"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_bloom",
+          "label": "Escríbele a Bloom Café por el trabajo de barista",
+          "text": "Escríbele un correo a Bloom Café (hiring@bloomcafe.com) para postularme al trabajo de barista.",
+          "quality": "good"
+        },
+        {
+          "id": "email_job",
+          "label": "Escribe un correo por un trabajo",
+          "text": "Escribe un correo por un trabajo.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "¿Qué debe decir el correo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "cv_attached",
+          "label": "Mi CV va adjunto",
+          "text": "Di que mi CV va adjunto.",
+          "quality": "good"
+        },
+        {
+          "id": "availability",
+          "label": "Libre fines de semana y martes en la tarde",
+          "text": "Di que tengo libres los fines de semana y los martes en la tarde.",
+          "quality": "good"
+        },
+        {
+          "id": "why",
+          "label": "Me encanta su café",
+          "text": "Di que me encanta su café y el buen ambiente.",
+          "quality": "neutral"
+        },
+        {
+          "id": "casual",
+          "label": "Escríbelo como un mensajito: 'hola, ¿contratan?'",
+          "text": "Escríbelo como un mensajito: 'hola, ¿contratan?'",
+          "quality": "weak",
+          "tip": "Un correo de trabajo es tu primera impresión. Claro y amable le gana a lo informal."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo lo envíe",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstrame el correo primero",
+          "text": "Muéstrame el correo antes de enviarlo.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Envíalo ahora",
+          "text": "Envíalo ahora.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:email_job",
+      "signals": [
+        "📧(?![^\\n]*bloom)"
+      ],
+      "hint": "\"Por un trabajo\" no dice qué trabajo ni a quién escribirle.",
+      "explain": "Pipo no sabía a dónde enviarlo, así que no va a Bloom Café."
+    },
+    {
+      "id": "no_cv",
+      "when": "not_picked:cv_attached",
+      "signals": [
+        "^(?![\\s\\S]*((?<![a-záéíóúñü])cv(?![a-záéíóúñü])|curr[ií]cul|hoja de vida|r[eé]sum[eé](?![a-záéíóúñü])))"
+      ],
+      "hint": "No le dijiste a Pipo que tu CV va adjunto.",
+      "explain": "Pipo no mencionó tu CV, así que tal vez ni lo abran."
+    },
+    {
+      "id": "no_availability",
+      "when": "not_picked:availability",
+      "signals": [
+        "^(?![\\s\\S]*(fin(es)? de semana|finde|martes))"
+      ],
+      "hint": "No le dijiste a Pipo cuándo puedes trabajar.",
+      "explain": "Pipo no sabía cuándo tienes tiempo, así que la cafetería tiene que preguntar."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(enviad[oa]s?|entregad[oa]s?)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Si pides ver el correo primero, puedes revisar tu primera impresión.",
+      "explain": "Pipo lo envió de inmediato, así que nunca pudiste revisarlo."
+    }
+  ],
+  "lesson": "Di para quién es y qué necesitan saber. Revisa tu primera impresión antes de que se envíe."
+}

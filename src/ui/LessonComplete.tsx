@@ -9,6 +9,7 @@ import { answerLines } from "../game/feedback.ts";
 import { Button } from "./Button.tsx";
 import { PeelReward } from "./PeelReward.tsx";
 import { Pipo } from "./Pipo.tsx";
+import { useLang } from "../i18n/index.tsx";
 
 interface Props {
   pathName: string;
@@ -37,6 +38,7 @@ export function LessonComplete({ pathName, lessons, index, log, stars, postcard,
   const mission = lessons[index]!;
   const next = lessons[index + 1];
   const won = log.score.stars;
+  const { t } = useLang();
 
   useEffect(() => {
     if (won < 2) return;
@@ -69,9 +71,9 @@ export function LessonComplete({ pathName, lessons, index, log, stars, postcard,
           />
           <div>
             <p id="lesson-complete-title" className="text-xl font-black md:text-2xl">
-              Lesson {index + 1} complete!
+              {t.complete.title(index + 1)}
             </p>
-            <p className="flex gap-1 text-3xl leading-none" aria-label={`${won} out of 3 stars`}>
+            <p className="flex gap-1 text-3xl leading-none" aria-label={t.common.starsOf(won)}>
               {[1, 2, 3].map((n) => (
                 <span
                   key={n}
@@ -90,7 +92,7 @@ export function LessonComplete({ pathName, lessons, index, log, stars, postcard,
               <span className="text-2xl leading-none" aria-hidden="true">
                 🔥
               </span>
-              <span className="text-sm font-black">{streak}-day streak</span>
+              <span className="text-sm font-black">{t.complete.streak(streak)}</span>
             </div>
           )}
         </div>
@@ -100,11 +102,11 @@ export function LessonComplete({ pathName, lessons, index, log, stars, postcard,
           {mission.funFact && (
             <section
               className="flex items-start gap-4 rounded-2xl bg-gradient-to-br from-sky-50 to-brand-50 p-4 ring-2 ring-sky-200"
-              aria-label="Did you know?"
+              aria-label={t.complete.didYouKnow}
             >
               <Pipo mood="happy" className="h-14 w-14 shrink-0 drop-shadow-[0_6px_12px_rgb(45_36_112/0.25)]" />
               <div>
-                <p className="text-lg font-black text-sky-900">Did you know?</p>
+                <p className="text-lg font-black text-sky-900">{t.complete.didYouKnow}</p>
                 <p className="text-base leading-snug font-semibold text-ink md:text-[17px]">{mission.funFact}</p>
               </div>
             </section>
@@ -116,8 +118,8 @@ export function LessonComplete({ pathName, lessons, index, log, stars, postcard,
               <span aria-hidden="true">{mission.icon ?? "✅"}</span>
               <span className="flex-1">{mission.recap ?? mission.title}</span>
               <span className="text-xs font-extrabold text-brand-700">
-                <span className="group-open:hidden">See answer</span>
-                <span className="hidden group-open:inline">Hide</span>
+                <span className="group-open:hidden">{t.complete.seeAnswer}</span>
+                <span className="hidden group-open:inline">{t.complete.hide}</span>
               </span>
             </summary>
             <ul className="mt-2 space-y-1">
@@ -142,9 +144,9 @@ export function LessonComplete({ pathName, lessons, index, log, stars, postcard,
           </p>
 
           {/* 4. Where you are on the path */}
-          <section className="rounded-2xl bg-brand-50/70 px-4 py-3" aria-label="Your path">
+          <section className="rounded-2xl bg-brand-50/70 px-4 py-3" aria-label={t.complete.yourPath}>
             <p className="text-sm font-extrabold text-gray-600">
-              {pathName} path · {next ? <span className="text-ink">Up next: {next.title}</span> : <span className="text-ink">Path complete!</span>}
+              {t.complete.path(pathName)} · {next ? <span className="text-ink">{t.complete.upNext(next.title)}</span> : <span className="text-ink">{t.complete.pathDone}</span>}
             </p>
             {next ? (
               <PathSteps lessons={lessons} doneUpTo={index} stars={stars} />
@@ -166,20 +168,20 @@ export function LessonComplete({ pathName, lessons, index, log, stars, postcard,
           {next ? (
             <div className="flex gap-2">
               <Button tone="plain" className="flex-1 sm:flex-none" onClick={onBack}>
-                Back to paths
+                {t.complete.backToPaths}
               </Button>
               <Button className="flex-1" onClick={onContinue} autoFocus>
-                Continue
+                {t.common.continue}
               </Button>
             </div>
           ) : (
             // The path is done: heading home to town is the main way on.
             <div className="flex flex-col-reverse gap-2 sm:flex-row">
               <Button tone="plain" className="sm:flex-none" onClick={onBack}>
-                Other paths
+                {t.complete.otherPaths}
               </Button>
               <Button className="flex-1" onClick={onTown}>
-                <span aria-hidden="true">🏘️ </span>Back to town
+                <span aria-hidden="true">🏘️ </span>{t.complete.backToTown}
               </Button>
             </div>
           )}
@@ -200,8 +202,9 @@ function PathSteps({
   stars: Readonly<Record<string, number>>;
 }) {
   const allDone = doneUpTo >= lessons.length - 1;
+  const { t } = useLang();
   return (
-    <ol className="mt-3 flex items-start" aria-label="Lessons in this path">
+    <ol className="mt-3 flex items-start" aria-label={t.complete.lessonsInPath}>
       {lessons.map((lesson, i) => {
         const state = i <= doneUpTo ? "done" : i === doneUpTo + 1 ? "next" : "locked";
         return (
@@ -211,16 +214,16 @@ function PathSteps({
             state={state}
             stars={stars[lesson.id] ?? 0}
             icon={lesson.icon}
-            ariaLabel={`Lesson ${i + 1}: ${lesson.title}, ${state === "done" ? `done, ${stars[lesson.id] ?? 0} stars` : state === "next" ? "up next" : "locked"}`}
+            ariaLabel={t.complete.stepLabel(i + 1, lesson.title, state, stars[lesson.id] ?? 0)}
             lineDone={i <= doneUpTo}
           />
         );
       })}
       <Step
-        label={allDone ? "Reward!" : "Reward"}
+        label={allDone ? t.complete.rewardDone : t.complete.reward}
         state={allDone ? "reward" : "locked-reward"}
         stars={0}
-        ariaLabel={allDone ? "Path reward unlocked" : "Path reward, locked"}
+        ariaLabel={allDone ? t.complete.rewardUnlocked : t.complete.rewardLocked}
         last
       />
     </ol>
@@ -246,6 +249,7 @@ function Step({
   lineDone?: boolean;
   last?: boolean;
 }) {
+  const { t } = useLang();
   const circle: Record<StepState, string> = {
     done: "border-brand-800 bg-brand-600 text-white",
     next: "border-brand-700 bg-brand-500 text-white ring-4 ring-brand-200",
@@ -289,7 +293,7 @@ function Step({
       )}
       {state === "next" && (
         <span className="mt-0.5 rounded-md bg-ink px-1.5 py-px text-[10px] font-black tracking-wider text-white uppercase" aria-hidden="true">
-          Start
+          {t.complete.start}
         </span>
       )}
     </li>

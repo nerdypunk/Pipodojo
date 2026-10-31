@@ -3,6 +3,7 @@
 // so the part that shows a gap in the prompt is outlined in red. Nothing here is a real app.
 import type { PipoAction } from "../engine/types.ts";
 import { readable } from "../engine/actions.ts";
+import { useLang } from "../i18n/index.tsx";
 
 interface Props {
   action: PipoAction;
@@ -24,8 +25,9 @@ function ChatScreen({ action, flags }: Props) {
   const to = readable(action.args.to);
   const message = typeof action.args.message === "string" ? action.args.message.trim() : readable(action.args.message);
   const sent = action.outcome === "done";
+  const { t } = useLang();
   return (
-    <div className="flex h-full flex-col" aria-label={`Message to ${to}${sent ? ", sent" : ", draft waiting for your OK"}`}>
+    <div className="flex h-full flex-col" aria-label={t.screens.chatLabel(to, sent)}>
       <div className={`flex items-center gap-2 bg-emerald-700 px-3 py-2 text-white ${flags[0] ? FLAG : ""}`}>
         <span aria-hidden="true" className="text-lg leading-none">
           ‹
@@ -35,16 +37,16 @@ function ChatScreen({ action, flags }: Props) {
         </span>
         <div className="min-w-0">
           <p className="truncate text-sm font-black">{to}</p>
-          <p className="text-[11px] font-semibold text-white/80">tap here for group info</p>
+          <p className="text-[11px] font-semibold text-white/80">{t.screens.groupInfo}</p>
         </div>
       </div>
 
       {/* Conversation */}
       <div className="flex min-h-0 flex-1 flex-col justify-end gap-2 overflow-y-auto bg-[#efeae2] px-3 py-3">
-        <span className="self-center rounded-md bg-white/80 px-2 py-0.5 text-[10px] font-bold text-gray-600">Today</span>
+        <span className="self-center rounded-md bg-white/80 px-2 py-0.5 text-[10px] font-bold text-gray-600">{t.screens.today}</span>
         <p className="max-w-[80%] self-start rounded-2xl rounded-tl-sm bg-white px-3 py-1.5 text-[13px] leading-snug font-semibold text-ink shadow-sm">
           <span className="block text-[11px] font-black text-orange-600">Alex</span>
-          Anyone free this weekend? ☀️
+          {t.screens.friendLine}
           <span className="block text-right text-[10px] font-bold text-gray-400">3:58 PM</span>
         </p>
         {sent && (
@@ -68,7 +70,7 @@ function ChatScreen({ action, flags }: Props) {
             sent ? "text-gray-400" : "text-ink"
           } ${!sent && flags[1] ? FLAG : ""}`}
         >
-          {sent ? "Message" : message}
+          {sent ? t.screens.messagePlaceholder : message}
         </p>
         <span
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-sm text-white"
@@ -86,19 +88,20 @@ function ShopScreen({ action, flags }: Props) {
   const items = Array.isArray(action.args.items) ? action.args.items : [];
   const paid = action.outcome === "done";
   const total = readable(action.args.total);
+  const { t } = useLang();
   return (
-    <div className="flex h-full flex-col" aria-label={`Shopping cart, total $${total}${paid ? ", paid" : ", waiting for your OK to pay"}`}>
+    <div className="flex h-full flex-col" aria-label={t.screens.cartLabel(total, paid)}>
       <div className="flex items-center justify-between bg-brand-700 px-3 py-2.5 text-white">
         <p className="text-sm font-black">
           <span aria-hidden="true">🛒 </span>
           {action.store ?? "FreshCart"}
         </p>
         <p className="text-[11px] font-bold text-white/80">
-          {paid ? "Order placed" : "Your cart"} · {items.length} items
+          {paid ? t.screens.orderPlaced : t.screens.yourCart} · {t.screens.items(items.length)}
         </p>
       </div>
       <ul className={`min-h-0 flex-1 overflow-y-auto px-3 py-1.5 ${flags[0] ? FLAG : ""}`}>
-        {items.length === 0 && <li className="py-1 text-sm font-semibold text-gray-500">The cart is empty</li>}
+        {items.length === 0 && <li className="py-1 text-sm font-semibold text-gray-500">{t.screens.cartEmpty}</li>}
         {items.map((item, i) => {
           const { name, price } = (item ?? {}) as { name?: unknown; price?: unknown };
           return (
@@ -116,13 +119,13 @@ function ShopScreen({ action, flags }: Props) {
       </ul>
       <div className="space-y-1 border-t border-gray-200 px-3 py-2">
         <p className={`flex justify-between rounded-md px-1 text-sm font-black text-ink ${flags[1] ? FLAG : ""}`}>
-          <span>Total</span>
+          <span>{t.screens.total}</span>
           <span>${total}</span>
         </p>
         <p className={`flex justify-between rounded-md px-1 text-[13px] font-semibold text-gray-700 ${flags[2] ? FLAG : ""}`}>
           <span>
             <span aria-hidden="true">🚚 </span>
-            {action.whenLabel ?? "Delivery"}
+            {action.whenLabel ?? t.screens.delivery}
           </span>
           <span>{readable(action.args.delivery)}</span>
         </p>
@@ -137,18 +140,19 @@ function EmailScreen({ action, flags }: Props) {
   const subject = readable(action.args.subject);
   const body = typeof action.args.body === "string" ? action.args.body.trim() : readable(action.args.body);
   const sent = action.outcome === "done";
+  const { t } = useLang();
   return (
-    <div className="flex h-full flex-col" aria-label={`Email to ${to}${sent ? ", sent" : ", draft waiting for your OK"}`}>
+    <div className="flex h-full flex-col" aria-label={t.screens.emailLabel(to, sent)}>
       <div className="flex items-center justify-between bg-sky-600 px-3 py-2.5 text-white">
         <p className="text-sm font-black">
           <span aria-hidden="true">✉️ </span>
-          {action.store ?? "Mail"}
+          {action.store ?? t.screens.mail}
         </p>
-        <p className="text-[11px] font-bold text-white/85">{sent ? "Sent" : "Draft"}</p>
+        <p className="text-[11px] font-bold text-white/85">{sent ? t.screens.sentBox : t.screens.draft}</p>
       </div>
       <div className="space-y-1 border-b border-gray-100 px-3 py-2 text-[13px]">
         <p className={`truncate rounded-md px-1 font-semibold text-gray-600 ${flags[0] ? FLAG : ""}`}>
-          To: <span className="font-black text-ink">{to}</span>
+          {t.screens.to} <span className="font-black text-ink">{to}</span>
         </p>
         <p className={`truncate rounded-md px-1 font-black text-ink ${flags[1] ? FLAG : ""}`}>{subject}</p>
       </div>
@@ -160,7 +164,7 @@ function EmailScreen({ action, flags }: Props) {
         {body}
       </p>
       {sent && (
-        <p className="pop-in mx-3 mb-2 rounded-lg bg-emerald-50 px-2 py-1 text-center text-xs font-black text-emerald-700">✓ Delivered</p>
+        <p className="pop-in mx-3 mb-2 rounded-lg bg-emerald-50 px-2 py-1 text-center text-xs font-black text-emerald-700">{t.screens.delivered}</p>
       )}
     </div>
   );
@@ -171,17 +175,18 @@ function CalendarScreen({ action, flags }: Props) {
   const events = Array.isArray(action.args.events) ? action.args.events : [];
   const added = action.outcome === "done";
   const reminder = action.args.reminder;
+  const { t } = useLang();
   return (
-    <div className="flex h-full flex-col" aria-label={`${action.store ?? "Calendar"}, ${events.length} events${added ? " added" : " waiting for your OK"}`}>
+    <div className="flex h-full flex-col" aria-label={t.screens.calendarLabel(action.store ?? t.screens.calendar, events.length, added)}>
       <div className="flex items-center justify-between bg-rose-500 px-3 py-2.5 text-white">
         <p className="text-sm font-black">
           <span aria-hidden="true">📅 </span>
-          {action.store ?? "Calendar"}
+          {action.store ?? t.screens.calendar}
         </p>
-        <p className="text-[11px] font-bold text-white/85">{added ? "Added" : "Not added yet"}</p>
+        <p className="text-[11px] font-bold text-white/85">{added ? t.screens.added : t.screens.notAdded}</p>
       </div>
       <ul className={`min-h-0 flex-1 space-y-1.5 overflow-y-auto px-3 py-2 ${flags[0] ? FLAG : ""}`}>
-        {events.length === 0 && <li className="text-sm font-semibold text-gray-500">No events</li>}
+        {events.length === 0 && <li className="text-sm font-semibold text-gray-500">{t.screens.noEvents}</li>}
         {events.map((event, i) => {
           const { name, when } = (event ?? {}) as { name?: unknown; when?: unknown };
           return (
@@ -189,7 +194,7 @@ function CalendarScreen({ action, flags }: Props) {
               <span className="w-1 shrink-0 rounded-full bg-rose-400" aria-hidden="true" />
               <span className="min-w-0">
                 <span className="block truncate text-[13px] font-black text-ink">{readable(name ?? event)}</span>
-                <span className="block text-[12px] font-semibold text-gray-600">{when === undefined ? "No time set" : readable(when)}</span>
+                <span className="block text-[12px] font-semibold text-gray-600">{when === undefined ? t.screens.noTime : readable(when)}</span>
               </span>
             </li>
           );

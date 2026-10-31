@@ -13,7 +13,8 @@ import { PathPicker } from "../ui/PathPicker.tsx";
 import { PipoLookContext } from "../ui/Pipo.tsx";
 import { PipoBuilder } from "../ui/PipoBuilder.tsx";
 import { preloadTown, Town } from "../ui/town/Town.tsx";
-import { missions } from "./missions.ts";
+import { initialLang, LangContext, saveLang, type Lang } from "../i18n/index.tsx";
+import { missionsIn } from "./missions.ts";
 import { paintPostcard, type Postcard } from "./postcard.ts";
 
 type Screen =
@@ -73,6 +74,16 @@ export function App() {
   const [streak, setStreak] = useState<Streak | null>(loadStreak);
   const streakDays = currentDays(streak, dayKey(new Date()));
   const { direction, go, cover, uncover } = usePageTransition();
+  // English or Spanish: remembered on this device, first guessed from the browser.
+  const [lang, setLangState] = useState<Lang>(initialLang);
+  const setLang = (next: Lang) => {
+    saveLang(next);
+    setLangState(next);
+  };
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
+  const missions = missionsIn(lang);
 
   // Fetch the 3D town while the player is still picking a look.
   useEffect(preloadTown, []);
@@ -131,7 +142,7 @@ export function App() {
     const { persona, path, index } = screen;
     content = (
       <MissionPlayer
-        key={mission.id}
+        key={`${mission.id}-${lang}`}
         mission={mission}
         lesson={{ number: index + 1, total: lessons.length }}
         onFinish={(log) => void finish(persona, path, index, log)}
@@ -171,6 +182,7 @@ export function App() {
   }
 
   return (
+    <LangContext.Provider value={{ lang, setLang }}>
     <PipoLookContext.Provider value={look}>
       <Backdrop />
       <div className="swup-transition-main">{content}</div>
@@ -178,13 +190,13 @@ export function App() {
       <DesktopNote />
       {finished && (
         <LessonComplete
-          pathName={pathById(finished.path)?.name ?? ""}
+          pathName={pathById(finished.path, lang)?.name ?? ""}
           lessons={lessonsOf(finished.path)}
           index={finished.index}
           log={finished.log}
           stars={stars}
           postcard={postcard}
-          brag={pathById(finished.path)?.brag ?? ""}
+          brag={pathById(finished.path, lang)?.brag ?? ""}
           streak={streakDays}
           onContinue={() => leaveBox({ kind: "lesson", persona: finished.persona, path: finished.path, index: finished.index + 1 })}
           onBack={() => leaveBox({ kind: "paths", persona: finished.persona })}
@@ -192,5 +204,6 @@ export function App() {
         />
       )}
     </PipoLookContext.Provider>
+    </LangContext.Provider>
   );
 }
