@@ -40,6 +40,12 @@ const CAMERA_HOME = new THREE.Vector3(20.5, 25, 30.5);
 const LOOK_HOME = new THREE.Vector3(0, -1.7, 1.6);
 /** Where the arrival swoop starts: high up, round to one side. */
 const CAMERA_START = new THREE.Vector3(-14, 44, 30);
+
+/** Pull the camera back on tall, narrow screens (phones) so the whole island still fits. */
+function homeFor(aspect: number): THREE.Vector3 {
+  const back = aspect >= 1.3 ? 1 : Math.min(2.4, 1.25 / aspect);
+  return CAMERA_HOME.clone().multiplyScalar(back);
+}
 const INTRO_MS = 2000;
 const FLY_MS = 1000;
 /** When each place pops up during the intro, in seconds. */
@@ -55,7 +61,7 @@ export default function TownCanvas(props: TownCanvasProps) {
       // Sharp enough on retina screens without drawing 4x the pixels.
       dpr={[1, 1.5]}
       gl={{ antialias: true, powerPreference: "high-performance" }}
-      camera={{ position: (props.still ? CAMERA_HOME : CAMERA_START).toArray(), fov: 30, near: 0.5, far: 140 }}
+      camera={{ position: (props.still ? homeFor(window.innerWidth / window.innerHeight) : CAMERA_START).toArray(), fov: 30, near: 0.5, far: 140 }}
       onPointerMissed={() => props.onHover(null)}
       aria-label="Pipodojo Town"
     >
@@ -177,12 +183,13 @@ type Flight = { from: THREE.Vector3; fromLook: THREE.Vector3; to: THREE.Vector3;
 
 /** The camera: swoops in on arrival, follows the mouse a little, then flies in to a clicked place. */
 function Rig({ selected, onArrive, still }: { selected: PlaceId | null; onArrive: () => void; still: boolean }) {
-  const { camera, pointer } = useThree();
+  const { camera, pointer, size } = useThree();
+  const home = useMemo(() => homeFor(size.width / size.height), [size.width, size.height]);
   const look = useRef(LOOK_HOME.clone());
   const flight = useRef<Flight | null>(
     still
       ? null
-      : { from: CAMERA_START.clone(), fromLook: new THREE.Vector3(0, 0, 0), to: CAMERA_HOME.clone(), toLook: LOOK_HOME.clone(), start: performance.now(), ms: INTRO_MS, done: false },
+      : { from: CAMERA_START.clone(), fromLook: new THREE.Vector3(0, 0, 0), to: home.clone(), toLook: LOOK_HOME.clone(), start: performance.now(), ms: INTRO_MS, done: false },
   );
   const arrive = useRef(onArrive);
   arrive.current = onArrive;
@@ -216,7 +223,7 @@ function Rig({ selected, onArrive, still }: { selected: PlaceId | null; onArrive
     }
     if (selected) return;
     // At home: a slow drift that follows the mouse a little.
-    const goal = still ? CAMERA_HOME : CAMERA_HOME.clone().add(new THREE.Vector3(pointer.x * 1.6, pointer.y * 0.8, -pointer.x * 0.6));
+    const goal = still ? home : home.clone().add(new THREE.Vector3(pointer.x * 1.6, pointer.y * 0.8, -pointer.x * 0.6));
     camera.position.lerp(goal, still ? 1 : Math.min(1, delta * 1.5));
     look.current.lerp(LOOK_HOME, Math.min(1, delta * 3));
     camera.lookAt(look.current);
@@ -376,14 +383,14 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
       <Html position={[0, place.tag, 0]} zIndexRange={[20, 0]} style={{ pointerEvents: "none" }}>
         <div className="flex -translate-x-1/2 -translate-y-full flex-col items-center gap-1.5">
           {hovered && (
-            <div className="pop-in w-48 rounded-2xl bg-ink/90 px-3 py-2 text-center text-xs font-bold text-white shadow-xl">
+            <div className="pop-in w-40 rounded-2xl bg-ink/90 px-3 py-2 text-center text-[11px] font-bold text-white shadow-xl sm:w-48 sm:text-xs">
               {tag.sub}
-              {tag.open && <span className="mt-1 block text-[11px] font-black text-amber-300">Click to visit ›</span>}
+              {tag.open && <span className="mt-1 block text-[11px] font-black text-amber-300">Tap or click to visit ›</span>}
             </div>
           )}
           <div className="pop-in" style={{ animationDelay: `${delay + 0.35}s` }}>
             <div
-              className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-black whitespace-nowrap shadow-lg ring-2 transition-transform duration-200 motion-reduce:transition-none ${
+              className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-black whitespace-nowrap shadow-lg ring-2 sm:gap-1.5 sm:px-3 sm:py-1 sm:text-sm transition-transform duration-200 motion-reduce:transition-none ${
                 tag.open ? "bg-white text-ink ring-white" : "bg-white/75 text-gray-600 ring-white/60"
               } ${hovered ? "scale-110" : ""}`}
             >

@@ -24,6 +24,8 @@ interface Props {
   look: PipoLook;
   /** Best stars per lesson id this visit. */
   stars: Readonly<Record<string, number>>;
+  /** Days in a row (0 if the streak has lapsed). */
+  streak: number;
   onVisit: (persona: Persona) => void;
   onGarage: () => void;
 }
@@ -37,7 +39,7 @@ function canDraw3D(): boolean {
   }
 }
 
-export function Town({ look, stars, onVisit, onGarage }: Props) {
+export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
   const [hovered, setHovered] = useState<PlaceId | null>(null);
   const [selected, setSelected] = useState<PlaceId | null>(null);
   const [has3D] = useState(canDraw3D);
@@ -107,13 +109,17 @@ export function Town({ look, stars, onVisit, onGarage }: Props) {
       )}
 
       {/* Top: title, stars and the garage */}
-      <header className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4 md:p-6">
-        <div className="glass pointer-events-auto rounded-2xl px-4 py-2.5">
-          <p className="text-xs font-black tracking-wide text-brand-700 uppercase">Pipodojo Town</p>
-          <h1 className="text-2xl font-black text-ink">Who should Pipo help?</h1>
-          <p className="text-sm font-semibold text-gray-600">Click a place in town to see their paths.</p>
+      <header className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3 md:gap-3 md:p-6">
+        <div className="glass pointer-events-auto min-w-0 rounded-2xl px-3 py-2 md:px-4 md:py-2.5">
+          <p className="text-[11px] font-black tracking-wide text-brand-700 uppercase md:text-xs">Pipodojo Town</p>
+          <h1 className="text-lg leading-tight font-black text-ink md:text-2xl">Who should Pipo help?</h1>
+          <p className="hidden text-sm font-semibold text-gray-600 sm:block">Click a place in town to see their paths.</p>
         </div>
-        <div className="pointer-events-auto flex items-center gap-2">
+        <div className="pointer-events-auto flex shrink-0 flex-col items-end gap-2 sm:flex-row sm:items-center">
+          <span className="glass flex items-center gap-1 rounded-full px-3 py-2 text-sm font-black text-orange-600" title="Days in a row">
+            <span aria-hidden="true">🔥</span>
+            {streak} <span className="sr-only">day streak</span>
+          </span>
           <span className="glass flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-black text-brand-800">
             <span className="text-amber-500" aria-hidden="true">
               ★
@@ -123,16 +129,18 @@ export function Town({ look, stars, onVisit, onGarage }: Props) {
           <button
             type="button"
             onClick={() => select("garage")}
-            className="glass flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-extrabold text-brand-700 transition hover:bg-white/80"
+            className="glass flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-extrabold text-brand-700 transition hover:bg-white/80 md:px-4"
+            aria-label="Pipo's garage"
           >
-            <span aria-hidden="true">🔧</span> Pipo's garage
+            <span aria-hidden="true">🔧</span>
+            <span className="hidden sm:inline">Pipo's garage</span>
           </button>
         </div>
       </header>
 
       {/* Bottom: the same places as buttons, and who powers Pipo */}
-      <nav className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 p-4 md:p-6" aria-label="Places in town">
-        <div className="glass flex gap-1.5 rounded-2xl p-1.5">
+      <nav className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 p-3 md:p-6" aria-label="Places in town">
+        <div className="glass grid w-full max-w-sm grid-cols-2 gap-1 rounded-2xl p-1.5 sm:flex sm:w-auto sm:max-w-none sm:gap-1.5">
           {PERSONAS.map((persona) => (
             <button
               key={persona.id}
@@ -142,7 +150,7 @@ export function Town({ look, stars, onVisit, onGarage }: Props) {
               onMouseLeave={() => !selected && setHovered(null)}
               onFocus={() => !selected && setHovered(persona.id)}
               onBlur={() => !selected && setHovered(null)}
-              className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-sm font-extrabold transition ${
+              className={`flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-[13px] font-extrabold transition sm:gap-2 sm:px-3.5 sm:text-sm ${
                 hovered === persona.id ? "bg-brand-600 text-white" : "text-ink hover:bg-white/80"
               }`}
             >

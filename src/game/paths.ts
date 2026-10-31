@@ -6,6 +6,8 @@ export interface PathCard {
   id: string;
   persona: Persona;
   name: string;
+  /** The shareable one-liner for the end-of-path card, e.g. "My AI agent just handled a whole school week". */
+  brag: string;
   emoji: string;
   blurb: string;
   /** Lesson names, shown on the card (and as "coming soon" until the lessons are built). */
@@ -18,6 +20,7 @@ export const PATHS: readonly PathCard[] = [
   // Busy parent
   {
     id: "parent-barbecue",
+    brag: "My AI agent just planned, invited and shopped for a whole barbecue 🍔",
     persona: "parent",
     name: "Saturday barbecue",
     emoji: "🍔",
@@ -27,6 +30,7 @@ export const PATHS: readonly PathCard[] = [
   },
   {
     id: "parent-school",
+    brag: "My AI agent just handled a whole school week 🎒",
     persona: "parent",
     name: "School week",
     emoji: "🎒",
@@ -36,6 +40,7 @@ export const PATHS: readonly PathCard[] = [
   },
   {
     id: "parent-daytrip",
+    brag: "My AI agent planned our rainy Sunday out 🚗",
     persona: "parent",
     name: "Family day trip",
     emoji: "🚗",
@@ -46,6 +51,7 @@ export const PATHS: readonly PathCard[] = [
   // Student
   {
     id: "student-exams",
+    brag: "My AI agent got me ready for exam week 📚",
     persona: "student",
     name: "Exam week",
     emoji: "📚",
@@ -55,6 +61,7 @@ export const PATHS: readonly PathCard[] = [
   },
   {
     id: "student-project",
+    brag: "My AI agent organised our whole group project 🧩",
     persona: "student",
     name: "Group project",
     emoji: "🧩",
@@ -64,6 +71,7 @@ export const PATHS: readonly PathCard[] = [
   },
   {
     id: "student-job",
+    brag: "My AI agent helped me apply for my first job 💼",
     persona: "student",
     name: "First job",
     emoji: "💼",
@@ -74,6 +82,7 @@ export const PATHS: readonly PathCard[] = [
   // Café owner
   {
     id: "business-sale",
+    brag: "My AI agent just ran my café's weekend sale 🥐",
     persona: "business",
     name: "Weekend sale",
     emoji: "🏷️",
@@ -83,6 +92,7 @@ export const PATHS: readonly PathCard[] = [
   },
   {
     id: "business-review",
+    brag: "My AI agent turned a one-star review into a happy customer ☕",
     persona: "business",
     name: "Unhappy customer",
     emoji: "💬",
@@ -92,6 +102,7 @@ export const PATHS: readonly PathCard[] = [
   },
   {
     id: "business-staff",
+    brag: "My AI agent sorted my café's staff week 🗓️",
     persona: "business",
     name: "Staff week",
     emoji: "🗓️",
@@ -102,6 +113,7 @@ export const PATHS: readonly PathCard[] = [
   // Young coder (Pipo Code on the laptop)
   {
     id: "kid-site",
+    brag: "I built my first website with an AI coding agent 🌐",
     persona: "kid",
     name: "My first website",
     emoji: "🌐",
@@ -111,6 +123,7 @@ export const PATHS: readonly PathCard[] = [
   },
   {
     id: "kid-game",
+    brag: "I made my own game with an AI coding agent 🎮",
     persona: "kid",
     name: "Make a game",
     emoji: "🎮",
@@ -120,6 +133,7 @@ export const PATHS: readonly PathCard[] = [
   },
   {
     id: "kid-homework",
+    brag: "My AI coding agent helped me learn, not copy 📊",
     persona: "kid",
     name: "Homework helper",
     emoji: "📊",

@@ -20,6 +20,10 @@ interface Props {
   stars: Readonly<Record<string, number>>;
   /** Painted at the end of a path, from the player's runs. */
   postcard: Postcard | null;
+  /** The path's share line, for the end-of-path card. */
+  brag: string;
+  /** Days in a row. */
+  streak: number;
   onContinue: () => void;
   onBack: () => void;
 }
@@ -27,7 +31,7 @@ interface Props {
 /** Let the box pop in before the confetti starts. */
 const CONFETTI_DELAY_MS = 250;
 
-export function LessonComplete({ pathName, lessons, index, log, stars, postcard, onContinue, onBack }: Props) {
+export function LessonComplete({ pathName, lessons, index, log, stars, postcard, brag, streak, onContinue, onBack }: Props) {
   const mission = lessons[index]!;
   const next = lessons[index + 1];
   const won = log.score.stars;
@@ -78,6 +82,15 @@ export function LessonComplete({ pathName, lessons, index, log, stars, postcard,
               ))}
             </p>
           </div>
+          {/* The day streak, Duolingo style */}
+          {streak > 0 && (
+            <div className="pop-in ml-auto flex shrink-0 flex-col items-center rounded-2xl bg-white/15 px-3 py-1.5" style={{ animationDelay: "900ms" }}>
+              <span className="text-2xl leading-none" aria-hidden="true">
+                🔥
+              </span>
+              <span className="text-sm font-black">{streak}-day streak</span>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-4 p-5">
@@ -141,6 +154,7 @@ export function LessonComplete({ pathName, lessons, index, log, stars, postcard,
                   lessons={lessons.length}
                   stars={lessons.reduce((sum, lesson) => sum + (stars[lesson.id] ?? 0), 0)}
                   postcard={postcard}
+                  share={{ brag, streak }}
                 />
               </div>
             )}

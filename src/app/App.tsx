@@ -3,7 +3,9 @@ import { postcardScene } from "../engine/postcard.ts";
 import type { Persona, RunLog } from "../engine/types.ts";
 import { pathById } from "../game/paths.ts";
 import { DEFAULT_LOOK, describeLook, parseLook, type PipoLook } from "../game/pipoLook.ts";
+import { currentDays, dayKey, parseStreak, playedOn, type Streak } from "../game/streak.ts";
 import { Backdrop } from "../ui/Backdrop.tsx";
+import { DesktopNote } from "../ui/DesktopNote.tsx";
 import { LessonComplete } from "../ui/LessonComplete.tsx";
 import { MissionPlayer } from "../ui/MissionPlayer.tsx";
 import { TransitionOverlay, usePageTransition } from "../ui/PageTransition.tsx";
@@ -22,6 +24,17 @@ type Screen =
   | { kind: "lesson"; persona: Persona; path: string; index: number };
 
 const LOOK_KEY = "pipodojo.look";
+const STREAK_KEY = "pipodojo.streak";
+
+/** The day streak is kept on this device; storage may be missing, which just means no streak. */
+function loadStreak(): Streak | null {
+  try {
+    const raw = localStorage.getItem(STREAK_KEY);
+    return raw ? parseStreak(JSON.parse(raw)) : null;
+  } catch {
+    return null;
+  }
+}
 
 /** The look is a per-device convenience: storage may be missing or blocked, which is fine. */
 function loadLook(): PipoLook {
@@ -57,6 +70,8 @@ export function App() {
   const runs = useRef<Record<string, RunLog>>({});
   const [postcard, setPostcard] = useState<Postcard | null>(null);
   const painting = useRef(0);
+  const [streak, setStreak] = useState<Streak | null>(loadStreak);
+  const streakDays = currentDays(streak, dayKey(new Date()));
   const { direction, go, cover, uncover } = usePageTransition();
 
   // Fetch the 3D town while the player is still picking a look.
@@ -76,6 +91,16 @@ export function App() {
   const toPaths = (persona: Persona) => void go("to-left", () => setScreen({ kind: "paths", persona }));
 
   const finish = async (persona: Persona, path: string, index: number, log: RunLog) => {
+    // Finishing a lesson keeps the day streak going.
+    setStreak((prev) => {
+      const next = playedOn(prev, dayKey(new Date()));
+      try {
+        localStorage.setItem(STREAK_KEY, JSON.stringify(next));
+      } catch {
+        // Not saved this time.
+      }
+      return next;
+    });
     setStars((s) => ({ ...s, [log.missionId]: Math.max(s[log.missionId] ?? 0, log.score.stars) }));
     runs.current[log.missionId] = log;
     const lessons = lessonsOf(path);
@@ -128,6 +153,7 @@ export function App() {
       <Town
         look={look}
         stars={stars}
+        streak={streakDays}
         onVisit={(persona) => void go("to-right", () => setScreen({ kind: "paths", persona }))}
         onGarage={() => void go("to-right", () => setScreen({ kind: "build", first: false }))}
       />
@@ -149,6 +175,7 @@ export function App() {
       <Backdrop />
       <div className="swup-transition-main">{content}</div>
       <TransitionOverlay direction={direction} />
+      <DesktopNote />
       {finished && (
         <LessonComplete
           pathName={pathById(finished.path)?.name ?? ""}
@@ -157,6 +184,8 @@ export function App() {
           log={finished.log}
           stars={stars}
           postcard={postcard}
+          brag={pathById(finished.path)?.brag ?? ""}
+          streak={streakDays}
           onContinue={() => leaveBox({ kind: "lesson", persona: finished.persona, path: finished.path, index: finished.index + 1 })}
           onBack={() => leaveBox({ kind: "paths", persona: finished.persona })}
         />

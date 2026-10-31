@@ -9,6 +9,7 @@ import { createPortal } from "react-dom";
 import { postcardFileName, type Postcard } from "../app/postcard.ts";
 import { Peel, type PeelInstance } from "../vendor/peel/index.ts";
 import { Pipo } from "./Pipo.tsx";
+import { ShareSheet } from "./ShareSheet.tsx";
 
 interface Props {
   pathName: string;
@@ -16,6 +17,8 @@ interface Props {
   /** Stars earned across the path. */
   stars: number;
   postcard: Postcard | null;
+  /** For the share card: the path's brag line and the day streak. */
+  share: { brag: string; streak: number };
 }
 
 /** How far the corner curls up before anyone touches it, to invite a peel. */
@@ -25,11 +28,12 @@ const AUTO_PEEL_MS = 700;
 const PEEL_FINISH_AT = 0.45;
 const PEEL_RELEASE_AT = 0.25;
 
-export function PeelReward({ pathName, lessons, stars, postcard }: Props) {
+export function PeelReward({ pathName, lessons, stars, postcard, share }: Props) {
   const el = useRef<HTMLDivElement>(null);
   const peel = useRef<PeelInstance | null>(null);
   const [open, setOpen] = useState(false);
   const [big, setBig] = useState(false);
+  const [sharing, setSharing] = useState(false);
   const [still] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
   // Refs, not state, so the peel.js handlers (set up once) always see the latest values.
@@ -177,8 +181,17 @@ export function PeelReward({ pathName, lessons, stars, postcard }: Props) {
           Or tap here to open it
         </button>
       ) : (
-        ready && (
-          <div className="flex gap-4">
+        <div className="flex flex-col gap-2">
+          {/* The big moment: share the win */}
+          <button
+            type="button"
+            onClick={() => setSharing(true)}
+            className="pop-in flex items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(115deg,#ff7a1a,#ffb547)] py-3 text-base font-black text-white shadow-[0_10px_24px_-10px_rgb(255_122_26/0.8)] transition hover:brightness-105 active:translate-y-px"
+          >
+            <span aria-hidden="true">📣</span> Share your win
+          </button>
+        {ready && (
+          <div className="flex justify-center gap-4">
             <button
               type="button"
               onClick={() => setBig(true)}
@@ -194,8 +207,16 @@ export function PeelReward({ pathName, lessons, stars, postcard }: Props) {
               ⬇ Save postcard
             </a>
           </div>
-        )
+        )}
+        </div>
       )}
+
+      <ShareSheet
+        open={sharing}
+        painting={postcard?.status === "painting"}
+        info={{ brag: share.brag, pathName, stars, maxStars: lessons * 3, lessons, streak: Math.max(1, share.streak), postcard: ready?.src ?? null }}
+        onClose={() => setSharing(false)}
+      />
 
       {/* On document.body: the lesson box is transformed, which would trap a fixed overlay inside it. */}
       {createPortal(

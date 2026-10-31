@@ -49,6 +49,10 @@ In later lessons Pipo **acts**, using Muse Spark tool calling: each lesson offer
 
 Tap **🔧 Under the hood** below the boxes to see the real calls: the message your pieces built, the app actions offered, what Muse Spark sent back (with the model name and timing), and the scoring step, which is the game's own rules.
 
+Finishing a lesson keeps your **day streak** 🔥 going (saved on your device only). At the end of each path you can **share your win**: a ready-to-post image with your streak, stars, badge and the postcard Pipo painted, shared through your phone's share menu or saved as an image.
+
+Pipodojo works on phones and runs best on a computer; phones get a friendly note saying so.
+
 Before a path you **make your own Pipo** (head, body, colours). It is drawn in code, so it is instant and free. When you finish the path, Meta's **Muse Image** (`muse-image-1.0`) paints a postcard of what your Pipo did across the lessons, starring your Pipo, and you peel the gift open to find it. That is one image per finished path; if painting is slow or fails, a ready-made postcard shows instead. The image endpoint (`functions/api/image.js`) fixes the model, size and style, so it can only paint a Pipodojo postcard.
 
 ## Credits
