@@ -10,7 +10,7 @@ import { TransitionOverlay, usePageTransition } from "../ui/PageTransition.tsx";
 import { PathPicker } from "../ui/PathPicker.tsx";
 import { PipoLookContext } from "../ui/Pipo.tsx";
 import { PipoBuilder } from "../ui/PipoBuilder.tsx";
-import { Town } from "../ui/town/Town.tsx";
+import { preloadTown, Town } from "../ui/town/Town.tsx";
 import { missions } from "./missions.ts";
 import { paintPostcard, type Postcard } from "./postcard.ts";
 
@@ -58,6 +58,9 @@ export function App() {
   const [postcard, setPostcard] = useState<Postcard | null>(null);
   const painting = useRef(0);
   const { direction, go, cover, uncover } = usePageTransition();
+
+  // Fetch the 3D town while the player is still picking a look.
+  useEffect(preloadTown, []);
 
   useEffect(() => {
     try {

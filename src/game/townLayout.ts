@@ -33,6 +33,9 @@ export const PLACES: readonly Place[] = [
 
 export const placeOf = (id: PlaceId) => PLACES.find((p) => p.id === id)!;
 
+/** A pond near the front edge; its stream spills over the edge as a waterfall. */
+export const POND = { at: [4.3, 9.7] as Vec2, radius: 1.35 };
+
 /** Dojo plaza in the middle (inside the ring road). */
 export const PLAZA_CLEAR = RING.half + RING.width;
 
@@ -66,11 +69,20 @@ function onRoad(x: number, z: number, margin: number): boolean {
   return (Math.abs(x) < w && Math.abs(z) > RING.half) || (Math.abs(z) < w && Math.abs(x) > RING.half);
 }
 
+function blocked(x: number, z: number, roadMargin: number): boolean {
+  if (Math.max(Math.abs(x), Math.abs(z)) < PLAZA_CLEAR + 0.4) return true;
+  if (onRoad(x, z, roadMargin)) return true;
+  if (Math.hypot(x - POND.at[0], z - POND.at[1]) < POND.radius + 0.9) return true;
+  // The stream from the pond out to the edge.
+  if (x > POND.at[0] - 0.6 && x < POND.at[0] + 1.6 && z > POND.at[1]) return true;
+  return PLACES.some((p) => Math.hypot(x - p.at[0], z - p.at[1]) < p.clear);
+}
+
 export interface TreeSpot {
   x: number;
   z: number;
   scale: number;
-  kind: "round" | "pine";
+  kind: "round" | "pine" | "blossom";
 }
 
 /** Trees everywhere that isn't a road, a place, the plaza or the island's edge. */
@@ -82,11 +94,38 @@ export function scatterTrees(count: number, seed = 7): TreeSpot[] {
     const r = Math.sqrt(rand()) * (ISLAND_RADIUS - 0.9);
     const x = Math.cos(angle) * r;
     const z = Math.sin(angle) * r;
-    if (Math.max(Math.abs(x), Math.abs(z)) < PLAZA_CLEAR + 0.4) continue;
-    if (onRoad(x, z, 0.45)) continue;
-    if (PLACES.some((p) => Math.hypot(x - p.at[0], z - p.at[1]) < p.clear)) continue;
-    if (trees.some((t) => Math.hypot(x - t.x, z - t.z) < 1.05)) continue;
-    trees.push({ x, z, scale: 0.75 + rand() * 0.5, kind: rand() < 0.35 ? "pine" : "round" });
+    if (blocked(x, z, 0.45)) continue;
+    if (trees.some((t) => Math.hypot(x - t.x, z - t.z) < 1.15)) continue;
+    const roll = rand();
+    trees.push({ x, z, scale: 0.75 + rand() * 0.5, kind: roll < 0.3 ? "pine" : roll < 0.45 ? "blossom" : "round" });
   }
   return trees;
+}
+
+export interface FlowerSpot {
+  x: number;
+  z: number;
+  /** Index into the flower colours. */
+  color: number;
+}
+
+/** Little flowers in small clumps on the grass, clear of roads and buildings. */
+export function scatterFlowers(clumps: number, seed = 11): FlowerSpot[] {
+  const rand = seeded(seed);
+  const flowers: FlowerSpot[] = [];
+  for (let tries = 0, made = 0; made < clumps && tries < clumps * 40; tries++) {
+    const angle = rand() * Math.PI * 2;
+    const r = Math.sqrt(rand()) * (ISLAND_RADIUS - 0.6);
+    const cx = Math.cos(angle) * r;
+    const cz = Math.sin(angle) * r;
+    if (blocked(cx, cz, 0.3)) continue;
+    made++;
+    const color = Math.floor(rand() * 4);
+    for (let i = 0; i < 5; i++) {
+      const x = cx + (rand() - 0.5) * 0.7;
+      const z = cz + (rand() - 0.5) * 0.7;
+      if (!blocked(x, z, 0.25)) flowers.push({ x, z, color });
+    }
+  }
+  return flowers;
 }

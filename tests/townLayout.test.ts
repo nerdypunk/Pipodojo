@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ISLAND_RADIUS, PLACES, PLAZA_CLEAR, RING, ringPoint, scatterTrees } from "../src/game/townLayout.ts";
+import { ISLAND_RADIUS, PLACES, PLAZA_CLEAR, POND, RING, ringPoint, scatterFlowers, scatterTrees } from "../src/game/townLayout.ts";
 
 describe("town layout", () => {
   it("scatters the same trees every time, clear of places, plaza and the edge", () => {
@@ -19,5 +19,14 @@ describe("town layout", () => {
       expect(Math.max(Math.abs(p.x), Math.abs(p.z))).toBeCloseTo(RING.half);
     }
     expect(ringPoint(1)).toEqual(ringPoint(0));
+  });
+});
+
+describe("flowers and the pond", () => {
+  it("keeps trees and flowers out of the pond", () => {
+    for (const p of [...scatterTrees(60), ...scatterFlowers(40)]) {
+      expect(Math.hypot(p.x - POND.at[0], p.z - POND.at[1])).toBeGreaterThan(POND.radius);
+    }
+    expect(scatterFlowers(40).length).toBeGreaterThan(100);
   });
 });

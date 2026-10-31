@@ -21,6 +21,7 @@ export function Pipo3D({ look, target, still }: Props) {
   const flame = useRef<THREE.Mesh>(null);
   const wheel = useRef<THREE.Mesh>(null);
   const goal = useRef(new THREE.Vector3());
+  const shadow = useRef<THREE.Mesh>(null);
   const { shell, accent } = paletteOf(look.color);
   const [light, mid, dark] = shell;
 
@@ -44,12 +45,22 @@ export function Pipo3D({ look, target, still }: Props) {
       pipo.rotation.y += (0.6 - pipo.rotation.y) * Math.min(1, delta * 3);
     }
     pipo.rotation.z = still ? 0 : Math.sin(t * 2) * 0.06;
+    // Its soft shadow stays on the ground under it, smaller the higher it flies.
+    if (shadow.current) {
+      shadow.current.position.set(pipo.position.x, 0.08, pipo.position.z);
+      shadow.current.scale.setScalar(Math.max(0.4, 1.3 - pipo.position.y * 0.12));
+    }
     if (flame.current) flame.current.scale.y = still ? 1 : 0.8 + Math.sin(t * 30) * 0.2;
     if (wheel.current && !still) wheel.current.rotation.x += delta * 6;
   });
 
   return (
-    <group ref={ref} position={[3.2, 3.6, 0]}>
+    <>
+    <mesh ref={shadow} rotation={[-Math.PI / 2, 0, 0]} position={[0, -50, 0]} raycast={() => null}>
+      <circleGeometry args={[0.5, 20]} />
+      <meshBasicMaterial color="#2d2470" transparent opacity={0.16} depthWrite={false} />
+    </mesh>
+    <group ref={ref} position={still ? [2.6, 3.6, 2.6] : [-18, 9, 8]}>
       <group scale={1.3}>
         {/* Body */}
         {look.body === "rocket" ? (
@@ -148,5 +159,6 @@ export function Pipo3D({ look, target, still }: Props) {
         </group>
       </group>
     </group>
+    </>
   );
 }

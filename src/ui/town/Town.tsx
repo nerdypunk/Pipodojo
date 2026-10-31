@@ -12,7 +12,13 @@ import type { PlaceId } from "../../game/townLayout.ts";
 import { Pipo } from "../Pipo.tsx";
 import type { PlaceTag } from "./TownCanvas.tsx";
 
-const TownCanvas = lazy(() => import("./TownCanvas.tsx"));
+const loadCanvas = () => import("./TownCanvas.tsx");
+const TownCanvas = lazy(loadCanvas);
+
+/** Starts downloading the 3D town early (e.g. while the player picks a look), so it opens at once. */
+export function preloadTown() {
+  void loadCanvas().catch(() => {});
+}
 
 interface Props {
   look: PipoLook;
@@ -44,6 +50,8 @@ export function Town({ look, stars, onVisit, onGarage }: Props) {
     const result = {} as Record<PlaceId, PlaceTag>;
     for (const persona of PERSONAS) {
       const paths = pathsOf(persona.id);
+      const playable = missions.filter((m) => m.persona === persona.id);
+      const earned = playable.reduce((sum, m) => sum + (stars[m.id] ?? 0), 0);
       const finished = paths.filter((path) => {
         const lessons = missions.filter((m) => m.path === path.id);
         return lessons.length > 0 && lessons.every((m) => (stars[m.id] ?? 0) > 0);
@@ -51,6 +59,7 @@ export function Town({ look, stars, onVisit, onGarage }: Props) {
       result[persona.id] = {
         title: `${persona.emoji} ${persona.name}`,
         sub: `${persona.blurb} ${paths.length} paths.`,
+        ...(playable.length > 0 ? { progress: `★ ${earned}/${playable.length * 3}` } : {}),
         ...(finished > 0 ? { badge: `🏅${finished > 1 ? `×${finished}` : ""}` } : {}),
         open: true,
       };

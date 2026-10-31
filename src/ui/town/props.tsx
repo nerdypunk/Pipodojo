@@ -31,44 +31,13 @@ export function Roof({ width, height, depth, color, position }: { width: number;
   );
 }
 
-export function Tree({ x, z, scale, kind, tint }: { x: number; z: number; scale: number; kind: "round" | "pine"; tint: string }) {
-  const sway = useRef<THREE.Group>(null);
-  const phase = useMemo(() => x * 1.3 + z * 0.7, [x, z]);
-  useFrame(({ clock }) => {
-    if (sway.current) sway.current.rotation.z = Math.sin(clock.elapsedTime * 1.2 + phase) * 0.03;
-  });
+/** A soft round shadow on the ground, for things that move (real shadows are baked once). */
+export function Blob({ size, position = [0, 0.03, 0] }: { size: number; position?: V3 }) {
   return (
-    <group position={[x, 0, z]} scale={scale}>
-      <mesh position={[0, 0.3, 0]}>
-        <cylinderGeometry args={[0.08, 0.12, 0.6, 6]} />
-        <meshStandardMaterial color="#9a6b4f" roughness={0.9} />
-      </mesh>
-      <group ref={sway} position={[0, 0.55, 0]}>
-        {kind === "round" ? (
-          <>
-            <mesh position={[0, 0.35, 0]}>
-              <icosahedronGeometry args={[0.5, 0]} />
-              <meshStandardMaterial color={tint} roughness={0.8} flatShading />
-            </mesh>
-            <mesh position={[0.18, 0.62, 0.05]}>
-              <icosahedronGeometry args={[0.3, 0]} />
-              <meshStandardMaterial color={tint} roughness={0.8} flatShading />
-            </mesh>
-          </>
-        ) : (
-          <>
-            <mesh position={[0, 0.35, 0]}>
-              <coneGeometry args={[0.45, 0.8, 6]} />
-              <meshStandardMaterial color={tint} roughness={0.8} flatShading />
-            </mesh>
-            <mesh position={[0, 0.8, 0]}>
-              <coneGeometry args={[0.32, 0.6, 6]} />
-              <meshStandardMaterial color={tint} roughness={0.8} flatShading />
-            </mesh>
-          </>
-        )}
-      </group>
-    </group>
+    <mesh position={position} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
+      <circleGeometry args={[size, 20]} />
+      <meshBasicMaterial color="#2d2470" transparent opacity={0.18} depthWrite={false} />
+    </mesh>
   );
 }
 
@@ -81,14 +50,34 @@ export interface PersonStyle {
   extra?: "apron" | "backpack" | "spatula";
 }
 
-/** A chunky little townsperson who waves now and then. */
-export function Person({ style, position, turn = 0, still }: { style: PersonStyle; position: V3; turn?: number; still: boolean }) {
+/** A chunky little townsperson who waves now and then, or strolls along when `walking`. */
+export function Person({
+  style,
+  position,
+  turn = 0,
+  walking = false,
+  still,
+}: {
+  style: PersonStyle;
+  position: V3;
+  turn?: number;
+  walking?: boolean;
+  still: boolean;
+}) {
   const arm = useRef<THREE.Group>(null);
   const body = useRef<THREE.Group>(null);
+  const legs = useRef<(THREE.Group | null)[]>([]);
   const phase = useMemo(() => position[0] * 2.1, [position]);
   useFrame(({ clock }) => {
     if (still) return;
     const t = clock.elapsedTime + phase;
+    if (walking) {
+      const swing = Math.sin(t * 7) * 0.5;
+      legs.current.forEach((leg, i) => leg && (leg.rotation.x = i ? swing : -swing));
+      if (arm.current) arm.current.rotation.x = swing;
+      if (body.current) body.current.position.y = Math.abs(Math.cos(t * 7)) * 0.03;
+      return;
+    }
     // A wave every few seconds, a little bounce in between.
     const waving = Math.sin(t * 0.9) > 0.55;
     if (arm.current) arm.current.rotation.z = waving ? 2.5 + Math.sin(t * 9) * 0.35 : 0.25;
@@ -98,11 +87,13 @@ export function Person({ style, position, turn = 0, still }: { style: PersonStyl
     <group position={position} rotation={[0, turn, 0]} scale={1.25}>
       <group ref={body}>
         {/* Legs */}
-        {[-0.09, 0.09].map((x) => (
-          <mesh key={x} position={[x, 0.18, 0]}>
-            <capsuleGeometry args={[0.07, 0.22, 4, 8]} />
-            <meshStandardMaterial color={style.pants} roughness={0.8} />
-          </mesh>
+        {[-0.09, 0.09].map((x, i) => (
+          <group key={x} ref={(g) => void (legs.current[i] = g)} position={[x, 0.33, 0]}>
+            <mesh position={[0, -0.15, 0]}>
+              <capsuleGeometry args={[0.07, 0.22, 4, 8]} />
+              <meshStandardMaterial color={style.pants} roughness={0.8} />
+            </mesh>
+          </group>
         ))}
         {/* Body */}
         <mesh position={[0, 0.55, 0]}>
@@ -177,6 +168,7 @@ export function Car({ color, offset, speed, still }: { color: string; offset: nu
   });
   return (
     <group ref={ref}>
+      <Blob size={0.42} />
       <mesh position={[0, 0.2, 0]}>
         <boxGeometry args={[0.7, 0.24, 0.4]} />
         <meshStandardMaterial color={color} roughness={0.5} />
