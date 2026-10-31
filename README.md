@@ -31,7 +31,8 @@ Other commands:
 - `missions/*.json`: one file per lesson (the situation, the prompt pieces, and what goes wrong when a piece is missing), validated with Zod. Adding a lesson needs no code changes.
 - `src/engine`: pure TypeScript game engine (prompt building, asking Pipo, rule-based stars). No React. A model never scores the player.
 - `src/ui`: the screens. `src/ui/town` is the 3D overworld (React Three Fiber), built from simple shapes in code.
-- `functions/api/chat.js`: the only server code. It holds the API key, picks the model, and caps cost.
+- `functions/api/chat.js`: the chat proxy. It holds the API key, picks the model, and caps cost.
+- `functions/api/_middleware.js`: guards both endpoints. It only answers the Pipodojo page itself (other sites and scripts get 403) and limits each visitor to 100 chat calls and 6 postcards per 10 minutes (in memory, best effort). When blocked, the game quietly shows a replay or the ready-made postcard.
 
 ## Playing
 
