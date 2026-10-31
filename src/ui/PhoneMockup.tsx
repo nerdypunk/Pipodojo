@@ -1,6 +1,6 @@
 // The app screen inside Pipo's phone: a chat for messages, a store cart for shopping. Built from
-// the tool call's arguments. `flags` follow the tool's answer lines, so the part that shows a gap
-// in the prompt is outlined in red. Nothing here is a real app.
+// the tool call's arguments and sized to fill the phone. `flags` follow the tool's answer lines,
+// so the part that shows a gap in the prompt is outlined in red. Nothing here is a real app.
 import type { PipoAction } from "../engine/types.ts";
 import { readable } from "../engine/actions.ts";
 
@@ -16,50 +16,76 @@ export function PhoneScreen({ action, flags }: Props) {
   return action.app === "whatsapp" ? <ChatScreen action={action} flags={flags} /> : <ShopScreen action={action} flags={flags} />;
 }
 
+/** A group chat. A draft waits in the typing box; once sent it's a bubble in the chat. */
 function ChatScreen({ action, flags }: Props) {
   const to = readable(action.args.to);
   const message = typeof action.args.message === "string" ? action.args.message.trim() : readable(action.args.message);
   const sent = action.outcome === "done";
   return (
-    <div aria-label={`Message to ${to}${sent ? ", sent" : ", draft waiting for your OK"}`}>
+    <div className="flex h-full flex-col" aria-label={`Message to ${to}${sent ? ", sent" : ", draft waiting for your OK"}`}>
       <div className={`flex items-center gap-2 bg-emerald-700 px-3 py-2 text-white ${flags[0] ? FLAG : ""}`}>
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-base" aria-hidden="true">
+        <span aria-hidden="true" className="text-lg leading-none">
+          ‹
+        </span>
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-base" aria-hidden="true">
           👥
         </span>
         <div className="min-w-0">
           <p className="truncate text-sm font-black">{to}</p>
-          <p className="text-[11px] font-semibold text-white/80">Group chat</p>
+          <p className="text-[11px] font-semibold text-white/80">tap here for group info</p>
         </div>
       </div>
-      <div className="flex min-h-36 flex-col items-end justify-end gap-1 bg-[#efeae2] px-3 py-3">
-        <p
-          className={`max-w-[88%] rounded-2xl rounded-tr-sm px-3 py-2 text-sm leading-snug font-semibold whitespace-pre-line text-ink shadow-sm transition-colors duration-500 ${
-            sent ? "bg-[#d9fdd3]" : "border-2 border-dashed border-gray-400 bg-white"
-          } ${flags[1] ? FLAG : ""}`}
-        >
-          {message}
-          <span className="mt-1 block text-right text-[10px] font-bold text-gray-500">
-            {sent ? (
-              <>
-                4:02 PM <span className="text-sky-500">✓✓</span>
-              </>
-            ) : (
-              "Draft, not sent"
-            )}
-          </span>
+
+      {/* Conversation */}
+      <div className="flex min-h-0 flex-1 flex-col justify-end gap-2 overflow-y-auto bg-[#efeae2] px-3 py-3">
+        <span className="self-center rounded-md bg-white/80 px-2 py-0.5 text-[10px] font-bold text-gray-600">Today</span>
+        <p className="max-w-[80%] self-start rounded-2xl rounded-tl-sm bg-white px-3 py-1.5 text-[13px] leading-snug font-semibold text-ink shadow-sm">
+          <span className="block text-[11px] font-black text-orange-600">Alex</span>
+          Anyone free this weekend? ☀️
+          <span className="block text-right text-[10px] font-bold text-gray-400">3:58 PM</span>
         </p>
+        {sent && (
+          <p
+            className={`pop-in max-w-[88%] self-end rounded-2xl rounded-tr-sm bg-[#d9fdd3] px-3 py-2 text-[13px] leading-snug font-semibold whitespace-pre-line text-ink shadow-sm ${
+              flags[1] ? FLAG : ""
+            }`}
+          >
+            {message}
+            <span className="mt-1 block text-right text-[10px] font-bold text-gray-500">
+              4:02 PM <span className="text-sky-500">✓✓</span>
+            </span>
+          </p>
+        )}
+      </div>
+
+      {/* Typing box: Pipo's draft waits here until you send it */}
+      <div className="flex items-end gap-2 bg-[#efeae2] px-2 pb-2">
+        <p
+          className={`max-h-28 flex-1 overflow-y-auto rounded-3xl bg-white px-3 py-2 text-[13px] leading-snug font-semibold whitespace-pre-line shadow-sm ${
+            sent ? "text-gray-400" : "text-ink"
+          } ${!sent && flags[1] ? FLAG : ""}`}
+        >
+          {sent ? "Message" : message}
+        </p>
+        <span
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-sm text-white"
+          aria-hidden="true"
+        >
+          ➤
+        </span>
       </div>
     </div>
   );
 }
 
+/** A store cart: items, total, delivery. */
 function ShopScreen({ action, flags }: Props) {
   const items = Array.isArray(action.args.items) ? action.args.items : [];
   const paid = action.outcome === "done";
   const total = readable(action.args.total);
   return (
-    <div aria-label={`Shopping cart, total $${total}${paid ? ", paid" : ", waiting for your OK to pay"}`}>
-      <div className="flex items-center justify-between bg-brand-700 px-3 py-2 text-white">
+    <div className="flex h-full flex-col" aria-label={`Shopping cart, total $${total}${paid ? ", paid" : ", waiting for your OK to pay"}`}>
+      <div className="flex items-center justify-between bg-brand-700 px-3 py-2.5 text-white">
         <p className="text-sm font-black">
           <span aria-hidden="true">🛒 </span>FreshCart
         </p>
@@ -67,13 +93,18 @@ function ShopScreen({ action, flags }: Props) {
           {paid ? "Order placed" : "Your cart"} · {items.length} items
         </p>
       </div>
-      <ul className={`max-h-32 overflow-y-auto px-3 py-1.5 ${flags[0] ? FLAG : ""}`}>
+      <ul className={`min-h-0 flex-1 overflow-y-auto px-3 py-1.5 ${flags[0] ? FLAG : ""}`}>
         {items.length === 0 && <li className="py-1 text-sm font-semibold text-gray-500">The cart is empty</li>}
         {items.map((item, i) => {
           const { name, price } = (item ?? {}) as { name?: unknown; price?: unknown };
           return (
-            <li key={i} className="flex justify-between gap-2 border-b border-gray-100 py-1 text-[13px] font-semibold text-ink last:border-0">
-              <span className="truncate">{readable(name ?? item)}</span>
+            <li key={i} className="flex items-center justify-between gap-2 border-b border-gray-100 py-1.5 text-[13px] font-semibold text-ink last:border-0">
+              <span className="flex min-w-0 items-center gap-2">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-[11px] font-black text-brand-700" aria-hidden="true">
+                  {i + 1}
+                </span>
+                <span className="truncate">{readable(name ?? item)}</span>
+              </span>
               {price !== undefined && <span className="shrink-0 text-gray-600">${readable(price)}</span>}
             </li>
           );

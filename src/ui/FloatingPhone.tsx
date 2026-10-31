@@ -3,7 +3,7 @@
 // toward the pointer, and it folds into a small button. When Pipo is holding something for your
 // OK (a draft or a cart), Send / Pay asks Pipo to go ahead and Pipo finishes it with its own call.
 import confetti from "canvas-confetti";
-import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
+import { motion, useMotionTemplate, useReducedMotion, useSpring } from "motion/react";
 import { useRef, type PointerEvent } from "react";
 import { readable } from "../engine/actions.ts";
 import type { PipoAction } from "../engine/types.ts";
@@ -23,23 +23,36 @@ interface Props {
   onApprove: () => void;
 }
 
-const TILT = 10;
+/** Gentle: the phone leans a few degrees toward the pointer, like picking it up. */
+const TILT = 4;
+const SPRING = { stiffness: 150, damping: 20, mass: 0.6 };
 
 export function FloatingPhone({ action, flags, status, open, onOpen, onClose, onApprove }: Props) {
   const still = useReducedMotion();
   const bounds = useRef<HTMLDivElement>(null);
-  const rotateX = useSpring(useMotionValue(0), { stiffness: 200, damping: 18 });
-  const rotateY = useSpring(useMotionValue(0), { stiffness: 200, damping: 18 });
+  const dragging = useRef(false);
+  const rotateX = useSpring(0, SPRING);
+  const rotateY = useSpring(0, SPRING);
+  // A soft glare on the glass that follows the pointer
+  const glareX = useSpring(50, SPRING);
+  const glareY = useSpring(30, SPRING);
+  const glare = useMotionTemplate`radial-gradient(circle at ${glareX}% ${glareY}%, rgb(255 255 255 / 0.22), transparent 55%)`;
 
   const tilt = (e: PointerEvent<HTMLDivElement>) => {
-    if (still) return;
+    if (still || dragging.current) return;
     const r = e.currentTarget.getBoundingClientRect();
-    rotateY.set(((e.clientX - r.left) / r.width - 0.5) * TILT * 2);
-    rotateX.set(-((e.clientY - r.top) / r.height - 0.5) * TILT * 2);
+    const x = (e.clientX - r.left) / r.width;
+    const y = (e.clientY - r.top) / r.height;
+    rotateY.set((x - 0.5) * TILT * 2);
+    rotateX.set(-(y - 0.5) * TILT * 2);
+    glareX.set(x * 100);
+    glareY.set(y * 100);
   };
   const untilt = () => {
     rotateX.set(0);
     rotateY.set(0);
+    glareX.set(50);
+    glareY.set(30);
   };
 
   if (!open) {
@@ -64,16 +77,23 @@ export function FloatingPhone({ action, flags, status, open, onOpen, onClose, on
       <motion.div
         drag
         dragConstraints={bounds}
-        dragElastic={0.08}
+        dragElastic={0.06}
         dragMomentum={false}
-        whileDrag={{ scale: 1.04, cursor: "grabbing" }}
-        initial={still ? false : { opacity: 0, y: 80, scale: 0.85, rotate: -6 }}
-        animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
-        transition={{ type: "spring", bounce: 0.35, duration: 0.6 }}
-        style={{ rotateX, rotateY, transformPerspective: 900 }}
+        onDragStart={() => {
+          dragging.current = true;
+          untilt();
+        }}
+        onDragEnd={() => {
+          dragging.current = false;
+        }}
+        whileDrag={{ scale: 1.03, cursor: "grabbing" }}
+        initial={still ? false : { opacity: 0, y: 90, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: "spring", bounce: 0.25, duration: 0.6 }}
+        style={{ rotateX, rotateY, transformPerspective: 1600 }}
         onPointerMove={tilt}
         onPointerLeave={untilt}
-        className="fixed bottom-3 left-[calc(50%-136px)] z-50 w-[272px] cursor-grab touch-none md:top-24 md:right-8 md:bottom-auto md:left-auto"
+        className="fixed bottom-3 left-[calc(50%-136px)] z-50 h-[min(568px,calc(100dvh-1.5rem))] w-[272px] cursor-grab touch-none md:top-20 md:right-8 md:bottom-auto md:left-auto md:h-[min(568px,calc(100dvh-18rem))]"
         role="dialog"
         aria-label="Pipo's phone"
       >
@@ -86,21 +106,32 @@ export function FloatingPhone({ action, flags, status, open, onOpen, onClose, on
           <span aria-hidden="true">–</span>
         </button>
 
-        <div className="rounded-[38px] bg-ink p-[7px] shadow-[0_30px_60px_-15px_rgb(27_22_64/0.65)]">
-          <div className="relative overflow-hidden rounded-[31px] bg-white">
-            {/* Status bar with a little camera island */}
-            <div className="flex items-center justify-between px-5 pt-2 pb-1 text-[11px] font-black text-ink">
+        {/* Side buttons, for a real phone silhouette */}
+        <span className="absolute top-24 -left-[3px] h-10 w-[3px] rounded-l bg-ink" aria-hidden="true" />
+        <span className="absolute top-28 -right-[3px] h-16 w-[3px] rounded-r bg-ink" aria-hidden="true" />
+
+        <div className="h-full rounded-[42px] bg-ink p-[7px] shadow-[0_40px_70px_-20px_rgb(27_22_64/0.7)]">
+          <div className="relative flex h-full flex-col overflow-hidden rounded-[35px] bg-white">
+            {/* Status bar with a camera island */}
+            <div className="flex shrink-0 items-center justify-between px-6 pt-2.5 pb-1.5 text-[11px] font-black text-ink">
               <span>9:41</span>
-              <span className="h-4 w-16 rounded-full bg-ink" aria-hidden="true" />
+              <span className="h-[18px] w-[72px] rounded-full bg-ink" aria-hidden="true" />
               <span aria-hidden="true">📶 🔋</span>
             </div>
 
-            <PhoneScreen action={action} flags={flags} />
-            <PhoneFooter action={action} flags={flags} status={status} onApprove={onApprove} onLater={onClose} />
-
-            <div className="flex justify-center pt-1 pb-2" aria-hidden="true">
-              <span className="h-1 w-24 rounded-full bg-ink/80" />
+            <div className="min-h-0 flex-1">
+              <PhoneScreen action={action} flags={flags} />
             </div>
+            <div className="shrink-0">
+              <PhoneFooter action={action} flags={flags} status={status} onApprove={onApprove} onLater={onClose} />
+            </div>
+
+            <div className="flex shrink-0 justify-center pt-1.5 pb-2" aria-hidden="true">
+              <span className="h-1 w-28 rounded-full bg-ink/80" />
+            </div>
+
+            {/* Glass glare */}
+            {!still && <motion.div className="pointer-events-none absolute inset-0" style={{ background: glare }} aria-hidden="true" />}
           </div>
         </div>
       </motion.div>
