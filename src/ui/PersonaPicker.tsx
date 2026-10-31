@@ -51,6 +51,9 @@ export function PersonaPicker({ onStart }: { onStart: (persona: Persona) => void
         <p className="text-lg font-black tracking-tight text-brand-700">Pipodojo</p>
         <h1 className="text-3xl font-black text-ink md:text-4xl">Pick your path</h1>
         <p className="font-semibold text-gray-600">Who are you helping Pipo help today?</p>
+        <p className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1 text-xs font-extrabold text-brand-800 ring-1 ring-white">
+          <span aria-hidden="true">⚡</span> Pipo is powered by Meta's Muse Spark
+        </p>
       </header>
 
       <div ref={wrapper} className="relative">

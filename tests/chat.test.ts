@@ -104,8 +104,8 @@ describe("onRequest", () => {
 
   it("uses MODEL_ID only when it is on the allowlist", async () => {
     let fetchMock = stubUpstream();
-    await onRequest({ request: post({ messages }), env: { ...env, MODEL_ID: "muse-spark-1.2-contributor" } });
-    expect(sentBody(fetchMock).model).toBe("muse-spark-1.2-contributor");
+    await onRequest({ request: post({ messages }), env: { ...env, MODEL_ID: "muse-spark-1.2" } });
+    expect(sentBody(fetchMock).model).toBe("muse-spark-1.2");
 
     fetchMock = stubUpstream();
     await onRequest({ request: post({ messages }), env: { ...env, MODEL_ID: "some-other-model" } });

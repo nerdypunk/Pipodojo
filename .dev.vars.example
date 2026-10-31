@@ -2,5 +2,6 @@
 # .dev.vars is gitignored. Never commit a real key.
 MODEL_API_KEY=paste-your-meta-model-api-key-here
 
-# Optional. muse-spark-1.2 (default) or muse-spark-1.2-contributor (cheaper; Meta may train on prompts).
-MODEL_ID=muse-spark-1.2-contributor
+# Optional. Pipodojo uses muse-spark-1.2-contributor by default, locally and deployed
+# (cheaper; Meta may use the prompts to improve its models). Set muse-spark-1.2 to override.
+# MODEL_ID=muse-spark-1.2-contributor

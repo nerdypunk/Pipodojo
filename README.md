@@ -32,3 +32,7 @@ Other commands:
 - `src/engine`: pure TypeScript game engine (prompt building, asking Pipo, rule-based stars). No React. A model never scores the player.
 - `src/ui`: the screens.
 - `functions/api/chat.js`: the only server code. It holds the API key, picks the model, and caps cost.
+
+## Powered by Muse Spark
+
+Pipo's answers come live from Meta's **Muse Spark** model through the Meta Model API. Pipodojo uses the `muse-spark-1.2-contributor` tier everywhere, locally and deployed: it costs less, and in return Meta may use the prompts to improve its models. Players never type, so every prompt is built from the game's own preset pieces and nothing personal is sent. Pipo's role and answer format come from each lesson file; the stars are worked out by the game's own rules, never by a model.

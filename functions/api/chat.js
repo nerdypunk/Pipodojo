@@ -6,10 +6,11 @@
 
 export const UPSTREAM_URL = "https://api.meta.ai/v1/chat/completions";
 // The client never picks the model. The server may choose one of ALLOWED_MODELS via
-// the MODEL_ID env var; anything else falls back to the standard tier.
-// The -contributor tier is much cheaper but lets Meta train on prompts. Our prompts
-// are only fictional mission text plus button choices, so it is fine for testing.
-export const MODEL = "muse-spark-1.2";
+// the MODEL_ID env var; anything else falls back to MODEL.
+// Decision (Oct 31): Pipodojo uses the -contributor tier everywhere, deployed too. It is much
+// cheaper; in return Meta may use the prompts to improve its models. Our prompts are only
+// fictional lesson text built from preset buttons (players never type), so nothing personal.
+export const MODEL = "muse-spark-1.2-contributor";
 export const ALLOWED_MODELS = ["muse-spark-1.2", "muse-spark-1.2-contributor"];
 
 export function resolveModel(env) {
