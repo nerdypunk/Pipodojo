@@ -1,4 +1,5 @@
 import { useLang } from "../i18n/index.tsx";
+import { SoundButton } from "./SoundButton.tsx";
 
 interface Props {
   /** 0 to 1: how much of the prompt is built. */
@@ -52,6 +53,7 @@ export function TopBar({ progress, stars, onBack, lesson }: Props) {
         </span>
         {stars}
       </span>
+      <SoundButton compact className="-mr-2" />
     </header>
   );
 }

@@ -2,7 +2,8 @@
 // column, read top to bottom: the celebration, what Pipo got done, what you learned, where you
 // are on the path, and Continue (which sweeps the panel away into the next lesson).
 import confetti from "canvas-confetti";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { play } from "../app/sound.ts";
 import type { Postcard } from "../app/postcard.ts";
 import type { Mission, RunLog } from "../engine/types.ts";
 import { answerLines } from "../game/feedback.ts";
@@ -39,6 +40,14 @@ export function LessonComplete({ pathName, lessons, index, log, stars, postcard,
   const next = lessons[index + 1];
   const won = log.score.stars;
   const { t } = useLang();
+
+  // A fanfare as the box comes up; the bigger victory sting when the path is done.
+  const sounded = useRef(false);
+  useEffect(() => {
+    if (sounded.current) return;
+    sounded.current = true;
+    play(next ? "lesson" : "path");
+  }, [next]);
 
   useEffect(() => {
     if (won < 2) return;

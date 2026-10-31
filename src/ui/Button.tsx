@@ -1,5 +1,6 @@
-import type { ButtonHTMLAttributes } from "react";
+import type { ButtonHTMLAttributes, MouseEvent } from "react";
 import StarBorder from "@/components/StarBorder";
+import { play } from "../app/sound.ts";
 import { TOUCH } from "./device.ts";
 
 type Tone = "primary" | "amber" | "plain";
@@ -13,8 +14,15 @@ const STAR = {
   amber: { backgroundColor: "#fbbf24", textColor: "#451a03", borderColor: "#d97706", color: "#ffffff" },
 } as const;
 
-/** The app's buttons. Primary and amber get the animated star border (React Bits StarBorder). */
-export function Button({ tone = "primary", className = "", ...props }: Props) {
+/** The app's buttons. Primary and amber get the animated star border (React Bits StarBorder). Every press makes a soft tap sound. */
+export function Button({ tone = "primary", className = "", onClick, ...rest }: Props) {
+  const props = {
+    ...rest,
+    onClick: (e: MouseEvent<HTMLButtonElement>) => {
+      play("tap");
+      onClick?.(e);
+    },
+  };
   if (TOUCH && tone !== "plain") {
     // Phones: the same colors as a plain button, no canvas, and it presses down when tapped.
     const star = STAR[tone];

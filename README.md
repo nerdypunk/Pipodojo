@@ -44,6 +44,10 @@ In each path, the first lesson is a short answer from Pipo; the next two have Pi
 
 The young coder uses **Pipo Code**, a coding agent on a laptop, to build a website about a hamster, make an obstacle-course game in BlockStudio (a pretend game studio) and make charts and diagrams for homework. Each laptop app shows a live preview and a code view. They're drawn by the game from Pipo's choices, so nothing the model writes is ever run. These lessons also teach staying safe: no personal details online, no real money in games, and learning instead of copying.
 
+## Music and sound
+
+Every sound effect and the music loop are made in code with the browser's Web Audio API (`src/app/sound.ts`): no audio files, nothing to license. Sound starts after the player's first tap, music loops softly under the game, and the 🔊 button turns music and sound effects off separately (remembered per device).
+
 ## English and Spanish
 
 The whole game plays in English or Latin American Spanish; the 🌐 button on the first screen and in town switches it, and a first visit follows the browser's language.

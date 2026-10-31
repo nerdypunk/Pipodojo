@@ -7,6 +7,14 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
 export const es: Strings = {
   switchTo: { short: "EN", label: "Switch to English" },
 
+  sound: {
+    button: "Ajustes de sonido",
+    music: "Música",
+    effects: "Efectos de sonido",
+    on: "Sí",
+    off: "No",
+  },
+
   common: {
     poweredBy: "Pipo funciona con Muse Spark de Meta",
     openSourceA: "Un",

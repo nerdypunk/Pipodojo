@@ -8,6 +8,14 @@ export const en = {
   /** The other language, for the switch button. */
   switchTo: { short: "ES", label: "Cambiar a español" },
 
+  sound: {
+    button: "Sound settings",
+    music: "Music",
+    effects: "Sound effects",
+    on: "On",
+    off: "Off",
+  },
+
   common: {
     poweredBy: "Pipo is powered by Meta's Muse Spark",
     openSourceA: "An",

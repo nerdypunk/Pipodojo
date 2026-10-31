@@ -12,6 +12,7 @@ import "@swup/slide-theme/src/index.css";
 import { useCallback, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { TOUCH } from "./device.ts";
+import { play } from "../app/sound.ts";
 
 export type SweepDirection = "to-right" | "to-left";
 
@@ -42,6 +43,7 @@ export function usePageTransition() {
       html().classList.toggle("swup-theme-reverse", dir === "to-left");
       settle(html());
       html().classList.add("is-changing", "is-leaving", "is-animating");
+      play("whoosh");
       await wait(HALF_MS);
       covered.current = true;
       return true;

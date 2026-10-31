@@ -1,6 +1,7 @@
 import StarBorder from "@/components/StarBorder";
 import type { Mission } from "../engine/types.ts";
 import { TOUCH } from "./device.ts";
+import { play } from "../app/sound.ts";
 import { useLang } from "../i18n/index.tsx";
 
 interface Props {
@@ -38,6 +39,7 @@ export function BriefBuilder({ mission, picks, onTap, onlyPicked = false }: Prop
               const on = picks.includes(piece.id);
               const tap = () => {
                 buzz();
+                play(on ? "unpick" : "pick");
                 onTap(piece.id);
               };
               if (TOUCH) {

@@ -6,6 +6,8 @@ import { BODIES, COLORS, HEADS, paletteOf, type PipoLook } from "../game/pipoLoo
 import { useLang } from "../i18n/index.tsx";
 import { Button } from "./Button.tsx";
 import { LangSwitch } from "./LangSwitch.tsx";
+import { SoundButton } from "./SoundButton.tsx";
+import { play } from "../app/sound.ts";
 import { Pipo } from "./Pipo.tsx";
 import { ShaderBorder } from "./ShaderBorder.tsx";
 
@@ -31,6 +33,7 @@ export function PipoBuilder({ look, onChange, onDone, first }: Props) {
           <span aria-hidden="true">⚡</span> {t.common.poweredBy}
         </span>
         <LangSwitch className="ml-auto py-1.5 sm:ml-0" />
+        <SoundButton compact />
       </header>
 
       <main className="grid gap-3 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-5">
@@ -112,7 +115,10 @@ function Tile({ on, label, onPick, children }: { on: boolean; label: string; onP
     <button
       type="button"
       aria-pressed={on}
-      onClick={onPick}
+      onClick={() => {
+        play("pick");
+        onPick();
+      }}
       className={`flex w-24 flex-col items-center gap-1 rounded-2xl border-2 border-b-4 px-2 py-2 text-sm font-extrabold transition active:translate-y-px motion-reduce:transition-none ${
         on ? "pick-pop border-brand-700 bg-brand-600 text-white" : "border-white bg-white/85 text-ink hover:bg-white"
       }`}

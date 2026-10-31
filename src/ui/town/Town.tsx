@@ -10,6 +10,8 @@ import type { PipoLook } from "../../game/pipoLook.ts";
 import { personasIn } from "../../game/personas.ts";
 import { useLang } from "../../i18n/index.tsx";
 import { LangSwitch } from "../LangSwitch.tsx";
+import { SoundButton } from "../SoundButton.tsx";
+import { play } from "../../app/sound.ts";
 import type { PlaceId } from "../../game/townLayout.ts";
 import { Pipo } from "../Pipo.tsx";
 import type { PlaceTag } from "./TownCanvas.tsx";
@@ -87,6 +89,7 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
   // Clicking flies the camera in; the screen moves on once it lands.
   const select = (id: PlaceId) => {
     if (selected || !tags[id].open) return;
+    play("fly");
     if (!has3D) return go(id);
     setSelected(id);
     setHovered(id);
@@ -146,6 +149,7 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
             <span className="hidden sm:inline">{t.town.garage}</span>
           </button>
           <LangSwitch />
+          <SoundButton />
         </div>
       </header>
 

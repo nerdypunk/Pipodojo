@@ -1,13 +1,17 @@
 // The language switch: a small pill that flips the whole game between English and Spanish.
 // It shows the language you'd switch TO, so a Spanish speaker on an English screen sees "ES".
 import { useLang } from "../i18n/index.tsx";
+import { play } from "../app/sound.ts";
 
 export function LangSwitch({ className = "" }: { className?: string }) {
   const { lang, setLang, t } = useLang();
   return (
     <button
       type="button"
-      onClick={() => setLang(lang === "en" ? "es" : "en")}
+      onClick={() => {
+        play("toggle");
+        setLang(lang === "en" ? "es" : "en");
+      }}
       aria-label={t.switchTo.label}
       title={t.switchTo.label}
       lang={lang === "en" ? "es" : "en"}

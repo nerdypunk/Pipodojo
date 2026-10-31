@@ -17,6 +17,7 @@ import { ShaderBorder } from "./ShaderBorder.tsx";
 import { TopBar } from "./TopBar.tsx";
 import { UnderTheHood } from "./UnderTheHood.tsx";
 import { useLang } from "../i18n/index.tsx";
+import { play } from "../app/sound.ts";
 
 type Phase =
   | { name: "build" }
@@ -59,16 +60,22 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
     setNudge(null);
     setCalls([]);
     setPhase({ name: "thinking" });
+    play("think");
     if (!takeLiveRun()) {
       setPhase({ name: "failed", run: null });
+      play("miss");
       return;
     }
     const run = await askPipo({ mission, picks, client: traced(liveClient), now: () => performance.now() });
     if (run.status === "failed") {
       setPhase({ name: "failed", run });
+      play("miss");
       return;
     }
     const score = evaluate(mission, picks, run.answer);
+    // One chime per star; a gentle "hmm" when a gap showed up.
+    if (score.stars === 1) play("miss");
+    else play("stars", score.stars);
     setBestStars((best) => Math.max(best, score.stars));
     setPhone(run.action ? { action: run.action, status: run.action.outcome === "done" ? "already" : "review", open: true } : null);
     setPhase({

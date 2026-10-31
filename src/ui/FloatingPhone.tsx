@@ -9,6 +9,7 @@ import { readable } from "../engine/actions.ts";
 import type { PipoAction } from "../engine/types.ts";
 import { isLaptopApp, LaptopScreen } from "./LaptopApps.tsx";
 import { PhoneScreen } from "./PhoneMockup.tsx";
+import { play, type Sfx } from "../app/sound.ts";
 import { useLang, type Strings } from "../i18n/index.tsx";
 
 /** review: waiting for your OK. working: Pipo is finishing it. approved: done after your OK.
@@ -307,7 +308,19 @@ function PhoneFooter({
 }
 
 /** A small burst of confetti from the phone when an order goes through. */
+/** The sound each app makes when Pipo finishes the action after your OK. */
+const DONE_SOUND: Record<PipoAction["app"], Sfx> = {
+  whatsapp: "send",
+  email: "send",
+  shop: "pay",
+  calendar: "add",
+  site: "publish",
+  game: "publish",
+  chart: "add",
+};
+
 export function celebrate(app: PipoAction["app"]) {
+  play(DONE_SOUND[app]);
   void confetti({
     particleCount: app === "shop" ? 90 : 50,
     spread: 70,

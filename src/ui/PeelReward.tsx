@@ -10,6 +10,7 @@ import { postcardFileName, type Postcard } from "../app/postcard.ts";
 import { Peel, type PeelInstance } from "../vendor/peel/index.ts";
 import { Pipo } from "./Pipo.tsx";
 import { ShareSheet } from "./ShareSheet.tsx";
+import { play } from "../app/sound.ts";
 import { useLang } from "../i18n/index.tsx";
 
 interface Props {
@@ -47,6 +48,7 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
   const reveal = () => {
     if (opened.current) return;
     opened.current = true;
+    play("reveal");
     setOpen(true);
     void confetti({
       particleCount: 160,
@@ -64,6 +66,7 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
     if (!box || !p) return reveal();
     if (finishing.current) return;
     finishing.current = true;
+    play("peel");
     const { width: w, height: h } = box.getBoundingClientRect();
     const from = pos.current ?? { x: w - TEASE.x, y: h - TEASE.y };
     const to = { x: -w * 1.2, y: -h * 1.2 };
@@ -117,6 +120,14 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
   }, [still]);
 
   const ready = postcard?.status === "ready" ? postcard : null;
+
+  // Sparkles when Muse Image's painting lands on an opened reward.
+  const sparkled = useRef(false);
+  useEffect(() => {
+    if (!open || !ready?.painted || sparkled.current) return;
+    sparkled.current = true;
+    play("painted");
+  }, [open, ready?.painted]);
   const seconds = ready?.ms !== undefined ? (ready.ms / 1000).toFixed(1) : null;
 
   return (

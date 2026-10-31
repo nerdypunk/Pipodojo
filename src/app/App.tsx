@@ -16,6 +16,7 @@ import { preloadTown, Town } from "../ui/town/Town.tsx";
 import { initialLang, LangContext, saveLang, type Lang } from "../i18n/index.tsx";
 import { missionsIn } from "./missions.ts";
 import { paintPostcard, type Postcard } from "./postcard.ts";
+import { installAudioUnlock } from "./sound.ts";
 
 type Screen =
   /** Make your Pipo: first thing on arrival, and later from Pipo's garage in town. */
@@ -87,6 +88,8 @@ export function App() {
 
   // Fetch the 3D town while the player is still picking a look.
   useEffect(preloadTown, []);
+  // Wake the audio on the first tap, then start the music (if on).
+  useEffect(installAudioUnlock, []);
 
   useEffect(() => {
     try {
