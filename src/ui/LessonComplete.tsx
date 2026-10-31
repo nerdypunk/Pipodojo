@@ -52,7 +52,7 @@ export function LessonComplete({ pathName, lessons, index, log, stars, onContinu
         className="pop-in m-auto flex w-full max-w-xl flex-col overflow-hidden rounded-3xl bg-white shadow-[0_30px_80px_-20px_rgb(0_0_0/0.6)]"
       >
         {/* 1. Celebration */}
-        <div className="flex items-center gap-4 bg-[radial-gradient(circle_at_20%_50%,#5a46e0_0%,#2d2470_60%,#1b1640_100%)] px-5 py-4 text-white">
+        <div className="flex items-center gap-4 bg-[linear-gradient(115deg,#4936bd_0%,#5a46e0_45%,#8c7dfb_100%)] px-5 py-4 text-white">
           <Pipo
             mood={won === 1 ? "oops" : "happy"}
             className="h-16 w-16 shrink-0 drop-shadow-[0_8px_18px_rgba(0,0,0,0.35)]"
@@ -104,6 +104,22 @@ export function LessonComplete({ pathName, lessons, index, log, stars, onContinu
             <span aria-hidden="true">💡 </span>
             {mission.lesson}
           </p>
+
+          {/* What agents can do, in plain words: where the path is heading next */}
+          {mission.funFact && (
+            <section className="flex gap-3 rounded-2xl bg-sky-50 px-4 py-3 ring-1 ring-sky-200" aria-label="Did you know?">
+              <span
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-500 text-lg"
+                aria-hidden="true"
+              >
+                🤖
+              </span>
+              <div>
+                <p className="text-sm font-black text-sky-900">Did you know?</p>
+                <p className="text-sm leading-snug font-semibold text-sky-950">{mission.funFact}</p>
+              </div>
+            </section>
+          )}
 
           {/* 4. Where you are on the path */}
           <section className="rounded-2xl bg-brand-50/70 px-4 py-3" aria-label="Your path">

@@ -59,6 +59,8 @@ export const MissionSchema = z
     icon: text.optional(),
     /** Shown after the lesson: what Pipo got done, e.g. "Pipo planned your barbecue menu." */
     recap: text.optional(),
+    /** Shown after the lesson: a plain-words fact about what agents can do, leading into the next lesson. */
+    funFact: text.optional(),
     /** Pipo's opening line, e.g. "Friends are coming Saturday. Tell me what you need!" */
     situation: text,
     /** Things the player knows and Pipo doesn't, shown on the lesson card. */
