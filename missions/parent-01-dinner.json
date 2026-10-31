@@ -3,7 +3,7 @@
   "persona": "parent",
   "order": 1,
   "title": "Saturday barbecue",
-  "situation": "Friends are coming over Saturday for a barbecue. Tell me what you need!",
+  "situation": "Hi! I hear friends are coming over Saturday for a barbecue. How can I help?",
   "facts": [
     "👥 6 people are coming",
     "🥕 Sam is vegetarian",
@@ -13,13 +13,13 @@
   "slots": [
     {
       "id": "want",
-      "label": "What do you want?",
+      "label": "What do you want Pipo to do?",
       "pick": "one",
       "required": true,
       "pieces": [
         {
           "id": "plan_dinner",
-          "label": "Plan a barbecue for 6 friends on Saturday",
+          "label": "Plan a barbecue for 6 friends this Saturday",
           "text": "Plan a barbecue for 6 friends this Saturday.",
           "quality": "good"
         },
@@ -33,24 +33,24 @@
     },
     {
       "id": "know",
-      "label": "What Pipo needs to know",
+      "label": "What does Pipo need to know?",
       "pick": "many",
       "pieces": [
         {
           "id": "vegetarian",
-          "label": "Sam is vegetarian",
+          "label": "My friend Sam is vegetarian",
           "text": "One of my friends, Sam, is vegetarian.",
           "quality": "good"
         },
         {
           "id": "budget",
-          "label": "Keep it under $60",
+          "label": "Keep the total under $60",
           "text": "Keep the total under $60.",
           "quality": "good"
         },
         {
           "id": "amazing",
-          "label": "Make it amazing",
+          "label": "Make it amazing!",
           "text": "Make it amazing!",
           "quality": "weak",
           "tip": "\"Make it amazing\" sounds nice, but it gives Pipo nothing concrete to work with."
@@ -59,7 +59,7 @@
     },
     {
       "id": "shape",
-      "label": "What should the answer look like?",
+      "label": "How should Pipo answer?",
       "pick": "one",
       "pieces": [
         {
@@ -73,7 +73,7 @@
           "label": "Tell me everything",
           "text": "Tell me everything I should know.",
           "quality": "weak",
-          "tip": "\"Tell me everything\" gets you a long answer that's hard to use."
+          "tip": "\"Tell me everything\" doesn't say what you need back. Asking for something specific gets you an answer you can use."
         }
       ]
     }

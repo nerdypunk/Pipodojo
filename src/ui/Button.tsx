@@ -4,7 +4,7 @@ import StarBorder from "@/components/StarBorder";
 type Tone = "primary" | "amber" | "plain";
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & { tone?: Tone };
 
-const BASE = "min-h-12 px-6! py-2! text-base font-extrabold";
+const BASE = "min-h-12 px-6! py-2! text-base font-extrabold!";
 
 /** Star colors per tone: a light that laps the border, brighter on hover, with a pulse on press. */
 const STAR = {

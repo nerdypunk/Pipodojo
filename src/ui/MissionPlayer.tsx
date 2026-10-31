@@ -58,7 +58,7 @@ export function MissionPlayer({ mission, onBack }: { mission: Mission; onBack: (
   const locked = phase.name !== "build";
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col justify-center gap-4 p-3 md:p-6">
+    <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col justify-center gap-3 p-3 md:px-6 md:py-4">
       <Backdrop />
       <TopBar progress={result ? 1 : filledShare(mission, picks)} stars={bestStars} onBack={onBack} />
 
@@ -74,13 +74,17 @@ export function MissionPlayer({ mission, onBack }: { mission: Mission; onBack: (
 
         <section className="glass flex flex-col gap-4 rounded-3xl p-4 md:p-5" aria-label="Build your message to Pipo">
           <PromptCard prompt={buildPrompt(mission, picks)} />
+          {/* Locked while Pipo thinks (the glow stays bright), faded once the answer is in. */}
           <div
-            className={`transition-opacity motion-reduce:transition-none ${locked ? "pointer-events-none opacity-50" : ""}`}
+            className={`transition-opacity motion-reduce:transition-none ${locked ? "pointer-events-none" : ""} ${
+              result || phase.name === "failed" ? "opacity-60" : ""
+            }`}
             aria-disabled={locked}
           >
             <BriefBuilder
               mission={mission}
               picks={picks}
+              mode={thinking ? "thinking" : result ? "done" : "build"}
               onTap={(id) => {
                 setNudge(null);
                 setPicks((p) => togglePick(mission, p, id));

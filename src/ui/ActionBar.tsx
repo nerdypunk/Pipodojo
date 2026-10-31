@@ -48,7 +48,7 @@ function Result({ mission, score, onTryAgain }: { mission: Mission; score: Score
   const text = missed ? "text-amber-800" : "text-brand-800";
   return (
     <Panel className={missed ? "bg-amber-50/90" : "bg-white/80"} label="Your result">
-      <div className="flex-1 space-y-1">
+      <div className="flex-1 space-y-0.5">
         <p className={`flex flex-wrap items-center gap-x-2.5 text-xl font-black ${text}`}>
           <span className="tracking-widest" aria-label={`${score.stars} out of 3 stars`}>
             <span className="text-amber-400">{"★".repeat(score.stars)}</span>
@@ -73,7 +73,7 @@ function Result({ mission, score, onTryAgain }: { mission: Mission; score: Score
 function Panel({ className, label, children }: { className: string; label?: string; children: React.ReactNode }) {
   return (
     <section
-      className={`pop-in flex flex-col gap-3 rounded-2xl p-4 sm:flex-row sm:items-center sm:gap-4 ${className}`}
+      className={`pop-in flex flex-col gap-3 rounded-2xl px-4 py-3 sm:flex-row sm:items-center sm:gap-4 ${className}`}
       aria-label={label}
     >
       {children}
