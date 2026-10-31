@@ -55,36 +55,37 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
   const thinking = phase.name === "thinking";
   const result = phase.name === "result" ? phase.log : null;
   const mood = thinking ? "thinking" : result ? (result.score.stars === 1 ? "oops" : "happy") : "idle";
-  // Pieces stay on screen while building and thinking; the result takes their place after.
-  const showPieces = phase.name === "build" || thinking;
+  const locked = phase.name !== "build";
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col justify-center gap-4 p-3 md:p-6">
       <Backdrop />
       <TopBar progress={result ? 1 : filledShare(mission, picks)} stars={bestStars} />
 
-      <main className="grid gap-4 md:grid-cols-[5fr_6fr] md:items-start md:gap-5">
+      {/* Both cards stretch to the same height; the pieces stay put so nothing jumps after Check. */}
+      <main className="grid gap-4 md:grid-cols-[5fr_6fr] md:gap-5">
         <PipoScene
           mission={mission}
           mood={mood}
-          thinking={thinking}
+          brain={thinking ? "thinking" : result ? "done" : "idle"}
           answer={result ? answerLines(mission, result.score, result.answer) : null}
         />
 
         <section className="glass flex flex-col gap-4 rounded-3xl p-4 md:p-5" aria-label="Build your message to Pipo">
           <PromptCard prompt={buildPrompt(mission, picks)} />
-          {showPieces && (
-            <div className={thinking ? "pointer-events-none opacity-60" : ""} aria-disabled={thinking}>
-              <BriefBuilder
-                mission={mission}
-                picks={picks}
-                onTap={(id) => {
-                  setNudge(null);
-                  setPicks((p) => togglePick(mission, p, id));
-                }}
-              />
-            </div>
-          )}
+          <div
+            className={`transition-opacity motion-reduce:transition-none ${locked ? "pointer-events-none opacity-50" : ""}`}
+            aria-disabled={locked}
+          >
+            <BriefBuilder
+              mission={mission}
+              picks={picks}
+              onTap={(id) => {
+                setNudge(null);
+                setPicks((p) => togglePick(mission, p, id));
+              }}
+            />
+          </div>
           <div className="mt-auto">
             {phase.name === "build" && <ActionBar state="build" nudge={nudge} onCheck={check} />}
             {thinking && <ActionBar state="thinking" />}

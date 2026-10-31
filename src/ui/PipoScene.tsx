@@ -2,19 +2,21 @@ import type { Mission } from "../engine/types.ts";
 import { splitEmoji } from "../game/emoji.ts";
 import type { AnswerLine } from "../game/feedback.ts";
 import { Pipo, type Mood } from "./Pipo.tsx";
+import { PipoBrain, type BrainMode } from "./PipoBrain.tsx";
 
 interface Props {
   mission: Mission;
   mood: Mood;
-  thinking: boolean;
+  brain: BrainMode;
   /** Pipo's answer once it's in; until then Pipo shows the lesson's request. */
   answer: AnswerLine[] | null;
 }
 
 const LINE_DELAY_MS = 150;
 
-/** Left card: Pipo, what Pipo says, and what you know. */
-export function PipoScene({ mission, mood, thinking, answer }: Props) {
+/** Left card: Pipo, what Pipo says, what you know, and Pipo's brain at work. */
+export function PipoScene({ mission, mood, brain, answer }: Props) {
+  const thinking = brain === "thinking";
   return (
     <section className="glass flex flex-col gap-4 rounded-3xl p-4 md:p-5" aria-label="The situation">
       <h1 className="text-xl font-black md:text-2xl">{mission.title}</h1>
@@ -43,6 +45,8 @@ export function PipoScene({ mission, mood, thinking, answer }: Props) {
           </ul>
         </div>
       )}
+
+      <PipoBrain mode={brain} />
     </section>
   );
 }
