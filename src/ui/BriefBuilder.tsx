@@ -3,26 +3,23 @@ import type { Mission } from "../engine/types.ts";
 interface Props {
   mission: Mission;
   picks: string[];
-  locked: boolean;
   onTap: (pieceId: string) => void;
 }
 
 /** Numbered rows of prompt pieces to tap. */
-export function BriefBuilder({ mission, picks, locked, onTap }: Props) {
+export function BriefBuilder({ mission, picks, onTap }: Props) {
   return (
-    <div className="space-y-5">
+    <div className="space-y-3.5">
       {mission.slots.map((slot, i) => (
         <fieldset key={slot.id}>
-          <legend className="mb-2 flex items-center gap-2 text-sm font-extrabold text-gray-500">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-xs text-gray-600">
+          <legend className="mb-1.5 flex items-center gap-2 text-sm font-extrabold text-gray-600">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-600 text-[11px] text-white">
               {i + 1}
             </span>
             {slot.label}
-            <span className="font-semibold text-gray-400">
-              · {slot.pick === "one" ? "pick one" : "pick any"}
-            </span>
+            <span className="font-semibold text-gray-500">· {slot.pick === "one" ? "pick one" : "pick any"}</span>
           </legend>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5">
             {slot.pieces.map((piece) => {
               const on = picks.includes(piece.id);
               return (
@@ -30,10 +27,11 @@ export function BriefBuilder({ mission, picks, locked, onTap }: Props) {
                   key={piece.id}
                   type="button"
                   aria-pressed={on}
-                  disabled={locked}
                   onClick={() => onTap(piece.id)}
-                  className={`min-h-12 rounded-2xl border-2 border-b-4 px-4 py-2 text-left font-bold transition active:translate-y-0.5 active:border-b-2 motion-reduce:transition-none disabled:cursor-default focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand-500 ${
-                    on ? "border-brand-400 bg-brand-100 text-brand-900" : "border-gray-200 bg-white text-ink hover:bg-gray-50"
+                  className={`min-h-11 rounded-xl border-2 border-b-4 px-3.5 py-1.5 text-left text-[15px] font-bold transition active:translate-y-0.5 active:border-b-2 motion-reduce:transition-none focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand-500 ${
+                    on
+                      ? "border-brand-500 bg-brand-100 text-brand-900"
+                      : "border-white bg-white/80 text-ink hover:bg-white"
                   }`}
                 >
                   {piece.label}
@@ -51,10 +49,10 @@ export function BriefBuilder({ mission, picks, locked, onTap }: Props) {
 export function PromptCard({ prompt }: { prompt: string }) {
   return (
     <div aria-live="polite">
-      <p className="mb-2 text-sm font-extrabold text-gray-400">Your message to Pipo</p>
+      <p className="mb-1.5 text-sm font-extrabold text-gray-600">Your message to Pipo</p>
       <p
-        className={`min-h-[4.5rem] rounded-3xl rounded-br-md px-5 py-3 text-lg leading-snug font-semibold ${
-          prompt ? "bg-brand-500 text-white" : "border-2 border-dashed border-gray-300 text-gray-400"
+        className={`min-h-[3.25rem] rounded-2xl rounded-br-md px-4 py-2.5 leading-snug font-semibold ${
+          prompt ? "bg-brand-600 text-white" : "border-2 border-dashed border-white/90 text-gray-500"
         }`}
       >
         {prompt || "Tap the pieces below to write it."}

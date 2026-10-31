@@ -8,47 +8,48 @@ type Props =
   | { state: "result"; mission: Mission; score: Score; onTryAgain: () => void }
   | { state: "failed"; onTryAgain: () => void };
 
-/** Bottom bar: the Check button while building, the result banner after. */
+/** Foot of the playground card: Check while building, the result after. */
 export function ActionBar(props: Props) {
-  if (props.state === "result") return <ResultBanner {...props} />;
+  if (props.state === "result") return <Result {...props} />;
 
   if (props.state === "failed") {
     return (
-      <Bar className="slide-up border-amber-200 bg-amber-50">
+      <Panel className="bg-amber-50/90">
         <div className="flex-1">
-          <p className="text-xl font-black text-amber-800">Pipo got a little tangled up</p>
+          <p className="text-lg font-black text-amber-800">Pipo got a little tangled up</p>
           <p className="font-semibold text-amber-700">That happens sometimes. Let's give it another go.</p>
         </div>
-        <Button tone="amber" className="w-full md:w-48" onClick={props.onTryAgain}>
+        <Button tone="amber" className="w-full sm:w-40" onClick={props.onTryAgain}>
           Try again
         </Button>
-      </Bar>
+      </Panel>
     );
   }
 
   const thinking = props.state === "thinking";
   return (
-    <Bar className="border-gray-200 bg-white">
-      <p className={`flex-1 font-bold ${!thinking && props.nudge ? "text-red-600" : "text-gray-400"}`} aria-live="polite">
+    <div className="flex flex-col gap-2 border-t border-white/70 pt-4 sm:flex-row sm:items-center sm:gap-4">
+      <p
+        className={`flex-1 text-sm font-bold ${!thinking && props.nudge ? "text-red-600" : "text-gray-500"}`}
+        aria-live="polite"
+      >
         {thinking ? "Pipo is reading your message…" : (props.nudge ?? "Build your message, then check it.")}
       </p>
-      <Button className="w-full md:w-48" disabled={thinking} onClick={thinking ? undefined : props.onCheck}>
+      <Button className="w-full sm:w-40" disabled={thinking} onClick={thinking ? undefined : props.onCheck}>
         {thinking ? "Thinking…" : "Check"}
       </Button>
-    </Bar>
+    </div>
   );
 }
 
-function ResultBanner({ mission, score, onTryAgain }: { mission: Mission; score: Score; onTryAgain: () => void }) {
+function Result({ mission, score, onTryAgain }: { mission: Mission; score: Score; onTryAgain: () => void }) {
   const missed = score.stars === 1;
   const notes = resultNotes(mission, score);
+  const text = missed ? "text-amber-800" : "text-brand-800";
   return (
-    <Bar
-      className={`slide-up ${missed ? "border-amber-200 bg-amber-50" : "border-brand-200 bg-brand-50"}`}
-      label="Your result"
-    >
+    <Panel className={missed ? "bg-amber-50/90" : "bg-white/80"} label="Your result">
       <div className="flex-1 space-y-1">
-        <p className={`flex flex-wrap items-center gap-x-3 text-2xl font-black ${missed ? "text-amber-800" : "text-brand-700"}`}>
+        <p className={`flex flex-wrap items-center gap-x-2.5 text-xl font-black ${text}`}>
           <span className="tracking-widest" aria-label={`${score.stars} out of 3 stars`}>
             <span className="text-amber-400">{"★".repeat(score.stars)}</span>
             <span className="text-gray-300">{"★".repeat(3 - score.stars)}</span>
@@ -56,27 +57,26 @@ function ResultBanner({ mission, score, onTryAgain }: { mission: Mission; score:
           {resultHeadline(score.stars)}
         </p>
         {notes.map((note) => (
-          <p key={note} className={`font-bold ${missed ? "text-amber-800" : "text-brand-800"}`}>
+          <p key={note} className={`font-bold ${text}`}>
             {note}
           </p>
         ))}
-        <p className={`text-sm font-semibold ${missed ? "text-amber-700" : "text-brand-700"}`}>
-          Remember: {mission.lesson}
-        </p>
+        <p className="text-sm font-semibold text-gray-600">Remember: {mission.lesson}</p>
       </div>
-      <Button tone={missed ? "amber" : "primary"} className="w-full md:w-48" onClick={onTryAgain}>
+      <Button tone={missed ? "amber" : "primary"} className="w-full sm:w-40" onClick={onTryAgain}>
         Try again
       </Button>
-    </Bar>
+    </Panel>
   );
 }
 
-function Bar({ className, label, children }: { className: string; label?: string; children: React.ReactNode }) {
+function Panel({ className, label, children }: { className: string; label?: string; children: React.ReactNode }) {
   return (
-    <footer className={`sticky bottom-0 border-t-2 ${className}`} aria-label={label}>
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-4 md:flex-row md:items-center md:gap-8 md:px-8 md:py-6">
-        {children}
-      </div>
-    </footer>
+    <section
+      className={`pop-in flex flex-col gap-3 rounded-2xl p-4 sm:flex-row sm:items-center sm:gap-4 ${className}`}
+      aria-label={label}
+    >
+      {children}
+    </section>
   );
 }

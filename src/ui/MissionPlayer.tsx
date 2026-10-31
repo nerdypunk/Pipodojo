@@ -1,5 +1,5 @@
 // One lesson on one screen: Pipo's scene on the left, the prompt playground on the right,
-// and the Check button / result banner in a bar along the bottom.
+// with Check and the result at the foot of the playground card.
 import { useState } from "react";
 import { askPipo } from "../engine/agentRunner.ts";
 import { buildPrompt, emptySlots, filledShare, isPromptReady, togglePick } from "../engine/brief.ts";
@@ -8,6 +8,7 @@ import type { Mission, PipoRun, RunLog } from "../engine/types.ts";
 import { answerLines } from "../game/feedback.ts";
 import { isDebug, liveClient, takeLiveRun } from "../app/liveClient.ts";
 import { ActionBar } from "./ActionBar.tsx";
+import { Backdrop } from "./Backdrop.tsx";
 import { BriefBuilder, PromptCard } from "./BriefBuilder.tsx";
 import { DebugPanel } from "./DebugPanel.tsx";
 import { PipoScene } from "./PipoScene.tsx";
@@ -51,36 +52,45 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
   }
 
   const tryAgain = () => setPhase({ name: "build" });
-  const building = phase.name === "build";
+  const thinking = phase.name === "thinking";
   const result = phase.name === "result" ? phase.log : null;
-  const mood = phase.name === "thinking" ? "thinking" : result ? (result.score.stars === 1 ? "oops" : "happy") : "idle";
+  const mood = thinking ? "thinking" : result ? (result.score.stars === 1 ? "oops" : "happy") : "idle";
+  // Pieces stay on screen while building and thinking; the result takes their place after.
+  const showPieces = phase.name === "build" || thinking;
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col justify-center gap-4 p-3 md:p-6">
+      <Backdrop />
       <TopBar progress={result ? 1 : filledShare(mission, picks)} stars={bestStars} />
 
-      <main className="mx-auto grid w-full max-w-6xl flex-1 content-center gap-6 px-4 pb-6 md:grid-cols-[5fr_6fr] md:items-start md:gap-10 md:px-8 md:pb-10">
+      <main className="grid gap-4 md:grid-cols-[5fr_6fr] md:items-start md:gap-5">
         <PipoScene
           mission={mission}
           mood={mood}
-          thinking={phase.name === "thinking"}
+          thinking={thinking}
           answer={result ? answerLines(mission, result.score, result.answer) : null}
         />
 
-        <section
-          className={`space-y-6 rounded-3xl bg-paper p-4 transition-opacity md:p-7 ${building ? "" : "opacity-60"}`}
-          aria-label="Build your message to Pipo"
-        >
+        <section className="glass flex flex-col gap-4 rounded-3xl p-4 md:p-5" aria-label="Build your message to Pipo">
           <PromptCard prompt={buildPrompt(mission, picks)} />
-          <BriefBuilder
-            mission={mission}
-            picks={picks}
-            locked={!building}
-            onTap={(id) => {
-              setNudge(null);
-              setPicks((p) => togglePick(mission, p, id));
-            }}
-          />
+          {showPieces && (
+            <div className={thinking ? "pointer-events-none opacity-60" : ""} aria-disabled={thinking}>
+              <BriefBuilder
+                mission={mission}
+                picks={picks}
+                onTap={(id) => {
+                  setNudge(null);
+                  setPicks((p) => togglePick(mission, p, id));
+                }}
+              />
+            </div>
+          )}
+          <div className="mt-auto">
+            {phase.name === "build" && <ActionBar state="build" nudge={nudge} onCheck={check} />}
+            {thinking && <ActionBar state="thinking" />}
+            {result && <ActionBar state="result" mission={mission} score={result.score} onTryAgain={tryAgain} />}
+            {phase.name === "failed" && <ActionBar state="failed" onTryAgain={tryAgain} />}
+          </div>
         </section>
 
         {isDebug && (result || phase.name === "failed") && (
@@ -89,11 +99,6 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
           </div>
         )}
       </main>
-
-      {phase.name === "build" && <ActionBar state="build" nudge={nudge} onCheck={check} />}
-      {phase.name === "thinking" && <ActionBar state="thinking" />}
-      {result && <ActionBar state="result" mission={mission} score={result.score} onTryAgain={tryAgain} />}
-      {phase.name === "failed" && <ActionBar state="failed" onTryAgain={tryAgain} />}
     </div>
   );
 }

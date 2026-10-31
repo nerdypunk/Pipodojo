@@ -27,7 +27,6 @@
   --color-gray-800: #312f42;
   --color-gray-900: #1f1d2c;
 
-  --color-paper: #f5f4fb;
   --color-ink: #26233a;
 }
 
@@ -37,7 +36,15 @@
 }
 
 body {
-  @apply bg-white text-ink antialiased;
+  @apply bg-brand-100 text-ink antialiased;
+}
+
+/* Frosted glass card that sits on the mesh gradient. */
+@utility glass {
+  background-color: rgb(255 255 255 / 0.55);
+  backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid rgb(255 255 255 / 0.7);
+  box-shadow: 0 12px 40px -16px rgb(45 36 112 / 0.35);
 }
 
 /* Result card lines pop in one by one. */

@@ -5,14 +5,14 @@ interface Props {
   stars: number;
 }
 
-/** Game frame across the top: logo, progress bar, stars. */
+/** Glass strip across the top: logo, progress bar, stars. */
 export function TopBar({ progress, stars }: Props) {
   const percent = Math.round(progress * 100);
   return (
-    <header className="mx-auto flex w-full max-w-6xl items-center gap-4 px-4 py-3 md:px-8 md:py-5">
-      <span className="text-xl font-black tracking-tight text-brand-600 md:text-2xl">Pipodojo</span>
+    <header className="glass flex items-center gap-4 rounded-2xl px-4 py-2.5">
+      <span className="text-lg font-black tracking-tight text-brand-700">Pipodojo</span>
       <div
-        className="h-4 flex-1 overflow-hidden rounded-full bg-brand-100"
+        className="h-3 flex-1 overflow-hidden rounded-full bg-white/70"
         role="progressbar"
         aria-label="Prompt progress"
         aria-valuenow={percent}
@@ -24,7 +24,7 @@ export function TopBar({ progress, stars }: Props) {
           style={{ width: `${percent}%` }}
         />
       </div>
-      <span className="flex items-center gap-1 text-lg font-extrabold text-amber-500" aria-label={`${stars} stars`}>
+      <span className="flex items-center gap-1 font-extrabold text-amber-500" aria-label={`${stars} stars`}>
         <span aria-hidden="true">★</span>
         {stars}
       </span>
