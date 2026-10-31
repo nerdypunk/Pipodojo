@@ -1,0 +1,118 @@
+{
+  "id": "parent-03-groceries",
+  "persona": "parent",
+  "order": 3,
+  "title": "Order the groceries",
+  "situation": "Everyone's invited! Should I get the food for Saturday?",
+  "facts": [
+    "📝 Your list: burgers, veggie burgers, buns, corn, salad, drinks",
+    "🚚 It has to arrive by Saturday at 2pm",
+    "💵 You can spend $60 at most",
+    "👀 You want to see the cart before paying"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. You can shop at online grocery stores and pay with their saved card. You do what they ask: if they ask you to buy or order something, you place the order and pay; if they ask to see the cart first, you show it and wait for their OK. Use these lines: one starting with 🛒 for what's in the cart, one starting with 💳 for the total in dollars, one starting with 🚚 for the delivery day and time, and a last line saying whether you paid or are waiting.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "order_list",
+          "label": "Order everything on the barbecue list",
+          "text": "Order everything on my barbecue shopping list for delivery: burgers, veggie burgers, buns, corn, salad and drinks for 6 people.",
+          "quality": "good"
+        },
+        {
+          "id": "buy_stuff",
+          "label": "Buy the stuff",
+          "text": "Buy the stuff.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "label": "What limits should Pipo follow?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "deliver_by",
+          "label": "Deliver by Saturday 2pm",
+          "text": "It has to arrive by Saturday at 2pm.",
+          "quality": "good"
+        },
+        {
+          "id": "budget",
+          "label": "Spend no more than $60",
+          "text": "Spend no more than $60 in total.",
+          "quality": "good"
+        },
+        {
+          "id": "cheaper",
+          "label": "Swap for cheaper brands if needed",
+          "text": "Swap to cheaper brands if you need to.",
+          "quality": "neutral"
+        },
+        {
+          "id": "best",
+          "label": "Get the best of everything!",
+          "text": "Get the best of everything!",
+          "quality": "weak",
+          "tip": "\"The best of everything\" sounds great, but it tells Pipo to spend more, not what you can afford."
+        }
+      ]
+    },
+    {
+      "id": "pay",
+      "label": "Before Pipo pays",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_cart",
+          "label": "Show me the cart and wait for my OK",
+          "text": "Show me the cart and wait for my OK before you pay.",
+          "quality": "good"
+        },
+        {
+          "id": "pay_now",
+          "label": "Just handle it",
+          "text": "Just handle it.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:buy_stuff",
+      "signals": ["🛒(?![^\\n]*(burger|bun|corn))"],
+      "hint": "\"Buy the stuff\" doesn't say what to buy, so Pipo has to guess.",
+      "explain": "Pipo didn't know what to buy, so the cart doesn't have your barbecue food."
+    },
+    {
+      "id": "no_budget",
+      "when": "not_picked:budget",
+      "signals": ["💳[^\\n]*\\$\\s?(6[1-9]|[7-9]\\d|\\d{3,})"],
+      "hint": "You didn't give Pipo a spending limit.",
+      "explain": "Pipo didn't know your limit, so the cart costs more than $60."
+    },
+    {
+      "id": "no_delivery_time",
+      "when": "not_picked:deliver_by",
+      "signals": ["🚚(?![^\\n]*saturday)", "🚚[^\\n]*saturday[^\\n]*\\b([2-9]|1[01])(:\\d\\d)?\\s?(pm|p\\.m\\.)"],
+      "hint": "You didn't tell Pipo when the food has to arrive.",
+      "explain": "Pipo didn't know when you need the food, so it picked a delivery time that's too late for the barbecue."
+    },
+    {
+      "id": "paid_unchecked",
+      "when": "picked:pay_now",
+      "signals": ["✅", "\\b(paid|purchased|order placed|ordered)\\b(?![^\\n]*\\bwait)"],
+      "hint": "Asking to see the cart first lets you catch mistakes before your money is spent.",
+      "explain": "Pipo paid straight away, so you never got to check the cart."
+    }
+  ],
+  "lesson": "When Pipo spends your money, give it limits and have it check with you before it pays."
+}
