@@ -1,10 +1,11 @@
 // A soft animated glow (Paper PulsingBorder) that sits BEHIND a card and peeks out around
 // its edges. It follows what Pipo is doing: a quiet drift while you build, a little brighter
 // and quicker while Pipo thinks, calm once the answer is in. "muted" is for cards you can't
-// play yet. Holds still for reduced motion.
+// play yet. Holds still for reduced motion. Phones get a still CSS glow instead (see device.ts).
 import { PulsingBorder } from "@paper-design/shaders-react";
 import { useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
+import { TOUCH } from "./device.ts";
 
 export type BorderMode = "build" | "thinking" | "done" | "muted";
 
@@ -30,10 +31,32 @@ interface Props {
   children: ReactNode;
 }
 
+/** The same glow as a still CSS shadow, for phones: one less WebGL canvas per card. */
+const TOUCH_GLOW: Record<BorderMode, string> = {
+  build: "0 0 0 2px rgb(110 92 242 / 0.35), 0 0 22px 2px rgb(91 156 255 / 0.4)",
+  thinking: "0 0 0 2px rgb(110 92 242 / 0.55), 0 0 26px 4px rgb(232 121 249 / 0.45)",
+  done: "0 0 0 2px rgb(140 125 251 / 0.3), 0 0 20px 2px rgb(156 194 255 / 0.35)",
+  muted: "0 0 0 2px rgb(178 169 255 / 0.3), 0 0 16px 1px rgb(203 201 218 / 0.35)",
+};
+
 /** Wraps a card: the glow is drawn underneath it, so the card itself stays exactly as it is. */
 export function ShaderBorder({ mode, roundness = 0.1, className = "", children }: Props) {
   const still = useReducedMotion();
   const look = LOOK[mode];
+  if (TOUCH) {
+    return (
+      <div className={`relative isolate ${className}`}>
+        <div
+          className={`pointer-events-none absolute inset-0 -z-10 rounded-3xl transition-shadow duration-300 ${
+            mode === "thinking" ? "animate-pulse motion-reduce:animate-none" : ""
+          }`}
+          style={{ boxShadow: TOUCH_GLOW[mode] }}
+          aria-hidden="true"
+        />
+        {children}
+      </div>
+    );
+  }
   return (
     <div className={`relative isolate ${className}`}>
       {/* The shader draws in a rectangle and its corners don't follow CSS radii, so clip it to a

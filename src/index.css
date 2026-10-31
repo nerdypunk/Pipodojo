@@ -90,6 +90,27 @@ body {
   backdrop-filter: blur(24px) saturate(1.4);
   border: 1px solid rgb(255 255 255 / 0.7);
   box-shadow: 0 12px 40px -16px rgb(45 36 112 / 0.35);
+
+  /* Phones: a live blur is re-drawn on every scrolled frame, so use a whiter card instead. */
+  @media (pointer: coarse) {
+    background-color: rgb(255 255 255 / 0.8);
+    backdrop-filter: none;
+  }
+}
+
+/* Phones and tablets (see src/ui/device.ts): taps act at once (no double-tap-zoom wait, no grey
+   flash), and no frosted blur anywhere, since re-blurring while scrolling is what stutters. */
+@media (pointer: coarse) {
+  html {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  *,
+  ::before,
+  ::after {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 }
 
 /* Result card lines pop in one by one. */
@@ -351,6 +372,23 @@ body {
   --swup-overlay-theme-delay: 0.04s;
   --swup-overlay-theme-skew: 6deg;
   --swup-slide-theme-translate: 40px;
+}
+
+/* Phones: Pipo still floats, but the tiny flame flicker and core glow (which repaint the whole
+   drawing every frame) rest. */
+@media (pointer: coarse) {
+  .pipo-flame,
+  .pipo-core {
+    animation: none;
+  }
+}
+
+/* Phones: a snappier sweep, so a tap moves on quickly (HALF_MS matches this too). */
+@media (pointer: coarse) {
+  :root {
+    --swup-overlay-theme-duration: 0.3s;
+    --swup-overlay-theme-delay: 0.02s;
+  }
 }
 
 .swup-transition-overlay {

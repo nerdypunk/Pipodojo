@@ -7,6 +7,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, type ReactNode } from "rea
 import * as THREE from "three";
 import type { PipoLook } from "../../game/pipoLook.ts";
 import { PLACES, RING, SPOKE_END, placeOf, type Place, type PlaceId } from "../../game/townLayout.ts";
+import { TOUCH } from "../device.ts";
 import { Pipo3D } from "./Pipo3D.tsx";
 import { Cafe, College, Dojo, Garage, House, KidHouse } from "./places.tsx";
 import { Balloon, Car, Cloud } from "./props.tsx";
@@ -58,8 +59,8 @@ export default function TownCanvas(props: TownCanvasProps) {
     <Canvas
       shadows
       flat
-      // Sharp enough on retina screens without drawing 4x the pixels.
-      dpr={[1, 1.5]}
+      // Sharp enough on retina screens without drawing 4x the pixels; phones a little less.
+      dpr={TOUCH ? [1, 1.25] : [1, 1.5]}
       gl={{ antialias: true, powerPreference: "high-performance" }}
       camera={{ position: (props.still ? homeFor(window.innerWidth / window.innerHeight) : CAMERA_START).toArray(), fov: 30, near: 0.5, far: 140 }}
       onPointerMissed={() => props.onHover(null)}

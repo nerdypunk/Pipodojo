@@ -11,11 +11,12 @@ import "@swup/overlay-theme/src/index.css";
 import "@swup/slide-theme/src/index.css";
 import { useCallback, useRef, useState } from "react";
 import { flushSync } from "react-dom";
+import { TOUCH } from "./device.ts";
 
 export type SweepDirection = "to-right" | "to-left";
 
 /** Matches --swup-overlay-theme-delay + --swup-overlay-theme-duration in index.css, plus a frame. */
-const HALF_MS = 560;
+const HALF_MS = TOUCH ? 340 : 560;
 
 // Plain timers, not requestAnimationFrame: rAF never fires in a hidden tab, which would leave the
 // panel stuck over the page.

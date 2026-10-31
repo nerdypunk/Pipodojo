@@ -161,7 +161,7 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
             <div
               className={`mt-auto ${
                 phase.name === "build" || thinking
-                  ? "max-md:glass max-md:sticky max-md:bottom-3 max-md:z-20 max-md:-mx-1 max-md:rounded-2xl max-md:px-3 max-md:pb-3"
+                  ? "max-md:glass pointer-coarse:bg-white/95 max-md:sticky max-md:bottom-3 max-md:z-20 max-md:-mx-1 max-md:rounded-2xl max-md:px-3 max-md:pb-3"
                   : ""
               }`}
             >

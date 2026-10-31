@@ -1,5 +1,6 @@
 import type { ButtonHTMLAttributes } from "react";
 import StarBorder from "@/components/StarBorder";
+import { TOUCH } from "./device.ts";
 
 type Tone = "primary" | "amber" | "plain";
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & { tone?: Tone };
@@ -14,6 +15,18 @@ const STAR = {
 
 /** The app's buttons. Primary and amber get the animated star border (React Bits StarBorder). */
 export function Button({ tone = "primary", className = "", ...props }: Props) {
+  if (TOUCH && tone !== "plain") {
+    // Phones: the same colors as a plain button, no canvas, and it presses down when tapped.
+    const star = STAR[tone];
+    return (
+      <button
+        type="button"
+        className={`${BASE} inline-flex items-center justify-center gap-2 rounded-2xl border-b-4 transition-transform active:translate-y-0.5 active:border-b-2 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand-500 motion-reduce:transition-none ${className}`}
+        style={{ backgroundColor: star.backgroundColor, color: star.textColor, borderColor: star.borderColor }}
+        {...props}
+      />
+    );
+  }
   if (tone === "plain") {
     return (
       <button

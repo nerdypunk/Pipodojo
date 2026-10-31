@@ -1,5 +1,6 @@
 import StarBorder from "@/components/StarBorder";
 import type { Mission } from "../engine/types.ts";
+import { TOUCH } from "./device.ts";
 
 interface Props {
   mission: Mission;
@@ -33,15 +34,42 @@ export function BriefBuilder({ mission, picks, onTap, onlyPicked = false }: Prop
             )}
             {slot.pieces.filter((piece) => !onlyPicked || picks.includes(piece.id)).map((piece) => {
               const on = picks.includes(piece.id);
+              const tap = () => {
+                buzz();
+                onTap(piece.id);
+              };
+              if (TOUCH) {
+                // Phones: the same look without a canvas per piece (see device.ts).
+                return (
+                  <button
+                    key={piece.id}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={tap}
+                    className={`inline-flex min-h-11 items-center justify-start gap-2 rounded-[14px] px-3 py-1.5 text-left text-[15px] leading-tight font-bold shadow-sm transition-transform active:scale-[0.97] motion-reduce:transition-none ${
+                      on
+                        ? "pick-pop bg-brand-600 text-white shadow-[0_6px_16px_-6px_rgb(59_45_150/0.6)] ring-2 ring-brand-800 ring-inset"
+                        : "bg-white/90 text-ink ring-1 ring-white ring-inset"
+                    }`}
+                  >
+                    {on && (
+                      <span
+                        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white text-xs font-black text-brand-700"
+                        aria-hidden="true"
+                      >
+                        ✓
+                      </span>
+                    )}
+                    {piece.label}
+                  </button>
+                );
+              }
               return (
                 // Picked pieces turn solid violet with a check and pop; every piece shows a star on hover.
                 <StarBorder
                   key={piece.id}
                   aria-pressed={on}
-                  onClick={() => {
-                    buzz();
-                    onTap(piece.id);
-                  }}
+                  onClick={tap}
                   theme={on ? "dark" : "light"}
                   radius={14}
                   thickness={on ? 2 : 1}
