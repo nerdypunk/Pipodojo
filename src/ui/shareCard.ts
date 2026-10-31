@@ -14,6 +14,8 @@ export interface ShareInfo {
   streak: number;
   /** The postcard picture (data URL or same-site file); null draws a placeholder. */
   postcard: string | null;
+  /** True when Meta's Muse Image painted it live (not the ready-made fallback): the card says so. */
+  painted: boolean;
   /** Shown in the footer, e.g. "pipodojo.pages.dev". */
   site: string;
   /** The card's words, in the player's language. */
@@ -143,6 +145,8 @@ export async function drawShareCard(info: ShareInfo): Promise<Blob> {
     ctx.fillText("🏅", 0, 70);
     ctx.textAlign = "left";
   }
+  // Credit the Meta model that painted it, on the photo itself
+  if (img && info.painted) pill(ctx, w.paintedBy, -size / 2 + 22, -size / 2 + 22, "rgba(27,22,64,0.82)", "#ffffff", 26);
   ctx.restore();
 
   // A badge sticker over the corner of the postcard

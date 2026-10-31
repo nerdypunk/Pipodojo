@@ -117,12 +117,13 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
   }, [still]);
 
   const ready = postcard?.status === "ready" ? postcard : null;
+  const seconds = ready?.ms !== undefined ? (ready.ms / 1000).toFixed(1) : null;
 
   return (
     <div className="space-y-2">
       <div
         ref={el}
-        className={`peel relative h-44 w-full cursor-grab rounded-2xl select-none ${still || !Peel?.supported ? "peel-ready" : ""}`}
+        className={`peel relative h-56 w-full cursor-grab sm:h-44 rounded-2xl select-none ${still || !Peel?.supported ? "peel-ready" : ""}`}
         aria-label={open ? r.opened(pathName) : r.wrapped}
         role="img"
       >
@@ -130,11 +131,16 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
         <div className="peel-bottom flex items-center gap-3 rounded-2xl bg-gradient-to-br from-amber-100 via-white to-brand-100 p-3 ring-2 ring-amber-300">
           <div className="relative aspect-square h-24 shrink-0 overflow-hidden sm:h-full rounded-xl bg-brand-900 shadow-md ring-2 ring-white">
             {ready ? (
-              <img src={ready.src} alt={r.postcardAlt} className="h-full w-full object-cover" />
-            ) : postcard ? (
+              <>
+                <img src={ready.src} alt={r.postcardAlt} className="h-full w-full object-cover" />
+                {ready.painted && <MetaChip label={r.chip} />}
+              </>
+            ) : postcard?.status === "painting" ? (
               <div className="postcard-painting flex h-full w-full flex-col items-center justify-center gap-1 p-2 text-center">
-                <span className="text-3xl" aria-hidden="true">🎨</span>
-                <span className="text-xs font-extrabold text-white">{r.painting}</span>
+                <span className="text-2xl" aria-hidden="true">🎨</span>
+                <span className="text-[10px] leading-tight font-black text-white">⚡ {r.chip}</span>
+                <span className="text-[10px] leading-tight font-bold text-white/85">{r.paintingThumb}</span>
+                <LiveSeconds since={postcard.startedAt} />
               </div>
             ) : (
               <Pipo mood="happy" className="h-full w-full p-2" />
@@ -142,7 +148,7 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
           </div>
           <div className="min-w-0">
             <p className="text-xs font-black tracking-wider text-amber-700 uppercase">{r.badge}</p>
-            <p className="text-xl leading-tight font-black text-ink sm:text-2xl">{r.pro(pathName)}</p>
+            <p className="text-lg leading-tight font-black text-ink sm:text-2xl">{r.pro(pathName)}</p>
             <p className="text-sm font-bold text-gray-700">
               {r.tally(lessons, stars, lessons * 3).lessons} · <span className="text-amber-500">★</span> {r.tally(lessons, stars, lessons * 3).stars}
             </p>
@@ -152,7 +158,7 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
                 : !ready
                   ? r.paintingPostcard
                   : ready.painted
-                    ? r.painted
+                    ? r.painted(seconds ?? "…")
                     : r.fromPipo}
             </p>
           </div>
@@ -217,22 +223,46 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
       <ShareSheet
         open={sharing}
         painting={postcard?.status === "painting"}
-        info={{ brag: share.brag, pathName, stars, maxStars: lessons * 3, lessons, streak: Math.max(1, share.streak), postcard: ready?.src ?? null }}
+        info={{ brag: share.brag, pathName, stars, maxStars: lessons * 3, lessons, streak: Math.max(1, share.streak), postcard: ready?.src ?? null, painted: !!ready?.painted }}
         onClose={() => setSharing(false)}
       />
 
       {/* On document.body: the lesson box is transformed, which would trap a fixed overlay inside it. */}
       {createPortal(
-        <AnimatePresence>{big && ready && <BigPostcard src={ready.src} still={still} onClose={() => setBig(false)} />}</AnimatePresence>,
+        <AnimatePresence>{big && ready && <BigPostcard postcard={ready} still={still} onClose={() => setBig(false)} />}</AnimatePresence>,
         document.body,
       )}
     </div>
   );
 }
 
-/** The postcard at full size over everything. Tap anywhere or press Escape to close. */
-function BigPostcard({ src, still, onClose }: { src: string; still: boolean; onClose: () => void }) {
+/** "Meta Muse Image" on the postcard: which Meta model made this picture. */
+function MetaChip({ label }: { label: string }) {
+  return (
+    <span className="absolute inset-x-1 bottom-1 rounded-lg bg-ink/80 px-1 py-0.5 text-center text-[9px] leading-tight font-black text-white backdrop-blur-sm">
+      ⚡ {label}
+    </span>
+  );
+}
+
+/** Seconds since painting started, ticking, so it reads as live. */
+function LiveSeconds({ since }: { since: number }) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 200);
+    return () => window.clearInterval(id);
+  }, []);
+  return <span className="font-mono text-[11px] font-bold text-white/80 tabular-nums">{((now - since) / 1000).toFixed(1)} s</span>;
+}
+
+/**
+ * The postcard at full size over everything, with how it was made when Muse Image painted it:
+ * the Meta model, how long it took, and the prompt Pipo wrote from the player's lessons.
+ * Tap outside the details or press Escape to close.
+ */
+function BigPostcard({ postcard, still, onClose }: { postcard: Extract<Postcard, { status: "ready" }>; still: boolean; onClose: () => void }) {
   const { t } = useLang();
+  const r = t.reward;
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
@@ -250,13 +280,28 @@ function BigPostcard({ src, still, onClose }: { src: string; still: boolean; onC
       onClick={onClose}
     >
       <motion.img
-        src={src}
-        alt={t.reward.postcardAlt}
+        src={postcard.src}
+        alt={r.postcardAlt}
         initial={still ? false : { scale: 0.9, rotate: -2 }}
         animate={{ scale: 1, rotate: 0 }}
         transition={{ type: "spring", bounce: 0.35, duration: 0.5 }}
-        className="max-h-[80dvh] max-w-full rounded-2xl shadow-2xl ring-4 ring-white"
+        className={`max-w-full rounded-2xl shadow-2xl ring-4 ring-white ${postcard.painted ? "max-h-[56dvh]" : "max-h-[80dvh]"}`}
       />
+      {postcard.painted && (
+        <div className="w-full max-w-md cursor-auto rounded-2xl bg-white/95 p-3 text-left shadow-xl" onClick={(e) => e.stopPropagation()}>
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-black text-ink">
+            <span>🎨 {r.liveTitle}</span>
+            {postcard.model && <code className="rounded-md bg-ink px-1.5 py-0.5 font-mono text-[11px] font-bold text-white">{postcard.model}</code>}
+            {postcard.ms !== undefined && <span className="text-xs font-bold text-gray-500">{r.took((postcard.ms / 1000).toFixed(1))}</span>}
+          </p>
+          {postcard.scene && (
+            <details className="mt-1.5">
+              <summary className="cursor-pointer text-xs font-extrabold text-brand-700">{r.promptLabel}</summary>
+              <p className="mt-1 max-h-28 overflow-y-auto rounded-xl bg-brand-50 px-2.5 py-1.5 text-xs leading-snug font-semibold text-ink">{postcard.scene}</p>
+            </details>
+          )}
+        </div>
+      )}
       <button type="button" autoFocus className="rounded-full bg-white px-4 py-1.5 text-sm font-extrabold text-brand-700">
         {t.common.close}
       </button>

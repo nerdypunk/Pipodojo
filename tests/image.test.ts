@@ -40,7 +40,7 @@ describe("image endpoint", () => {
     const fetchMock = stubUpstream();
     const res = await onRequest({ request: post({ scene: "Pipo waves" }), env });
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ image: "AAAA" });
+    expect(await res.json()).toEqual({ image: "AAAA", model: IMAGE_MODEL });
     const init = fetchMock.mock.calls[0]?.[1];
     expect(new Headers(init?.headers).get("authorization")).toBe("Bearer test-key");
   });

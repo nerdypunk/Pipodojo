@@ -2,9 +2,14 @@
 // slow, broken or used up, the player gets a ready-made postcard instead.
 
 export type Postcard =
-  | { status: "painting" }
-  /** `painted` is false when the ready-made fallback is shown instead. */
-  | { status: "ready"; src: string; painted: boolean };
+  /** `startedAt` (Date.now()) drives the live "painting for 7 s" counter. */
+  | { status: "painting"; startedAt: number }
+  /**
+   * `painted` is false when the ready-made fallback is shown instead. A painted postcard also
+   * carries how it was made, shown to the player: the Meta model that painted it, how long it
+   * took, and the prompt Pipo wrote for it from the player's own lessons.
+   */
+  | { status: "ready"; src: string; painted: boolean; model?: string; ms?: number; scene?: string };
 
 export const FALLBACK_POSTCARD = `${import.meta.env.BASE_URL}postcard-fallback.webp`;
 
@@ -26,6 +31,7 @@ export async function paintPostcard(scene: string): Promise<Extract<Postcard, { 
   const fallback = { status: "ready", src: FALLBACK_POSTCARD, painted: false } as const;
   if (paintingsUsed >= MAX_PAINTINGS_PER_SESSION) return fallback;
   paintingsUsed++;
+  const started = performance.now();
   try {
     const res = await fetch("/api/image", {
       method: "POST",
@@ -34,9 +40,16 @@ export async function paintPostcard(scene: string): Promise<Extract<Postcard, { 
       signal: AbortSignal.timeout(PAINT_TIMEOUT_MS),
     });
     if (!res.ok) return fallback;
-    const { image } = (await res.json()) as { image?: unknown };
+    const { image, model } = (await res.json()) as { image?: unknown; model?: unknown };
     if (typeof image !== "string" || !image) return fallback;
-    return { status: "ready", src: `data:${mimeOf(image)};base64,${image}`, painted: true };
+    return {
+      status: "ready",
+      src: `data:${mimeOf(image)};base64,${image}`,
+      painted: true,
+      ms: Math.round(performance.now() - started),
+      scene,
+      ...(typeof model === "string" ? { model } : {}),
+    };
   } catch {
     return fallback;
   }

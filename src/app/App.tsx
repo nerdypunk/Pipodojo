@@ -122,7 +122,7 @@ export function App() {
         lessons.flatMap((mission) => (runs.current[mission.id] ? [{ mission, log: runs.current[mission.id]! }] : [])),
       );
       const ticket = ++painting.current;
-      setPostcard({ status: "painting" });
+      setPostcard({ status: "painting", startedAt: Date.now() });
       void paintPostcard(scene).then((ready) => {
         if (ticket === painting.current) setPostcard(ready);
       });

@@ -57,9 +57,10 @@ export async function onRequest({ request, env }) {
   }
   if (!upstream.ok) return json(upstream.status, { error: { message: `Painter returned HTTP ${upstream.status}` } });
 
-  // Only the picture goes back, as base64 PNG.
+  // Only the picture goes back (base64), plus which Meta model painted it, shown to the player.
   const result = await upstream.json().catch(() => null);
   const image = result?.data?.[0]?.b64_json;
   if (typeof image !== "string") return json(502, { error: { message: "The painter sent no picture." } });
-  return json(200, { image });
+  const model = typeof result?.model === "string" ? result.model : IMAGE_MODEL;
+  return json(200, { image, model });
 }
