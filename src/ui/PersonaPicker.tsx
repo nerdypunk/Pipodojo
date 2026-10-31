@@ -5,13 +5,13 @@ import { Arrow, Pagination, Perspective } from "@egjs/flicking-plugins";
 import "@egjs/flicking/dist/flicking.css";
 import "@egjs/flicking-plugins/dist/pagination.css";
 import { useEffect, useRef } from "react";
-import ElectricBorder from "@/components/ElectricBorder";
 import PixelTransition from "@/components/PixelTransition";
 import type { Persona } from "../engine/types.ts";
 import { PERSONAS, type PersonaCard } from "../game/personas.ts";
 import { Backdrop } from "./Backdrop.tsx";
 import { Button } from "./Button.tsx";
 import { Pipo } from "./Pipo.tsx";
+import { ShaderBorder } from "./ShaderBorder.tsx";
 
 export function PersonaPicker({ onStart }: { onStart: (persona: Persona) => void }) {
   const wrapper = useRef<HTMLDivElement>(null);
@@ -117,12 +117,14 @@ function PersonaPanel({
     />
   );
 
-  const card = (
+  return (
     <article
-      className="glass flex w-64 flex-col gap-3 rounded-3xl p-3 md:w-72"
+      className="glass relative mx-2.5 flex w-64 flex-col gap-3 rounded-3xl p-3 md:w-72"
       onClick={onFocus}
       aria-label={persona.available ? persona.name : `${persona.name}, coming soon`}
     >
+      {/* Animated shader border: lively on the playable path, quiet on the ones still to come. */}
+      <ShaderBorder mode={persona.available ? "build" : "muted"} roundness={0.14} />
       {art}
       <div className="px-1">
         <h2 className="text-xl font-black">{persona.name}</h2>
@@ -144,15 +146,6 @@ function PersonaPanel({
         </Button>
       )}
     </article>
-  );
-
-  // The playable path gets a crackling electric border (React Bits ElectricBorder).
-  return persona.available ? (
-    <ElectricBorder className="mx-2.5" color="#5a46e0" glowColor="#8c7dfb" borderRadius={24} theme="light" thickness={2.5} intensity={1.3} glow={0.9} speed={0.8}>
-      {card}
-    </ElectricBorder>
-  ) : (
-    <div className="mx-2.5">{card}</div>
   );
 }
 

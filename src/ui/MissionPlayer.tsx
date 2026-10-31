@@ -12,6 +12,7 @@ import { Backdrop } from "./Backdrop.tsx";
 import { BriefBuilder, PromptCard } from "./BriefBuilder.tsx";
 import { DebugPanel } from "./DebugPanel.tsx";
 import { PipoScene } from "./PipoScene.tsx";
+import { ShaderBorder } from "./ShaderBorder.tsx";
 import { TopBar } from "./TopBar.tsx";
 
 type Phase =
@@ -56,6 +57,8 @@ export function MissionPlayer({ mission, onBack }: { mission: Mission; onBack: (
   const result = phase.name === "result" ? phase.log : null;
   const mood = thinking ? "thinking" : result ? (result.score.stars === 1 ? "oops" : "happy") : "idle";
   const locked = phase.name !== "build";
+  // Both big cards wear an animated border that follows what Pipo is doing.
+  const borderMode = thinking ? "thinking" : result ? "done" : "build";
 
   // On phones Pipo's answer is above the fold once Check is pressed: bring it into view.
   const sceneRef = useRef<HTMLDivElement>(null);
@@ -77,15 +80,17 @@ export function MissionPlayer({ mission, onBack }: { mission: Mission; onBack: (
             mission={mission}
             mood={mood}
             stage={thinking ? "thinking" : result ? "done" : "idle"}
+            border={borderMode}
             stars={result ? result.score.stars : null}
             answer={result ? answerLines(mission, result.score, result.answer) : null}
           />
         </div>
 
         <section
-          className="glass flex flex-col gap-3 rounded-3xl p-3 md:gap-4 md:p-5"
+          className="glass relative flex flex-col gap-3 rounded-3xl p-3 md:gap-4 md:p-5"
           aria-label="Build your message to Pipo"
         >
+          <ShaderBorder mode={borderMode} roundness={0.08} />
           <PromptCard prompt={buildPrompt(mission, picks)} />
           {/* Locked while Pipo thinks (the glow stays bright), faded once the answer is in.
               On phones the faded pieces are hidden so the result sits right under the message. */}
@@ -98,7 +103,6 @@ export function MissionPlayer({ mission, onBack }: { mission: Mission; onBack: (
             <BriefBuilder
               mission={mission}
               picks={picks}
-              mode={thinking ? "thinking" : result ? "done" : "build"}
               onTap={(id) => {
                 setNudge(null);
                 setPicks((p) => togglePick(mission, p, id));

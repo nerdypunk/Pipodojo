@@ -1,17 +1,18 @@
 import StarBorder from "@/components/StarBorder";
 import type { Mission } from "../engine/types.ts";
-import { PieceGlow, type GlowMode } from "./PieceGlow.tsx";
-
 interface Props {
   mission: Mission;
   picks: string[];
-  /** What Pipo is doing; picked pieces' glowing borders follow it. */
-  mode: GlowMode;
   onTap: (pieceId: string) => void;
 }
 
+/** A tiny tap you can feel on phones that support it. */
+function buzz() {
+  navigator.vibrate?.(12);
+}
+
 /** Numbered rows of prompt pieces to tap. */
-export function BriefBuilder({ mission, picks, mode, onTap }: Props) {
+export function BriefBuilder({ mission, picks, onTap }: Props) {
   return (
     <div className="space-y-3 md:space-y-4">
       {mission.slots.map((slot, i) => (
@@ -27,23 +28,35 @@ export function BriefBuilder({ mission, picks, mode, onTap }: Props) {
             {slot.pieces.map((piece) => {
               const on = picks.includes(piece.id);
               return (
-                // Picked pieces get the glowing shader border; every piece shows a star on hover.
+                // Picked pieces turn solid violet with a check and pop; every piece shows a star on hover.
                 <StarBorder
                   key={piece.id}
                   aria-pressed={on}
-                  onClick={() => onTap(piece.id)}
-                  theme="light"
+                  onClick={() => {
+                    buzz();
+                    onTap(piece.id);
+                  }}
+                  theme={on ? "dark" : "light"}
                   radius={14}
-                  thickness={1}
+                  thickness={on ? 2 : 1}
                   hover="reveal"
-                  glow={0.5}
-                  color="#6e5cf2"
-                  backgroundColor={on ? "#ece9ff" : "rgb(255 255 255 / 0.88)"}
-                  textColor={on ? "#2d2470" : "#26233a"}
-                  borderColor={on ? "#b2a9ff" : "#ffffff"}
-                  className="min-h-11 justify-start px-3! py-1.5! text-left text-[15px] font-bold! md:min-h-12 md:px-4! md:py-2! md:text-[17px]"
+                  glow={0.6}
+                  color={on ? "#d3cfff" : "#6e5cf2"}
+                  backgroundColor={on ? "#5a46e0" : "rgb(255 255 255 / 0.88)"}
+                  textColor={on ? "#ffffff" : "#26233a"}
+                  borderColor={on ? "#3b2d96" : "#ffffff"}
+                  className={`min-h-11 justify-start gap-2! px-3! py-1.5! text-left text-[15px] font-bold! shadow-sm md:min-h-12 md:px-4! md:py-2! md:text-[17px] ${
+                    on ? "pick-pop shadow-[0_6px_16px_-6px_rgb(59_45_150/0.6)]" : ""
+                  }`}
                 >
-                  {on && <PieceGlow mode={mode} />}
+                  {on && (
+                    <span
+                      className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white text-xs font-black text-brand-700"
+                      aria-hidden="true"
+                    >
+                      ✓
+                    </span>
+                  )}
                   <span className="relative">{piece.label}</span>
                 </StarBorder>
               );

@@ -147,7 +147,28 @@ body {
   animation: pipo-core 2.4s ease-in-out infinite;
 }
 
+/* A picked piece pops: a quick squash and bounce. */
+@keyframes pick-pop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(0.94);
+  }
+  70% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pick-pop {
+  animation: pick-pop 260ms ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .pick-pop,
   .pop-in,
   .slide-up,
   .pipo-float,
