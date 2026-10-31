@@ -1,14 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Persona, RunLog } from "../engine/types.ts";
 import { PERSONAS } from "../game/personas.ts";
+import { DEFAULT_LOOK, parseLook, type PipoLook } from "../game/pipoLook.ts";
 import { Backdrop } from "../ui/Backdrop.tsx";
 import { LessonComplete } from "../ui/LessonComplete.tsx";
 import { MissionPlayer } from "../ui/MissionPlayer.tsx";
 import { TransitionOverlay, usePageTransition } from "../ui/PageTransition.tsx";
 import { PersonaPicker } from "../ui/PersonaPicker.tsx";
+import { PipoLookContext } from "../ui/Pipo.tsx";
+import { PipoBuilder } from "../ui/PipoBuilder.tsx";
 import { missions } from "./missions.ts";
 
-type Screen = { kind: "paths" } | { kind: "lesson"; persona: Persona; index: number };
+type Screen =
+  | { kind: "paths" }
+  /** Make your Pipo, before a path starts. */
+  | { kind: "build"; persona: Persona }
+  | { kind: "lesson"; persona: Persona; index: number };
+
+const LOOK_KEY = "pipodojo.look";
+
+/** The look is a per-device convenience: storage may be missing or blocked, which is fine. */
+function loadLook(): PipoLook {
+  try {
+    const raw = localStorage.getItem(LOOK_KEY);
+    return raw ? parseLook(JSON.parse(raw)) : DEFAULT_LOOK;
+  } catch {
+    return DEFAULT_LOOK;
+  }
+}
 
 /** The lesson just finished, shown in a box on the dark sweep panel until the player moves on. */
 interface Finished {
@@ -27,7 +46,16 @@ export function App() {
   const [finished, setFinished] = useState<Finished | null>(null);
   // Best stars per lesson, for this visit.
   const [stars, setStars] = useState<Record<string, number>>({});
+  const [look, setLook] = useState<PipoLook>(loadLook);
   const { direction, go, cover, uncover } = usePageTransition();
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(LOOK_KEY, JSON.stringify(look));
+    } catch {
+      // Storage unavailable: the look just won't be remembered.
+    }
+  }, [look]);
 
   // Lessons come sorted by path and order (see missionLoader).
   const lessonsOf = (persona: Persona) => missions.filter((m) => m.persona === persona);
@@ -57,12 +85,23 @@ export function App() {
         onBack={toPaths}
       />
     );
+  } else if (screen.kind === "build") {
+    const { persona } = screen;
+    content = (
+      <PipoBuilder
+        pathName={PERSONAS.find((p) => p.id === persona)?.name ?? ""}
+        look={look}
+        onChange={setLook}
+        onStart={() => void go("to-right", () => setScreen({ kind: "lesson", persona, index: 0 }))}
+        onBack={toPaths}
+      />
+    );
   } else {
-    content = <PersonaPicker onStart={(persona) => void go("to-right", () => setScreen({ kind: "lesson", persona, index: 0 }))} />;
+    content = <PersonaPicker onStart={(persona) => void go("to-right", () => setScreen({ kind: "build", persona }))} />;
   }
 
   return (
-    <>
+    <PipoLookContext.Provider value={look}>
       <Backdrop />
       <div className="swup-transition-main">{content}</div>
       <TransitionOverlay direction={direction} />
@@ -77,6 +116,6 @@ export function App() {
           onBack={() => leaveBox({ kind: "paths" })}
         />
       )}
-    </>
+    </PipoLookContext.Provider>
   );
 }

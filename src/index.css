@@ -156,6 +156,20 @@ body {
   animation: pipo-core 2.4s ease-in-out infinite;
 }
 
+/* Rocket body: the flame flickers. */
+@keyframes pipo-flame {
+  50% {
+    transform: scaleY(0.75);
+    opacity: 0.8;
+  }
+}
+
+.pipo-flame {
+  transform-box: fill-box;
+  transform-origin: top center;
+  animation: pipo-flame 0.35s ease-in-out infinite;
+}
+
 /* A picked piece pops: a quick squash and bounce. */
 @keyframes pick-pop {
   0% {
@@ -182,7 +196,8 @@ body {
   .slide-up,
   .pipo-float,
   .pipo-shadow,
-  .pipo-core {
+  .pipo-core,
+  .pipo-flame {
     animation: none;
   }
 }
