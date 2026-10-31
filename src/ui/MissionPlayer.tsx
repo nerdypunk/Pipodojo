@@ -8,7 +8,6 @@ import type { Mission, PipoRun, RunLog } from "../engine/types.ts";
 import { answerLines } from "../game/feedback.ts";
 import { isDebug, liveClient, takeLiveRun } from "../app/liveClient.ts";
 import { ActionBar } from "./ActionBar.tsx";
-import { Backdrop } from "./Backdrop.tsx";
 import { BriefBuilder, PromptCard } from "./BriefBuilder.tsx";
 import { DebugPanel } from "./DebugPanel.tsx";
 import { PipoScene } from "./PipoScene.tsx";
@@ -70,7 +69,6 @@ export function MissionPlayer({ mission, onBack }: { mission: Mission; onBack: (
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col justify-center gap-3 p-3 md:px-6 md:py-4">
-      <Backdrop />
       <TopBar progress={result ? 1 : filledShare(mission, picks)} stars={bestStars} onBack={onBack} />
 
       {/* Both cards stretch to the same height; the pieces stay put so nothing jumps after Check. */}

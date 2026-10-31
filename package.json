@@ -23,6 +23,7 @@
     "motion": "^12.43.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "transition-style": "^0.1.4",
     "zod": "^4.6.7"
   },
   "devDependencies": {

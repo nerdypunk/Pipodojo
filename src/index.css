@@ -270,3 +270,8 @@ body {
 @utility state-transition {
     @apply transition-[background-color,border-color,color,box-shadow] duration-150 ease-out motion-reduce:transition-none;
 }
+/* Page transitions (transition-style): quicker than the library's default so moving between
+   screens feels snappy. The library already skips the animation for reduced motion. */
+.page-transition {
+  --transition__duration: 0.7s;
+}

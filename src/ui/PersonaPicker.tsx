@@ -8,7 +8,6 @@ import { useEffect, useRef } from "react";
 import PixelTransition from "@/components/PixelTransition";
 import type { Persona } from "../engine/types.ts";
 import { PERSONAS, type PersonaCard } from "../game/personas.ts";
-import { Backdrop } from "./Backdrop.tsx";
 import { Button } from "./Button.tsx";
 import { Pipo } from "./Pipo.tsx";
 import { ShaderBorder } from "./ShaderBorder.tsx";
@@ -46,7 +45,6 @@ export function PersonaPicker({ onStart }: { onStart: (persona: Persona) => void
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col justify-center gap-6 p-3 md:p-6">
-      <Backdrop />
       <header className="flex flex-col items-center gap-2 text-center">
         <Pipo mood="happy" className="h-16 w-16 drop-shadow-[0_6px_16px_rgba(45,36,112,0.35)]" />
         <p className="text-lg font-black tracking-tight text-brand-700">Pipodojo</p>
