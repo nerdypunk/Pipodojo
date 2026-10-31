@@ -77,19 +77,36 @@ export function LessonComplete({ pathName, lessons, index, log, stars, onContinu
         </div>
 
         <div className="flex flex-col gap-4 p-5">
-          {/* 2. What Pipo got done */}
-          <section aria-label="What Pipo did">
-            <h2 className="flex items-center gap-2 text-lg font-black text-ink">
+          {/* 2. The main point between lessons: what agents can do, and where the path goes next */}
+          {mission.funFact && (
+            <section
+              className="flex items-start gap-4 rounded-2xl bg-gradient-to-br from-sky-50 to-brand-50 p-4 ring-2 ring-sky-200"
+              aria-label="Did you know?"
+            >
+              <Pipo mood="happy" className="h-14 w-14 shrink-0 drop-shadow-[0_6px_12px_rgb(45_36_112/0.25)]" />
+              <div>
+                <p className="text-lg font-black text-sky-900">Did you know?</p>
+                <p className="text-base leading-snug font-semibold text-ink md:text-[17px]">{mission.funFact}</p>
+              </div>
+            </section>
+          )}
+
+          {/* 3. What Pipo got done, folded into one line; opens by itself after a miss so the red line shows */}
+          <details className="group rounded-xl bg-brand-50 px-3 py-2" open={won === 1}>
+            <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-bold text-ink [&::-webkit-details-marker]:hidden">
               <span aria-hidden="true">{mission.icon ?? "✅"}</span>
-              {mission.title}
-            </h2>
-            {mission.recap && <p className="font-semibold text-gray-600">{mission.recap}</p>}
-            <ul className="mt-2 space-y-1.5">
+              <span className="flex-1">{mission.recap ?? mission.title}</span>
+              <span className="text-xs font-extrabold text-brand-700">
+                <span className="group-open:hidden">See answer</span>
+                <span className="hidden group-open:inline">Hide</span>
+              </span>
+            </summary>
+            <ul className="mt-2 space-y-1">
               {answerLines(mission, log.score, log.answer).map((line, i) => (
                 <li
                   key={i}
-                  className={`flex items-center gap-2.5 rounded-xl px-3 py-1.5 text-[15px] leading-snug font-bold ${
-                    line.flagged ? "bg-red-50 text-red-900 ring-2 ring-red-300" : "bg-brand-50 text-ink"
+                  className={`flex items-center gap-2 rounded-lg px-2.5 py-1 text-sm leading-snug font-bold ${
+                    line.flagged ? "bg-red-50 text-red-900 ring-2 ring-red-300" : "bg-white text-ink"
                   }`}
                 >
                   <span aria-hidden="true">{line.emoji || "•"}</span>
@@ -97,29 +114,13 @@ export function LessonComplete({ pathName, lessons, index, log, stars, onContinu
                 </li>
               ))}
             </ul>
-          </section>
+          </details>
 
-          {/* 3. What you learned */}
-          <p className="rounded-xl bg-amber-50 px-3 py-2 text-sm font-bold text-amber-900">
+          {/* What you learned, as one small line */}
+          <p className="-mt-2 px-1 text-sm font-semibold text-gray-600">
             <span aria-hidden="true">💡 </span>
             {mission.lesson}
           </p>
-
-          {/* What agents can do, in plain words: where the path is heading next */}
-          {mission.funFact && (
-            <section className="flex gap-3 rounded-2xl bg-sky-50 px-4 py-3 ring-1 ring-sky-200" aria-label="Did you know?">
-              <span
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-500 text-lg"
-                aria-hidden="true"
-              >
-                🤖
-              </span>
-              <div>
-                <p className="text-sm font-black text-sky-900">Did you know?</p>
-                <p className="text-sm leading-snug font-semibold text-sky-950">{mission.funFact}</p>
-              </div>
-            </section>
-          )}
 
           {/* 4. Where you are on the path */}
           <section className="rounded-2xl bg-brand-50/70 px-4 py-3" aria-label="Your path">
