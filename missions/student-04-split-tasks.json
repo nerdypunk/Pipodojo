@@ -15,7 +15,7 @@
     "📅 Due Friday at 9am",
     "🎨 Lee is great at design"
   ],
-  "systemPrompt": "You are Pipo, a friendly personal assistant on a university student's phone. Help with what they ask. When you split work, write one line per person, starting with their name.",
+  "systemPrompt": "You are Pipo, a friendly personal assistant on a college student's phone. Help with what they ask. When you split work, write one line per person, starting with their name.",
   "slots": [
     {
       "id": "want",

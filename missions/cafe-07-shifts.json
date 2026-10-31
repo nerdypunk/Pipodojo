@@ -6,7 +6,7 @@
   "title": "Plan the shifts",
   "icon": "🗓️",
   "recap": "Pipo planned the shifts for Thursday to Saturday.",
-  "funFact": "Agents can message your team for you. Next, Pipo sends the rota to the team chat!",
+  "funFact": "Agents can message your team for you. Next, Pipo sends the schedule to the team chat!",
   "postcard": "the Bloom Café team high-fiving behind the counter: {answer}",
   "situation": "Busy days ahead at Bloom Café! Want me to plan who works when?",
   "facts": [
@@ -31,8 +31,8 @@
         },
         {
           "id": "rota",
-          "label": "Sort out the rota",
-          "text": "Sort out the rota.",
+          "label": "Make the schedule",
+          "text": "Make the schedule.",
           "quality": "weak"
         }
       ]
@@ -116,8 +116,8 @@
       "signals": [
         "^(?![\\s\\S]*\\bchloe\\b)"
       ],
-      "hint": "\"Sort out the rota\" doesn't say who's on the team or which days.",
-      "explain": "Pipo didn't know your team, so it made up the rota."
+      "hint": "\"Make the schedule\" doesn't say who's on the team or which days.",
+      "explain": "Pipo didn't know your team, so it made up the schedule."
     }
   ],
   "lesson": "Rules like who can't work when are exactly what Pipo can't guess. Spell them out."

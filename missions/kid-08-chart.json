@@ -7,12 +7,12 @@
   "icon": "📊",
   "recap": "Pipo Code made a bar chart of your fruit survey.",
   "funFact": "Diagrams explain how things work in one picture. Next, Pipo Code draws the water cycle for your poster!",
-  "postcard": "a colourful bar chart of favourite fruits pinned on a classroom wall: {bars}",
-  "situation": "You asked your class about their favourite fruit! Want a chart?",
+  "postcard": "a colorful bar chart of favorite fruits pinned on a classroom wall: {bars}",
+  "situation": "You asked your class about their favorite fruit! Want a chart?",
   "facts": [
-    "📋 Your class survey: favourite fruit",
+    "📋 Your class survey: favorite fruit",
     "🍎 Apples 8 · Bananas 5 · Grapes 7 · Mango 4",
-    "🏷️ Title: Our favourite fruits",
+    "🏷️ Title: Our favorite fruits",
     "👀 Check it before you share it"
   ],
   "systemPrompt": "You are Pipo Code, a friendly coding helper on a 10-year-old's laptop. You build their homework charts with your tools. You do what they ask: if they ask you to share it, you do it; if they ask to see it first, you prepare it and wait for their OK.",
@@ -132,7 +132,7 @@
         {
           "id": "make_chart",
           "label": "Make a bar chart of my fruit survey",
-          "text": "Make a bar chart of my class survey about favourite fruit.",
+          "text": "Make a bar chart of my class survey about favorite fruit.",
           "quality": "good"
         },
         {
@@ -156,8 +156,8 @@
         },
         {
           "id": "title",
-          "label": "Title it \"Our favourite fruits\"",
-          "text": "Title it \"Our favourite fruits\".",
+          "label": "Title it \"Our favorite fruits\"",
+          "text": "Title it \"Our favorite fruits\".",
           "quality": "good"
         },
         {

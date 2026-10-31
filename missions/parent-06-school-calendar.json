@@ -8,7 +8,7 @@
   "recap": "Pipo put the school week in the family calendar.",
   "funFact": "Lunches, the teacher and the calendar: a whole school week handled. Agents shine at the small chores that pile up, and you stay in charge.",
   "postcard": "a big friendly family calendar on the fridge, filled with {events}",
-  "situation": "The school newsletter is full of dates! Shall I put them in the family calendar?",
+  "situation": "The school newsletter is full of dates! Should I put them in the family calendar?",
   "facts": [
     "🚌 Museum trip: Friday, bus leaves 8:30am",
     "🧁 Bake sale: Thursday 3pm",
@@ -166,10 +166,10 @@
         },
         {
           "id": "colours",
-          "label": "Make it colourful!",
-          "text": "Make it colourful!",
+          "label": "Make it colorful!",
+          "text": "Make it colorful!",
           "quality": "weak",
-          "tip": "Colours are nice, but Pipo still needs the dates and times to get the calendar right."
+          "tip": "Colors are nice, but Pipo still needs the dates and times to get the calendar right."
         }
       ]
     },

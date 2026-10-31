@@ -5,10 +5,10 @@
   "order": 2,
   "title": "Message the team",
   "icon": "💬",
-  "recap": "Pipo sent the rota to the team chat.",
+  "recap": "Pipo sent the schedule to the team chat.",
   "funFact": "Agents can manage a shared calendar, too. Next, Pipo puts the shifts where the whole team can see them.",
   "postcard": "phones buzzing in the Bloom Café kitchen with Pipo's message: {message}",
-  "situation": "The rota's ready! Shall I send it to the team chat?",
+  "situation": "The schedule's ready! Should I send it to the team chat?",
   "facts": [
     "💬 Your \"Café team\" WhatsApp group",
     "📅 Thu: Ben am, Ana pm · Fri: Chloe am, Ana pm · Sat: all three",
@@ -101,14 +101,14 @@
       "pieces": [
         {
           "id": "message_team",
-          "label": "Send the rota to the Café team group",
-          "text": "Send this week's rota to our \"Café team\" WhatsApp group.",
+          "label": "Send the schedule to the Café team group",
+          "text": "Send this week's schedule to our \"Café team\" WhatsApp group.",
           "quality": "good"
         },
         {
           "id": "tell_staff",
           "label": "Tell the staff",
-          "text": "Tell the staff about the rota.",
+          "text": "Tell the staff about the schedule.",
           "quality": "weak"
         }
       ]
@@ -121,7 +121,7 @@
         {
           "id": "rota",
           "label": "Thu Ben/Ana · Fri Chloe/Ana · Sat everyone",
-          "text": "The rota is: Thursday Ben morning, Ana afternoon. Friday Chloe morning, Ana afternoon. Saturday all three.",
+          "text": "The schedule is: Thursday Ben morning, Ana afternoon. Friday Chloe morning, Ana afternoon. Saturday all three.",
           "quality": "good"
         },
         {
@@ -138,10 +138,10 @@
         },
         {
           "id": "rota_up",
-          "label": "Just say the rota is up",
-          "text": "Just say the rota is up.",
+          "label": "Just say the schedule is up",
+          "text": "Just say the schedule is up.",
           "quality": "weak",
-          "tip": "\"The rota is up\" sends people hunting for it. Put the actual shifts in the message."
+          "tip": "\"The schedule is up\" sends people hunting for it. Put the actual shifts in the message."
         }
       ]
     },
@@ -181,8 +181,8 @@
       "signals": [
         "^(?![\\s\\S]*\\b(thu|thursday)\\b)"
       ],
-      "hint": "You didn't give Pipo the rota.",
-      "explain": "Pipo didn't have the rota, so the message doesn't say who works when."
+      "hint": "You didn't give Pipo the schedule.",
+      "explain": "Pipo didn't have the schedule, so the message doesn't say who works when."
     },
     {
       "id": "no_confirm",

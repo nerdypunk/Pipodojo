@@ -15,7 +15,7 @@
     "❓ Just 3 questions",
     "🙈 No answers until you've tried"
   ],
-  "systemPrompt": "You are Pipo, a friendly personal assistant on a university student's phone. Help with what they ask. When you quiz someone, write one question per line.",
+  "systemPrompt": "You are Pipo, a friendly personal assistant on a college student's phone. Help with what they ask. When you quiz someone, write one question per line.",
   "slots": [
     {
       "id": "want",
@@ -90,5 +90,5 @@
       "explain": "Pipo didn't know your exam is on plant cells, so it quizzed you on other things."
     }
   ],
-  "lesson": "Tell Pipo the topic and how you want to practise, so the quiz actually helps."
+  "lesson": "Tell Pipo the topic and how you want to practice, so the quiz actually helps."
 }

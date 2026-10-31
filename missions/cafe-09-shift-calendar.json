@@ -6,9 +6,9 @@
   "title": "Put shifts on the calendar",
   "icon": "📆",
   "recap": "Pipo put the shifts on the team calendar.",
-  "funFact": "Rota planned, sent and in the calendar. That's the weekly admin agents take off your plate, while you stay in charge.",
-  "postcard": "a cosy team calendar on the café wall showing {events}",
-  "situation": "Everyone confirmed! Shall I add the shifts to the team calendar?",
+  "funFact": "Schedule planned, sent and in the calendar. That's the weekly admin agents take off your plate, while you stay in charge.",
+  "postcard": "a cozy team calendar on the café wall showing {events}",
+  "situation": "Everyone confirmed! Should I add the shifts to the team calendar?",
   "facts": [
     "📅 Thu: Ben 7–11am, Ana 11am–3pm",
     "📅 Fri: Chloe 7–11am, Ana 11am–3pm",
@@ -141,8 +141,8 @@
         },
         {
           "id": "add_rota",
-          "label": "Put the rota in",
-          "text": "Put the rota in the calendar.",
+          "label": "Put the schedule in",
+          "text": "Put the schedule in the calendar.",
           "quality": "weak"
         }
       ]

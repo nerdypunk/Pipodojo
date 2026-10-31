@@ -41,7 +41,7 @@ const DATA: readonly (PersonaCard & { es: PersonaText })[] = [
     name: "Café owner",
     emoji: "☕",
     place: "Café",
-    blurb: "Sales, customers and the staff rota.",
+    blurb: "Sales, customers and the staff schedule.",
     tint: "from-fuchsia-400 to-brand-700",
     es: { name: "Dueño del café", place: "Café", blurb: "Ofertas, clientes y los turnos del equipo." },
   },

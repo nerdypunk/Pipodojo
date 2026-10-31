@@ -6,16 +6,16 @@
   "title": "Email about the job",
   "icon": "📧",
   "recap": "Pipo emailed Bloom Café about the job.",
-  "funFact": "Agents can help you practise, too. Next, Pipo gets you ready for the interview!",
+  "funFact": "Agents can help you practice, too. Next, Pipo gets you ready for the interview!",
   "postcard": "Bloom Café's owner reading a job email with a smile: {subject}",
-  "situation": "Your CV is ready. Shall I email Bloom Café?",
+  "situation": "Your résumé is ready. Should I email Bloom Café?",
   "facts": [
     "📧 hiring@bloomcafe.com",
-    "📎 Your CV is attached",
+    "📎 Your résumé is attached",
     "📅 Free weekends and Tuesday evenings",
     "👀 You want to read it before it goes"
   ],
-  "systemPrompt": "You are Pipo, a friendly personal assistant on a university student's phone. You can send emails for them. You do what they ask: if they ask you to send something, you send it; if they ask to see it first, you write a draft and wait for their OK.",
+  "systemPrompt": "You are Pipo, a friendly personal assistant on a college student's phone. You can send emails for them. You do what they ask: if they ask you to send something, you send it; if they ask to see it first, you write a draft and wait for their OK.",
   "tools": [
     {
       "name": "send_email",
@@ -140,8 +140,8 @@
       "pieces": [
         {
           "id": "cv_attached",
-          "label": "My CV is attached",
-          "text": "Say my CV is attached.",
+          "label": "My résumé is attached",
+          "text": "Say my résumé is attached.",
           "quality": "good"
         },
         {
@@ -201,8 +201,8 @@
       "signals": [
         "^(?![\\s\\S]*(\\bcv\\b|r[ée]sum[ée]))"
       ],
-      "hint": "You didn't tell Pipo your CV is attached.",
-      "explain": "Pipo didn't mention your CV, so they might not open it."
+      "hint": "You didn't tell Pipo your résumé is attached.",
+      "explain": "Pipo didn't mention your résumé, so they might not open it."
     },
     {
       "id": "no_availability",

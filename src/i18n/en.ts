@@ -36,7 +36,7 @@ export const en = {
     pickLook: "Pick a look",
     head: "Head",
     body: "Body",
-    colours: "Colours",
+    colors: "Colors",
     go: "Let's go to town",
     back: "Back to town",
   },
