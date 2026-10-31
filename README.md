@@ -38,3 +38,12 @@ Other commands:
 Pipo's answers come live from Meta's **Muse Spark** model through the Meta Model API. Pipodojo uses the `muse-spark-1.2-contributor` tier everywhere, locally and deployed: it costs less, and in return Meta may use the prompts to improve its models. Players never type, so every prompt is built from the game's own preset pieces and nothing personal is sent. Pipo's role and answer format come from each lesson file; the stars are worked out by the game's own rules, never by a model.
 
 In later lessons Pipo **acts**, using Muse Spark tool calling: each lesson offers pretend app actions (send or draft a WhatsApp message; pay and order, or show the cart first). Muse Spark picks one and fills in the details, and the game shows the result on a floating phone you can drag around. When Pipo is waiting for your OK, tap Send or Pay on that phone: Pipo is told to go ahead and finishes the job with a second tool call. Nothing real is ever sent or bought.
+
+## Credits
+
+Pipodojo's game, lessons and Pipo were built during the hackathon. It also uses these open-source projects:
+
+- [peel.js](https://github.com/andrewplummer/peel-js) by Andrew Plummer (MIT), copied into `src/vendor/peel` for the path reward
+- [smoothui](https://smoothui.dev) (Siri orb, dynamic island) and [React Bits](https://reactbits.dev) (StarBorder, PixelTransition and more), added with the shadcn CLI into `src/components`
+- [Paper Shaders](https://github.com/paper-design/shaders) (mesh gradient background, card glow), [swup](https://swup.js.org) overlay and slide themes (page transitions), [egjs Flicking](https://naver.github.io/egjs-flicking/) (path carousel), [Motion](https://motion.dev), [canvas-confetti](https://github.com/catdad/canvas-confetti)
+- [Nunito](https://fonts.google.com/specimen/Nunito) font via Fontsource

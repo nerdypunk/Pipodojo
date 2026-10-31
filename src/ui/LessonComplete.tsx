@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import type { Mission, RunLog } from "../engine/types.ts";
 import { answerLines } from "../game/feedback.ts";
 import { Button } from "./Button.tsx";
+import { PeelReward } from "./PeelReward.tsx";
 import { Pipo } from "./Pipo.tsx";
 
 interface Props {
@@ -127,7 +128,18 @@ export function LessonComplete({ pathName, lessons, index, log, stars, onContinu
             <p className="text-sm font-extrabold text-gray-600">
               {pathName} path · {next ? <span className="text-ink">Up next: {next.title}</span> : <span className="text-ink">Path complete!</span>}
             </p>
-            <PathSteps lessons={lessons} doneUpTo={index} stars={stars} />
+            {next ? (
+              <PathSteps lessons={lessons} doneUpTo={index} stars={stars} />
+            ) : (
+              // The path is done: the reward chest becomes a gift you peel open.
+              <div className="mt-3">
+                <PeelReward
+                  pathName={pathName}
+                  lessons={lessons.length}
+                  stars={lessons.reduce((sum, lesson) => sum + (stars[lesson.id] ?? 0), 0)}
+                />
+              </div>
+            )}
           </section>
 
           {/* 5. Move on */}
