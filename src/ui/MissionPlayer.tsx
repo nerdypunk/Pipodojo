@@ -1,6 +1,6 @@
 // One lesson on one screen: Pipo's scene on the left, the prompt playground on the right,
 // with Check and the result at the foot of the playground card.
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { askPipo } from "../engine/agentRunner.ts";
 import { buildPrompt, emptySlots, filledShare, isPromptReady, togglePick } from "../engine/brief.ts";
 import { evaluate } from "../engine/evaluator.ts";
@@ -57,27 +57,41 @@ export function MissionPlayer({ mission, onBack }: { mission: Mission; onBack: (
   const mood = thinking ? "thinking" : result ? (result.score.stars === 1 ? "oops" : "happy") : "idle";
   const locked = phase.name !== "build";
 
+  // On phones Pipo's answer is above the fold once Check is pressed: bring it into view.
+  const sceneRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!result || !window.matchMedia("(max-width: 767px)").matches) return;
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    sceneRef.current?.scrollIntoView({ behavior: still ? "auto" : "smooth", block: "start" });
+  }, [result]);
+
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col justify-center gap-3 p-3 md:px-6 md:py-4">
       <Backdrop />
       <TopBar progress={result ? 1 : filledShare(mission, picks)} stars={bestStars} onBack={onBack} />
 
       {/* Both cards stretch to the same height; the pieces stay put so nothing jumps after Check. */}
-      <main className="grid gap-4 md:grid-cols-[5fr_6fr] md:gap-5">
-        <PipoScene
-          mission={mission}
-          mood={mood}
-          stage={thinking ? "thinking" : result ? "done" : "idle"}
-          stars={result ? result.score.stars : null}
-          answer={result ? answerLines(mission, result.score, result.answer) : null}
-        />
+      <main className="grid gap-3 md:grid-cols-[5fr_6fr] md:gap-5">
+        <div ref={sceneRef} className="flex scroll-mt-3 flex-col">
+          <PipoScene
+            mission={mission}
+            mood={mood}
+            stage={thinking ? "thinking" : result ? "done" : "idle"}
+            stars={result ? result.score.stars : null}
+            answer={result ? answerLines(mission, result.score, result.answer) : null}
+          />
+        </div>
 
-        <section className="glass flex flex-col gap-4 rounded-3xl p-4 md:p-5" aria-label="Build your message to Pipo">
+        <section
+          className="glass flex flex-col gap-3 rounded-3xl p-3 md:gap-4 md:p-5"
+          aria-label="Build your message to Pipo"
+        >
           <PromptCard prompt={buildPrompt(mission, picks)} />
-          {/* Locked while Pipo thinks (the glow stays bright), faded once the answer is in. */}
+          {/* Locked while Pipo thinks (the glow stays bright), faded once the answer is in.
+              On phones the faded pieces are hidden so the result sits right under the message. */}
           <div
             className={`transition-opacity motion-reduce:transition-none ${locked ? "pointer-events-none" : ""} ${
-              result || phase.name === "failed" ? "opacity-60" : ""
+              result || phase.name === "failed" ? "max-md:hidden md:opacity-60" : ""
             }`}
             aria-disabled={locked}
           >
@@ -91,7 +105,14 @@ export function MissionPlayer({ mission, onBack }: { mission: Mission; onBack: (
               }}
             />
           </div>
-          <div className="mt-auto">
+          {/* On phones, Check stays pinned to the bottom of the screen while you build. */}
+          <div
+            className={`mt-auto ${
+              phase.name === "build" || thinking
+                ? "max-md:glass max-md:sticky max-md:bottom-3 max-md:z-20 max-md:-mx-1 max-md:rounded-2xl max-md:px-3 max-md:pb-3"
+                : ""
+            }`}
+          >
             {phase.name === "build" && <ActionBar state="build" nudge={nudge} onCheck={check} />}
             {thinking && <ActionBar state="thinking" />}
             {result && <ActionBar state="result" mission={mission} score={result.score} onTryAgain={tryAgain} />}

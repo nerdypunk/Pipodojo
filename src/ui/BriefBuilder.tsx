@@ -13,17 +13,17 @@ interface Props {
 /** Numbered rows of prompt pieces to tap. */
 export function BriefBuilder({ mission, picks, mode, onTap }: Props) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 md:space-y-4">
       {mission.slots.map((slot, i) => (
         <fieldset key={slot.id}>
-          <legend className="mb-2 flex flex-wrap items-center gap-2 text-base font-extrabold text-ink">
+          <legend className="mb-1.5 flex flex-wrap items-center gap-2 text-sm font-extrabold text-ink md:mb-2 md:text-base">
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-600 text-xs text-white">
               {i + 1}
             </span>
             {slot.label}
             <PickBadge pick={slot.pick} />
           </legend>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5 md:gap-2">
             {slot.pieces.map((piece) => {
               const on = picks.includes(piece.id);
               return (
@@ -41,7 +41,7 @@ export function BriefBuilder({ mission, picks, mode, onTap }: Props) {
                   backgroundColor={on ? "#ece9ff" : "rgb(255 255 255 / 0.88)"}
                   textColor={on ? "#2d2470" : "#26233a"}
                   borderColor={on ? "#b2a9ff" : "#ffffff"}
-                  className="min-h-12 justify-start px-4! py-2! text-left text-base font-bold! md:text-[17px]"
+                  className="min-h-11 justify-start px-3! py-1.5! text-left text-[15px] font-bold! md:min-h-12 md:px-4! md:py-2! md:text-[17px]"
                 >
                   {on && <PieceGlow mode={mode} />}
                   <span className="relative">{piece.label}</span>
@@ -72,9 +72,9 @@ function PickBadge({ pick }: { pick: "one" | "many" }) {
 export function PromptCard({ prompt }: { prompt: string }) {
   return (
     <div aria-live="polite">
-      <p className="mb-2 text-base font-extrabold text-ink">Your message to Pipo</p>
+      <p className="mb-1.5 text-sm font-extrabold text-ink md:mb-2 md:text-base">Your message to Pipo</p>
       <p
-        className={`min-h-[3.5rem] rounded-2xl rounded-br-md px-4 py-3 text-[17px] leading-snug font-semibold ${
+        className={`min-h-12 rounded-2xl rounded-br-md px-4 py-2.5 text-base leading-snug font-semibold md:min-h-[3.5rem] md:py-3 md:text-[17px] ${
           prompt ? "bg-brand-600 text-white" : "border-2 border-dashed border-white/90 text-gray-500"
         }`}
       >
