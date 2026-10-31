@@ -138,8 +138,9 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
         </div>
       </header>
 
-      {/* Bottom: the same places as buttons, and who powers Pipo */}
-      <nav className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 p-3 md:p-6" aria-label="Places in town">
+      {/* Bottom: the same places as buttons, and who powers Pipo. On tall phone screens the island
+          sits mid-screen, so lift these up to tuck under it instead of hugging the bottom edge. */}
+      <nav className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 p-3 max-sm:bottom-[11dvh] md:p-6" aria-label="Places in town">
         <div className="glass grid w-full max-w-sm grid-cols-2 gap-1 rounded-2xl p-1.5 sm:flex sm:w-auto sm:max-w-none sm:gap-1.5">
           {PERSONAS.map((persona) => (
             <button

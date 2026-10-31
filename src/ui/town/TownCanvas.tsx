@@ -53,6 +53,8 @@ const FLY_MS = 1000;
 const POP_START = 0.45;
 const POP_STEP = 0.14;
 const noRaycast = () => null;
+/** Closest a name tag may come to the screen's left or right edge, in pixels. */
+const TAG_MARGIN = 8;
 
 export default function TownCanvas(props: TownCanvasProps) {
   return (
@@ -338,6 +340,29 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
   const lift = useRef<THREE.Group>(null);
   const ring = useRef<THREE.Mesh>(null);
   const hover = useRef(1);
+  const label = useRef<HTMLDivElement>(null);
+  const shift = useRef(0);
+  const anchor = useMemo(() => new THREE.Vector3(), []);
+
+  // Keep the tag on screen: on narrow phones a tag centred over a building near the edge would be
+  // cut off, so slide it sideways just enough to stay TAG_MARGIN inside the edge. (The tag is
+  // mounted by <Html> after this component, so its width is read here rather than once on mount;
+  // the moving tags only change transforms, so the read is cheap.)
+  useFrame(({ camera, size }) => {
+    const el = label.current;
+    if (!el) return;
+    anchor.set(place.at[0], place.tag, place.at[1]).project(camera);
+    const x = ((anchor.x + 1) / 2) * size.width;
+    const half = el.offsetWidth / 2;
+    const left = x - half - TAG_MARGIN;
+    const right = x + half + TAG_MARGIN - size.width;
+    const next = Math.round(left < 0 ? -left : right > 0 ? -right : 0);
+    if (next !== shift.current) {
+      shift.current = next;
+      el.style.transform = `translate(calc(-50% + ${next}px), -100%)`;
+    }
+  });
+
   useFrame(({ clock }, delta) => {
     const k = Math.min(1, delta * 10);
     hover.current += ((hovered ? 1.05 : 1) - hover.current) * k;
@@ -382,7 +407,7 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
       </group>
       {/* The tag is pinned by its bottom edge, so the hover card grows upward, off the building. */}
       <Html position={[0, place.tag, 0]} zIndexRange={[20, 0]} style={{ pointerEvents: "none" }}>
-        <div className="flex -translate-x-1/2 -translate-y-full flex-col items-center gap-1.5">
+        <div ref={label} className="flex flex-col items-center gap-1.5" style={{ transform: "translate(-50%, -100%)" }}>
           {hovered && (
             <div className="pop-in w-40 rounded-2xl bg-ink/90 px-3 py-2 text-center text-[11px] font-bold text-white shadow-xl sm:w-48 sm:text-xs">
               {tag.sub}
