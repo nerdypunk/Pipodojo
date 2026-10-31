@@ -1,6 +1,6 @@
-// A box on the dark page-sweep panel, shown between lessons and after the last one: what Pipo
-// got done, your stars, what you learned, and the path so far (finished, next, locked, reward).
-// Continue sweeps the panel away into the next lesson.
+// A box on the dark page-sweep panel, shown between lessons and after the last one. One compact
+// column, read top to bottom: the celebration, what Pipo got done, what you learned, where you
+// are on the path, and Continue (which sweeps the panel away into the next lesson).
 import confetti from "canvas-confetti";
 import { useEffect } from "react";
 import type { Mission, RunLog } from "../engine/types.ts";
@@ -34,7 +34,7 @@ export function LessonComplete({ pathName, lessons, index, log, stars, onContinu
       void confetti({
         particleCount: won === 3 ? 140 : 70,
         spread: 80,
-        origin: { y: 0.35 },
+        origin: { y: 0.3 },
         colors: ["#6e5cf2", "#8c7dfb", "#9cc2ff", "#fbbf24", "#ff7a1a"],
         disableForReducedMotion: true,
       });
@@ -49,101 +49,89 @@ export function LessonComplete({ pathName, lessons, index, log, stars, onContinu
         role="dialog"
         aria-modal="true"
         aria-labelledby="lesson-complete-title"
-        className="pop-in m-auto grid w-full max-w-5xl gap-4 rounded-3xl bg-white/95 p-4 shadow-[0_30px_80px_-20px_rgb(0_0_0/0.6)] md:grid-cols-[5fr_6fr] md:gap-6 md:p-6"
+        className="pop-in m-auto flex w-full max-w-xl flex-col overflow-hidden rounded-3xl bg-white shadow-[0_30px_80px_-20px_rgb(0_0_0/0.6)]"
       >
-        <Summary mission={mission} log={log} lessonNumber={index + 1} />
-
-        <section className="flex flex-col gap-4" aria-label="Your path">
+        {/* 1. Celebration */}
+        <div className="flex items-center gap-4 bg-[radial-gradient(circle_at_20%_50%,#5a46e0_0%,#2d2470_60%,#1b1640_100%)] px-5 py-4 text-white">
+          <Pipo
+            mood={won === 1 ? "oops" : "happy"}
+            className="h-16 w-16 shrink-0 drop-shadow-[0_8px_18px_rgba(0,0,0,0.35)]"
+          />
           <div>
-            <p className="text-sm font-extrabold text-gray-600">{pathName} path</p>
-            <h2 className="text-2xl font-black text-ink">{next ? `Up next: ${next.title}` : "Path complete!"}</h2>
+            <p id="lesson-complete-title" className="text-xl font-black md:text-2xl">
+              Lesson {index + 1} complete!
+            </p>
+            <p className="flex gap-1 text-3xl leading-none" aria-label={`${won} out of 3 stars`}>
+              {[1, 2, 3].map((n) => (
+                <span
+                  key={n}
+                  className={`pop-in ${n <= won ? "text-amber-300 drop-shadow-[0_0_10px_rgb(252_211_77/0.6)]" : "text-white/20"}`}
+                  style={{ animationDelay: `${300 + n * 180}ms` }}
+                  aria-hidden="true"
+                >
+                  ★
+                </span>
+              ))}
+            </p>
           </div>
-          <PathMap lessons={lessons} doneUpTo={index} stars={stars} />
-          <div className="mt-auto flex flex-col gap-2 sm:flex-row sm:justify-end">
-            {next ? (
-              <>
-                <Button tone="plain" className="w-full sm:w-auto" onClick={onBack}>
-                  Back to paths
-                </Button>
-                <Button className="w-full sm:w-56" onClick={onContinue} autoFocus>
-                  Continue
-                </Button>
-              </>
-            ) : (
-              <Button className="w-full sm:w-56" onClick={onBack} autoFocus>
-                Back to paths
+        </div>
+
+        <div className="flex flex-col gap-4 p-5">
+          {/* 2. What Pipo got done */}
+          <section aria-label="What Pipo did">
+            <h2 className="flex items-center gap-2 text-lg font-black text-ink">
+              <span aria-hidden="true">{mission.icon ?? "✅"}</span>
+              {mission.title}
+            </h2>
+            {mission.recap && <p className="font-semibold text-gray-600">{mission.recap}</p>}
+            <ul className="mt-2 space-y-1.5">
+              {answerLines(mission, log.score, log.answer).map((line, i) => (
+                <li
+                  key={i}
+                  className={`flex items-center gap-2.5 rounded-xl px-3 py-1.5 text-[15px] leading-snug font-bold ${
+                    line.flagged ? "bg-red-50 text-red-900 ring-2 ring-red-300" : "bg-brand-50 text-ink"
+                  }`}
+                >
+                  <span aria-hidden="true">{line.emoji || "•"}</span>
+                  {line.text}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* 3. What you learned */}
+          <p className="rounded-xl bg-amber-50 px-3 py-2 text-sm font-bold text-amber-900">
+            <span aria-hidden="true">💡 </span>
+            {mission.lesson}
+          </p>
+
+          {/* 4. Where you are on the path */}
+          <section className="rounded-2xl bg-brand-50/70 px-4 py-3" aria-label="Your path">
+            <p className="text-sm font-extrabold text-gray-600">
+              {pathName} path · {next ? <span className="text-ink">Up next: {next.title}</span> : <span className="text-ink">Path complete!</span>}
+            </p>
+            <PathSteps lessons={lessons} doneUpTo={index} stars={stars} />
+          </section>
+
+          {/* 5. Move on */}
+          <div className="flex gap-2">
+            <Button tone="plain" className="flex-1 sm:flex-none" onClick={onBack}>
+              Back to paths
+            </Button>
+            {next && (
+              <Button className="flex-1" onClick={onContinue} autoFocus>
+                Continue
               </Button>
             )}
           </div>
-        </section>
+        </div>
       </div>
     </div>
   );
 }
 
-function Summary({ mission, log, lessonNumber }: { mission: Mission; log: RunLog; lessonNumber: number }) {
-  const won = log.score.stars;
-  return (
-    <section className="flex flex-col gap-3" aria-label="Lesson complete">
-      {/* Celebration: Pipo and the stars you earned */}
-      <div className="relative flex flex-col items-center gap-1 rounded-2xl bg-[radial-gradient(circle_at_50%_40%,#5a46e0_0%,#2d2470_55%,#1b1640_100%)] px-4 py-4 text-white">
-        <Pipo mood={won === 1 ? "oops" : "happy"} className="h-20 w-20 drop-shadow-[0_8px_18px_rgba(0,0,0,0.35)] md:h-24 md:w-24" />
-        <p className="flex gap-1.5 text-4xl" aria-label={`${won} out of 3 stars`}>
-          {[1, 2, 3].map((n) => (
-            <span
-              key={n}
-              className={`pop-in ${n <= won ? "text-amber-300 drop-shadow-[0_0_10px_rgb(252_211_77/0.6)]" : "text-white/20"}`}
-              style={{ animationDelay: `${300 + n * 180}ms` }}
-              aria-hidden="true"
-            >
-              ★
-            </span>
-          ))}
-        </p>
-        <p id="lesson-complete-title" className="text-xl font-black">
-          Lesson {lessonNumber} complete!
-        </p>
-      </div>
-
-      <div className="flex flex-1 flex-col gap-3 rounded-2xl bg-brand-50/70 p-4">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl" aria-hidden="true">
-            {mission.icon ?? "✅"}
-          </span>
-          <h1 className="text-2xl leading-tight font-black text-ink">{mission.title}</h1>
-        </div>
-        {mission.recap && <p className="text-lg leading-snug font-semibold text-ink">{mission.recap}</p>}
-
-        <div>
-          <p className="mb-1.5 text-sm font-extrabold text-gray-600">What Pipo did</p>
-          <ul className="space-y-1.5">
-            {answerLines(mission, log.score, log.answer).map((line, i) => (
-              <li
-                key={i}
-                className={`flex items-center gap-2.5 rounded-xl px-3 py-1.5 text-[15px] leading-snug font-bold ${
-                  line.flagged ? "bg-red-50 text-red-900 ring-2 ring-red-300" : "bg-white"
-                }`}
-              >
-                <span className="text-lg" aria-hidden="true">
-                  {line.emoji || "•"}
-                </span>
-                {line.text}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <p className="mt-auto rounded-xl bg-amber-50 px-3 py-2 text-sm font-bold text-amber-900">
-          <span aria-hidden="true">💡 </span>
-          {mission.lesson}
-        </p>
-      </div>
-    </section>
-  );
-}
-
-/** Zig-zag path of round nodes, like a game map: done, next (glowing, with Pipo), locked, reward. */
-function PathMap({
+/** The path as a row of steps joined by a line: done, next (glowing), locked, then the reward. */
+function PathSteps({
   lessons,
   doneUpTo,
   stars,
@@ -153,84 +141,98 @@ function PathMap({
   stars: Readonly<Record<string, number>>;
 }) {
   const allDone = doneUpTo >= lessons.length - 1;
-  const offsets = ["md:-translate-x-10", "md:translate-x-10", "md:-translate-x-6", "md:translate-x-6"];
-
   return (
-    <ol className="flex flex-col items-center gap-5 py-2" aria-label="Lessons in this path">
+    <ol className="mt-3 flex items-start" aria-label="Lessons in this path">
       {lessons.map((lesson, i) => {
         const state = i <= doneUpTo ? "done" : i === doneUpTo + 1 ? "next" : "locked";
         return (
-          <li key={lesson.id} className={`relative flex flex-col items-center ${offsets[i % offsets.length]}`}>
-            <PathNode lesson={lesson} state={state} stars={stars[lesson.id] ?? 0} number={i + 1} />
-          </li>
+          <Step
+            key={lesson.id}
+            label={lesson.title}
+            state={state}
+            stars={stars[lesson.id] ?? 0}
+            icon={lesson.icon}
+            ariaLabel={`Lesson ${i + 1}: ${lesson.title}, ${state === "done" ? `done, ${stars[lesson.id] ?? 0} stars` : state === "next" ? "up next" : "locked"}`}
+            lineDone={i <= doneUpTo}
+          />
         );
       })}
-      <li className={`flex flex-col items-center ${offsets[lessons.length % offsets.length]}`}>
-        <div
-          className={`flex h-16 w-16 items-center justify-center rounded-2xl border-b-[6px] text-3xl ${
-            allDone ? "border-amber-600 bg-amber-300" : "border-gray-400 bg-gray-300 grayscale"
-          }`}
-          aria-label={allDone ? "Path reward unlocked" : "Path reward, locked"}
-        >
-          <span aria-hidden="true">{allDone ? "🏆" : "🎁"}</span>
-        </div>
-        <span className="mt-1 text-xs font-extrabold text-gray-600">{allDone ? "Reward unlocked!" : "Path reward"}</span>
-      </li>
+      <Step
+        label={allDone ? "Reward!" : "Reward"}
+        state={allDone ? "reward" : "locked-reward"}
+        stars={0}
+        ariaLabel={allDone ? "Path reward unlocked" : "Path reward, locked"}
+        last
+      />
     </ol>
   );
 }
 
-function PathNode({
-  lesson,
+type StepState = "done" | "next" | "locked" | "reward" | "locked-reward";
+
+function Step({
+  label,
   state,
   stars,
-  number,
+  icon,
+  ariaLabel,
+  lineDone = false,
+  last = false,
 }: {
-  lesson: Mission;
-  state: "done" | "next" | "locked";
+  label: string;
+  state: StepState;
   stars: number;
-  number: number;
+  icon?: string;
+  ariaLabel: string;
+  lineDone?: boolean;
+  last?: boolean;
 }) {
-  const label = `Lesson ${number}: ${lesson.title}, ${state === "done" ? `done, ${stars} stars` : state === "next" ? "up next" : "locked"}`;
+  const circle: Record<StepState, string> = {
+    done: "border-brand-800 bg-brand-600 text-white",
+    next: "border-brand-700 bg-brand-500 text-white ring-4 ring-brand-200",
+    locked: "border-gray-400 bg-gray-200 text-gray-500",
+    reward: "border-amber-600 bg-amber-300",
+    "locked-reward": "border-gray-400 bg-gray-200 grayscale",
+  };
+  const glyph =
+    state === "done" ? "✓" : state === "next" ? (icon ?? "★") : state === "locked" ? "🔒" : state === "reward" ? "🏆" : "🎁";
+
   return (
-    <>
-      {state === "next" && (
-        <span className="mb-2 rounded-xl bg-ink px-3 py-1 text-xs font-black tracking-wider text-white uppercase shadow">
-          Start
-        </span>
+    <li className="relative flex flex-1 flex-col items-center text-center" aria-label={ariaLabel}>
+      {/* Line to the next step */}
+      {!last && (
+        <span
+          className={`absolute top-5 left-1/2 h-1 w-full rounded-full ${lineDone ? "bg-brand-500" : "bg-gray-200"}`}
+          aria-hidden="true"
+        />
       )}
-      <div className="relative" aria-label={label} role="img">
+      <span className="relative" aria-hidden="true">
         {state === "next" && (
-          <span
-            className="absolute -inset-2 animate-ping rounded-full bg-brand-300/60 motion-reduce:animate-none"
-            aria-hidden="true"
-          />
+          <span className="absolute -inset-1.5 animate-ping rounded-full bg-brand-300/50 motion-reduce:animate-none" />
         )}
-        <div
-          className={`relative flex h-16 w-16 items-center justify-center rounded-full border-b-[6px] text-2xl font-black ${
-            state === "done"
-              ? "border-brand-800 bg-brand-600 text-white"
-              : state === "next"
-                ? "border-brand-700 bg-brand-500 text-white ring-4 ring-white"
-                : "border-gray-400 bg-gray-300 text-gray-500"
-          }`}
+        <span
+          className={`relative flex h-10 w-10 items-center justify-center rounded-full border-b-4 text-lg font-black ${circle[state]}`}
         >
-          <span aria-hidden="true">{state === "done" ? "✓" : state === "next" ? (lesson.icon ?? "★") : "🔒"}</span>
-        </div>
-        {/* Pipo waits next to the lesson that's up next */}
-        {state === "next" && (
-          <Pipo mood="happy" className="absolute top-0 left-full ml-4 h-14 w-14 drop-shadow-[0_6px_12px_rgb(45_36_112/0.35)]" />
-        )}
-      </div>
-      <span className={`mt-1 text-sm font-extrabold ${state === "locked" ? "text-gray-500" : "text-ink"}`}>
-        {lesson.title}
+          {glyph}
+        </span>
+      </span>
+      <span
+        className={`mt-1 px-1 text-xs leading-tight font-extrabold ${state === "locked" || state === "locked-reward" ? "text-gray-500" : "text-ink"}`}
+        aria-hidden="true"
+      >
+        {label}
       </span>
       {state === "done" && (
-        <span className="text-sm tracking-wider" aria-hidden="true">
+        <span className="text-xs tracking-wider" aria-hidden="true">
           <span className="text-amber-400">{"★".repeat(stars)}</span>
           <span className="text-gray-300">{"★".repeat(3 - stars)}</span>
         </span>
       )}
-    </>
+      {state === "next" && (
+        <span className="mt-0.5 rounded-md bg-ink px-1.5 py-px text-[10px] font-black tracking-wider text-white uppercase" aria-hidden="true">
+          Start
+        </span>
+      )}
+    </li>
   );
 }
