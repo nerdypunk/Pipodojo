@@ -5,10 +5,12 @@ interface Props {
   stars: number;
   /** Back to picking a path. */
   onBack: () => void;
+  /** Where this lesson sits in its path. */
+  lesson: { number: number; total: number };
 }
 
-/** Glass strip across the top: back, logo, progress bar, stars. */
-export function TopBar({ progress, stars, onBack }: Props) {
+/** Glass strip across the top: back, logo, lesson number, progress bar, stars. */
+export function TopBar({ progress, stars, onBack, lesson }: Props) {
   const percent = Math.round(progress * 100);
   return (
     <header className="glass flex items-center gap-3 rounded-2xl py-1.5 pr-4 pl-1.5 md:gap-4">
@@ -20,7 +22,10 @@ export function TopBar({ progress, stars, onBack }: Props) {
       >
         <span aria-hidden="true">‹</span>
       </button>
-      <span className="text-lg font-black tracking-tight text-brand-700">Pipodojo</span>
+      <span className="hidden text-lg font-black tracking-tight text-brand-700 sm:inline">Pipodojo</span>
+      <span className="rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-extrabold whitespace-nowrap text-white">
+        Lesson {lesson.number} of {lesson.total}
+      </span>
       <div
         className="h-3 flex-1 overflow-hidden rounded-full bg-white/70"
         role="progressbar"

@@ -7,7 +7,7 @@ import { evaluate } from "../engine/evaluator.ts";
 import type { Mission, PipoRun, RunLog } from "../engine/types.ts";
 import { answerLines } from "../game/feedback.ts";
 import { isDebug, liveClient, takeLiveRun } from "../app/liveClient.ts";
-import { ActionBar } from "./ActionBar.tsx";
+import { ActionBar, type NextStep } from "./ActionBar.tsx";
 import { BriefBuilder, PromptCard } from "./BriefBuilder.tsx";
 import { DebugPanel } from "./DebugPanel.tsx";
 import { PipoScene } from "./PipoScene.tsx";
@@ -20,7 +20,16 @@ type Phase =
   | { name: "result"; log: RunLog }
   | { name: "failed"; run: PipoRun | null };
 
-export function MissionPlayer({ mission, onBack }: { mission: Mission; onBack: () => void }) {
+interface Props {
+  mission: Mission;
+  /** Where this lesson sits in its path, e.g. 2 of 3. */
+  lesson: { number: number; total: number };
+  /** After a result: on to the next lesson, or back to the paths after the last one. */
+  next: NextStep;
+  onBack: () => void;
+}
+
+export function MissionPlayer({ mission, lesson, next, onBack }: Props) {
   const [phase, setPhase] = useState<Phase>({ name: "build" });
   const [picks, setPicks] = useState<string[]>([]);
   const [nudge, setNudge] = useState<string | null>(null);
@@ -69,7 +78,7 @@ export function MissionPlayer({ mission, onBack }: { mission: Mission; onBack: (
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col justify-center gap-3 p-3 md:px-6 md:py-4">
-      <TopBar progress={result ? 1 : filledShare(mission, picks)} stars={bestStars} onBack={onBack} />
+      <TopBar progress={result ? 1 : filledShare(mission, picks)} stars={bestStars} onBack={onBack} lesson={lesson} />
 
       {/* Both cards stretch to the same height; the pieces stay put so nothing jumps after Check. */}
       <main className="grid gap-3 md:grid-cols-[5fr_6fr] md:gap-5">
@@ -118,7 +127,7 @@ export function MissionPlayer({ mission, onBack }: { mission: Mission; onBack: (
             >
               {phase.name === "build" && <ActionBar state="build" nudge={nudge} onCheck={check} />}
               {thinking && <ActionBar state="thinking" />}
-              {result && <ActionBar state="result" mission={mission} score={result.score} onTryAgain={tryAgain} />}
+              {result && <ActionBar state="result" mission={mission} score={result.score} onTryAgain={tryAgain} next={next} />}
               {phase.name === "failed" && <ActionBar state="failed" onTryAgain={tryAgain} />}
             </div>
           </section>

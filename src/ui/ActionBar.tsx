@@ -5,8 +5,14 @@ import { Button } from "./Button.tsx";
 type Props =
   | { state: "build"; nudge: string | null; onCheck: () => void }
   | { state: "thinking" }
-  | { state: "result"; mission: Mission; score: Score; onTryAgain: () => void }
+  | { state: "result"; mission: Mission; score: Score; onTryAgain: () => void; next: NextStep }
   | { state: "failed"; onTryAgain: () => void };
+
+/** Where the player goes after a result: the next lesson, or back to the paths after the last one. */
+export interface NextStep {
+  label: "Next lesson" | "Finish";
+  onGo: () => void;
+}
 
 /** Foot of the playground card: Check while building, the result after. */
 export function ActionBar(props: Props) {
@@ -42,7 +48,17 @@ export function ActionBar(props: Props) {
   );
 }
 
-function Result({ mission, score, onTryAgain }: { mission: Mission; score: Score; onTryAgain: () => void }) {
+function Result({
+  mission,
+  score,
+  onTryAgain,
+  next,
+}: {
+  mission: Mission;
+  score: Score;
+  onTryAgain: () => void;
+  next: NextStep;
+}) {
   const missed = score.stars === 1;
   const notes = resultNotes(mission, score);
   const text = missed ? "text-amber-800" : "text-brand-800";
@@ -63,9 +79,28 @@ function Result({ mission, score, onTryAgain }: { mission: Mission; score: Score
         ))}
         <p className="text-sm font-semibold text-gray-600">Remember: {mission.lesson}</p>
       </div>
-      <Button tone={missed ? "amber" : "primary"} className="w-full sm:w-40" onClick={onTryAgain}>
-        Try again
-      </Button>
+      {/* A good result leads on to the next lesson; a miss leads with another try (moving on is still allowed). */}
+      <div className="flex flex-col gap-2 sm:w-40">
+        {missed ? (
+          <>
+            <Button tone="amber" className="w-full" onClick={onTryAgain}>
+              Try again
+            </Button>
+            <Button tone="plain" className="w-full" onClick={next.onGo}>
+              {next.label}
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button className="w-full" onClick={next.onGo}>
+              {next.label}
+            </Button>
+            <Button tone="plain" className="w-full" onClick={onTryAgain}>
+              Try again
+            </Button>
+          </>
+        )}
+      </div>
     </Panel>
   );
 }

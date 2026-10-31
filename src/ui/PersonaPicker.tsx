@@ -7,6 +7,7 @@ import "@egjs/flicking-plugins/dist/pagination.css";
 import { useEffect, useRef } from "react";
 import PixelTransition from "@/components/PixelTransition";
 import type { Persona } from "../engine/types.ts";
+import { missions } from "../app/missions.ts";
 import { PERSONAS, type PersonaCard } from "../game/personas.ts";
 import { Button } from "./Button.tsx";
 import { Pipo } from "./Pipo.tsx";
@@ -77,6 +78,7 @@ function PersonaPanel({
   onFocus: () => void;
   onStart: (persona: Persona) => void;
 }) {
+  const lessonCount = missions.filter((m) => m.persona === persona.id).length;
   const art = (
     // Hovering the picture dissolves it in pixels into a peek at what's inside (React Bits PixelTransition).
     <PixelTransition
@@ -106,9 +108,9 @@ function PersonaPanel({
           <span className="text-3xl" aria-hidden="true">
             {persona.available ? "🍔" : "🔒"}
           </span>
-          <span className="font-black">{persona.available ? "Saturday barbecue" : "Lessons on the way"}</span>
+          <span className="font-black">{persona.available ? "The Saturday barbecue" : "Lessons on the way"}</span>
           <span className="text-sm font-semibold text-white/70">
-            {persona.available ? "Your first lesson is ready" : "Check back soon"}
+            {persona.available ? `${lessonCount} lessons ready to play` : "Check back soon"}
           </span>
         </div>
       }
