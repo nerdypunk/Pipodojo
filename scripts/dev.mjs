@@ -1,14 +1,17 @@
-// Starts the Pages Function (wrangler, port 8788) and Vite (port 5173) together.
+// Starts the Worker (wrangler, port 8788, same code as the live site) and Vite (port 5173) together.
 // Vite proxies /api/* to wrangler, so open http://localhost:5173.
 import { spawn } from "node:child_process";
+import { mkdirSync } from "node:fs";
 
 const isWindows = process.platform === "win32";
+
+// wrangler.jsonc points the Worker's files at `dist`; it only has to exist, since Vite serves the game.
+mkdirSync("dist", { recursive: true });
 
 const processes = [
   {
     name: "api",
-    // `public` is only a placeholder asset dir; Vite serves the real front end.
-    command: "npx wrangler pages dev public --port 8788 --compatibility-date=2026-10-01 --show-interactive-dev-session=false",
+    command: "npx wrangler dev --port 8788 --show-interactive-dev-session=false",
   },
   { name: "web", command: "npx vite" },
 ];

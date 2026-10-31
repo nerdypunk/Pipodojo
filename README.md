@@ -16,7 +16,9 @@ cp .dev.vars.example .dev.vars   # then paste your Meta Model API key
 npm run dev                      # open http://localhost:5173
 ```
 
-`npm run dev` starts Vite and the Cloudflare Pages Function (`functions/api/chat.js`) together. Vite forwards `/api/*` to the function, which holds the API key.
+`npm run dev` starts Vite and the Cloudflare Worker (`worker/index.js`, running the API code in `functions/api`) together. Vite forwards `/api/*` to the Worker, which holds the API key.
+
+**Deploying.** The site is a Cloudflare Worker connected to this GitHub repo: every push to `main` runs `npm run build` and `npx wrangler deploy` (see `wrangler.jsonc`). The Worker serves the built game from `dist` and runs code only for `/api/*`. Set `MODEL_API_KEY` as a secret in the Worker's settings.
 
 Add `?debug=1` to the URL (http://localhost:5173/?debug=1) to see the run log and score breakdown.
 

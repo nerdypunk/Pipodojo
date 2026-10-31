@@ -1,0 +1,14 @@
+// Cloudflare Worker config. Workers Builds runs `npm run build` then `npx wrangler deploy` on every
+// push to main. The key is a secret set in the dashboard (MODEL_API_KEY), never in this file.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pipodojo",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    // Only the API runs code; the game itself is plain files.
+    "run_worker_first": ["/api/*"]
+  },
+  "observability": { "enabled": true }
+}

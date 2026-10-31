@@ -7,7 +7,7 @@ Project: Pipodojo (the mascot, and the player's agent, is a little robot called 
 - If something is unclear or missing, propose an answer and ask before building on it.
 
 ## Stack (approved)
-TypeScript (strict), React 18, Vite, Tailwind CSS, Framer Motion, react-router (HashRouter), Zustand, Zod, Vitest, canvas-confetti. Backend is one Cloudflare Pages Function at `functions/api/chat.js`. Hosting is Cloudflare Pages deployed from the public GitHub repo.
+TypeScript (strict), React 18, Vite, Tailwind CSS, Framer Motion, react-router (HashRouter), Zustand, Zod, Vitest, canvas-confetti. Backend is the API code in `functions/api` (chat, image, and a guard middleware), run by the Cloudflare Worker in `worker/index.js`. Hosting is a Cloudflare Worker with static assets (`wrangler.jsonc`), deployed by Workers Builds from the public GitHub repo.
 - Ask before adding any other dependency.
 - No database, no auth, no analytics or tracking.
 
@@ -27,7 +27,7 @@ TypeScript (strict), React 18, Vite, Tailwind CSS, Framer Motion, react-router (
 - After each slice, tell me exactly how to run it and what to try, including a failing setup.
 
 ## Commands (keep these working)
-- `npm run dev`: starts Vite and the Pages Function together for local development.
+- `npm run dev`: starts Vite and the Worker together for local development.
 - `npm run build`: production build to `dist`.
 - `npm test`: runs Vitest.
 - `npm run record`: records replays against the live API.
