@@ -68,6 +68,7 @@ export function MissionPlayer({ mission, onBack }: { mission: Mission; onBack: (
           mission={mission}
           mood={mood}
           stage={thinking ? "thinking" : result ? "done" : "idle"}
+          stars={result ? result.score.stars : null}
           answer={result ? answerLines(mission, result.score, result.answer) : null}
         />
 

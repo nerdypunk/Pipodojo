@@ -1,3 +1,4 @@
+import StarBorder from "@/components/StarBorder";
 import type { Mission } from "../engine/types.ts";
 
 interface Props {
@@ -23,19 +24,24 @@ export function BriefBuilder({ mission, picks, onTap }: Props) {
             {slot.pieces.map((piece) => {
               const on = picks.includes(piece.id);
               return (
-                <button
+                // Picked pieces keep a star lapping their border; the others show it on hover.
+                <StarBorder
                   key={piece.id}
-                  type="button"
                   aria-pressed={on}
                   onClick={() => onTap(piece.id)}
-                  className={`min-h-11 rounded-xl border-2 border-b-4 px-3.5 py-1.5 text-left text-[15px] font-bold transition active:translate-y-0.5 active:border-b-2 motion-reduce:transition-none focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand-500 ${
-                    on
-                      ? "border-brand-500 bg-brand-100 text-brand-900"
-                      : "border-white bg-white/80 text-ink hover:bg-white"
-                  }`}
+                  theme="light"
+                  radius={12}
+                  thickness={on ? 2 : 1}
+                  hover={on ? "lap" : "reveal"}
+                  glow={on ? 0.9 : 0.5}
+                  color="#6e5cf2"
+                  backgroundColor={on ? "#e8e6ff" : "rgb(255 255 255 / 0.85)"}
+                  textColor={on ? "#2d2470" : "#26233a"}
+                  borderColor={on ? "#8c7dfb" : "#ffffff"}
+                  className="min-h-11 justify-start px-3.5! py-1.5! text-left text-[15px] font-bold"
                 >
                   {piece.label}
-                </button>
+                </StarBorder>
               );
             })}
           </div>

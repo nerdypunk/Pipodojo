@@ -8,6 +8,8 @@ interface Props {
   mission: Mission;
   mood: Mood;
   stage: StageMode;
+  /** Stars once Pipo has answered, for the status island. */
+  stars: number | null;
   /** Pipo's answer once it's in; until then Pipo shows the lesson's request. */
   answer: AnswerLine[] | null;
 }
@@ -15,10 +17,10 @@ interface Props {
 const LINE_DELAY_MS = 150;
 
 /** Left card: Pipo on stage, what Pipo says, and what you know. */
-export function PipoScene({ mission, mood, stage, answer }: Props) {
+export function PipoScene({ mission, mood, stage, stars, answer }: Props) {
   return (
     <section className="glass flex flex-col gap-3 rounded-3xl p-3 md:p-4" aria-label="The situation">
-      <PipoStage title={mission.title} mode={stage} mood={mood} />
+      <PipoStage title={mission.title} mode={stage} mood={mood} stars={stars} />
 
       {answer ? <AnswerCard lines={answer} /> : <SpeechBubble>{mission.situation}</SpeechBubble>}
 

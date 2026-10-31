@@ -5,6 +5,8 @@ import { Arrow, Pagination, Perspective } from "@egjs/flicking-plugins";
 import "@egjs/flicking/dist/flicking.css";
 import "@egjs/flicking-plugins/dist/pagination.css";
 import { useEffect, useRef } from "react";
+import ElectricBorder from "@/components/ElectricBorder";
+import PixelTransition from "@/components/PixelTransition";
 import type { Persona } from "../engine/types.ts";
 import { PERSONAS, type PersonaCard } from "../game/personas.ts";
 import { Backdrop } from "./Backdrop.tsx";
@@ -77,26 +79,51 @@ function PersonaPanel({
   onFocus: () => void;
   onStart: (persona: Persona) => void;
 }) {
-  return (
+  const art = (
+    // Hovering the picture dissolves it in pixels into a peek at what's inside (React Bits PixelTransition).
+    <PixelTransition
+      className="rounded-2xl"
+      aspectRatio="56%"
+      gridSize={10}
+      pixelColor="#ffffff"
+      trigger="hover"
+      firstContent={
+        <div
+          className={`relative flex h-full w-full items-center justify-center bg-gradient-to-br ${persona.tint} ${
+            persona.available ? "" : "grayscale-[60%]"
+          }`}
+        >
+          <span className="text-6xl drop-shadow-[0_6px_12px_rgba(0,0,0,0.25)]" aria-hidden="true">
+            {persona.emoji}
+          </span>
+          {!persona.available && (
+            <span className="absolute top-2.5 right-2.5 rounded-full bg-white/85 px-2.5 py-0.5 text-xs font-extrabold text-brand-800">
+              Coming soon
+            </span>
+          )}
+        </div>
+      }
+      secondContent={
+        <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-brand-900 px-4 text-center text-white">
+          <span className="text-3xl" aria-hidden="true">
+            {persona.available ? "🍔" : "🔒"}
+          </span>
+          <span className="font-black">{persona.available ? "Saturday barbecue" : "Lessons on the way"}</span>
+          <span className="text-sm font-semibold text-white/70">
+            {persona.available ? "Your first lesson is ready" : "Check back soon"}
+          </span>
+        </div>
+      }
+    />
+  );
+
+  const card = (
     <article
-      className="glass mx-2.5 flex w-64 flex-col gap-3 rounded-3xl p-3 md:w-72"
+      className="glass flex w-64 flex-col gap-3 rounded-3xl p-3 md:w-72"
       onClick={onFocus}
       aria-label={persona.available ? persona.name : `${persona.name}, coming soon`}
     >
-      <div
-        className={`relative flex h-36 items-center justify-center rounded-2xl bg-gradient-to-br md:h-40 ${persona.tint} ${
-          persona.available ? "" : "grayscale-[60%]"
-        }`}
-      >
-        <span className="text-6xl drop-shadow-[0_6px_12px_rgba(0,0,0,0.25)]" aria-hidden="true">
-          {persona.emoji}
-        </span>
-        {!persona.available && (
-          <span className="absolute top-2.5 right-2.5 rounded-full bg-white/85 px-2.5 py-0.5 text-xs font-extrabold text-brand-800">
-            Coming soon
-          </span>
-        )}
-      </div>
+      {art}
       <div className="px-1">
         <h2 className="text-xl font-black">{persona.name}</h2>
         <p className="text-[15px] leading-snug font-semibold text-gray-600">{persona.blurb}</p>
@@ -117,6 +144,15 @@ function PersonaPanel({
         </Button>
       )}
     </article>
+  );
+
+  // The playable path gets a crackling electric border (React Bits ElectricBorder).
+  return persona.available ? (
+    <ElectricBorder className="mx-2.5" color="#5a46e0" glowColor="#8c7dfb" borderRadius={24} theme="light" thickness={2.5} intensity={1.3} glow={0.9} speed={0.8}>
+      {card}
+    </ElectricBorder>
+  ) : (
+    <div className="mx-2.5">{card}</div>
   );
 }
 

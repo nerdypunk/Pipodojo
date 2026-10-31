@@ -1,20 +1,37 @@
 import type { ButtonHTMLAttributes } from "react";
+import StarBorder from "@/components/StarBorder";
 
 type Tone = "primary" | "amber" | "plain";
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & { tone?: Tone };
 
-const TONES: Record<Tone, string> = {
-  primary: "bg-brand-600 text-white border-brand-800",
-  amber: "bg-amber-400 text-amber-950 border-amber-600",
-  plain: "bg-white text-gray-700 border-gray-300",
-};
+const BASE = "min-h-12 px-6! py-2! text-base font-extrabold";
 
-/** Chunky game button with a pressed-down effect. */
+/** Star colors per tone: a light that laps the border, brighter on hover, with a pulse on press. */
+const STAR = {
+  primary: { backgroundColor: "#5a46e0", textColor: "#ffffff", borderColor: "#3b2d96", color: "#d3cfff" },
+  amber: { backgroundColor: "#fbbf24", textColor: "#451a03", borderColor: "#d97706", color: "#ffffff" },
+} as const;
+
+/** The app's buttons. Primary and amber get the animated star border (React Bits StarBorder). */
 export function Button({ tone = "primary", className = "", ...props }: Props) {
+  if (tone === "plain") {
+    return (
+      <button
+        type="button"
+        className={`${BASE} rounded-2xl border-2 border-gray-300 bg-white text-gray-700 disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
+        {...props}
+      />
+    );
+  }
   return (
-    <button
-      type="button"
-      className={`min-h-12 rounded-2xl border-2 border-b-4 px-6 py-2 text-base font-extrabold transition active:translate-y-0.5 active:border-b-2 motion-reduce:transition-none disabled:opacity-60 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand-500 ${TONES[tone]} ${className}`}
+    <StarBorder
+      {...STAR[tone]}
+      radius={16}
+      thickness={2}
+      stars={2}
+      glow={0.8}
+      sparkle
+      className={`${BASE} ${className}`}
       {...props}
     />
   );
