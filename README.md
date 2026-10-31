@@ -18,7 +18,7 @@ npm run dev                      # open http://localhost:5173
 
 `npm run dev` starts Vite and the Cloudflare Worker (`worker/index.js`, running the API code in `functions/api`) together. Vite forwards `/api/*` to the Worker, which holds the API key.
 
-**Deploying.** The site is a Cloudflare Worker connected to this GitHub repo: every push to `main` runs `npm run build` and `npx wrangler deploy` (see `wrangler.jsonc`). The Worker serves the built game from `dist` and runs code only for `/api/*`. Set `MODEL_API_KEY` as a secret in the Worker's settings.
+**Deploying.** The site is a Cloudflare Worker connected to this GitHub repo: every push to `main` runs `npm run build` and `npx wrangler deploy` (see `wrangler.jsonc`). The Worker serves the built game from `dist` and runs code only for `/api/*`. Set `MODEL_API_KEY` in the Worker's **Settings → Variables and Secrets** with type **Secret**, not Text: a secret is encrypted, can't be read back, and survives every deploy, while a Text value is readable in the dashboard.
 
 Add `?debug=1` to the URL (http://localhost:5173/?debug=1) to see the run log and score breakdown.
 
