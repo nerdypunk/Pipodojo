@@ -3,6 +3,8 @@
   "persona": "parent",
   "order": 2,
   "title": "Invite your friends",
+  "icon": "💌",
+  "recap": "Pipo wrote the invite for the Barbecue crew.",
   "situation": "The barbecue plan looks great! Want me to let your friends know?",
   "facts": [
     "👥 Your friends' group chat is \"Barbecue crew\"",

@@ -7,7 +7,7 @@ import { evaluate } from "../engine/evaluator.ts";
 import type { Mission, PipoRun, RunLog } from "../engine/types.ts";
 import { answerLines } from "../game/feedback.ts";
 import { isDebug, liveClient, takeLiveRun } from "../app/liveClient.ts";
-import { ActionBar, type NextStep } from "./ActionBar.tsx";
+import { ActionBar } from "./ActionBar.tsx";
 import { BriefBuilder, PromptCard } from "./BriefBuilder.tsx";
 import { DebugPanel } from "./DebugPanel.tsx";
 import { PipoScene } from "./PipoScene.tsx";
@@ -24,12 +24,12 @@ interface Props {
   mission: Mission;
   /** Where this lesson sits in its path, e.g. 2 of 3. */
   lesson: { number: number; total: number };
-  /** After a result: on to the next lesson, or back to the paths after the last one. */
-  next: NextStep;
+  /** After a result: the player moves on with this run (to the lesson complete screen). */
+  onFinish: (log: RunLog) => void;
   onBack: () => void;
 }
 
-export function MissionPlayer({ mission, lesson, next, onBack }: Props) {
+export function MissionPlayer({ mission, lesson, onFinish, onBack }: Props) {
   const [phase, setPhase] = useState<Phase>({ name: "build" });
   const [picks, setPicks] = useState<string[]>([]);
   const [nudge, setNudge] = useState<string | null>(null);
@@ -127,7 +127,7 @@ export function MissionPlayer({ mission, lesson, next, onBack }: Props) {
             >
               {phase.name === "build" && <ActionBar state="build" nudge={nudge} onCheck={check} />}
               {thinking && <ActionBar state="thinking" />}
-              {result && <ActionBar state="result" mission={mission} score={result.score} onTryAgain={tryAgain} next={next} />}
+              {result && <ActionBar state="result" mission={mission} score={result.score} onTryAgain={tryAgain} next={{ label: "Continue", onGo: () => onFinish(result) }} />}
               {phase.name === "failed" && <ActionBar state="failed" onTryAgain={tryAgain} />}
             </div>
           </section>

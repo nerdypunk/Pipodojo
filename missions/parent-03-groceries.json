@@ -3,6 +3,8 @@
   "persona": "parent",
   "order": 3,
   "title": "Order the groceries",
+  "icon": "🛒",
+  "recap": "Pipo filled the cart and lined up the delivery.",
   "situation": "Everyone's invited! Should I get the food for Saturday?",
   "facts": [
     "📝 Your list: burgers, veggie burgers, buns, corn, salad, drinks",
@@ -88,28 +90,38 @@
     {
       "id": "vague_goal",
       "when": "picked:buy_stuff",
-      "signals": ["🛒(?![^\\n]*(burger|bun|corn))"],
+      "signals": [
+        "🛒(?![^\\n]*(burger|bun|corn))"
+      ],
       "hint": "\"Buy the stuff\" doesn't say what to buy, so Pipo has to guess.",
       "explain": "Pipo didn't know what to buy, so the cart doesn't have your barbecue food."
     },
     {
       "id": "no_budget",
       "when": "not_picked:budget",
-      "signals": ["💳[^\\n]*\\$\\s?(6[1-9]|[7-9]\\d|\\d{3,})"],
+      "signals": [
+        "💳[^\\n]*\\$\\s?(6[1-9]|[7-9]\\d|\\d{3,})"
+      ],
       "hint": "You didn't give Pipo a spending limit.",
       "explain": "Pipo didn't know your limit, so the cart costs more than $60."
     },
     {
       "id": "no_delivery_time",
       "when": "not_picked:deliver_by",
-      "signals": ["🚚(?![^\\n]*saturday)", "🚚[^\\n]*saturday[^\\n]*\\b([2-9]|1[01])(:\\d\\d)?\\s?(pm|p\\.m\\.)"],
+      "signals": [
+        "🚚(?![^\\n]*saturday)",
+        "🚚[^\\n]*saturday[^\\n]*\\b([2-9]|1[01])(:\\d\\d)?\\s?(pm|p\\.m\\.)"
+      ],
       "hint": "You didn't tell Pipo when the food has to arrive.",
       "explain": "Pipo didn't know when you need the food, so it picked a delivery time that's too late for the barbecue."
     },
     {
       "id": "paid_unchecked",
       "when": "picked:pay_now",
-      "signals": ["✅", "\\b(paid|purchased|order placed|ordered)\\b(?![^\\n]*\\bwait)"],
+      "signals": [
+        "✅",
+        "\\b(paid|purchased|order placed|ordered)\\b(?![^\\n]*\\bwait)"
+      ],
       "hint": "Asking to see the cart first lets you catch mistakes before your money is spent.",
       "explain": "Pipo paid straight away, so you never got to check the cart."
     }

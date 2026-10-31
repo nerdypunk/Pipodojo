@@ -8,9 +8,9 @@ type Props =
   | { state: "result"; mission: Mission; score: Score; onTryAgain: () => void; next: NextStep }
   | { state: "failed"; onTryAgain: () => void };
 
-/** Where the player goes after a result: the next lesson, or back to the paths after the last one. */
+/** Where the player goes after a result (the lesson complete screen). */
 export interface NextStep {
-  label: "Next lesson" | "Finish";
+  label: string;
   onGo: () => void;
 }
 
@@ -79,7 +79,7 @@ function Result({
         ))}
         <p className="text-sm font-semibold text-gray-600">Remember: {mission.lesson}</p>
       </div>
-      {/* A good result leads on to the next lesson; a miss leads with another try (moving on is still allowed). */}
+      {/* A good result leads on; a miss leads with another try (moving on is still allowed). */}
       <div className="flex flex-col gap-2 sm:w-40">
         {missed ? (
           <>

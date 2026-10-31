@@ -55,6 +55,10 @@ export const MissionSchema = z
     persona: PersonaSchema,
     order: z.number().int().positive(),
     title: text,
+    /** One emoji for the lesson's spot on the path map. */
+    icon: text.optional(),
+    /** Shown after the lesson: what Pipo got done, e.g. "Pipo planned your barbecue menu." */
+    recap: text.optional(),
     /** Pipo's opening line, e.g. "Friends are coming Saturday. Tell me what you need!" */
     situation: text,
     /** Things the player knows and Pipo doesn't, shown on the lesson card. */

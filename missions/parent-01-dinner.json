@@ -3,6 +3,8 @@
   "persona": "parent",
   "order": 1,
   "title": "Saturday barbecue",
+  "icon": "🍔",
+  "recap": "Pipo planned your barbecue: the menu and a short shopping list.",
   "situation": "Hi! I hear friends are coming over Saturday for a barbecue. How can I help?",
   "facts": [
     "👥 6 people are coming",
