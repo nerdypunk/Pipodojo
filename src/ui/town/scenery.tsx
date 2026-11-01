@@ -26,11 +26,13 @@ export function grow(elapsed: number, delay: number, still: boolean): number {
 export function IslandBase({ still }: { still: boolean }) {
   const rocks = useMemo(() => {
     const rand = seeded(23);
-    return Array.from({ length: 26 }, (_, i) => {
+    const all = Array.from({ length: 26 }, (_, i) => {
       const a = (i / 26) * Math.PI * 2 + rand() * 0.2;
       const r = ISLAND_RADIUS - 0.5 + rand() * 0.6;
-      return { x: Math.cos(a) * r, z: Math.sin(a) * r, y: -1.1 - rand() * 1.6, s: 0.55 + rand() * 0.6, c: ROCK[i % 3]! };
+      return { a, x: Math.cos(a) * r, z: Math.sin(a) * r, y: -1.1 - rand() * 1.6, s: 0.55 + rand() * 0.6, c: ROCK[i % 3]! };
     });
+    // None in front of the waterfall.
+    return all.filter((r) => Math.abs(Math.atan2(Math.sin(r.a - FALL_ANGLE), Math.cos(r.a - FALL_ANGLE))) > 0.12);
   }, []);
   return (
     <group>
@@ -195,20 +197,27 @@ export function Flowers({ still }: { still: boolean }) {
   );
 }
 
+/** The stream runs straight out from the island's centre through the pond, so it meets the cliff square on. */
+const FALL_ANGLE = Math.atan2(POND.at[1], POND.at[0]);
+/** How far the water runs past the grass before it drops, and how far it falls. */
+const LIP = 0.16;
+const FALL_HEIGHT = 6.4;
+const STREAM_WIDTH = 0.55;
+
 /** The pond, two ducks, and a stream that spills over the edge of the island. */
 export function Pond({ still }: { still: boolean }) {
   const ducks = useRef<THREE.Group>(null);
   const drops = useRef<THREE.Group>(null);
   const [px, pz] = POND.at;
-  // Where the stream meets the edge, and which way is "out".
-  const edgeZ = Math.sqrt(ISLAND_RADIUS ** 2 - px ** 2);
-  const out = Math.atan2(px, edgeZ);
+  // The stream starts under the pond's rim and runs out past the edge, where the fall hangs from it.
+  const start = Math.hypot(px, pz) + POND.radius - 0.25;
+  const end = ISLAND_RADIUS + LIP;
   useFrame(({ clock }) => {
     const t = clock.elapsedTime;
     if (ducks.current && !still) ducks.current.rotation.y = t * 0.35;
     drops.current?.children.forEach((d, i) => {
       const k = still ? i / 8 : (t * 0.6 + i / 8) % 1;
-      d.position.y = -0.3 - k * 6.2;
+      d.position.y = -0.3 - k * (FALL_HEIGHT - 0.6);
     });
   });
   return (
@@ -251,24 +260,26 @@ export function Pond({ still }: { still: boolean }) {
           ))}
         </group>
       </group>
-      {/* The stream out to the edge */}
-      <mesh position={[px, 0.03, (pz + POND.radius + edgeZ) / 2 - 0.1]}>
-        <boxGeometry args={[0.55, 0.02, edgeZ - pz - POND.radius + 0.4]} />
-        <meshStandardMaterial color={WATER} roughness={0.15} emissive={WATER} emissiveIntensity={0.1} />
-      </mesh>
-      {/* The waterfall down the cliff */}
-      <group position={[px + Math.sin(out) * 0.2, 0, edgeZ + Math.cos(out) * 0.2]} rotation={[0, out, 0]}>
-        <mesh position={[0, -3.2, 0]} raycast={noRaycast}>
-          <boxGeometry args={[0.55, 6.4, 0.08]} />
-          <meshStandardMaterial color="#a5dcff" transparent opacity={0.75} roughness={0.1} emissive={WATER} emissiveIntensity={0.2} />
+      {/* The stream and the waterfall, turned so local +z points straight out over the edge. The
+          stream's end and the top of the fall meet in one clean corner. */}
+      <group rotation={[0, Math.atan2(px, pz), 0]}>
+        <mesh position={[0, 0.03, (start + end) / 2]}>
+          <boxGeometry args={[STREAM_WIDTH, 0.02, end - start]} />
+          <meshStandardMaterial color={WATER} roughness={0.15} emissive={WATER} emissiveIntensity={0.1} />
         </mesh>
-        <group ref={drops}>
-          {Array.from({ length: 8 }, (_, i) => (
-            <mesh key={i} position={[(i % 3) * 0.15 - 0.15, 0, 0.08]} raycast={noRaycast}>
-              <boxGeometry args={[0.05, 0.35, 0.02]} />
-              <meshStandardMaterial color="#ffffff" transparent opacity={0.85} />
-            </mesh>
-          ))}
+        <group position={[0, 0, end]}>
+          <mesh position={[0, 0.04 - FALL_HEIGHT / 2, -0.03]} raycast={noRaycast}>
+            <boxGeometry args={[STREAM_WIDTH, FALL_HEIGHT, 0.06]} />
+            <meshStandardMaterial color={WATER} roughness={0.15} emissive={WATER} emissiveIntensity={0.15} />
+          </mesh>
+          <group ref={drops}>
+            {Array.from({ length: 8 }, (_, i) => (
+              <mesh key={i} position={[(i % 3) * 0.15 - 0.15, 0, 0.012]} raycast={noRaycast}>
+                <boxGeometry args={[0.05, 0.35, 0.02]} />
+                <meshStandardMaterial color="#ffffff" />
+              </mesh>
+            ))}
+          </group>
         </group>
       </group>
     </group>
