@@ -79,6 +79,8 @@ let musicBus: GainNode | null = null;
 let sfxBus: GainNode | null = null;
 let noiseBuffer: AudioBuffer | null = null;
 let unlocked = false;
+/** The music waits for its cue (heading into town), so the first screen stays quiet. */
+let musicCued = false;
 
 /** Master volume, a gentle limiter (so stacked sounds never clip), the two buses and some noise. */
 function buildGraph(c: BaseAudioContext) {
@@ -116,7 +118,7 @@ function audio(): AudioContext | null {
 
 /**
  * Call once at start-up: the first tap or key press anywhere wakes the audio up (browsers keep
- * it asleep until then) and starts the music if it's on.
+ * it asleep until then). The music then waits for cueMusic(), if it's on.
  */
 let installed = false;
 
@@ -400,9 +402,16 @@ export function musicState() {
   return { running: musicSource !== null, volume: musicBus?.gain.value ?? 0, audio: ctx?.state ?? "none" };
 }
 
+/** Lets the music begin (it fades in): called when the player first heads into town. */
+export function cueMusic() {
+  if (musicCued) return;
+  musicCued = true;
+  applyMusic();
+}
+
 /** Starts or stops the music to match the setting, the tab's visibility and whether audio is awake. */
 function applyMusic() {
-  if (!ctx || !musicBus || !unlocked) return;
+  if (!ctx || !musicBus || !unlocked || !musicCued) return;
   const want = settings.music && !document.hidden;
   // Only touch the volume when the music actually starts or stops: this runs again on every
   // wake-up, setting change and tab switch, and cancelling a fade that's under way left it silent.
@@ -424,7 +433,7 @@ function applyMusic() {
       source.connect(bus);
       bus.gain.cancelScheduledValues(t);
       bus.gain.setValueAtTime(0.0001, t);
-      bus.gain.setTargetAtTime(MUSIC_LEVEL, t, 0.6);
+      bus.gain.setTargetAtTime(MUSIC_LEVEL, t, 1.2);
       source.start(t);
       musicSource = source;
     });

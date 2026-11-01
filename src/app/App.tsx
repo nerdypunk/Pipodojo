@@ -18,7 +18,7 @@ import { Lab } from "../ui/lab/Lab.tsx";
 import { initialLang, LangContext, saveLang, type Lang } from "../i18n/index.tsx";
 import { missionsIn } from "./missions.ts";
 import { paintPostcard, type Postcard } from "./postcard.ts";
-import { installAudioUnlock, installHoverSounds } from "./sound.ts";
+import { cueMusic, installAudioUnlock, installHoverSounds } from "./sound.ts";
 
 type Screen =
   /** Make your Pipo: first thing on arrival, and later from Pipo's garage in town. */
@@ -100,9 +100,14 @@ export function App() {
 
   // Fetch the 3D town while the player is still picking a look.
   useEffect(preloadTown, []);
-  // Wake the audio on the first tap, then start the music (if on).
+  // Wake the audio on the first tap. The music waits for "Let's go to town" (or any screen past
+  // the first one, like the Lab), then fades in.
   useEffect(installAudioUnlock, []);
   useEffect(installHoverSounds, []);
+  const firstScreen = screen.kind === "build" && screen.first;
+  useEffect(() => {
+    if (!firstScreen) cueMusic();
+  }, [firstScreen]);
 
   useEffect(() => {
     try {
@@ -202,7 +207,10 @@ export function App() {
         look={look}
         onChange={setLook}
         first={first}
-        onDone={() => void go(first ? "to-right" : "to-left", () => setScreen({ kind: "town" }))}
+        onDone={() => {
+          cueMusic();
+          void go(first ? "to-right" : "to-left", () => setScreen({ kind: "town" }));
+        }}
       />
     );
   }
