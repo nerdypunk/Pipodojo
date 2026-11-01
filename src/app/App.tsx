@@ -13,6 +13,7 @@ import { PathPicker } from "../ui/PathPicker.tsx";
 import { PipoLookContext } from "../ui/Pipo.tsx";
 import { PipoBuilder } from "../ui/PipoBuilder.tsx";
 import { preloadTown, Town } from "../ui/town/Town.tsx";
+import { Lab } from "../ui/lab/Lab.tsx";
 import { initialLang, LangContext, saveLang, type Lang } from "../i18n/index.tsx";
 import { missionsIn } from "./missions.ts";
 import { paintPostcard, type Postcard } from "./postcard.ts";
@@ -23,7 +24,11 @@ type Screen =
   | { kind: "build"; first: boolean }
   | { kind: "town" }
   | { kind: "paths"; persona: Persona }
-  | { kind: "lesson"; persona: Persona; path: string; index: number };
+  | { kind: "lesson"; persona: Persona; path: string; index: number }
+  /** Pipo's Lab: new ways to play being tried out, opened with #lab in the address. */
+  | { kind: "lab" };
+
+const isLabLink = () => window.location.hash === "#lab";
 
 const LOOK_KEY = "pipodojo.look";
 const STREAK_KEY = "pipodojo.streak";
@@ -63,7 +68,13 @@ interface Finished {
  * on it; Continue sweeps it away into the next lesson.
  */
 export function App() {
-  const [screen, setScreen] = useState<Screen>({ kind: "build", first: true });
+  const [screen, setScreen] = useState<Screen>(() => (isLabLink() ? { kind: "lab" } : { kind: "build", first: true }));
+  // Typing #lab into the address while playing opens the Lab too.
+  useEffect(() => {
+    const open = () => isLabLink() && setScreen({ kind: "lab" });
+    window.addEventListener("hashchange", open);
+    return () => window.removeEventListener("hashchange", open);
+  }, []);
   const [finished, setFinished] = useState<Finished | null>(null);
   // Best stars per lesson, for this visit.
   const [stars, setStars] = useState<Record<string, number>>({});
@@ -160,6 +171,15 @@ export function App() {
         stars={stars}
         onStart={(path) => void go("to-right", () => setScreen({ kind: "lesson", persona, path, index: 0 }))}
         onBack={toTown}
+      />
+    );
+  } else if (screen.kind === "lab") {
+    content = (
+      <Lab
+        onExit={() => {
+          history.replaceState(null, "", window.location.pathname + window.location.search);
+          toTown();
+        }}
       />
     );
   } else if (screen.kind === "town") {

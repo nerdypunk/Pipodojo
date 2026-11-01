@@ -6,11 +6,10 @@ import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { onRequest } from "../functions/api/chat.js";
 import { askPipo } from "../src/engine/agentRunner.ts";
-import { togglePick } from "../src/engine/brief.ts";
 import { evaluate } from "../src/engine/evaluator.ts";
 import { loadMissions } from "../src/engine/missionLoader.ts";
 import { createHttpModelClient } from "../src/engine/modelClient.ts";
-import type { Mission } from "../src/engine/types.ts";
+import { keySetups } from "../src/engine/setups.ts";
 
 const root = join(import.meta.dirname, "..");
 const argv = process.argv.slice(2);
@@ -32,21 +31,6 @@ function readDevVars(): Record<string, string> {
     if (match) env[match[1]!] = match[2]!.trim();
   }
   return env;
-}
-
-/** The best prompt, plus one variant per flaw (leave out a good piece, or swap in a weak one). */
-export function keySetups(mission: Mission): Record<string, string[]> {
-  const best = mission.slots.flatMap((slot) => {
-    const good = slot.pieces.filter((p) => p.quality === "good");
-    if (slot.pick === "many") return good.map((p) => p.id);
-    return [(good[0] ?? slot.pieces.find((p) => p.quality === "neutral") ?? slot.pieces[0]!).id];
-  });
-  const setups: Record<string, string[]> = { best };
-  for (const flaw of mission.flaws) {
-    const [kind, ref] = flaw.when.split(":") as [string, string];
-    setups[flaw.id] = kind === "not_picked" ? best.filter((id) => id !== ref) : togglePick(mission, best, ref);
-  }
-  return setups;
 }
 
 async function main() {

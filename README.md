@@ -48,6 +48,13 @@ The young coder uses **Pipo Code**, a coding agent on a laptop, to build a websi
 
 Every sound effect is made in code with the browser's Web Audio API (`src/app/sound.ts`): no audio files, nothing to license. The music is one looping track at `public/music/theme.mp3` (no track, no music). Sound starts after the player's first tap, music loops softly under the game, and the 🔊 button turns music and sound effects off separately (remembered per device).
 
+## Pipo's Lab
+
+New ways to play are tried out in a separate Lab, opened by adding `#lab` to the address (for example `http://localhost:5173/#lab`). Both prototypes run on the same engine, scoring and live Muse Spark calls as the lessons, in English and Spanish:
+
+- **Clue hunt:** read a long, messy chat or email and tap the parts Pipo needs; tapped parts become the prompt (`src/game/clueHunts.ts`).
+- **Which prompt wins?:** two messages for the same task; guess which one gets Pipo's better answer, then both run live (`src/game/versus.ts`).
+
 ## English and Spanish
 
 The whole game plays in English or Latin American Spanish; the 🌐 button on the first screen and in town switches it, and a first visit follows the browser's language.
