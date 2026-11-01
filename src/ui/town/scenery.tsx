@@ -469,9 +469,9 @@ export function MiniIsland({
         </group>
       </group>
       <Html position={[0, 2.6 * scale + 0.4, 0]} center zIndexRange={[10, 0]} style={{ pointerEvents: "none" }}>
-        <span className="block rounded-2xl bg-white/90 px-3 py-1.5 text-center whitespace-nowrap shadow-md ring-1 ring-white">
-          <span className="block text-[11px] leading-tight font-black text-amber-700 sm:text-xs">{label.title}</span>
-          <span className="block text-[10px] leading-tight font-bold text-brand-800 sm:text-[11px]">{label.sub}</span>
+        <span className="block rounded-2xl bg-white/90 px-3 py-1.5 text-center font-pixel font-bold whitespace-nowrap shadow-md ring-1 ring-white">
+          <span className="block text-[12px] leading-tight text-amber-700 sm:text-[13px]">{label.title}</span>
+          <span className="block text-[11px] leading-tight text-brand-800 sm:text-xs">{label.sub}</span>
         </span>
       </Html>
     </group>

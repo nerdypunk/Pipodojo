@@ -9,6 +9,7 @@ import type { PipoLook } from "../../game/pipoLook.ts";
 import { PLACES, RING, SPOKE_END, placeOf, type Place, type PlaceId } from "../../game/townLayout.ts";
 import { TOUCH } from "../device.ts";
 import { Pipo3D } from "./Pipo3D.tsx";
+import { Retro } from "./Retro.tsx";
 import { Cafe, College, Dojo, Garage, House, KidHouse } from "./places.tsx";
 import { Balloon, Car, Cloud } from "./props.tsx";
 import { Birds, Flowers, Forest, IslandBase, MiniIsland, Plaza, Pond, Strollers, grow } from "./scenery.tsx";
@@ -84,6 +85,7 @@ export default function TownCanvas(props: TownCanvasProps) {
       aria-label="Pipodojo Town"
     >
       <Town {...props} />
+      <Retro />
     </Canvas>
   );
 }
@@ -444,12 +446,12 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
           )}
           <div className="pop-in" style={{ animationDelay: `${delay + 0.35}s` }}>
             <div
-              className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-black whitespace-nowrap shadow-lg ring-2 sm:gap-1.5 sm:px-3 sm:py-1 sm:text-sm transition-transform duration-200 motion-reduce:transition-none ${
+              className={`flex items-center gap-1 rounded-full px-2 py-0.5 font-pixel text-[11px] font-bold whitespace-nowrap shadow-lg ring-2 sm:gap-1.5 sm:px-3 sm:py-1 sm:text-sm transition-transform duration-200 motion-reduce:transition-none ${
                 tag.open ? "bg-white text-ink ring-white" : "bg-white/75 text-gray-600 ring-white/60"
               } ${hovered ? "scale-110" : ""}`}
             >
               {tag.title}
-              {tag.progress && <span className="text-xs font-extrabold text-amber-600">{tag.progress}</span>}
+              {tag.progress && <span className="text-xs text-amber-600">{tag.progress}</span>}
               {tag.badge && <span aria-hidden="true">{tag.badge}</span>}
             </div>
           </div>
