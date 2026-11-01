@@ -171,9 +171,10 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
       <Cloud position={[-10, 10.5, -9]} scale={1.3} speed={0.35} still={still} />
       <Cloud position={[6, 11.5, -14]} scale={1.6} speed={0.25} still={still} />
       <Balloon position={[12.5, 6.5, -9]} still={still} />
-      {/* Round the rim of the island: just over the edge trees, well outside Pipo's paths between
-          the places, and low enough that the far side of the loop stays on screen. */}
-      <Airplane center={[0, 0]} radius={12.4} height={2.8} speed={0.25} still={still} />
+      {/* Round the rim of the island, just past the grass: the inner wingtip clears the widest
+          building (the college roof reaches ~12.6 out when hovered) and the edge trees, it stays
+          well outside Pipo's paths, and it flies low enough that the far side stays on screen. */}
+      <Airplane center={[0, 0]} radius={13.7} height={2.7} shadowReach={12.2} speed={0.25} still={still} />
       {/* Two small islands floating off the town: more to come. Placed for the screen's shape so
           they land in clear sky, away from the header and the name tags. */}
       {(wide ? ISLANDS_WIDE : ISLANDS_TALL).map((at, i) => (

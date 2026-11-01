@@ -316,6 +316,8 @@ interface AirplaneProps {
   center: [number, number];
   radius: number;
   height: number;
+  /** How far out from the middle the shadow may go, so it stays on the grass when the loop runs past the edge. */
+  shadowReach: number;
   /** Radians per second round the loop. */
   speed: number;
   still: boolean;
@@ -325,7 +327,7 @@ interface AirplaneProps {
  * A little propeller plane with Pipo at the controls, looping round the island and leaning into
  * the turn. A soft shadow follows it on the ground so it reads as flying, not parked.
  */
-export function Airplane({ center, radius, height, speed, still }: AirplaneProps) {
+export function Airplane({ center, radius, height, shadowReach, speed, still }: AirplaneProps) {
   const ref = useRef<THREE.Group>(null);
   const prop = useRef<THREE.Group>(null);
   const shadow = useRef<THREE.Mesh>(null);
@@ -347,7 +349,8 @@ export function Airplane({ center, radius, height, speed, still }: AirplaneProps
     // Nose along the loop, banked in toward the middle. (Local +x then points out of the loop,
     // so a positive roll lifts the outer wing; a negative pitch lifts the nose as it bobs up.)
     g.rotation.set(-Math.cos(t * 0.9) * 0.06, -a, 0.35, "YXZ");
-    shadow.current?.position.set(x, 0.06, z);
+    const reach = Math.min(radius, shadowReach);
+    shadow.current?.position.set(center[0] + Math.cos(a) * reach, 0.06, center[1] + Math.sin(a) * reach);
     if (prop.current && !still) prop.current.rotation.z = t * 40;
   });
   const white = "#f6f7fb";
