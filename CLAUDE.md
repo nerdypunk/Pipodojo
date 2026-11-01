@@ -9,7 +9,7 @@ Project: Pipodojo (the mascot, and the player's agent, is a little robot called 
 ## Stack (approved)
 TypeScript (strict), React 18, Vite, Tailwind CSS, Framer Motion, react-router (HashRouter), Zustand, Zod, Vitest, canvas-confetti. Backend is the API code in `functions/api` (chat, image, and a guard middleware), run by the Cloudflare Worker in `worker/index.js`. Hosting is a Cloudflare Worker with static assets (`wrangler.jsonc`), deployed by Workers Builds from the public GitHub repo.
 - Ask before adding any other dependency.
-- No database, no auth, no analytics or tracking.
+- No database, no auth, no cookies, nothing that tracks or identifies a person. The one exception is Cloudflare Web Analytics on the live site (`src/app/analytics.ts`): cookie-free counts of visits, pages, countries and devices.
 
 ## Hard rules
 - Never commit secrets. `MODEL_API_KEY` lives in `.dev.vars` (gitignored) locally and in a Cloudflare secret in production. Never put it in client code, build output, or logs.

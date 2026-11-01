@@ -62,6 +62,10 @@ The whole game plays in English or Latin American Spanish; the 🌐 button on th
 - Each lesson in `/missions` has a Spanish twin in `/missions/es` with the same ids, pieces and scoring rules, only the words and the answer checks rewritten for Spanish. `tests/spanish.test.ts` keeps every twin in step, and a missing twin falls back to English.
 - Spanish lessons tell Pipo to answer in Spanish. Check one live with `npm run check:mission -- cafe-01-sale-post --lang es`.
 
+## Privacy
+
+No accounts and no cookies. Your settings (language, sound, your Pipo's look, your streak) stay in your own browser's storage and are never sent anywhere. The live site uses [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/) to count visits, pages, countries and devices; it's cookie-free and doesn't identify anyone (`src/app/analytics.ts`, off when running locally).
+
 ## Powered by Muse Spark
 
 Pipo's answers come live from Meta's **Muse Spark** model through the Meta Model API. Pipodojo uses the `muse-spark-1.2-contributor` tier everywhere, locally and deployed: it costs less, and in return Meta may use the prompts to improve its models. Players never type, so every prompt is built from the game's own preset pieces and nothing personal is sent. Pipo's role and answer format come from each lesson file; the stars are worked out by the game's own rules, never by a model.
