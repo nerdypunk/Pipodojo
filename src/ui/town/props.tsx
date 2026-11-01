@@ -2,7 +2,7 @@
 // Everything is made of simple shapes in a soft toy style; nothing is loaded from outside.
 import { RoundedBox } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { useMemo, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { RING, ringPoint } from "../../game/townLayout.ts";
 
@@ -308,5 +308,107 @@ export function Balloon({ position, still }: { position: V3; still: boolean }) {
         </mesh>
       ))}
     </group>
+  );
+}
+
+interface AirplaneProps {
+  /** Middle of the loop (x, z) and its size; the loop is level, `height` above the grass. */
+  center: [number, number];
+  radius: number;
+  height: number;
+  /** Radians per second round the loop. */
+  speed: number;
+  still: boolean;
+}
+
+/**
+ * A little propeller plane with Pipo at the controls, looping round the island and leaning into
+ * the turn. A soft shadow follows it on the ground so it reads as flying, not parked.
+ */
+export function Airplane({ center, radius, height, speed, still }: AirplaneProps) {
+  const ref = useRef<THREE.Group>(null);
+  const prop = useRef<THREE.Group>(null);
+  const shadow = useRef<THREE.Mesh>(null);
+  // It flies over the places, so it must never catch a click meant for them.
+  useLayoutEffect(() => {
+    ref.current?.traverse((o) => {
+      o.raycast = () => {};
+    });
+  }, []);
+  useFrame(({ clock }) => {
+    const g = ref.current;
+    if (!g) return;
+    // Parked on the left of the loop when motion is reduced.
+    const t = still ? 0 : clock.elapsedTime;
+    const a = still ? 2.4 : t * speed;
+    const x = center[0] + Math.cos(a) * radius;
+    const z = center[1] + Math.sin(a) * radius;
+    g.position.set(x, height + Math.sin(t * 0.9) * 0.25, z);
+    // Nose along the loop, banked in toward the middle. (Local +x then points out of the loop,
+    // so a positive roll lifts the outer wing; a negative pitch lifts the nose as it bobs up.)
+    g.rotation.set(-Math.cos(t * 0.9) * 0.06, -a, 0.35, "YXZ");
+    shadow.current?.position.set(x, 0.06, z);
+    if (prop.current && !still) prop.current.rotation.z = t * 40;
+  });
+  const white = "#f6f7fb";
+  return (
+    <>
+      <mesh ref={shadow} rotation={[-Math.PI / 2, 0, 0]} scale={[1, 0.7, 1]} raycast={() => null}>
+        <circleGeometry args={[0.75, 20]} />
+        <meshBasicMaterial color="#2d2470" transparent opacity={0.14} depthWrite={false} />
+      </mesh>
+      <group ref={ref} scale={0.8}>
+        {/* Body, tapering to the tail */}
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.26, 0.14, 1.7, 14]} />
+          <meshStandardMaterial color={white} roughness={0.5} />
+        </mesh>
+        <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.18]}>
+          <cylinderGeometry args={[0.235, 0.225, 0.16, 14]} />
+          <meshStandardMaterial color="#5aa0e0" roughness={0.5} />
+        </mesh>
+        {/* Nose and propeller */}
+        <mesh position={[0, 0, 0.9]} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.15, 0.26, 0.2, 14]} />
+          <meshStandardMaterial color={CORAL} roughness={0.5} />
+        </mesh>
+        <mesh position={[0, 0, 1.03]}>
+          <sphereGeometry args={[0.08, 10, 8]} />
+          <meshStandardMaterial color="#f6c945" />
+        </mesh>
+        <group ref={prop} position={[0, 0, 1.06]}>
+          {[0, Math.PI / 2].map((r) => (
+            <mesh key={r} rotation={[0, 0, r]}>
+              <boxGeometry args={[0.75, 0.07, 0.02]} />
+              <meshStandardMaterial color={INK} />
+            </mesh>
+          ))}
+        </group>
+        {/* Wings and tail */}
+        <RoundedBox args={[2.4, 0.07, 0.48]} radius={0.03} smoothness={2} position={[0, -0.04, 0.25]}>
+          <meshStandardMaterial color={CORAL} roughness={0.5} />
+        </RoundedBox>
+        <RoundedBox args={[0.9, 0.05, 0.26]} radius={0.02} smoothness={2} position={[0, 0.02, -0.72]}>
+          <meshStandardMaterial color={CORAL} roughness={0.5} />
+        </RoundedBox>
+        <RoundedBox args={[0.05, 0.42, 0.32]} radius={0.02} smoothness={2} position={[0, 0.22, -0.72]}>
+          <meshStandardMaterial color="#5aa0e0" roughness={0.5} />
+        </RoundedBox>
+        {/* Pipo in the open cockpit */}
+        <mesh position={[0, 0.27, 0.32]}>
+          <sphereGeometry args={[0.15, 14, 12]} />
+          <meshStandardMaterial color={ORANGE} roughness={0.5} />
+        </mesh>
+        <mesh position={[0, 0.29, 0.43]} scale={[1, 0.6, 0.5]}>
+          <sphereGeometry args={[0.1, 12, 10]} />
+          <meshStandardMaterial color={INK} roughness={0.3} />
+        </mesh>
+        {/* Windscreen */}
+        <mesh position={[0, 0.25, 0.52]} rotation={[-0.5, 0, 0]}>
+          <boxGeometry args={[0.3, 0.14, 0.02]} />
+          <meshStandardMaterial color="#cfe9ff" transparent opacity={0.7} />
+        </mesh>
+      </group>
+    </>
   );
 }

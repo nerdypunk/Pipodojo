@@ -11,7 +11,7 @@ import { TOUCH } from "../device.ts";
 import { Pipo3D } from "./Pipo3D.tsx";
 import { Retro } from "./Retro.tsx";
 import { Cafe, College, Dojo, Garage, House, KidHouse } from "./places.tsx";
-import { Balloon, Car, Cloud } from "./props.tsx";
+import { Airplane, Balloon, Car, Cloud } from "./props.tsx";
 import { Birds, Flowers, Forest, IslandBase, MiniIsland, Plaza, Pond, Strollers, grow } from "./scenery.tsx";
 
 export interface PlaceTag {
@@ -171,6 +171,9 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
       <Cloud position={[-10, 10.5, -9]} scale={1.3} speed={0.35} still={still} />
       <Cloud position={[6, 11.5, -14]} scale={1.6} speed={0.25} still={still} />
       <Balloon position={[12.5, 6.5, -9]} still={still} />
+      {/* Round the rim of the island: just over the edge trees, well outside Pipo's paths between
+          the places, and low enough that the far side of the loop stays on screen. */}
+      <Airplane center={[0, 0]} radius={12.4} height={2.8} speed={0.25} still={still} />
       {/* Two small islands floating off the town: more to come. Placed for the screen's shape so
           they land in clear sky, away from the header and the name tags. */}
       {(wide ? ISLANDS_WIDE : ISLANDS_TALL).map((at, i) => (
@@ -337,6 +340,11 @@ function Roads() {
           <meshStandardMaterial color={PAVEMENT} roughness={0.95} />
         </RoundedBox>
       ))}
+      {/* A barrier across the end of each road, so none of them looks like it runs off the island */}
+      {[1, -1].flatMap((s) => [
+        <Barrier key={`z${s}`} position={[0, 0, s * (SPOKE_END - 0.35)]} turn={0} />,
+        <Barrier key={`x${s}`} position={[s * (SPOKE_END - 0.35), 0, 0]} turn={Math.PI / 2} />,
+      ])}
       <Instances limit={dashes.length + zebra.length} raycast={noRaycast}>
         <boxGeometry args={[0.08, 0.01, 0.4]} />
         <meshStandardMaterial color="#ffffff" />
@@ -347,6 +355,38 @@ function Roads() {
           <Instance key={`z${i}`} position={z.at} rotation={[0, z.alongX ? Math.PI / 2 : 0, 0]} scale={[1.4, 1, 1.3]} />
         ))}
       </Instances>
+    </group>
+  );
+}
+
+const BARRIER_STRIPES = 5;
+const BARRIER_WIDTH = RING.width + 0.2;
+
+/** A red and white striped road barrier: two boards on two posts, with a little amber lamp on each. */
+function Barrier({ position, turn }: { position: [number, number, number]; turn: number }) {
+  const stripe = BARRIER_WIDTH / BARRIER_STRIPES;
+  return (
+    <group position={position} rotation={[0, turn, 0]}>
+      {[-1, 1].map((side) => (
+        <group key={side} position={[side * (BARRIER_WIDTH / 2 - 0.08), 0, 0]}>
+          <mesh position={[0, 0.26, 0]} raycast={noRaycast}>
+            <boxGeometry args={[0.08, 0.52, 0.08]} />
+            <meshStandardMaterial color="#f4f5f7" roughness={0.8} />
+          </mesh>
+          <mesh position={[0, 0.58, 0]} raycast={noRaycast}>
+            <sphereGeometry args={[0.06, 10, 8]} />
+            <meshStandardMaterial color="#ffc94d" emissive="#ffb000" emissiveIntensity={0.6} />
+          </mesh>
+        </group>
+      ))}
+      {[0.22, 0.42].flatMap((y, row) =>
+        Array.from({ length: BARRIER_STRIPES }, (_, i) => (
+          <mesh key={`${y}-${i}`} position={[(i - (BARRIER_STRIPES - 1) / 2) * stripe, y, 0.06]} raycast={noRaycast}>
+            <boxGeometry args={[stripe, 0.14, 0.04]} />
+            <meshStandardMaterial color={(i + row) % 2 ? "#ffffff" : "#e8655a"} roughness={0.7} />
+          </mesh>
+        )),
+      )}
     </group>
   );
 }
