@@ -58,12 +58,13 @@ const POP_START = 0.45;
 const POP_STEP = 0.14;
 const noRaycast = () => null;
 /**
- * Where the "under construction" islands float. On wide screens: two, in the open sky to the
- * right of the town; on tall phone screens: one, in the sky above it, clear of the header and the
- * button column. (Worked out by projecting through the home camera.)
+ * Where the "under construction" islands float. On wide screens: two, in the open sky on either
+ * side of the town (left, and lower right), clear of the buildings and name tags; on tall phone
+ * screens: one, in the sky above it, clear of the header and the button column. (Worked out by
+ * projecting through the home camera.)
  */
 const ISLANDS_WIDE: [number, number, number][] = [
-  [15, 8.5, 6.5],
+  [-19.5, -6, 5.5],
   [16.5, 3.5, 7.5],
 ];
 const ISLANDS_TALL: [number, number, number][] = [[-15, 6, -19.5]];
