@@ -315,6 +315,14 @@ function loadTrack(c: BaseAudioContext): Promise<AudioBuffer | null> {
   return musicTrack;
 }
 
+/** Where the sound really ends: songs often close with seconds of silence, which would leave a gap each loop. */
+export function loopEndOf(track: AudioBuffer): number {
+  const data = track.getChannelData(0);
+  let last = data.length - 1;
+  while (last > 0 && Math.abs(data[last]!) < 0.002) last--;
+  return Math.min(track.duration, last / track.sampleRate + 0.05);
+}
+
 /**
  * Renders every sound effect in turn, offline, into one buffer: for previewing the effects and
  * checking their levels without playing anything aloud.
@@ -363,6 +371,8 @@ function applyMusic() {
       const source = c.createBufferSource();
       source.buffer = track;
       source.loop = true;
+      source.loopStart = 0;
+      source.loopEnd = loopEndOf(track);
       source.connect(bus);
       bus.gain.cancelScheduledValues(t);
       bus.gain.setValueAtTime(0.0001, t);
