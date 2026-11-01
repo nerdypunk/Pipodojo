@@ -2,7 +2,8 @@
 // finished messages for the same task. One has everything Pipo needs; the other has two flaws
 // (facts left out, or weak bits swapped in), so the difference is easy to spot without being
 // silly. Only the chosen one goes to Pipo, scored by the same rules as every lesson. The pair is
-// fixed for the visit, so Try again can test the other.
+// fixed for the visit, so Try again can test the other. A ring counts down once per visit: the
+// first pick in time is a quick pick, and running out never stops the player.
 import { useState } from "react";
 import { play } from "../app/sound.ts";
 import { buildPrompt } from "../engine/brief.ts";
@@ -10,18 +11,27 @@ import { promptPair } from "../engine/setups.ts";
 import type { Mission } from "../engine/types.ts";
 import { useLang } from "../i18n/index.tsx";
 import type { PickerProps } from "./MissionPlayer.tsx";
+import { PICK_SECONDS, PickTimer, useCountdown } from "./PickTimer.tsx";
 
 const same = (a: readonly string[], b: readonly string[]) => a.length === b.length && a.every((id) => b.includes(id));
 
 export function PromptChoice({ mission, picks, choose, done }: PickerProps & { mission: Mission }) {
   const { t } = useLang();
   const [pair] = useState(() => promptPair(mission));
+  // Seconds into the countdown when the player first picked.
+  const [pickedAt, setPickedAt] = useState<number | null>(null);
+  const elapsed = useCountdown(!done && pickedAt === null);
+  const outOfTime = elapsed >= PICK_SECONDS;
+  const quick = pickedAt !== null && pickedAt < PICK_SECONDS ? Math.max(1, Math.round(pickedAt)) : null;
 
   return (
     <div className="space-y-2.5">
-      <div>
-        <p className="text-base font-black text-ink md:text-lg">{t.lesson.choose}</p>
-        <p className="text-sm font-semibold text-gray-600">{t.lesson.chooseSub}</p>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-base font-black text-ink md:text-lg">{t.lesson.choose}</p>
+          <p className="text-sm font-semibold text-gray-600">{t.lesson.chooseSub}</p>
+        </div>
+        <PickTimer elapsed={elapsed} quick={quick} />
       </div>
       <div className="space-y-2.5" role="radiogroup" aria-label={t.lesson.choose}>
         {pair.map((option, i) => {
@@ -35,7 +45,9 @@ export function PromptChoice({ mission, picks, choose, done }: PickerProps & { m
               aria-checked={on}
               disabled={done}
               onClick={() => {
-                play("pick");
+                const firstInTime = pickedAt === null && !outOfTime;
+                play(firstInTime ? "publish" : "pick");
+                if (pickedAt === null) setPickedAt(elapsed);
                 choose(option);
               }}
               className={`flex w-full items-start gap-3 rounded-2xl p-2.5 text-left transition motion-reduce:transition-none ${
