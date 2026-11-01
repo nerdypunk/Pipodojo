@@ -136,12 +136,12 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
           <p className="hidden text-sm font-semibold text-gray-600 sm:block">{t.town.hint}</p>
         </div>
         <div className="pointer-events-auto flex shrink-0 flex-col items-end gap-2 sm:flex-row sm:items-center">
-          <span className="glass flex items-center gap-1 rounded-full px-3 py-2 text-sm font-black text-orange-600" title={t.town.streakTitle}>
+          <span className="chip flex items-center gap-1 rounded-full px-3 py-2 text-sm font-black" title={t.town.streakTitle}>
             <span aria-hidden="true">🔥</span>
             {streak} <span className="sr-only">{t.town.streak}</span>
           </span>
-          <span className="glass flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-black text-brand-800">
-            <span className="text-amber-500" aria-hidden="true">
+          <span className="chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-black">
+            <span className="text-amber-300" aria-hidden="true">
               ★
             </span>
             {total} <span className="sr-only">{t.town.stars}</span>
@@ -149,7 +149,7 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
           <button
             type="button"
             onClick={() => select("garage")}
-            className="glass flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-extrabold text-brand-700 transition hover:bg-white/80 md:px-4"
+            className="chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-extrabold transition hover:bg-brand-700 active:translate-y-px focus-visible:outline-3 focus-visible:outline-white md:px-4"
             aria-label={t.town.garage}
           >
             <span aria-hidden="true">🔧</span>

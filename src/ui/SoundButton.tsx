@@ -67,8 +67,8 @@ export function SoundButton({ className = "", compact = false }: { className?: s
         aria-label={t.sound.button}
         aria-expanded={open}
         title={t.sound.button}
-        className={`flex shrink-0 items-center justify-center rounded-full font-black text-brand-700 transition hover:bg-white/80 active:translate-y-px focus-visible:outline-3 focus-visible:outline-brand-500 ${
-          compact ? "h-9 w-9 text-lg" : "glass px-3 py-2 text-sm"
+        className={`flex shrink-0 items-center justify-center rounded-full font-black transition active:translate-y-px focus-visible:outline-3 focus-visible:outline-brand-500 ${
+          compact ? "h-9 w-9 text-lg text-brand-700 hover:bg-white/80" : "chip px-3 py-2 text-sm hover:bg-brand-700"
         } ${className}`}
       >
         <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>
