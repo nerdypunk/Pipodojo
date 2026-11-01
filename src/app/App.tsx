@@ -12,12 +12,13 @@ import { TransitionOverlay, usePageTransition } from "../ui/PageTransition.tsx";
 import { PathPicker } from "../ui/PathPicker.tsx";
 import { PipoLookContext } from "../ui/Pipo.tsx";
 import { PipoBuilder } from "../ui/PipoBuilder.tsx";
+import { PromptChoice } from "../ui/PromptChoice.tsx";
 import { preloadTown, Town } from "../ui/town/Town.tsx";
 import { Lab } from "../ui/lab/Lab.tsx";
 import { initialLang, LangContext, saveLang, type Lang } from "../i18n/index.tsx";
 import { missionsIn } from "./missions.ts";
 import { paintPostcard, type Postcard } from "./postcard.ts";
-import { installAudioUnlock } from "./sound.ts";
+import { installAudioUnlock, installHoverSounds } from "./sound.ts";
 
 type Screen =
   /** Make your Pipo: first thing on arrival, and later from Pipo's garage in town. */
@@ -101,6 +102,7 @@ export function App() {
   useEffect(preloadTown, []);
   // Wake the audio on the first tap, then start the music (if on).
   useEffect(installAudioUnlock, []);
+  useEffect(installHoverSounds, []);
 
   useEffect(() => {
     try {
@@ -161,6 +163,7 @@ export function App() {
         lesson={{ number: index + 1, total: lessons.length }}
         onFinish={(log) => void finish(persona, path, index, log)}
         onBack={() => toPaths(persona)}
+        picker={pathById(path)?.mode === "pick" ? (props) => <PromptChoice mission={mission} {...props} /> : undefined}
       />
     );
   } else if (screen.kind === "paths") {

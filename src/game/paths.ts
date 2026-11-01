@@ -11,9 +11,14 @@ interface PathText {
   lessons: readonly string[];
 }
 
+/** How the path's lessons are played: build the message from pieces, or pick one of two finished messages. */
+export type PathMode = "build" | "pick";
+
 export interface PathCard extends PathText {
   id: string;
   persona: Persona;
+  /** Each place's second path is played as Pick a prompt; the rest are Build a prompt. */
+  mode: PathMode;
   emoji: string;
   /** Card art tint, from the purple-blue family. */
   tint: string;
@@ -24,6 +29,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
   // Busy parent
   {
     id: "parent-barbecue",
+    mode: "build",
     brag: "My AI agent just planned, invited and shopped for a whole barbecue 🍔",
     persona: "parent",
     name: "Saturday barbecue",
@@ -35,6 +41,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
   },
   {
     id: "parent-school",
+    mode: "pick",
     brag: "My AI agent just handled a whole school week 🎒",
     persona: "parent",
     name: "School week",
@@ -46,6 +53,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
   },
   {
     id: "parent-daytrip",
+    mode: "build",
     brag: "My AI agent planned our rainy Sunday out 🚗",
     persona: "parent",
     name: "Family day trip",
@@ -58,6 +66,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
   // Student
   {
     id: "student-exams",
+    mode: "build",
     brag: "My AI agent got me ready for exam week 📚",
     persona: "student",
     name: "Exam week",
@@ -69,6 +78,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
   },
   {
     id: "student-project",
+    mode: "pick",
     brag: "My AI agent organized our whole group project 🧩",
     persona: "student",
     name: "Group project",
@@ -80,6 +90,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
   },
   {
     id: "student-job",
+    mode: "build",
     brag: "My AI agent helped me apply for my first job 💼",
     persona: "student",
     name: "First job",
@@ -92,6 +103,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
   // Café owner
   {
     id: "business-sale",
+    mode: "build",
     brag: "My AI agent just ran my café's weekend sale 🥐",
     persona: "business",
     name: "Weekend sale",
@@ -103,6 +115,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
   },
   {
     id: "business-review",
+    mode: "pick",
     brag: "My AI agent turned a one-star review into a happy customer ☕",
     persona: "business",
     name: "Unhappy customer",
@@ -114,6 +127,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
   },
   {
     id: "business-staff",
+    mode: "build",
     brag: "My AI agent sorted my café's staff week 🗓️",
     persona: "business",
     name: "Staff week",
@@ -126,6 +140,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
   // Young coder (Pipo Code on the laptop)
   {
     id: "kid-site",
+    mode: "build",
     brag: "I built my first website with an AI coding agent 🌐",
     persona: "kid",
     name: "My first website",
@@ -137,6 +152,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
   },
   {
     id: "kid-game",
+    mode: "pick",
     brag: "I made my own game with an AI coding agent 🎮",
     persona: "kid",
     name: "Make a game",
@@ -148,6 +164,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
   },
   {
     id: "kid-homework",
+    mode: "build",
     brag: "My AI coding agent helped me learn, not copy 📊",
     persona: "kid",
     name: "Homework helper",

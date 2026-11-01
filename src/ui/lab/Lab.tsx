@@ -1,42 +1,20 @@
 // Pipo's Lab: a testing area, opened with #lab in the address, for new ways to play before they
-// join the main game. For now: the clue hunt and "Which prompt wins?".
+// join the main game. For now: "Which prompt wins?".
 import { useState } from "react";
-import { CLUE_HUNTS } from "../../game/clueHunts.ts";
 import { useLang } from "../../i18n/index.tsx";
 import { Button } from "../Button.tsx";
 import { LangSwitch } from "../LangSwitch.tsx";
-import { MissionPlayer } from "../MissionPlayer.tsx";
 import { Pipo } from "../Pipo.tsx";
 import { SoundButton } from "../SoundButton.tsx";
-import { CluePicker } from "./CluePicker.tsx";
 import { Versus } from "./Versus.tsx";
 
-type View = { name: "menu" } | { name: "clues"; index: number } | { name: "versus" };
+type View = { name: "menu" } | { name: "versus" };
 
 export function Lab({ onExit }: { onExit: () => void }) {
-  const { lang, t } = useLang();
+  const { t } = useLang();
   const [view, setView] = useState<View>({ name: "menu" });
-  const menu = () => setView({ name: "menu" });
 
-  if (view.name === "versus") return <Versus onBack={menu} />;
-
-  if (view.name === "clues") {
-    const hunts = CLUE_HUNTS[lang];
-    const hunt = hunts[view.index]!;
-    const last = view.index === hunts.length - 1;
-    return (
-      <MissionPlayer
-        key={`${hunt.mission.id}-${lang}`}
-        mission={hunt.mission}
-        lesson={{ number: view.index + 1, total: hunts.length }}
-        initialPicks={hunt.autoPicks}
-        picker={(props) => <CluePicker hunt={hunt} {...props} />}
-        finishLabel={last ? t.lab.backToLab : t.lab.nextHunt}
-        onFinish={() => (last ? menu() : setView({ name: "clues", index: view.index + 1 }))}
-        onBack={menu}
-      />
-    );
-  }
+  if (view.name === "versus") return <Versus onBack={() => setView({ name: "menu" })} />;
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-3xl flex-col justify-center gap-4 p-3 md:p-6">
@@ -60,29 +38,20 @@ export function Lab({ onExit }: { onExit: () => void }) {
         <p className="font-semibold text-gray-600">{t.lab.intro}</p>
       </header>
 
-      <div className="grid gap-3 md:grid-cols-2">
-        <LabCard emoji="🔍" title={t.lab.clueTitle} blurb={t.lab.clueBlurb} play={t.lab.play} onPlay={() => setView({ name: "clues", index: 0 })} tint="from-amber-200 to-brand-300" />
-        <LabCard emoji="⚖️" title={t.lab.versusTitle} blurb={t.lab.versusBlurb} play={t.lab.play} onPlay={() => setView({ name: "versus" })} tint="from-sky-200 to-brand-300" />
-      </div>
+      <section className="glass mx-auto flex w-full max-w-sm flex-col gap-3 rounded-3xl p-3">
+        <div className="flex h-28 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-200 to-brand-300">
+          <span className="text-5xl drop-shadow-[0_6px_12px_rgba(0,0,0,0.2)]" aria-hidden="true">
+            ⚖️
+          </span>
+        </div>
+        <div className="px-1">
+          <h2 className="text-xl font-black text-ink">{t.lab.versusTitle}</h2>
+          <p className="text-[15px] leading-snug font-semibold text-gray-600">{t.lab.versusBlurb}</p>
+        </div>
+        <Button className="w-full" onClick={() => setView({ name: "versus" })}>
+          {t.lab.play}
+        </Button>
+      </section>
     </div>
-  );
-}
-
-function LabCard({ emoji, title, blurb, play, onPlay, tint }: { emoji: string; title: string; blurb: string; play: string; onPlay: () => void; tint: string }) {
-  return (
-    <section className="glass flex flex-col gap-3 rounded-3xl p-3">
-      <div className={`flex h-28 items-center justify-center rounded-2xl bg-gradient-to-br ${tint}`}>
-        <span className="text-5xl drop-shadow-[0_6px_12px_rgba(0,0,0,0.2)]" aria-hidden="true">
-          {emoji}
-        </span>
-      </div>
-      <div className="px-1">
-        <h2 className="text-xl font-black text-ink">{title}</h2>
-        <p className="text-[15px] leading-snug font-semibold text-gray-600">{blurb}</p>
-      </div>
-      <Button className="w-full" onClick={onPlay}>
-        {play}
-      </Button>
-    </section>
   );
 }

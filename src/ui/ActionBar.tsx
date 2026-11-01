@@ -4,7 +4,7 @@ import { useLang } from "../i18n/index.tsx";
 import { Button } from "./Button.tsx";
 
 type Props =
-  | { state: "build"; nudge: string | null; onCheck: () => void }
+  | { state: "build"; nudge: string | null; onCheck: () => void; /** The hint before any nudge, if not the default. */ idle?: string }
   | { state: "thinking" }
   | { state: "result"; mission: Mission; score: Score; onTryAgain: () => void; next: NextStep }
   | { state: "failed"; onTryAgain: () => void };
@@ -41,7 +41,7 @@ export function ActionBar(props: Props) {
         className={`flex-1 text-sm font-bold ${!thinking && props.nudge ? "text-red-600" : "text-gray-500"}`}
         aria-live="polite"
       >
-        {thinking ? t.lesson.reading : (props.nudge ?? t.lesson.idle)}
+        {thinking ? t.lesson.reading : (props.nudge ?? (props.state === "build" && props.idle) ?? t.lesson.idle)}
       </p>
       <Button className="w-full sm:w-40" disabled={thinking} onClick={thinking ? undefined : props.onCheck}>
         {thinking ? t.lesson.thinkingButton : t.lesson.check}

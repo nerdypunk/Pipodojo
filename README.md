@@ -50,9 +50,8 @@ Every sound effect is made in code with the browser's Web Audio API (`src/app/so
 
 ## Pipo's Lab
 
-New ways to play are tried out in a separate Lab, opened by adding `#lab` to the address (for example `http://localhost:5173/#lab`). Both prototypes run on the same engine, scoring and live Muse Spark calls as the lessons, in English and Spanish:
+New ways to play are tried out in a separate Lab, opened by adding `#lab` to the address (for example `http://localhost:5173/#lab`). It runs on the same engine, scoring and live Muse Spark calls as the lessons, in English and Spanish:
 
-- **Clue hunt:** read a long, messy chat or email and tap the parts Pipo needs; tapped parts become the prompt (`src/game/clueHunts.ts`).
 - **Which prompt wins?:** two messages for the same task; guess which one gets Pipo's better answer, then both run live (`src/game/versus.ts`).
 
 ## English and Spanish

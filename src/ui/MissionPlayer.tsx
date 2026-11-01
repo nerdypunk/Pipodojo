@@ -37,25 +37,22 @@ interface Props {
   /** After a result: the player moves on with this run (to the lesson complete screen). */
   onFinish: (log: RunLog) => void;
   onBack: () => void;
-  /** Another way to build the prompt instead of the rows of pieces (the Lab's clue hunt). */
+  /** Another way to make the message instead of the rows of pieces (Pick a prompt). */
   picker?: (props: PickerProps) => ReactNode;
-  /** Pieces already in the prompt when the lesson opens. */
-  initialPicks?: readonly string[];
-  /** The result's move-on button, if not "Continue". */
-  finishLabel?: string;
 }
 
 export interface PickerProps {
   picks: readonly string[];
-  onTap: (pieceId: string) => void;
+  /** Sets the whole message at once (e.g. one of two finished messages). */
+  choose: (picks: string[]) => void;
   /** Pipo has answered (or failed): show what was picked, take no more taps. */
   done: boolean;
 }
 
-export function MissionPlayer({ mission, lesson, onFinish, onBack, picker, initialPicks = [], finishLabel }: Props) {
+export function MissionPlayer({ mission, lesson, onFinish, onBack, picker }: Props) {
   const [phase, setPhase] = useState<Phase>({ name: "build" });
   const { t } = useLang();
-  const [picks, setPicks] = useState<string[]>([...initialPicks]);
+  const [picks, setPicks] = useState<string[]>([]);
   const [nudge, setNudge] = useState<string | null>(null);
   const [bestStars, setBestStars] = useState(0);
   // Pipo's floating phone, after Pipo acts in an app (lessons with tools).
@@ -67,7 +64,7 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack, picker, initi
   async function check() {
     if (!isPromptReady(mission, picks)) {
       const missing = emptySlots(mission, picks).map((s) => `"${s.label}"`);
-      setNudge(t.lesson.nudge(missing));
+      setNudge(picker ? t.lesson.chooseNudge : t.lesson.nudge(missing));
       return;
     }
     setNudge(null);
@@ -165,9 +162,14 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack, picker, initi
             className="glass flex flex-1 flex-col gap-3 rounded-3xl p-3 md:gap-4 md:p-5"
             aria-label={t.lesson.buildMessage}
           >
-            {/* The message comes first with pieces to tap; a custom picker (a clue hunt's long
-                chat) comes first itself, so the hunt is on screen and the message builds below it. */}
+            {/* The message being built, above its pieces. A picker shows its own finished messages. */}
             {!picker && <PromptCard prompt={buildPrompt(mission, picks)} />}
+            {/* Phones hide the choices after Check, so show the message that was picked there. */}
+            {picker && (result || phase.name === "failed") && (
+              <div className="md:hidden">
+                <PromptCard prompt={buildPrompt(mission, picks)} />
+              </div>
+            )}
             {/* Locked while Pipo thinks (the glow stays bright), faded once the answer is in.
                 On phones the faded pieces are hidden so the result sits right under the message. */}
             <div
@@ -177,12 +179,18 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack, picker, initi
               aria-disabled={locked}
             >
               {picker ? (
-                picker({ picks, onTap: tap, done: !!result || phase.name === "failed" })
+                picker({
+                  picks,
+                  choose: (next) => {
+                    setNudge(null);
+                    setPicks(next);
+                  },
+                  done: !!result || phase.name === "failed",
+                })
               ) : (
                 <BriefBuilder mission={mission} picks={picks} onlyPicked={!!result || phase.name === "failed"} onTap={tap} />
               )}
             </div>
-            {picker && <PromptCard prompt={buildPrompt(mission, picks)} />}
             {/* On phones, Check stays pinned to the bottom of the screen while you build. */}
             <div
               className={`mt-auto ${
@@ -191,9 +199,9 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack, picker, initi
                   : ""
               }`}
             >
-              {phase.name === "build" && <ActionBar state="build" nudge={nudge} onCheck={check} />}
+              {phase.name === "build" && <ActionBar state="build" nudge={nudge} onCheck={check} {...(picker ? { idle: t.lesson.chooseIdle } : {})} />}
               {thinking && <ActionBar state="thinking" />}
-              {result && <ActionBar state="result" mission={mission} score={result.score} onTryAgain={tryAgain} next={{ label: finishLabel ?? t.common.continue, onGo: () => onFinish(result) }} />}
+              {result && <ActionBar state="result" mission={mission} score={result.score} onTryAgain={tryAgain} next={{ label: t.common.continue, onGo: () => onFinish(result) }} />}
               {phase.name === "failed" && <ActionBar state="failed" onTryAgain={tryAgain} />}
             </div>
           </section>

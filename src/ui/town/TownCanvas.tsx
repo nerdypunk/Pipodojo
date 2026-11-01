@@ -11,7 +11,7 @@ import { TOUCH } from "../device.ts";
 import { Pipo3D } from "./Pipo3D.tsx";
 import { Cafe, College, Dojo, Garage, House, KidHouse } from "./places.tsx";
 import { Balloon, Car, Cloud } from "./props.tsx";
-import { Birds, Flowers, Forest, IslandBase, Plaza, Pond, Strollers, grow } from "./scenery.tsx";
+import { Birds, Flowers, Forest, IslandBase, MiniIsland, Plaza, Pond, Strollers, grow } from "./scenery.tsx";
 
 export interface PlaceTag {
   title: string;
@@ -37,6 +37,8 @@ export interface TownCanvasProps {
   /** The camera has arrived at the selected place. */
   onArrive: () => void;
   still: boolean;
+  /** The sign over the floating "under construction" islands, in the player's language. */
+  soonLabel: { title: string; sub: string };
 }
 
 const CAMERA_HOME = new THREE.Vector3(20.5, 25, 30.5);
@@ -55,6 +57,16 @@ const FLY_MS = 1000;
 const POP_START = 0.45;
 const POP_STEP = 0.14;
 const noRaycast = () => null;
+/**
+ * Where the "under construction" islands float. On wide screens: two, in the open sky to the
+ * right of the town; on tall phone screens: one, in the sky above it, clear of the header and the
+ * button column. (Worked out by projecting through the home camera.)
+ */
+const ISLANDS_WIDE: [number, number, number][] = [
+  [15, 8.5, 6.5],
+  [16.5, 3.5, 7.5],
+];
+const ISLANDS_TALL: [number, number, number][] = [[-15, 6, -19.5]];
 /** Closest a name tag may come to the screen's left or right edge, in pixels. */
 const TAG_MARGIN = 8;
 
@@ -75,8 +87,9 @@ export default function TownCanvas(props: TownCanvasProps) {
   );
 }
 
-function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, still }: TownCanvasProps) {
+function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, still, soonLabel }: TownCanvasProps) {
   const root = useRef<THREE.Group>(null);
+  const wide = useThree((s) => s.size.width / Math.max(1, s.size.height) >= 1.3);
 
   // The town casts and catches soft shadows (the scenery under the island doesn't need to).
   useLayoutEffect(() => {
@@ -155,6 +168,11 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
       <Cloud position={[-10, 10.5, -9]} scale={1.3} speed={0.35} still={still} />
       <Cloud position={[6, 11.5, -14]} scale={1.6} speed={0.25} still={still} />
       <Balloon position={[12.5, 6.5, -9]} still={still} />
+      {/* Two small islands floating off the town: more to come. Placed for the screen's shape so
+          they land in clear sky, away from the header and the name tags. */}
+      {(wide ? ISLANDS_WIDE : ISLANDS_TALL).map((at, i) => (
+        <MiniIsland key={i} position={at} scale={i ? 0.8 : 1} phase={i * 2.1} label={soonLabel} still={still} />
+      ))}
     </>
   );
 }

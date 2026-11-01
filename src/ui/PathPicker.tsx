@@ -156,8 +156,10 @@ function PathPanel({
   );
 
   // A soft animated glow behind the card: lively on playable paths, quiet on the ones still to come.
+  // Under the card, how its lessons are played: build the message, or pick one of two.
   return (
-    <ShaderBorder mode={playable ? "build" : "muted"} roundness={0.14} className="mx-2.5">
+    <div className="mx-2.5 flex flex-col items-center gap-2.5">
+    <ShaderBorder mode={playable ? "build" : "muted"} roundness={0.14}>
       <article
         className="glass flex w-64 flex-col gap-3 rounded-3xl p-3 md:w-72"
         onClick={onFocus}
@@ -185,6 +187,10 @@ function PathPanel({
         )}
       </article>
     </ShaderBorder>
+      <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-black text-brand-800 shadow-sm ring-1 ring-white md:text-sm">
+        {path.mode === "pick" ? t.paths.modePick : t.paths.modeBuild}
+      </span>
+    </div>
   );
 }
 
@@ -194,8 +200,9 @@ function ArrowButton({ side }: { side: "prev" | "next" }) {
     <button
       type="button"
       aria-label={side === "prev" ? t.paths.prev : t.paths.next}
-      className={`persona-${side} glass absolute top-1/2 z-10 hidden h-11 w-11 -translate-y-[calc(50%+12px)] items-center justify-center rounded-full text-xl font-black text-brand-700 transition hover:bg-white/80 md:flex [&.flicking-arrow-disabled]:pointer-events-none [&.flicking-arrow-disabled]:opacity-30 ${
-        side === "prev" ? "left-2" : "right-2"
+      // On phones too, for players who don't think to swipe: solid so they stand out over the cards.
+      className={`persona-${side} absolute top-1/2 z-10 flex h-10 w-10 -translate-y-[calc(50%+28px)] items-center justify-center rounded-full bg-white text-xl font-black text-brand-700 shadow-[0_6px_16px_-4px_rgb(45_36_112/0.45)] ring-1 ring-brand-100 transition hover:bg-brand-50 md:glass md:h-11 md:w-11 md:shadow-none [&.flicking-arrow-disabled]:pointer-events-none [&.flicking-arrow-disabled]:opacity-30 ${
+        side === "prev" ? "left-0 md:left-2" : "right-0 md:right-2"
       }`}
     >
       <span aria-hidden="true">{side === "prev" ? "‹" : "›"}</span>

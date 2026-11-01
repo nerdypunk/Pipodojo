@@ -22,6 +22,7 @@ export type Sfx =
   | "painted"
   | "fly"
   | "whoosh"
+  | "hover"
   | "toggle";
 
 export interface SoundSettings {
@@ -118,6 +119,40 @@ function audio(): AudioContext | null {
  * it asleep until then) and starts the music if it's on.
  */
 let installed = false;
+
+/** Hovering moves between things quickly: at most one hover chime per HOVER_GAP_MS. */
+const HOVER_GAP_MS = 70;
+let lastHover = 0;
+
+/** Devices without real hover (phones, tablets) never get hover chimes, even from taps. */
+const NO_HOVER = typeof window !== "undefined" && window.matchMedia?.("(hover: none)").matches;
+let hoverInstalled = false;
+
+/** A hover chime for the mouse (touch has no hover). `n` varies the note, e.g. per place in town. */
+export function hover(n = 0) {
+  if (NO_HOVER) return;
+  const now = performance.now();
+  if (now - lastHover < HOVER_GAP_MS) return;
+  lastHover = now;
+  play("hover", n);
+}
+
+/**
+ * Hover chimes for every button and link, from one listener: a mouse moving onto a different
+ * clickable thing chimes once. Called once at start-up.
+ */
+export function installHoverSounds() {
+  if (hoverInstalled) return;
+  hoverInstalled = true;
+  let current: Element | null = null;
+  document.addEventListener("pointerover", (e) => {
+    if (e.pointerType !== "mouse") return;
+    const target = (e.target as Element | null)?.closest?.('button:not(:disabled), a[href], [role="button"], [role="switch"], summary') ?? null;
+    if (target === current) return;
+    current = target;
+    if (target) hover(Array.from(target.parentElement?.children ?? []).indexOf(target));
+  });
+}
 
 export function installAudioUnlock() {
   if (installed) return;
@@ -291,9 +326,22 @@ function sfxAt(sound: Sfx, n: number, t: number) {
     case "fly":
       noise(t, 0.6, { vol: 0.45, from: 300, to: 1800, q: 0.8 });
       break;
-    case "whoosh":
-      noise(t, 0.3, { vol: 0.22, from: 600, to: 2200, q: 0.7 });
+    case "whoosh": {
+      // Screen change: an airy swoosh with a soft two-note chime, rising going forward (n >= 0), falling going back.
+      noise(t, 0.42, { vol: 0.3, from: n < 0 ? 2400 : 500, to: n < 0 ? 500 : 2400, q: 0.6 });
+      const [a, b] = n < 0 ? [G5, D5] : [D5, G5];
+      voice(t + 0.12, freq(a), 0.3, { type: "sine", vol: 0.07, attack: 0.02 });
+      voice(t + 0.22, freq(b), 0.45, { type: "sine", vol: 0.07, attack: 0.02 });
       break;
+    }
+    case "hover": {
+      // A soft, short chime from a pentatonic set (n picks the note), so hovering never jars.
+      const notes = [C6, D5 + 12, E6, G5 + 12, A5 + 12];
+      const note = notes[Math.abs(n) % notes.length]!;
+      voice(t, freq(note), 0.12, { type: "sine", vol: 0.045, attack: 0.004 });
+      voice(t, freq(note) * 2, 0.06, { type: "sine", vol: 0.012 });
+      break;
+    }
   }
 }
 

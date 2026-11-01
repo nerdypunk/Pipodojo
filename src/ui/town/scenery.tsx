@@ -1,12 +1,12 @@
 // The town's scenery: the floating island with its cliffs and clouds below, the forest and
 // flowers (instanced, so hundreds of them stay cheap), the pond with its waterfall over the
 // edge, plaza details, and a little life: people strolling round the dojo and birds overhead.
-import { Instance, Instances } from "@react-three/drei";
+import { Html, Instance, Instances } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { ISLAND_RADIUS, POND, RING, scatterFlowers, scatterTrees, seeded, type TreeSpot } from "../../game/townLayout.ts";
-import { Blob, BRAND, INK, LEAF, ORANGE, Person, type PersonStyle } from "./props.tsx";
+import { Blob, BRAND, CORAL, INK, LEAF, ORANGE, Person, type PersonStyle } from "./props.tsx";
 
 /** Lighter, yellower greens for some trees, so the forest isn't one flat colour. */
 const BLOSSOM = ["#a6d96a", "#b5de78", "#95cf62"];
@@ -381,3 +381,129 @@ export function Birds({ still }: { still: boolean }) {
     </group>
   );
 }
+
+/**
+ * A small island floating off in the distance, gently bobbing: a preview of places still to come.
+ * Same grass and stone as the town's island, so it reads as "more of this world", with a little
+ * tag over it.
+ */
+export function MiniIsland({
+  position,
+  scale = 1,
+  phase = 0,
+  label,
+  still,
+}: {
+  position: [number, number, number];
+  scale?: number;
+  phase?: number;
+  label: { title: string; sub: string };
+  still: boolean;
+}) {
+  const ref = useRef<THREE.Group>(null);
+  useFrame(({ clock }) => {
+    if (!ref.current || still) return;
+    const t = clock.elapsedTime;
+    ref.current.position.y = position[1] + Math.sin(t * 0.55 + phase) * 0.35;
+    ref.current.rotation.y = Math.sin(t * 0.12 + phase) * 0.15;
+  });
+  return (
+    <group ref={ref} position={position}>
+      <group scale={scale}>
+        <mesh raycast={noHit}>
+          <cylinderGeometry args={[2, 2, 0.35, 32]} />
+          <meshStandardMaterial color="#a8d98a" roughness={1} />
+        </mesh>
+        <mesh position={[0, -0.25, 0]} raycast={noHit}>
+          <cylinderGeometry args={[2.04, 1.85, 0.25, 32]} />
+          <meshStandardMaterial color="#cfc8bf" roughness={1} />
+        </mesh>
+        <mesh position={[0, -1.45, 0]} rotation={[Math.PI, 0, 0]} raycast={noHit}>
+          <coneGeometry args={[1.85, 2.2, 9]} />
+          <meshStandardMaterial color="#b9b1a7" roughness={1} flatShading />
+        </mesh>
+        {/* A couple of trees, and a building site: a crane, cones and a striped barrier */}
+        {([[-1.1, 0.6, 0.7], [-0.4, -1.1, 0.55]] as const).map(([x, z, s], i) => (
+          <group key={i} position={[x, 0.18, z]} scale={s}>
+            <mesh position={[0, 0.25, 0]} raycast={noHit}>
+              <cylinderGeometry args={[0.08, 0.1, 0.5, 6]} />
+              <meshStandardMaterial color="#9a7357" roughness={1} />
+            </mesh>
+            <mesh position={[0, 0.85, 0]} raycast={noHit}>
+              <sphereGeometry args={[0.5, 12, 10]} />
+              <meshStandardMaterial color={LEAF[i % LEAF.length]} roughness={1} />
+            </mesh>
+          </group>
+        ))}
+        <Crane />
+        {([[1.2, 0.9], [1.5, 0.3], [0.2, 1.4]] as const).map(([x, z], i) => (
+          <group key={i} position={[x, 0.18, z]}>
+            <mesh position={[0, 0.2, 0]} raycast={noHit}>
+              <coneGeometry args={[0.13, 0.4, 10]} />
+              <meshStandardMaterial color={ORANGE} roughness={0.8} />
+            </mesh>
+            <mesh position={[0, 0.2, 0]} raycast={noHit}>
+              <cylinderGeometry args={[0.075, 0.09, 0.07, 10]} />
+              <meshStandardMaterial color="#ffffff" roughness={0.8} />
+            </mesh>
+          </group>
+        ))}
+        {/* The barrier: two posts and a yellow board with dark stripes */}
+        <group position={[-0.1, 0.18, 0.9]} rotation={[0, 0.35, 0]}>
+          {[-0.45, 0.45].map((x) => (
+            <mesh key={x} position={[x, 0.2, 0]} raycast={noHit}>
+              <boxGeometry args={[0.07, 0.4, 0.07]} />
+              <meshStandardMaterial color={INK} roughness={1} />
+            </mesh>
+          ))}
+          <mesh position={[0, 0.34, 0]} raycast={noHit}>
+            <boxGeometry args={[1.05, 0.14, 0.05]} />
+            <meshStandardMaterial color="#f6c945" roughness={0.8} />
+          </mesh>
+          {[-0.33, -0.11, 0.11, 0.33].map((x) => (
+            <mesh key={x} position={[x, 0.34, 0.03]} rotation={[0, 0, 0.6]} raycast={noHit}>
+              <boxGeometry args={[0.07, 0.15, 0.01]} />
+              <meshStandardMaterial color={INK} roughness={1} />
+            </mesh>
+          ))}
+        </group>
+      </group>
+      <Html position={[0, 2.6 * scale + 0.4, 0]} center zIndexRange={[10, 0]} style={{ pointerEvents: "none" }}>
+        <span className="block rounded-2xl bg-white/90 px-3 py-1.5 text-center whitespace-nowrap shadow-md ring-1 ring-white">
+          <span className="block text-[11px] leading-tight font-black text-amber-700 sm:text-xs">{label.title}</span>
+          <span className="block text-[10px] leading-tight font-bold text-brand-800 sm:text-[11px]">{label.sub}</span>
+        </span>
+      </Html>
+    </group>
+  );
+}
+
+/** A little yellow tower crane, its hook swinging gently. */
+function Crane() {
+  return (
+    <group position={[0.5, 0.18, -0.3]}>
+      <mesh position={[0, 0.85, 0]} raycast={noHit}>
+        <boxGeometry args={[0.16, 1.7, 0.16]} />
+        <meshStandardMaterial color="#f6c945" roughness={0.7} />
+      </mesh>
+      <mesh position={[-0.35, 1.72, 0]} raycast={noHit}>
+        <boxGeometry args={[1.5, 0.12, 0.12]} />
+        <meshStandardMaterial color="#f6c945" roughness={0.7} />
+      </mesh>
+      <mesh position={[0.32, 1.62, 0]} raycast={noHit}>
+        <boxGeometry args={[0.24, 0.2, 0.2]} />
+        <meshStandardMaterial color={INK} roughness={1} />
+      </mesh>
+      <mesh position={[-0.95, 1.45, 0]} raycast={noHit}>
+        <cylinderGeometry args={[0.012, 0.012, 0.5, 4]} />
+        <meshStandardMaterial color={INK} roughness={1} />
+      </mesh>
+      <mesh position={[-0.95, 1.16, 0]} raycast={noHit}>
+        <boxGeometry args={[0.22, 0.16, 0.22]} />
+        <meshStandardMaterial color={CORAL} roughness={1} />
+      </mesh>
+    </group>
+  );
+}
+
+const noHit = () => null;

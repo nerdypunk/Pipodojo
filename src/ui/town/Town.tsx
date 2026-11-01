@@ -11,8 +11,8 @@ import { personasIn } from "../../game/personas.ts";
 import { useLang } from "../../i18n/index.tsx";
 import { LangSwitch } from "../LangSwitch.tsx";
 import { SoundButton } from "../SoundButton.tsx";
-import { play } from "../../app/sound.ts";
-import type { PlaceId } from "../../game/townLayout.ts";
+import { hover, play } from "../../app/sound.ts";
+import { PLACES, type PlaceId } from "../../game/townLayout.ts";
 import { Pipo } from "../Pipo.tsx";
 import type { PlaceTag } from "./TownCanvas.tsx";
 
@@ -82,6 +82,12 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stars, lang]);
 
+  // A soft chime when the mouse moves onto a place in the 3D town, a different note per place.
+  const hoverPlace = (id: PlaceId | null) => {
+    if (id && id !== hovered) hover(PLACES.findIndex((p) => p.id === id));
+    setHovered(id);
+  };
+
   const go = (id: PlaceId) => {
     if (id === "garage") onGarage();
     else onVisit(id);
@@ -107,7 +113,8 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
               look={look}
               tags={tags}
               hovered={hovered}
-              onHover={setHovered}
+              onHover={hoverPlace}
+              soonLabel={t.town.moreIslands}
               selected={selected}
               onSelect={select}
               onArrive={arrive}

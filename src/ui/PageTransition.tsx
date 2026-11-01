@@ -43,7 +43,7 @@ export function usePageTransition() {
       html().classList.toggle("swup-theme-reverse", dir === "to-left");
       settle(html());
       html().classList.add("is-changing", "is-leaving", "is-animating");
-      play("whoosh");
+      play("whoosh", dir === "to-left" ? -1 : 1);
       await wait(HALF_MS);
       covered.current = true;
       return true;
