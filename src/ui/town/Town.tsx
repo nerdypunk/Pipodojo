@@ -132,7 +132,8 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
       <header className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3 md:gap-3 md:p-6">
         <div className="glass pointer-events-auto min-w-0 rounded-2xl px-3 py-2 md:px-4 md:py-2.5">
           <p className="text-[11px] font-black tracking-wide text-brand-700 uppercase md:text-xs">{t.town.kicker}</p>
-          <h1 className="text-lg leading-tight font-black text-ink md:text-2xl">{t.town.title}</h1>
+          {/* Nunito kerns "Wh" apart; without kerning the W sits next to the h */}
+          <h1 className="text-lg leading-tight font-black text-ink [font-kerning:none] md:text-2xl">{t.town.title}</h1>
           <p className="hidden text-sm font-semibold text-gray-600 sm:block">{t.town.hint}</p>
         </div>
         <div className="pointer-events-auto flex shrink-0 flex-col items-end gap-2 sm:flex-row sm:items-center">
