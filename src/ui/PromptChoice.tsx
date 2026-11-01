@@ -1,29 +1,21 @@
 // "Pick a prompt": instead of building the message from pieces, the player chooses between two
-// finished messages for the same task. One has everything Pipo needs; the other has one flaw
-// (a fact left out, or a weak bit swapped in). Only the chosen one goes to Pipo, scored by the
-// same rules as every lesson. The pair is fixed for the visit, so Try again can test the other.
+// finished messages for the same task. One has everything Pipo needs; the other has two flaws
+// (facts left out, or weak bits swapped in), so the difference is easy to spot without being
+// silly. Only the chosen one goes to Pipo, scored by the same rules as every lesson. The pair is
+// fixed for the visit, so Try again can test the other.
 import { useState } from "react";
 import { play } from "../app/sound.ts";
 import { buildPrompt } from "../engine/brief.ts";
-import { bestPicks, keySetups } from "../engine/setups.ts";
+import { promptPair } from "../engine/setups.ts";
 import type { Mission } from "../engine/types.ts";
 import { useLang } from "../i18n/index.tsx";
 import type { PickerProps } from "./MissionPlayer.tsx";
 
 const same = (a: readonly string[], b: readonly string[]) => a.length === b.length && a.every((id) => b.includes(id));
 
-/** The best message and one flawed one, in a random order. A random flaw each visit keeps replays fresh. */
-function makePair(mission: Mission): [string[], string[]] {
-  const best = bestPicks(mission);
-  const setups = keySetups(mission);
-  const flawed = mission.flaws.map((f) => setups[f.id]!).filter((picks) => !same(picks, best));
-  const weak = flawed[Math.floor(Math.random() * flawed.length)] ?? best;
-  return Math.random() < 0.5 ? [best, weak] : [weak, best];
-}
-
 export function PromptChoice({ mission, picks, choose, done }: PickerProps & { mission: Mission }) {
   const { t } = useLang();
-  const [pair] = useState(() => makePair(mission));
+  const [pair] = useState(() => promptPair(mission));
 
   return (
     <div className="space-y-2.5">
