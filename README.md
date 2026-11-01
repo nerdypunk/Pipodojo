@@ -46,7 +46,7 @@ The young coder uses **Pipo Code**, a coding agent on a laptop, to build a websi
 
 ## Music and sound
 
-Every sound effect and the music loop are made in code with the browser's Web Audio API (`src/app/sound.ts`): no audio files, nothing to license. Sound starts after the player's first tap, music loops softly under the game, and the 🔊 button turns music and sound effects off separately (remembered per device).
+Every sound effect is made in code with the browser's Web Audio API (`src/app/sound.ts`): no audio files, nothing to license. The music is one looping track at `public/music/theme.mp3` (no track, no music). Sound starts after the player's first tap, music loops softly under the game, and the 🔊 button turns music and sound effects off separately (remembered per device).
 
 ## English and Spanish
 

@@ -1,7 +1,8 @@
-// Pipodojo's sound: every effect and the music loop are made in code with the browser's Web Audio
-// API, so there are no audio files to download or license. Nothing plays until the player first
-// taps or presses a key (browsers require that); after that, music loops softly under the game.
-// Music and sound effects can each be turned off, and the choice is remembered on this device.
+// Pipodojo's sound: every effect is made in code with the browser's Web Audio API (no files to
+// download or license), and the music is one looping track from public/music/theme.mp3. Nothing
+// plays until the player first taps or presses a key (browsers require that); after that, the
+// music loops softly under the game. Music and sound effects can each be turned off, and the
+// choice is remembered on this device.
 
 export type Sfx =
   | "tap"
@@ -296,69 +297,27 @@ function sfxAt(sound: Sfx, n: number, t: number) {
   }
 }
 
-// ---- Music: a calm, cheerful loop, made note by note ----
+// ---- Music: a looping track from a file ----
 
-const BPM = 100;
-const EIGHTH = 60 / BPM / 2;
-const BARS = 16;
+/** Drop the track at public/music/theme.mp3. If it's missing, the game simply has no music. */
+export const MUSIC_URL = `${import.meta.env.BASE_URL}music/theme.mp3`;
 
-/** Eight bars of chords (bass note, then the chord's tones), played twice: calm, then with the tune. */
-const CHORDS: [number, number[]][] = [
-  [48, [60, 64, 67]], // C
-  [45, [57, 60, 64]], // Am
-  [41, [53, 57, 60]], // F
-  [43, [55, 59, 62]], // G
-  [48, [60, 64, 67]], // C
-  [45, [57, 60, 64]], // Am
-  [38, [53, 57, 62]], // Dm
-  [43, [55, 59, 62]], // G
-];
-/** The tune, one row per bar of eighth notes (0 = rest). */
-const MELODY: number[][] = [
-  [76, 0, 79, 0, 76, 74, 72, 0],
-  [72, 0, 76, 0, 74, 72, 69, 0],
-  [69, 0, 72, 0, 74, 0, 72, 69],
-  [71, 0, 74, 0, 79, 0, 0, 0],
-  [79, 0, 76, 0, 79, 81, 79, 0],
-  [76, 0, 72, 0, 76, 0, 74, 0],
-  [74, 76, 77, 0, 77, 0, 76, 74],
-  [74, 0, 0, 0, 71, 0, 0, 0],
-];
-const ARP = [0, 1, 2, 1, 0, 1, 2, 1];
+let musicTrack: Promise<AudioBuffer | null> | null = null;
+let musicSource: AudioBufferSourceNode | null = null;
+let musicStarting = false;
 
-let musicTimer: number | null = null;
-let nextNoteTime = 0;
-let step = 0;
-
-function musicStep(s: number, t: number) {
-  const bar = Math.floor(s / 8);
-  const beat = s % 8;
-  const [bass, chord] = CHORDS[bar % CHORDS.length]!;
-  const bus = musicBus;
-  if (beat === 0 || beat === 4) {
-    voice(t, freq(bass), EIGHTH * 3.5, { type: "triangle", vol: 0.5, bus });
-    voice(t, 120, 0.12, { type: "sine", vol: 0.25, glide: 50, bus });
-  }
-  if (beat === 0) chord.forEach((m) => voice(t, freq(m), EIGHTH * 7.8, { type: "sine", vol: 0.07, attack: 0.25, bus }));
-  voice(t, freq(chord[ARP[beat]!]! + 12), EIGHTH * 1.4, { type: "triangle", vol: 0.12, bus });
-  if (beat % 2 === 1) noise(t, 0.05, { vol: 0.05, from: 7000, to: 9000, type: "highpass", bus });
-  // The tune plays on the second time through
-  const note = bar >= 8 ? MELODY[bar - 8]![beat]! : 0;
-  if (note) voice(t, freq(note), EIGHTH * 1.8, { type: "triangle", vol: 0.22, bus });
-}
-
-function scheduleMusic() {
-  if (!ctx) return;
-  while (nextNoteTime < ctx.currentTime + 0.25) {
-    musicStep(step, nextNoteTime);
-    nextNoteTime += EIGHTH;
-    step = (step + 1) % (BARS * 8);
-  }
+/** Downloads and decodes the track once, only when music is first wanted. */
+function loadTrack(c: BaseAudioContext): Promise<AudioBuffer | null> {
+  musicTrack ??= fetch(MUSIC_URL)
+    .then((res) => (res.ok ? res.arrayBuffer() : null))
+    .then((data) => (data ? c.decodeAudioData(data) : null))
+    .catch(() => null);
+  return musicTrack;
 }
 
 /**
- * Renders the whole music loop, then every sound effect in turn, offline into one buffer: for
- * previewing the sound and checking its levels without playing anything aloud.
+ * Renders every sound effect in turn, offline, into one buffer: for previewing the effects and
+ * checking their levels without playing anything aloud.
  */
 export async function renderPreview(): Promise<AudioBuffer> {
   const SFX_ORDER: [Sfx, number][] = [
@@ -366,26 +325,23 @@ export async function renderPreview(): Promise<AudioBuffer> {
     ["send", 0], ["pay", 0], ["add", 0], ["publish", 0], ["fly", 0], ["whoosh", 0], ["peel", 0], ["reveal", 0],
     ["painted", 0], ["lesson", 0], ["path", 0],
   ];
-  const musicSeconds = BARS * 8 * EIGHTH;
   const sampleRate = 44100;
-  const off = new OfflineAudioContext(1, Math.ceil((musicSeconds + SFX_ORDER.length * 1.1 + 2.5) * sampleRate), sampleRate);
+  const off = new OfflineAudioContext(1, Math.ceil((SFX_ORDER.length * 1.1 + 2.5) * sampleRate), sampleRate);
   const saved = { ctx, musicBus, sfxBus, noiseBuffer, settings };
   try {
     ctx = off;
     ({ music: musicBus, sfx: sfxBus, buffer: noiseBuffer } = buildGraph(off));
-    settings = { music: false, sfx: true }; // no ducking of a live loop
-    musicBus.gain.value = MUSIC_LEVEL;
-    for (let s = 0; s < BARS * 8; s++) musicStep(s, s * EIGHTH);
-    SFX_ORDER.forEach(([sound, n], i) => sfxAt(sound, n, musicSeconds + 0.5 + i * 1.1));
+    settings = { music: false, sfx: true }; // nothing to duck
+    SFX_ORDER.forEach(([sound, n], i) => sfxAt(sound, n, 0.5 + i * 1.1));
     return await off.startRendering();
   } finally {
     ({ ctx, musicBus, sfxBus, noiseBuffer, settings } = saved);
   }
 }
 
-/** For checking in a browser that the music is really running: its loop and its current volume. */
+/** For checking in a browser that the music is really running: whether it plays and its volume. */
 export function musicState() {
-  return { running: musicTimer !== null, volume: musicBus?.gain.value ?? 0, audio: ctx?.state ?? "none" };
+  return { running: musicSource !== null, volume: musicBus?.gain.value ?? 0, audio: ctx?.state ?? "none" };
 }
 
 /** Starts or stops the music to match the setting, the tab's visibility and whether audio is awake. */
@@ -394,18 +350,32 @@ function applyMusic() {
   const want = settings.music && !document.hidden;
   // Only touch the volume when the music actually starts or stops: this runs again on every
   // wake-up, setting change and tab switch, and cancelling a fade that's under way left it silent.
-  if (want === (musicTimer !== null)) return;
-  const t = ctx.currentTime;
-  musicBus.gain.cancelScheduledValues(t);
+  if (want === (musicSource !== null || musicStarting)) return;
+  const c = ctx;
+  const bus = musicBus;
   if (want) {
-    nextNoteTime = t + 0.1;
-    musicBus.gain.setValueAtTime(0.0001, t);
-    musicBus.gain.setTargetAtTime(MUSIC_LEVEL, t, 0.6);
-    musicTimer = window.setInterval(scheduleMusic, 60);
-    scheduleMusic();
-  } else if (musicTimer !== null) {
-    musicBus.gain.setTargetAtTime(0.0001, t, 0.15);
-    window.clearInterval(musicTimer);
-    musicTimer = null;
+    musicStarting = true;
+    void loadTrack(c).then((track) => {
+      musicStarting = false;
+      // No track, or the player changed their mind while it loaded.
+      if (!track || musicSource || !settings.music || document.hidden) return;
+      const t = c.currentTime;
+      const source = c.createBufferSource();
+      source.buffer = track;
+      source.loop = true;
+      source.connect(bus);
+      bus.gain.cancelScheduledValues(t);
+      bus.gain.setValueAtTime(0.0001, t);
+      bus.gain.setTargetAtTime(MUSIC_LEVEL, t, 0.6);
+      source.start(t);
+      musicSource = source;
+    });
+  } else if (musicSource) {
+    const t = c.currentTime;
+    const source = musicSource;
+    musicSource = null;
+    bus.gain.cancelScheduledValues(t);
+    bus.gain.setTargetAtTime(0.0001, t, 0.15);
+    source.stop(t + 0.6);
   }
 }
