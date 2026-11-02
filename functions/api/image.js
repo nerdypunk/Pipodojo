@@ -10,8 +10,10 @@ export const MAX_SCENE_CHARS = 700;
 export const MAX_BODY_BYTES = 4 * 1024;
 export const UPSTREAM_TIMEOUT_MS = 45_000;
 export const STYLE =
-  "A cheerful illustrated postcard, soft purple and blue colours with warm orange highlights, " +
-  "rounded friendly shapes, cosy and playful. No words, letters, numbers or logos anywhere.";
+  "A kawaii anime-style illustrated postcard: cute chibi characters with big sparkly eyes, clean line art, " +
+  "soft pastel purple and blue colours with warm orange highlights, cheerful and cosy. " +
+  'The only text in the picture is the web address "pipodojo.com", written once, small and neat, in a bottom corner. ' +
+  "No other words, letters, numbers or logos anywhere.";
 
 function json(status, body) {
   return new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
