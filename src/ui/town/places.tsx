@@ -3,9 +3,10 @@
 // turns and moves it into place.
 import { RoundedBox } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { BLOSSOM_SCALE, SAKURA_PADS, SAKURA_SIZE, SHRINE_DECK, sakuraBlossoms } from "../../game/townLayout.ts";
+import { mergePlaced, type Placed } from "./merge.ts";
 import { BRAND, CORAL, Face, INK, Person, Roof } from "./props.tsx";
 
 const GLASS = "#c7e6ff";
@@ -105,9 +106,37 @@ const WOOD: Limb[] = [
 ];
 const PETALS = 26;
 
+/**
+ * The tree's static parts joined into few meshes (see merge.ts): all the wood in one (trunk,
+ * branches, the knuckles where the trunk bends, the roots), and the blossom in one per pink.
+ */
+function sakuraGeometry() {
+  const wood: Placed[] = [
+    ...WOOD.map((w) => ({ geometry: new THREE.CylinderGeometry(w.r1, w.r0, w.length, 6), position: w.mid.toArray(), quaternion: w.turn })),
+    ...TRUNK.slice(1, 3).map((p, i) => ({ geometry: new THREE.DodecahedronGeometry(TRUNK_R[i + 1]! * 1.05, 0), position: p })),
+    ...[0.4, 2.0, 3.5, 5.1].map((a) => ({
+      geometry: new THREE.ConeGeometry(0.16, 0.7, 5),
+      position: [0.42 * Math.cos(a), DECK + 0.1, -0.42 * Math.sin(a)] as V3,
+      quaternion: new THREE.Quaternion().setFromEuler(new THREE.Euler(0, a, 0)).multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0, -1.2))),
+    })),
+  ];
+  const blossom = SAKURA.map((_, shade) =>
+    mergePlaced(
+      BLOSSOMS.filter((_, i) => i % SAKURA.length === shade).map(([x, y, z, r, spin]) => ({
+        geometry: new THREE.IcosahedronGeometry(r, 1),
+        position: [x, y, z] as V3,
+        rotation: [0, spin, 0] as V3,
+        scale: BLOSSOM_SCALE,
+      })),
+    ),
+  );
+  return { wood: mergePlaced(wood), blossom };
+}
+
 /** The heart of Pipodojo: an old sakura tree in a little shrine, behind a red torii gate. */
 export function SakuraShrine({ still }: { still: boolean }) {
-  const petals = useRef<THREE.Group>(null);
+  const tree = useMemo(sakuraGeometry, []);
+  const petals = useRef<THREE.InstancedMesh>(null);
   // Each petal drifts down from the canopy on its own path, then starts again at the top
   // (in the full-size model's units, like the rest of the tree).
   const drift = useRef(
@@ -125,17 +154,30 @@ export function SakuraShrine({ still }: { still: boolean }) {
       o.raycast = () => {};
     });
   }, []);
+  // Two shades of pink across the petals.
+  useLayoutEffect(() => {
+    const mesh = petals.current;
+    if (!mesh) return;
+    const pink = new THREE.Color();
+    for (let i = 0; i < PETALS; i++) mesh.setColorAt(i, pink.set(SAKURA[i % 2 ? 0 : 3]!));
+    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+  }, [still]);
+  const petal = useMemo(() => new THREE.Object3D(), []);
   useFrame(({ clock }) => {
-    if (!petals.current || still) return;
+    const mesh = petals.current;
+    if (!mesh || still) return;
     const t = clock.elapsedTime;
-    petals.current.children.forEach((petal, i) => {
+    for (let i = 0; i < PETALS; i++) {
       const d = drift.current[i]!;
       const k = (t * d.speed + d.phase) % 1;
       const a = d.a + k * 1.6;
       const r = d.r + k * 0.9;
       petal.position.set(Math.cos(a) * r + Math.sin(t * 1.3 + i) * 0.15, 4.4 - k * 3.9, Math.sin(a) * r);
       petal.rotation.set(t * 1.7 + i, t * 1.1 + i * 0.5, t * 0.9);
-    });
+      petal.updateMatrix();
+      mesh.setMatrixAt(i, petal.matrix);
+    }
+    mesh.instanceMatrix.needsUpdate = true;
   });
   return (
     <group ref={root}>
@@ -159,32 +201,14 @@ export function SakuraShrine({ still }: { still: boolean }) {
       ))}
       {/* The tree is modelled full size, from the mound's top, and drawn smaller (SAKURA_SIZE). */}
       <group position={[0, DECK * (1 - SAKURA_SIZE), 0]} scale={SAKURA_SIZE}>
-      {/* Low-poly trunk and branches, faceted like the blossom, with roots over the grass */}
-      {WOOD.map((w, i) => (
-        <mesh key={i} position={w.mid} quaternion={w.turn}>
-          <cylinderGeometry args={[w.r1, w.r0, w.length, 6]} />
-          <meshStandardMaterial color={BARK} roughness={0.9} flatShading />
-        </mesh>
-      ))}
-      {/* Knuckles where the trunk bends, so the pieces meet cleanly */}
-      {TRUNK.slice(1, 3).map((p, i) => (
-        <mesh key={i} position={p}>
-          <dodecahedronGeometry args={[TRUNK_R[i + 1]! * 1.05, 0]} />
-          <meshStandardMaterial color={BARK} roughness={0.9} flatShading />
-        </mesh>
-      ))}
-      {[0.4, 2.0, 3.5, 5.1].map((a) => (
-        <group key={a} position={[0, DECK, 0]} rotation={[0, a, 0]}>
-          <mesh position={[0.42, 0.1, 0]} rotation={[0, 0, -1.2]}>
-            <coneGeometry args={[0.16, 0.7, 5]} />
-            <meshStandardMaterial color={BARK} roughness={0.9} flatShading />
-          </mesh>
-        </group>
-      ))}
-      {BLOSSOMS.map(([x, y, z, r, spin], i) => (
-        <mesh key={i} position={[x, y, z]} rotation={[0, spin, 0]} scale={[...BLOSSOM_SCALE]}>
-          <icosahedronGeometry args={[r, 1]} />
-          <meshStandardMaterial color={SAKURA[i % SAKURA.length]} roughness={0.8} flatShading />
+      {/* Low-poly trunk and branches, faceted like the blossom, with roots over the grass: one mesh */}
+      <mesh geometry={tree.wood}>
+        <meshStandardMaterial color={BARK} roughness={0.9} flatShading />
+      </mesh>
+      {/* The blossom: one mesh per shade of pink */}
+      {tree.blossom.map((geometry, i) => (
+        <mesh key={i} geometry={geometry}>
+          <meshStandardMaterial color={SAKURA[i]} roughness={0.8} flatShading />
         </mesh>
       ))}
       {/* Shimenawa: a sacred straw rope round the trunk, with white paper streamers */}
@@ -202,15 +226,12 @@ export function SakuraShrine({ still }: { still: boolean }) {
           </group>
         ))}
       </group>
+      {/* Falling petals, all drawn in one go */}
       {!still && (
-        <group ref={petals}>
-          {Array.from({ length: PETALS }, (_, i) => (
-            <mesh key={i}>
-              <planeGeometry args={[0.16, 0.11]} />
-              <meshStandardMaterial color={SAKURA[i % 2 ? 0 : 3]} side={THREE.DoubleSide} />
-            </mesh>
-          ))}
-        </group>
+        <instancedMesh ref={petals} args={[undefined, undefined, PETALS]} frustumCulled={false}>
+          <planeGeometry args={[0.16, 0.11]} />
+          <meshStandardMaterial side={THREE.DoubleSide} />
+        </instancedMesh>
       )}
       </group>
       {/* Stone lanterns either side of the path */}

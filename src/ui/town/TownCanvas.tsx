@@ -1,15 +1,18 @@
 // The 3D town itself (react-three-fiber). Loaded on its own so lessons stay light.
 // On arrival the camera swoops in and the places pop up one by one. Hover a place to lift it
 // and send Pipo over; click it and the camera flies in, then the town tells the screen to move on.
-import { Html, Instance, Instances, RoundedBox } from "@react-three/drei";
+import { Html, Instance, Instances } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import * as THREE from "three";
+import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import type { PipoLook } from "../../game/pipoLook.ts";
 import { PLACES, RING, SPOKE_END, placeOf, type Place, type PlaceId } from "../../game/townLayout.ts";
 import { TOUCH } from "../device.ts";
 import { Pipo3D } from "./Pipo3D.tsx";
+import { ReadyContext, useTownReady } from "./ready.ts";
 import { Cafe, College, Garage, House, KidHouse, OfficeTower, SakuraShrine } from "./places.tsx";
+import { mergePlaced, type Placed } from "./merge.ts";
 import { Airplane, Balloon, Car, Cloud } from "./props.tsx";
 import { Birds, Flowers, Forest, IslandBase, MiniIsland, Plaza, Pond, Strollers, grow } from "./scenery.tsx";
 
@@ -99,10 +102,14 @@ function tallIslandSpot(width: number, height: number): [number, number, number]
 const TAG_MARGIN = 8;
 
 export default function TownCanvas(props: TownCanvasProps) {
+  // Paused until the shaders are ready (WarmUp), so the intro never starts with a freeze.
+  const [ready, setReady] = useState(false);
+  const start = useCallback(() => setReady(true), []);
   return (
     <Canvas
       shadows
       flat
+      frameloop={ready ? "always" : "never"}
       // Sharp enough on retina screens without drawing 4x the pixels; phones a little less.
       dpr={TOUCH ? [1, 1.25] : [1, 1.5]}
       gl={{ antialias: true, powerPreference: "high-performance" }}
@@ -110,9 +117,45 @@ export default function TownCanvas(props: TownCanvasProps) {
       onPointerMissed={() => props.onHover(null)}
       aria-label="Pipodojo Town"
     >
-      <Town {...props} />
+      <ReadyContext.Provider value={ready}>
+        <Town {...props} />
+      </ReadyContext.Provider>
+      {!ready && <WarmUp onReady={start} />}
+      {DEBUG && <DebugHandle />}
     </Canvas>
   );
+}
+
+/** Longest the warm-up waits for shaders before starting anyway. */
+const WARM_UP_LIMIT_MS = 2500;
+
+/**
+ * Before the intro starts: compiles every shader (in the background where the browser can), then
+ * draws one frame so the geometry is on the graphics chip and the shadows are built, and only
+ * then starts the clock. Without this the first frames take up to a second each, and because
+ * the intro runs on the clock, it jumps ahead after each freeze.
+ */
+function WarmUp({ onReady }: { onReady: () => void }) {
+  const { gl, scene, camera, advance, clock } = useThree();
+  useEffect(() => {
+    let live = true;
+    const go = async () => {
+      try {
+        await Promise.race([gl.compileAsync(scene, camera), new Promise((r) => setTimeout(r, WARM_UP_LIMIT_MS))]);
+      } catch {
+        // Older browsers: the shaders compile on the first frame instead.
+      }
+      if (!live) return;
+      advance(0);
+      clock.start();
+      onReady();
+    };
+    void go();
+    return () => {
+      live = false;
+    };
+  }, [gl, scene, camera, advance, clock, onReady]);
+  return null;
 }
 
 function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, still, soonLabel }: TownCanvasProps) {
@@ -155,7 +198,8 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
         intensity={1.5}
         color="#ffffff"
         castShadow
-        shadow-mapSize={[2048, 2048]}
+        // Phones and tablets get a quarter of the shadow pixels: still soft, much lighter.
+        shadow-mapSize={TOUCH ? [1024, 1024] : [2048, 2048]}
         shadow-camera-left={-15}
         shadow-camera-right={15}
         shadow-camera-top={15}
@@ -220,18 +264,41 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
   );
 }
 
+const DEBUG = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("debug");
+
+/** With ?debug=1, puts the scene and renderer on window.__town for checking draw calls in the console. */
+function DebugHandle() {
+  const { scene, gl, camera } = useThree();
+  useEffect(() => {
+    (window as unknown as { __town?: unknown }).__town = { scene, gl, camera };
+  }, [scene, gl, camera]);
+  return null;
+}
+
+/** During the intro, shadows are redrawn on one frame in this many. */
+const SHADOW_EVERY = 3;
+
 /**
- * Real shadows are the most expensive part of each frame. Once the town has popped up, draw
- * the shadow map one last time and keep it, so the town stays smooth on slower laptops.
+ * Real shadows are the most expensive part of each frame (every building is drawn a second time
+ * for them). While the town pops up they're redrawn every few frames rather than every frame,
+ * and once it has, drawn one last time and kept, so the town stays smooth on slower devices.
  */
 function BakeShadows({ after }: { after: number }) {
   const { gl } = useThree();
   const baked = useRef(false);
-  useFrame(({ clock }) => {
-    if (baked.current || clock.elapsedTime < after) return;
-    baked.current = true;
+  const frame = useRef(0);
+  useLayoutEffect(() => {
     gl.shadowMap.autoUpdate = false;
     gl.shadowMap.needsUpdate = true;
+  }, [gl]);
+  useFrame(({ clock }) => {
+    if (baked.current) return;
+    if (clock.elapsedTime >= after) {
+      baked.current = true;
+      gl.shadowMap.needsUpdate = true;
+      return;
+    }
+    if (frame.current++ % SHADOW_EVERY === 0) gl.shadowMap.needsUpdate = true;
   });
   return null;
 }
@@ -252,10 +319,12 @@ function Rig({ selected, onArrive, still }: { selected: PlaceId | null; onArrive
   const { camera, pointer, size } = useThree();
   const home = useMemo(() => homeFor(size.width / size.height), [size.width, size.height]);
   const look = useRef(LOOK_HOME.clone());
+  // The arrival swoop starts on its first frame (start -1), not on mount: the town may still be
+  // warming up then.
   const flight = useRef<Flight | null>(
     still
       ? null
-      : { from: CAMERA_START.clone(), fromLook: new THREE.Vector3(0, 0, 0), to: home.clone(), toLook: LOOK_HOME.clone(), start: performance.now(), ms: INTRO_MS, done: false },
+      : { from: CAMERA_START.clone(), fromLook: new THREE.Vector3(0, 0, 0), to: home.clone(), toLook: LOOK_HOME.clone(), start: -1, ms: INTRO_MS, done: false },
   );
   const arrive = useRef(onArrive);
   arrive.current = onArrive;
@@ -275,6 +344,7 @@ function Rig({ selected, onArrive, still }: { selected: PlaceId | null; onArrive
   useFrame((_, delta) => {
     const f = flight.current;
     if (f && !f.done) {
+      if (f.start < 0) f.start = performance.now();
       const t = Math.min(1, (performance.now() - f.start) / f.ms);
       const ease = t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
       camera.position.lerpVectors(f.from, f.to, ease);
@@ -359,6 +429,17 @@ function Roads() {
     zebra.push({ at: [o, 0.045, cross], alongX: false }, { at: [o, 0.045, -cross], alongX: false }, { at: [cross, 0.045, o], alongX: true }, { at: [-cross, 0.045, o], alongX: true });
   }
 
+  // All the road strips, and all the sidewalks, each drawn as one mesh (see merge.ts).
+  const roadGeometry = useMemo(
+    () => mergePlaced(strips.map((s) => ({ geometry: new THREE.BoxGeometry(...s.size), position: s.pos }))),
+    // The layout never changes, so these are made once.
+    [],
+  );
+  const walkGeometry = useMemo(
+    () => mergePlaced(walks.map((s) => ({ geometry: new RoundedBoxGeometry(...s.size, 2, 0.045), position: s.pos }))),
+    [],
+  );
+
   return (
     <group>
       {/* Shrine plaza paving */}
@@ -366,22 +447,14 @@ function Roads() {
         <circleGeometry args={[RING.half - 0.65, 48]} />
         <meshStandardMaterial color="#e7ebf0" roughness={1} />
       </mesh>
-      {strips.map((s, i) => (
-        <mesh key={i} position={s.pos} raycast={noRaycast}>
-          <boxGeometry args={s.size} />
-          <meshStandardMaterial color={ROAD} roughness={0.95} />
-        </mesh>
-      ))}
-      {walks.map((s, i) => (
-        <RoundedBox key={i} args={s.size} radius={0.045} smoothness={2} position={s.pos} raycast={noRaycast}>
-          <meshStandardMaterial color={PAVEMENT} roughness={0.95} />
-        </RoundedBox>
-      ))}
+      <mesh geometry={roadGeometry} raycast={noRaycast}>
+        <meshStandardMaterial color={ROAD} roughness={0.95} />
+      </mesh>
+      <mesh geometry={walkGeometry} raycast={noRaycast}>
+        <meshStandardMaterial color={PAVEMENT} roughness={0.95} />
+      </mesh>
       {/* A barrier across the end of each road, so none of them looks like it runs off the island */}
-      {[1, -1].flatMap((s) => [
-        <Barrier key={`z${s}`} position={[0, 0, s * (SPOKE_END - 0.35)]} turn={0} />,
-        <Barrier key={`x${s}`} position={[s * (SPOKE_END - 0.35), 0, 0]} turn={Math.PI / 2} />,
-      ])}
+      <Barriers />
       <Instances limit={dashes.length + zebra.length} raycast={noRaycast}>
         <boxGeometry args={[0.08, 0.01, 0.4]} />
         <meshStandardMaterial color="#ffffff" />
@@ -399,31 +472,59 @@ function Roads() {
 const BARRIER_STRIPES = 5;
 const BARRIER_WIDTH = RING.width + 0.2;
 
-/** A red and white striped road barrier: two boards on two posts, with a little amber lamp on each. */
-function Barrier({ position, turn }: { position: [number, number, number]; turn: number }) {
-  const stripe = BARRIER_WIDTH / BARRIER_STRIPES;
+/** Where each road's barrier stands, and which way it faces. */
+const BARRIER_SPOTS: { at: [number, number, number]; turn: number }[] = [1, -1].flatMap((s) => [
+  { at: [0, 0, s * (SPOKE_END - 0.35)] as [number, number, number], turn: 0 },
+  { at: [s * (SPOKE_END - 0.35), 0, 0] as [number, number, number], turn: Math.PI / 2 },
+]);
+
+/**
+ * A red and white striped barrier across the end of each road: two boards on two posts, with a
+ * little amber lamp on each. All four are drawn as one mesh per colour.
+ */
+function Barriers() {
+  const parts = useMemo(() => {
+    const stripe = BARRIER_WIDTH / BARRIER_STRIPES;
+    const posts: Placed[] = [];
+    const lamps: Placed[] = [];
+    const red: Placed[] = [];
+    const white: Placed[] = [];
+    // A point in a barrier's own frame, moved to where that barrier stands.
+    const place = (spot: (typeof BARRIER_SPOTS)[number], [x, y, z]: [number, number, number]): Placed["position"] => [
+      spot.at[0] + x * Math.cos(spot.turn) + z * Math.sin(spot.turn),
+      y,
+      spot.at[2] - x * Math.sin(spot.turn) + z * Math.cos(spot.turn),
+    ];
+    for (const spot of BARRIER_SPOTS) {
+      const rotation: [number, number, number] = [0, spot.turn, 0];
+      for (const side of [-1, 1]) {
+        const x = side * (BARRIER_WIDTH / 2 - 0.08);
+        posts.push({ geometry: new THREE.BoxGeometry(0.08, 0.52, 0.08), position: place(spot, [x, 0.26, 0]), rotation });
+        lamps.push({ geometry: new THREE.SphereGeometry(0.06, 10, 8), position: place(spot, [x, 0.58, 0]) });
+      }
+      [0.22, 0.42].forEach((y, row) => {
+        for (let i = 0; i < BARRIER_STRIPES; i++) {
+          const board: Placed = { geometry: new THREE.BoxGeometry(stripe, 0.14, 0.04), position: place(spot, [(i - (BARRIER_STRIPES - 1) / 2) * stripe, y, 0.06]), rotation };
+          ((i + row) % 2 ? white : red).push(board);
+        }
+      });
+    }
+    return { posts: mergePlaced(posts), lamps: mergePlaced(lamps), red: mergePlaced(red), white: mergePlaced(white) };
+  }, []);
   return (
-    <group position={position} rotation={[0, turn, 0]}>
-      {[-1, 1].map((side) => (
-        <group key={side} position={[side * (BARRIER_WIDTH / 2 - 0.08), 0, 0]}>
-          <mesh position={[0, 0.26, 0]} raycast={noRaycast}>
-            <boxGeometry args={[0.08, 0.52, 0.08]} />
-            <meshStandardMaterial color="#f4f5f7" roughness={0.8} />
-          </mesh>
-          <mesh position={[0, 0.58, 0]} raycast={noRaycast}>
-            <sphereGeometry args={[0.06, 10, 8]} />
-            <meshStandardMaterial color="#ffc94d" emissive="#ffb000" emissiveIntensity={0.6} />
-          </mesh>
-        </group>
-      ))}
-      {[0.22, 0.42].flatMap((y, row) =>
-        Array.from({ length: BARRIER_STRIPES }, (_, i) => (
-          <mesh key={`${y}-${i}`} position={[(i - (BARRIER_STRIPES - 1) / 2) * stripe, y, 0.06]} raycast={noRaycast}>
-            <boxGeometry args={[stripe, 0.14, 0.04]} />
-            <meshStandardMaterial color={(i + row) % 2 ? "#ffffff" : "#e8655a"} roughness={0.7} />
-          </mesh>
-        )),
-      )}
+    <group>
+      <mesh geometry={parts.posts} raycast={noRaycast}>
+        <meshStandardMaterial color="#f4f5f7" roughness={0.8} />
+      </mesh>
+      <mesh geometry={parts.lamps} raycast={noRaycast}>
+        <meshStandardMaterial color="#ffc94d" emissive="#ffb000" emissiveIntensity={0.6} />
+      </mesh>
+      <mesh geometry={parts.red} raycast={noRaycast}>
+        <meshStandardMaterial color="#e8655a" roughness={0.7} />
+      </mesh>
+      <mesh geometry={parts.white} raycast={noRaycast}>
+        <meshStandardMaterial color="#ffffff" roughness={0.7} />
+      </mesh>
     </group>
   );
 }
@@ -447,8 +548,8 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
   const lift = useRef<THREE.Group>(null);
   const ring = useRef<THREE.Mesh>(null);
   const hover = useRef(1);
-  const label = useRef<HTMLDivElement>(null);
-  const card = useRef<HTMLDivElement>(null);
+  const ready = useTownReady();
+  const label = useRef<HTMLDivElement | null>(null);
   const shift = useRef(0);
   const anchor = useMemo(() => new THREE.Vector3(), []);
   // The hover card sits above the tag, unless that would run under the header or off the top of
@@ -456,23 +557,53 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
   const [below, setBelow] = useState(false);
   const belowNow = useRef(false);
 
+  // The tag's and card's sizes, kept up to date by a ResizeObserver. Reading sizes straight from
+  // the page every frame would make the browser lay the page out again on every frame.
+  const sizes = useRef({ tagW: 0, tagH: 0, cardW: 0, cardH: 80 });
+  const observer = useMemo(
+    () =>
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver((entries) => {
+            for (const entry of entries) {
+              const el = entry.target as HTMLElement;
+              if (el.dataset["part"] === "card") Object.assign(sizes.current, { cardW: el.offsetWidth, cardH: el.offsetHeight });
+              else Object.assign(sizes.current, { tagW: el.offsetWidth, tagH: el.offsetHeight });
+            }
+          }),
+    [],
+  );
+  useEffect(() => () => observer?.disconnect(), [observer]);
+  const labelRef = useCallback(
+    (el: HTMLDivElement | null) => {
+      label.current = el;
+      if (el) observer?.observe(el);
+    },
+    [observer],
+  );
+  const cardRef = useCallback(
+    (el: HTMLDivElement | null) => {
+      if (el) observer?.observe(el);
+      else Object.assign(sizes.current, { cardW: 0, cardH: 80 });
+    },
+    [observer],
+  );
+
   // Keep the tag on screen: on narrow phones a tag centred over a building near the edge would be
-  // cut off, so slide it sideways just enough to stay TAG_MARGIN inside the edge. (The tag is
-  // mounted by <Html> after this component, so its width is read here rather than once on mount;
-  // the moving tags only change transforms, so the read is cheap.)
+  // cut off, so slide it sideways just enough to stay TAG_MARGIN inside the edge.
   useFrame(({ camera, size }) => {
     const el = label.current;
     if (!el) return;
     anchor.set(place.at[0], place.tag, place.at[1]).project(camera);
     const x = ((anchor.x + 1) / 2) * size.width;
     const y = ((1 - anchor.y) / 2) * size.height;
-    const cardHeight = card.current?.offsetHeight ?? 80;
-    const flip = y - el.offsetHeight - cardHeight - 8 < headerBottom(size.width);
+    const { tagW, tagH, cardW, cardH } = sizes.current;
+    const flip = y - tagH - cardH - 8 < headerBottom(size.width);
     if (flip !== belowNow.current) {
       belowNow.current = flip;
       setBelow(flip);
     }
-    const half = Math.max(el.offsetWidth, card.current?.offsetWidth ?? 0) / 2;
+    const half = Math.max(tagW, cardW) / 2;
     const left = x - half - TAG_MARGIN;
     const right = x + half + TAG_MARGIN - size.width;
     const next = Math.round(left < 0 ? -left : right > 0 ? -right : 0);
@@ -526,12 +657,15 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
       </group>
       {/* The tag is pinned by its bottom edge; the hover card hangs off it, above (off the building)
           or, near the top of the screen, below. */}
-      {/* The hovered place's tag and card stack above every other tag, so nearby tags never cover its card. */}
+      {/* The hovered place's tag and card stack above every other tag, so nearby tags never cover its card.
+          Tags wait for the intro to start, so they pop in with the buildings. */}
+      {ready && (
       <Html position={[0, place.tag, 0]} zIndexRange={hovered ? [40, 30] : [20, 0]} style={{ pointerEvents: "none" }}>
-        <div ref={label} className="relative" style={{ transform: "translate(-50%, -100%)" }}>
+        <div ref={labelRef} className="relative" style={{ transform: "translate(-50%, -100%)" }}>
           {hovered && (
             <div
-              ref={card}
+              ref={cardRef}
+              data-part="card"
               className={`pop-in absolute left-1/2 w-40 -translate-x-1/2 rounded-2xl bg-ink/90 px-3 py-2 text-center text-[11px] font-bold text-white shadow-xl sm:w-48 sm:text-xs ${
                 below ? "top-full mt-1.5" : "bottom-full mb-1.5"
               }`}
@@ -553,6 +687,7 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
           </div>
         </div>
       </Html>
+      )}
     </group>
   );
 }

@@ -6,6 +6,8 @@ import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { ISLAND_RADIUS, POND, RING, scatterFlowers, scatterTrees, seeded, type TreeSpot } from "../../game/townLayout.ts";
+import { mergePlaced } from "./merge.ts";
+import { useTownReady } from "./ready.ts";
 import { Blob, BRAND, CORAL, INK, LEAF, ORANGE, Person, type PersonStyle } from "./props.tsx";
 
 /** Lighter, yellower greens for some trees, so the forest isn't one flat colour. */
@@ -32,7 +34,16 @@ export function IslandBase({ still }: { still: boolean }) {
       return { a, x: Math.cos(a) * r, z: Math.sin(a) * r, y: -1.1 - rand() * 1.6, s: 0.55 + rand() * 0.6, c: ROCK[i % 3]! };
     });
     // None in front of the waterfall.
-    return all.filter((r) => Math.abs(Math.atan2(Math.sin(r.a - FALL_ANGLE), Math.cos(r.a - FALL_ANGLE))) > 0.12);
+    const kept = all.filter((r) => Math.abs(Math.atan2(Math.sin(r.a - FALL_ANGLE), Math.cos(r.a - FALL_ANGLE))) > 0.12);
+    // One mesh per rock colour (see merge.ts).
+    return ROCK.map((color) => ({
+      color,
+      geometry: mergePlaced(
+        kept.flatMap((r, i) =>
+          r.c === color ? [{ geometry: new THREE.DodecahedronGeometry(0.8, 0), position: [r.x, r.y, r.z] as const, rotation: [i, i * 2, 0] as const, scale: r.s }] : [],
+        ),
+      ),
+    }));
   }, []);
   return (
     <group>
@@ -54,10 +65,9 @@ export function IslandBase({ still }: { still: boolean }) {
         <coneGeometry args={[ISLAND_RADIUS - 0.8, 6, 11]} />
         <meshStandardMaterial color="#b9b1a7" roughness={1} />
       </mesh>
-      {rocks.map((r, i) => (
-        <mesh key={i} position={[r.x, r.y, r.z]} scale={r.s} rotation={[i, i * 2, 0]}>
-          <dodecahedronGeometry args={[0.8, 0]} />
-          <meshStandardMaterial color={r.c} roughness={1} flatShading />
+      {rocks.map((r) => (
+        <mesh key={r.color} geometry={r.geometry}>
+          <meshStandardMaterial color={r.color} roughness={1} flatShading />
         </mesh>
       ))}
       {/* Little rocks floating nearby */}
@@ -96,6 +106,20 @@ function FloatingRock({ position, size, still, phase }: { position: [number, num
   );
 }
 
+/** A puff's four round lumps, joined into one shape that every puff shares (see merge.ts). */
+let puffShape: THREE.BufferGeometry | null = null;
+function puffGeometry() {
+  puffShape ??= mergePlaced(
+    [
+      [0, 0, 0, 0.9],
+      [0.9, -0.15, 0.2, 0.65],
+      [-0.85, -0.2, 0.1, 0.6],
+      [0.2, 0.25, -0.4, 0.7],
+    ].map(([x, y, z, r]) => ({ geometry: new THREE.SphereGeometry(r!, 14, 12), position: [x!, y!, z!] as const })),
+  );
+  return puffShape;
+}
+
 function CloudPuff({ position, scale, still, phase }: { position: [number, number, number]; scale: number; still: boolean; phase: number }) {
   const ref = useRef<THREE.Group>(null);
   useFrame(({ clock }) => {
@@ -103,17 +127,9 @@ function CloudPuff({ position, scale, still, phase }: { position: [number, numbe
   });
   return (
     <group ref={ref} position={position} scale={scale}>
-      {[
-        [0, 0, 0, 0.9],
-        [0.9, -0.15, 0.2, 0.65],
-        [-0.85, -0.2, 0.1, 0.6],
-        [0.2, 0.25, -0.4, 0.7],
-      ].map(([x, y, z, r], i) => (
-        <mesh key={i} position={[x!, y!, z!]} raycast={noRaycast}>
-          <sphereGeometry args={[r!, 14, 12]} />
-          <meshStandardMaterial color="#ffffff" roughness={1} />
-        </mesh>
-      ))}
+      <mesh geometry={puffGeometry()} raycast={noRaycast}>
+        <meshStandardMaterial color="#ffffff" roughness={1} />
+      </mesh>
     </group>
   );
 }
@@ -419,6 +435,7 @@ export function MiniIsland({
   label: { title: string; sub: string };
   still: boolean;
 }) {
+  const ready = useTownReady();
   const ref = useRef<THREE.Group>(null);
   useFrame(({ clock }) => {
     if (!ref.current || still) return;
@@ -487,12 +504,15 @@ export function MiniIsland({
           ))}
         </group>
       </group>
-      <Html position={[0, 2.6 * scale + 0.4, 0]} center zIndexRange={[10, 0]} style={{ pointerEvents: "none" }}>
-        <span className="block rounded-2xl bg-white/90 px-3 py-1.5 text-center whitespace-nowrap shadow-md ring-1 ring-white">
-          <span className="block text-[11px] leading-tight font-black text-amber-700 sm:text-xs">{label.title}</span>
-          <span className="block text-[10px] leading-tight font-bold text-brand-800 sm:text-[11px]">{label.sub}</span>
-        </span>
-      </Html>
+      {/* The sign waits for the intro to start, like the name tags (see ready.ts). */}
+      {ready && (
+        <Html position={[0, 2.6 * scale + 0.4, 0]} center zIndexRange={[10, 0]} style={{ pointerEvents: "none" }}>
+          <span className="block rounded-2xl bg-white/90 px-3 py-1.5 text-center whitespace-nowrap shadow-md ring-1 ring-white">
+            <span className="block text-[11px] leading-tight font-black text-amber-700 sm:text-xs">{label.title}</span>
+            <span className="block text-[10px] leading-tight font-bold text-brand-800 sm:text-[11px]">{label.sub}</span>
+          </span>
+        </Html>
+      )}
     </group>
   );
 }
