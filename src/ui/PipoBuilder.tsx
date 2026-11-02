@@ -25,7 +25,7 @@ export function PipoBuilder({ look, onChange, onDone, first }: Props) {
   const { lang, t } = useLang();
   const label = (option: { label: string; es: string }) => (lang === "es" ? option.es : option.label);
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col justify-center gap-3 p-3 md:px-6 md:py-4">
+    <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col justify-center gap-3 p-3 pb-24 md:px-6 md:py-4">
       <header className="glass flex items-center gap-3 rounded-2xl py-1.5 pr-4 pl-1.5">
         <span className="pl-2.5 text-lg font-black tracking-tight text-brand-700">Pipodojo</span>
         <span className="rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-extrabold text-white">{first ? t.builder.welcome : t.builder.garage}</span>
@@ -89,7 +89,8 @@ export function PipoBuilder({ look, onChange, onDone, first }: Props) {
                 );
               })}
             </Choice>
-            <div className="mt-auto flex gap-2 border-t border-white/70 pt-4">
+            {/* Phones: floats at the bottom of the screen, so nobody has to scroll down to find it. */}
+            <div className="fixed inset-x-0 bottom-0 z-20 flex gap-2 bg-gradient-to-t from-brand-100 via-brand-100/80 to-transparent px-3 pt-6 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:static md:mt-auto md:border-t md:border-white/70 md:bg-none md:p-0 md:pt-4">
               <Button className="flex-1" onClick={onDone}>
                 {first ? t.builder.go : t.builder.back}
               </Button>
