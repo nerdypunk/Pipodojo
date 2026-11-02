@@ -8,6 +8,7 @@ import * as THREE from "three";
 import { ISLAND_RADIUS, POND, RING, scatterFlowers, scatterTrees, seeded, type TreeSpot } from "../../game/townLayout.ts";
 import { mergePlaced } from "./merge.ts";
 import { useTownReady } from "./ready.ts";
+import { DYNAMIC, Static } from "./Static.tsx";
 import { Blob, BRAND, CORAL, INK, LEAF, ORANGE, Person, type PersonStyle } from "./props.tsx";
 
 /** Lighter, yellower greens for some trees, so the forest isn't one flat colour. */
@@ -89,7 +90,7 @@ function FloatingRock({ position, size, still, phase }: { position: [number, num
     if (ref.current && !still) ref.current.position.y = position[1] + Math.sin(clock.elapsedTime * 0.7 + phase) * 0.35;
   });
   return (
-    <group ref={ref} position={position} scale={size}>
+    <group ref={ref} position={position} scale={size} userData={DYNAMIC}>
       <mesh position={[0, 0.1, 0]}>
         <cylinderGeometry args={[1, 1, 0.3, 10]} />
         <meshStandardMaterial color="#a8d98a" roughness={1} />
@@ -126,7 +127,7 @@ function CloudPuff({ position, scale, still, phase }: { position: [number, numbe
     if (ref.current && !still) ref.current.position.y = position[1] + Math.sin(clock.elapsedTime * 0.4 + phase) * 0.25;
   });
   return (
-    <group ref={ref} position={position} scale={scale}>
+    <group ref={ref} position={position} scale={scale} userData={DYNAMIC}>
       <mesh geometry={puffGeometry()} raycast={noRaycast}>
         <meshStandardMaterial color="#ffffff" roughness={1} />
       </mesh>
@@ -257,7 +258,7 @@ export function Pond({ still }: { still: boolean }) {
             <meshStandardMaterial color="#5fbf74" />
           </mesh>
         ))}
-        <group ref={ducks}>
+        <group ref={ducks} userData={DYNAMIC}>
           {[0, Math.PI].map((a) => (
             <group key={a} position={[Math.cos(a) * 0.75, 0.08, Math.sin(a) * 0.75]} rotation={[0, -a, 0]}>
               <mesh scale={[1, 0.7, 1.3]}>
@@ -288,7 +289,7 @@ export function Pond({ still }: { still: boolean }) {
             <boxGeometry args={[STREAM_WIDTH, FALL_HEIGHT, 0.06]} />
             <meshStandardMaterial color={WATER} roughness={0.15} emissive={WATER} emissiveIntensity={0.15} />
           </mesh>
-          <group ref={drops}>
+          <group ref={drops} userData={DYNAMIC}>
             {Array.from({ length: 8 }, (_, i) => (
               <mesh key={i} position={[(i % 3) * 0.15 - 0.15, 0, 0.012]} raycast={noRaycast}>
                 <boxGeometry args={[0.05, 0.35, 0.02]} />
@@ -446,6 +447,7 @@ export function MiniIsland({
   return (
     <group ref={ref} position={position}>
       <group scale={scale}>
+        <Static>
         <mesh raycast={noHit}>
           <cylinderGeometry args={[2, 2, 0.35, 32]} />
           <meshStandardMaterial color="#a8d98a" roughness={1} />
@@ -503,6 +505,7 @@ export function MiniIsland({
             </mesh>
           ))}
         </group>
+        </Static>
       </group>
       {/* The sign waits for the intro to start, like the name tags (see ready.ts). */}
       {ready && (

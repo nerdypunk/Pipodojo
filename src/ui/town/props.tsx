@@ -5,6 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import { useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { RING, ringPoint } from "../../game/townLayout.ts";
+import { DYNAMIC, Static } from "./Static.tsx";
 
 type V3 = [number, number, number];
 
@@ -61,7 +62,7 @@ export function Face({ position, scale = 1, blink = false }: { position: V3; sca
   });
   return (
     <group position={position} scale={scale}>
-      <group ref={eyes}>
+      <group ref={eyes} userData={DYNAMIC}>
         {[-0.16, 0.16].map((x) => (
           <group key={x} position={[x, 0.04, 0]}>
             <mesh scale={[1, 1.25, 0.5]}>
@@ -132,11 +133,13 @@ export function Person({
     if (body.current) body.current.position.y = Math.abs(Math.sin(t * 2.2)) * 0.04;
   });
   return (
-    <group position={position} rotation={[0, turn, 0]} scale={1.25}>
+    <group position={position} rotation={[0, turn, 0]} scale={1.25} userData={DYNAMIC}>
       <group ref={body}>
+        {/* The body's still parts are merged; the legs and the waving arm swing on their own. */}
+        <Static>
         {/* Legs */}
         {[-0.09, 0.09].map((x, i) => (
-          <group key={x} ref={(g) => void (legs.current[i] = g)} position={[x, 0.33, 0]}>
+          <group key={x} ref={(g) => void (legs.current[i] = g)} position={[x, 0.33, 0]} userData={DYNAMIC}>
             <mesh position={[0, -0.15, 0]}>
               <capsuleGeometry args={[0.07, 0.22, 4, 8]} />
               <meshStandardMaterial color={style.pants} roughness={0.8} />
@@ -195,7 +198,7 @@ export function Person({
             <meshStandardMaterial color={style.shirt} roughness={0.7} />
           </mesh>
         </group>
-        <group ref={arm} position={[0.24, 0.7, 0]} rotation={[0, 0, 0.25]}>
+        <group ref={arm} position={[0.24, 0.7, 0]} rotation={[0, 0, 0.25]} userData={DYNAMIC}>
           <mesh position={[0, -0.16, 0]}>
             <capsuleGeometry args={[0.055, 0.22, 4, 8]} />
             <meshStandardMaterial color={style.shirt} roughness={0.7} />
@@ -207,6 +210,7 @@ export function Person({
             </mesh>
           )}
         </group>
+        </Static>
       </group>
     </group>
   );
@@ -229,6 +233,7 @@ export function Car({ color, offset, speed, still }: { color: string; offset: nu
   return (
     <group ref={ref}>
       <group scale={CAR_SCALE}>
+      <Static>
       <Blob size={0.42} />
       <RoundedBox args={[0.72, 0.26, 0.42]} radius={0.1} smoothness={3} position={[0, 0.22, 0]}>
         <meshStandardMaterial color={color} roughness={0.6} />
@@ -247,6 +252,7 @@ export function Car({ color, offset, speed, still }: { color: string; offset: nu
           <meshStandardMaterial color={INK} roughness={0.8} />
         </mesh>
       ))}
+      </Static>
       </group>
     </group>
   );
@@ -265,6 +271,7 @@ export function Cloud({ position, scale, speed, still }: { position: V3; scale: 
   });
   return (
     <group ref={ref} position={position} scale={scale}>
+      <Static>
       {[
         [0, 0, 0, 0.7],
         [0.65, -0.1, 0.1, 0.5],
@@ -276,6 +283,7 @@ export function Cloud({ position, scale, speed, still }: { position: V3; scale: 
           <meshStandardMaterial color="#ffffff" roughness={1} transparent opacity={0.92} />
         </mesh>
       ))}
+      </Static>
     </group>
   );
 }
@@ -291,6 +299,7 @@ export function Balloon({ position, still }: { position: V3; still: boolean }) {
   const stripes = ["#5aa0e0", "#ffffff", CORAL, "#ffffff", "#f6c945", "#ffffff"];
   return (
     <group ref={ref} position={position}>
+      <Static>
       {stripes.map((color, i) => (
         <mesh key={i} rotation={[0, (i * Math.PI * 2) / stripes.length, 0]}>
           <sphereGeometry args={[1, 16, 16, 0, (Math.PI * 2) / stripes.length]} />
@@ -307,6 +316,7 @@ export function Balloon({ position, still }: { position: V3; still: boolean }) {
           <meshStandardMaterial color={INK} />
         </mesh>
       ))}
+      </Static>
     </group>
   );
 }
@@ -361,6 +371,7 @@ export function Airplane({ center, radius, height, shadowReach, speed, still }: 
         <meshBasicMaterial color="#2d2470" transparent opacity={0.14} depthWrite={false} />
       </mesh>
       <group ref={ref} scale={0.8}>
+        <Static>
         {/* Body, tapering to the tail */}
         <mesh rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[0.26, 0.14, 1.7, 14]} />
@@ -379,7 +390,7 @@ export function Airplane({ center, radius, height, shadowReach, speed, still }: 
           <sphereGeometry args={[0.08, 10, 8]} />
           <meshStandardMaterial color="#f6c945" />
         </mesh>
-        <group ref={prop} position={[0, 0, 1.06]}>
+        <group ref={prop} position={[0, 0, 1.06]} userData={DYNAMIC}>
           {[0, Math.PI / 2].map((r) => (
             <mesh key={r} rotation={[0, 0, r]}>
               <boxGeometry args={[0.75, 0.07, 0.02]} />
@@ -411,6 +422,7 @@ export function Airplane({ center, radius, height, shadowReach, speed, still }: 
           <boxGeometry args={[0.3, 0.14, 0.02]} />
           <meshStandardMaterial color="#cfe9ff" transparent opacity={0.7} />
         </mesh>
+        </Static>
       </group>
     </>
   );

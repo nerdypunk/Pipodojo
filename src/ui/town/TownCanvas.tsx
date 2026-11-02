@@ -11,6 +11,7 @@ import { PLACES, RING, SPOKE_END, placeOf, type Place, type PlaceId } from "../.
 import { TOUCH } from "../device.ts";
 import { Pipo3D } from "./Pipo3D.tsx";
 import { ReadyContext, useTownReady } from "./ready.ts";
+import { Static } from "./Static.tsx";
 import { Cafe, College, Garage, House, KidHouse, OfficeTower, SakuraShrine } from "./places.tsx";
 import { mergePlaced, type Placed } from "./merge.ts";
 import { Airplane, Balloon, Car, Cloud } from "./props.tsx";
@@ -209,13 +210,21 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
       />
       <Rig selected={selected} onArrive={onArrive} still={still} />
 
-      <IslandBase still={still} />
+      <Static>
+        <IslandBase still={still} />
+      </Static>
       <group ref={root}>
-        <Plaza />
+        <Static>
+          <Plaza />
+        </Static>
         <Roads />
-        <Pond still={still} />
+        <Static>
+          <Pond still={still} />
+        </Static>
         <Popper delay={POP_START - 0.25} still={still}>
-          <SakuraShrine still={still} />
+          <Static>
+            <SakuraShrine still={still} />
+          </Static>
         </Popper>
         {PLACES.map((place, i) => (
           <Spot
@@ -653,7 +662,7 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
           onSelect(place.id);
         }}
       >
-        {children}
+        <Static>{children}</Static>
       </group>
       {/* The tag is pinned by its bottom edge; the hover card hangs off it, above (off the building)
           or, near the top of the screen, below. */}

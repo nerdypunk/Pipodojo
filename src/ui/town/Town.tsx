@@ -17,6 +17,9 @@ import { Pipo } from "../Pipo.tsx";
 import { Leaderboard } from "./Leaderboard.tsx";
 import type { PlaceTag } from "./TownCanvas.tsx";
 
+/** Header buttons on phones: small and centred, so six of them fit in a compact grid. */
+const PILL = "max-sm:h-9 max-sm:justify-center max-sm:px-2.5 max-sm:py-0 max-sm:text-[13px]";
+
 const REPO_URL = "https://github.com/nerdypunk/Pipodojo";
 const SITE_URL = "https://nerdypunk.dev";
 
@@ -140,12 +143,13 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
           <h1 className="text-lg leading-tight font-black text-ink [font-kerning:none] md:text-2xl">{t.town.title}</h1>
           <p className="hidden text-sm font-semibold text-gray-600 sm:block">{t.town.hint}</p>
         </div>
-        <div className="pointer-events-auto flex shrink-0 flex-col items-end gap-2 sm:flex-row sm:items-center">
-          <span className="chip flex items-center gap-1 rounded-full px-3 py-2 text-sm font-black" title={t.town.streakTitle}>
+        {/* On phones: a compact two-column grid of small buttons; from sm up, one row. */}
+        <div className="pointer-events-auto grid shrink-0 grid-cols-2 gap-1.5 sm:flex sm:flex-row sm:items-center sm:gap-2">
+          <span className={`chip flex items-center gap-1 rounded-full px-3 py-2 text-sm font-black ${PILL}`} title={t.town.streakTitle}>
             <span aria-hidden="true">🔥</span>
             {streak} <span className="sr-only">{t.town.streak}</span>
           </span>
-          <span className="chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-black">
+          <span className={`chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-black ${PILL}`}>
             <span className="text-amber-300" aria-hidden="true">
               ★
             </span>
@@ -154,7 +158,7 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
           <button
             type="button"
             onClick={() => setShowBoard(true)}
-            className="chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-extrabold transition hover:bg-brand-700 active:translate-y-px focus-visible:outline-3 focus-visible:outline-white md:px-4"
+            className={`chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-extrabold transition hover:bg-brand-700 active:translate-y-px focus-visible:outline-3 focus-visible:outline-white md:px-4 ${PILL}`}
             aria-label={t.town.leaderboard}
             title={t.town.leaderboard}
             aria-haspopup="dialog"
@@ -164,14 +168,14 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
           <button
             type="button"
             onClick={() => select("garage")}
-            className="chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-extrabold transition hover:bg-brand-700 active:translate-y-px focus-visible:outline-3 focus-visible:outline-white md:px-4"
+            className={`chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-extrabold transition hover:bg-brand-700 active:translate-y-px focus-visible:outline-3 focus-visible:outline-white md:px-4 ${PILL}`}
             aria-label={t.town.garage}
           >
             <span aria-hidden="true">🔧</span>
             <span className="hidden sm:inline">{t.town.garage}</span>
           </button>
-          <LangSwitch />
-          <SoundButton />
+          <LangSwitch className={`${PILL} max-sm:[&>span:first-child]:hidden`} />
+          <SoundButton className={PILL} />
         </div>
       </header>
 

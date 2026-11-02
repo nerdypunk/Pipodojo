@@ -7,6 +7,7 @@ import { useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { BLOSSOM_SCALE, SAKURA_PADS, SAKURA_SIZE, SHRINE_DECK, sakuraBlossoms } from "../../game/townLayout.ts";
 import { mergePlaced, type Placed } from "./merge.ts";
+import { DYNAMIC } from "./Static.tsx";
 import { BRAND, CORAL, Face, INK, Person, Roof } from "./props.tsx";
 
 const GLASS = "#c7e6ff";
@@ -324,7 +325,7 @@ export function House({ still }: { still: boolean }) {
             <meshStandardMaterial color={INK} />
           </mesh>
         ))}
-        <group ref={smoke} position={[0, 0.7, 0]}>
+        <group ref={smoke} position={[0, 0.7, 0]} userData={DYNAMIC}>
           {[0, 1, 2].map((i) => (
             <mesh key={i}>
               <sphereGeometry args={[0.13, 10, 10]} />
@@ -410,7 +411,7 @@ export function College({ still }: { still: boolean }) {
         <cylinderGeometry args={[0.03, 0.03, 1.4, 6]} />
         <meshStandardMaterial color={INK} />
       </mesh>
-      <mesh ref={flag} position={[1.7, 3.4, -1.2]}>
+      <mesh ref={flag} position={[1.7, 3.4, -1.2]} userData={DYNAMIC}>
         <boxGeometry args={[0.02, 0.32, 0.55]} />
         <meshStandardMaterial color={CORAL} roughness={0.6} />
       </mesh>
@@ -470,7 +471,7 @@ export function Cafe({ still }: { still: boolean }) {
           <meshStandardMaterial color="#ffffff" roughness={0.45} />
         </mesh>
         <Face position={[0, 0, 0.42]} scale={0.85} blink={!still} />
-        <group ref={steam} position={[0, 0.45, 0]}>
+        <group ref={steam} position={[0, 0.45, 0]} userData={DYNAMIC}>
           {[-0.1, 0.12].map((x) => (
             <mesh key={x} position={[x, 0, 0]}>
               <sphereGeometry args={[0.1, 10, 10]} />
@@ -551,7 +552,7 @@ export function KidHouse({ still }: { still: boolean }) {
         <meshStandardMaterial color="#c9935f" roughness={0.8} />
       </RoundedBox>
       <Porthole position={[1.4, 1.78, -0.04]} r={0.13} />
-      <mesh ref={star} position={[1.4, 3.25, -0.9]}>
+      <mesh ref={star} position={[1.4, 3.25, -0.9]} userData={DYNAMIC}>
         <octahedronGeometry args={[0.16, 0]} />
         <meshStandardMaterial color="#ffd166" emissive="#ffd166" emissiveIntensity={1} toneMapped={false} />
       </mesh>
@@ -622,7 +623,7 @@ export function OfficeTower({ still }: { still: boolean }) {
         <cylinderGeometry args={[0.025, 0.035, 0.7, 6]} />
         <meshStandardMaterial color={INK} />
       </mesh>
-      <mesh ref={beacon} position={[0.55, 4.1, -0.45]}>
+      <mesh ref={beacon} position={[0.55, 4.1, -0.45]} userData={DYNAMIC}>
         <sphereGeometry args={[0.07, 10, 8]} />
         <meshStandardMaterial color="#ff6b5b" emissive="#ff3b2f" emissiveIntensity={1.2} toneMapped={false} />
       </mesh>
