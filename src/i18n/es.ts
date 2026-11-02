@@ -126,7 +126,7 @@ export const es: Strings = {
     openPhone: "Abrir el celular de Pipo",
     buildMessage: "Arma tu mensaje para Pipo",
     yourMessage: "Tu mensaje para Pipo",
-    tapPieces: "Toca las piezas de abajo para escribirlo.",
+    tapPieces: "Toca las piezas de abajo para armarlo.",
     pickOne: "Elige una",
     pickAny: "Elige las que quieras",
     nothingPicked: "Nada elegido",

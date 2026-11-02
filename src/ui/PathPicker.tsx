@@ -15,6 +15,9 @@ import { Button } from "./Button.tsx";
 import { Pipo } from "./Pipo.tsx";
 import { ShaderBorder } from "./ShaderBorder.tsx";
 
+/** How far the pointer can move during a tap before it counts as a swipe instead. */
+const SWIPE_PX = 12;
+
 interface Props {
   persona: Persona;
   /** Best stars per lesson id this visit. */
@@ -32,13 +35,33 @@ export function PathPicker({ persona, stars, onStart, onBack }: Props) {
   const paths = pathsOf(persona, lang);
 
   useEffect(() => {
-    if (!viewport.current || !wrapper.current) return;
+    const el = viewport.current;
+    if (!el || !wrapper.current) return;
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const carousel = new Flicking(viewport.current, {
+    const carousel = new Flicking(el, {
       align: "center",
       bound: false,
       duration: still ? 0 : 400,
+      // A small wobble while tapping doesn't nudge the cards; real swipes travel much further.
+      dragThreshold: SWIPE_PX,
+      // The carousel's own rule throws a click away whenever the cards moved during the press,
+      // even if the finger didn't: a tap on Start while the cards were still sliding (just after
+      // an arrow or a swipe) was lost, so it took two. We use the rule below instead.
+      preventClickOnDrag: false,
     });
+    // A click counts unless the pointer itself travelled like a swipe between press and release.
+    let from: { x: number; y: number } | null = null;
+    const press = (e: PointerEvent) => void (from = { x: e.clientX, y: e.clientY });
+    const click = (e: MouseEvent) => {
+      // detail 0: Enter or Space on a focused button, which is always a real click.
+      if (e.detail > 0 && from && Math.hypot(e.clientX - from.x, e.clientY - from.y) > SWIPE_PX) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      from = null;
+    };
+    el.addEventListener("pointerdown", press, true);
+    el.addEventListener("click", click, true);
     carousel.addPlugins(
       new Arrow({ parentEl: wrapper.current, prevElSelector: ".persona-prev", nextElSelector: ".persona-next" }),
       new Pagination({ parentEl: wrapper.current, selector: ".persona-dots", type: "bullet" }),
@@ -46,6 +69,8 @@ export function PathPicker({ persona, stars, onStart, onBack }: Props) {
     if (!still) carousel.addPlugins(new Perspective({ rotate: 0.6, scale: 0.15, perspective: 1000 }));
     flicking.current = carousel;
     return () => {
+      el.removeEventListener("pointerdown", press, true);
+      el.removeEventListener("click", click, true);
       carousel.destroy();
       flicking.current = null;
     };

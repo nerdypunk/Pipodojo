@@ -127,7 +127,7 @@ export const en = {
     openPhone: "Open Pipo's phone",
     buildMessage: "Build your message to Pipo",
     yourMessage: "Your message to Pipo",
-    tapPieces: "Tap the pieces below to write it.",
+    tapPieces: "Tap the pieces below to build it.",
     pickOne: "Pick one",
     pickAny: "Pick any",
     nothingPicked: "Nothing picked",
