@@ -9,7 +9,7 @@ Project: Pipodojo (the mascot, and the player's agent, is a little robot called 
 ## Stack (approved)
 TypeScript (strict), React 18, Vite, Tailwind CSS, Framer Motion, react-router (HashRouter), Zustand, Zod, Vitest, canvas-confetti. Backend is the API code in `functions/api` (chat, image, and a guard middleware), run by the Cloudflare Worker in `worker/index.js`. Hosting is a Cloudflare Worker with static assets (`wrangler.jsonc`), deployed by Workers Builds from the public GitHub repo.
 - Ask before adding any other dependency.
-- No auth, no cookies, nothing that tracks or identifies a person. Only two things are counted, both by country and cookie-free: Cloudflare Web Analytics on the live site (`src/app/analytics.ts`: visits, pages, countries, devices), and today's leaderboard (`functions/api/leaderboard.js`, Cloudflare D1: daily star totals per country, plus one-time receipts that last at most 30 minutes). Never store names, IP addresses or anything else about a person.
+- No auth, no cookies, nothing that tracks or identifies a person. Only two things are counted, both by country and cookie-free: Cloudflare Web Analytics on the live site (`src/app/analytics.ts`: visits, pages, countries, devices), and today's leaderboard (`functions/api/leaderboard.js`, Cloudflare D1: daily star totals per country, plus one-time receipts that last at most 30 minutes). Never store names, IP addresses or anything else about a person. Donations go through Ko-fi (`src/ui/Support.tsx`): its panel loads only when a player opens the Support window, never on page load.
 
 ## Hard rules
 - Never commit secrets. `MODEL_API_KEY` lives in `.dev.vars` (gitignored) locally and in a Cloudflare secret in production. Never put it in client code, build output, or logs.

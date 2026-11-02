@@ -69,6 +69,8 @@ No accounts and no cookies. Your settings (language, sound, your Pipo's look, yo
 
 **Today's leaderboard** (the 🏆 button in town) ranks countries, not people, by the stars their players earned today. The server keeps only daily totals per country in Cloudflare D1, using the country code Cloudflare attaches to each request; it never stores names, IP addresses or anything about a person. To keep it fair, each real answer from Muse Spark comes with a one-time receipt, and a finished lesson counts by handing that receipt in (`functions/api/leaderboard.js`). This device remembers which lessons it already counted today, in its own storage, so replays don't count twice.
 
+**Donations** go through [Ko-fi](https://ko-fi.com/pipodojo). Tapping **☕ Support Pipodojo** opens Ko-fi's donation panel in a window over the page (`src/ui/Support.tsx`); nothing from Ko-fi loads until someone opens it, so players who never tap it get no Ko-fi code and no cookies.
+
 ## Powered by Muse Spark
 
 Pipo's answers come live from Meta's **Muse Spark** model through the Meta Model API. Pipodojo uses the `muse-spark-1.2-contributor` tier everywhere, locally and deployed: it costs less, and in return Meta may use the prompts to improve its models. Players never type, so every prompt is built from the game's own preset pieces and nothing personal is sent. Pipo's role and answer format come from each lesson file; the stars are worked out by the game's own rules, never by a model.
@@ -82,6 +84,10 @@ Finishing a lesson keeps your **day streak** 🔥 going (saved on your device on
 Pipodojo works on phones and runs best on a computer; phones get a friendly note saying so.
 
 Before a path you **make your own Pipo** (head, body, colours). It is drawn in code, so it is instant and free. When you finish the path, Meta's **Muse Image** (`muse-image-1.0`) paints a postcard of what your Pipo did across the lessons, starring your Pipo, and you peel the gift open to find it. That is one image per finished path; if painting is slow or fails, a ready-made postcard shows instead. The image endpoint (`functions/api/image.js`) fixes the model, size and style, so it can only paint a Pipodojo postcard.
+
+## Support Pipodojo
+
+Pipodojo is free for everyone, with no ads and no accounts. If it helped you or someone you know, you can buy Pipo a coffee on Ko-fi: [ko-fi.com/pipodojo](https://ko-fi.com/pipodojo) ☕. It helps keep the site running and reaching more people across Latin America and beyond. Thank you!
 
 ## Credits
 

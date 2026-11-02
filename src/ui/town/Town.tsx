@@ -11,6 +11,7 @@ import { personasIn } from "../../game/personas.ts";
 import { useLang } from "../../i18n/index.tsx";
 import { LangSwitch } from "../LangSwitch.tsx";
 import { SoundButton } from "../SoundButton.tsx";
+import { SupportButton } from "../Support.tsx";
 import { hover, play } from "../../app/sound.ts";
 import { PLACES, type PlaceId } from "../../game/townLayout.ts";
 import { Pipo } from "../Pipo.tsx";
@@ -244,6 +245,15 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
             </a>
             </span>
           </p>
+          <span className="hidden text-brand-300 sm:inline" aria-hidden="true">
+            ·
+          </span>
+          <SupportButton className="inline-flex items-center gap-1.5 text-brand-700 underline underline-offset-2 hover:text-brand-900 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand-500">
+            <span className="w-4 text-center no-underline" aria-hidden="true">
+              ☕
+            </span>
+            {t.support.button}
+          </SupportButton>
         </div>
       </nav>
     </div>

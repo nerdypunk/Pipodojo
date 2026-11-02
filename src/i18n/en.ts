@@ -156,6 +156,18 @@ export const en = {
     answered: "Pipo answered",
   },
 
+  /** Donations through Ko-fi, in a window over the page. */
+  support: {
+    button: "Support Pipodojo",
+    title: "Support Pipodojo",
+    sub: "Pipodojo is free for everyone. A coffee helps keep it that way.",
+    ask: "Enjoyed this path?",
+    loading: "Opening Ko-fi…",
+    panel: "Ko-fi donation form",
+    backup: "Trouble paying here? Open it on Ko-fi",
+    privacy: "Donations are handled by Ko-fi, which only loads when you open this window.",
+  },
+
   /** A short first-time tour of the lesson screen, shown once on whichever lesson comes first. */
   tutorial: {
     label: "How a lesson works",

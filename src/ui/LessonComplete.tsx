@@ -9,6 +9,7 @@ import type { Mission, RunLog } from "../engine/types.ts";
 import { answerLines } from "../game/feedback.ts";
 import { Button } from "./Button.tsx";
 import { PeelReward } from "./PeelReward.tsx";
+import { SupportButton } from "./Support.tsx";
 import { Pipo } from "./Pipo.tsx";
 import { useLang } from "../i18n/index.tsx";
 
@@ -193,6 +194,13 @@ export function LessonComplete({ pathName, lessons, index, log, stars, postcard,
                 <span aria-hidden="true">🏘️ </span>{t.complete.backToTown}
               </Button>
             </div>
+          )}
+          {/* Only once a whole path is done, small and below the way on, so it never gets in the way. */}
+          {!next && (
+            <p className="-mt-1 text-center text-sm font-semibold text-gray-600">
+              {t.support.ask}{" "}
+              <SupportButton className="font-extrabold text-brand-700 underline underline-offset-2 hover:text-brand-900 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand-500" />
+            </p>
           )}
         </div>
       </div>
