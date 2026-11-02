@@ -16,7 +16,7 @@ const regexSource = z.string().min(1).refine((source) => {
   }
 }, "Not a valid regular expression");
 
-export const PersonaSchema = z.enum(["business", "student", "parent", "kid"]);
+export const PersonaSchema = z.enum(["business", "student", "parent", "kid", "executive"]);
 
 /** The game's languages. English lessons live in /missions, Spanish ones in /missions/es. */
 export const LangSchema = z.enum(["en", "es"]);
@@ -57,9 +57,8 @@ export const ToolSchema = z.strictObject({
   name: z.string().regex(/^[a-z][a-z0-9_]{0,63}$/, "Use lowercase letters, numbers or _"),
   /** Told to the model: when to use this tool. */
   description: text,
-  /** Which phone mockup shows the result. */
-  /** Phone apps, or laptop apps for Pipo Code (site, game, chart). */
-  app: z.enum(["whatsapp", "shop", "email", "calendar", "site", "game", "chart"]),
+  /** Which mockup shows the result: phone apps, or laptop apps for Pipo Code (site, game, chart). */
+  app: z.enum(["whatsapp", "shop", "email", "calendar", "form", "site", "game", "chart"]),
   /** The store's name on the shop screen, e.g. "TicketHub" (default FreshCart). */
   store: text.optional(),
   /** Label for the shop's "delivery" row, e.g. "Visit" for tickets (default Delivery). */

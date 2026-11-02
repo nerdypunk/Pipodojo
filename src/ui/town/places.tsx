@@ -545,6 +545,70 @@ export function KidHouse({ still }: { still: boolean }) {
   );
 }
 
+const FLOORS = 3;
+
+/** The busy executive's office tower: glass floors, a smiling sign over the door and a blinking aerial. */
+export function OfficeTower({ still }: { still: boolean }) {
+  const beacon = useRef<THREE.Mesh>(null);
+  useFrame(({ clock }) => {
+    if (!beacon.current || still) return;
+    ((beacon.current.material as THREE.MeshStandardMaterial).emissiveIntensity = Math.sin(clock.elapsedTime * 3) > 0.3 ? 2 : 0.2);
+  });
+  return (
+    <group>
+      <RoundedBox args={[3.2, 0.08, 3.0]} radius={0.04} position={[0, 0.04, 0.25]}>
+        <meshStandardMaterial color="#dfe4ea" roughness={0.95} />
+      </RoundedBox>
+      <Walls size={[2.1, 3.3, 1.8]} position={[0, 1.7, -0.2]} color="#eef2f8" radius={0.16} />
+      {/* A band of glass round each floor */}
+      {Array.from({ length: FLOORS }, (_, i) => (
+        <RoundedBox key={i} args={[2.16, 0.42, 1.86]} radius={0.06} position={[0, 1.6 + i * 0.7, -0.2]}>
+          <meshStandardMaterial color={GLASS} emissive={GLASS} emissiveIntensity={0.25} roughness={0.15} />
+        </RoundedBox>
+      ))}
+      {/* Entrance: glass doors under a canopy, with the sign and its face above */}
+      <mesh position={[0, 0.5, 0.71]}>
+        <boxGeometry args={[0.8, 0.85, 0.05]} />
+        <meshStandardMaterial color={GLASS} emissive={GLASS} emissiveIntensity={0.3} roughness={0.1} />
+      </mesh>
+      <mesh position={[0, 0.5, 0.74]}>
+        <boxGeometry args={[0.03, 0.85, 0.02]} />
+        <meshStandardMaterial color={BRAND[700]} />
+      </mesh>
+      <RoundedBox args={[1.2, 0.08, 0.5]} radius={0.03} position={[0, 1.0, 0.92]}>
+        <meshStandardMaterial color={BRAND[600]} roughness={0.6} />
+      </RoundedBox>
+      <RoundedBox args={[0.9, 0.42, 0.06]} radius={0.05} position={[0, 1.12, 0.72]}>
+        <meshStandardMaterial color="#fff8f0" roughness={0.8} />
+      </RoundedBox>
+      <Face position={[0, 1.12, 0.76]} scale={0.7} blink={!still} />
+      {/* Potted trees either side of the door */}
+      {[-0.85, 0.85].map((x) => (
+        <group key={x} position={[x, 0, 1.15]}>
+          <mesh position={[0, 0.16, 0]}>
+            <cylinderGeometry args={[0.14, 0.11, 0.24, 10]} />
+            <meshStandardMaterial color={CORAL} roughness={0.8} />
+          </mesh>
+          <mesh position={[0, 0.48, 0]}>
+            <sphereGeometry args={[0.24, 12, 10]} />
+            <meshStandardMaterial color="#68b84f" roughness={0.9} />
+          </mesh>
+        </group>
+      ))}
+      {/* Rooftop: a plant room and an aerial with a blinking light */}
+      <Walls size={[1.2, 0.45, 1.0]} position={[-0.3, 3.58, -0.35]} color="#d5dbe4" radius={0.08} />
+      <mesh position={[0.55, 3.7, -0.45]}>
+        <cylinderGeometry args={[0.025, 0.035, 0.7, 6]} />
+        <meshStandardMaterial color={INK} />
+      </mesh>
+      <mesh ref={beacon} position={[0.55, 4.1, -0.45]}>
+        <sphereGeometry args={[0.07, 10, 8]} />
+        <meshStandardMaterial color="#ff6b5b" emissive="#ff3b2f" emissiveIntensity={1.2} toneMapped={false} />
+      </mesh>
+    </group>
+  );
+}
+
 /** Pipo's garage: where you change how your Pipo looks. */
 export function Garage({ still }: { still: boolean }) {
   return (

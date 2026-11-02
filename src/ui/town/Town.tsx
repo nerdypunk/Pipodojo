@@ -164,8 +164,9 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
       {/* Bottom: the same places as buttons, and who powers Pipo. On tall phone screens the island
           sits mid-screen, so lift these up to tuck under it instead of hugging the bottom edge. */}
       <nav className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 p-3 max-sm:bottom-[8dvh] md:p-6" aria-label={t.town.places}>
-        {/* Four equal, chunky buttons (2×2 on phones, a row on wider screens) that press down when tapped. */}
-        <div className="grid w-full max-w-sm grid-cols-2 gap-2 sm:flex sm:w-auto sm:max-w-none">
+        {/* Equal, chunky buttons (two a row on phones, the odd one out full width; a row on wider
+            screens, wrapping if it must) that press down when tapped. */}
+        <div className="grid w-full max-w-sm grid-cols-2 gap-2 sm:flex sm:w-auto sm:max-w-none sm:flex-wrap sm:justify-center">
           {personas.map((persona) => {
             const on = hovered === persona.id;
             return (
@@ -177,7 +178,7 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
                 onMouseLeave={() => !selected && setHovered(null)}
                 onFocus={() => !selected && setHovered(persona.id)}
                 onBlur={() => !selected && setHovered(null)}
-                className={`flex min-h-13 min-w-0 items-center gap-2 rounded-2xl border-b-4 py-2 pr-2.5 pl-2 text-left text-sm leading-tight font-extrabold shadow-[0_10px_24px_-12px_rgb(45_36_112/0.55)] transition-[background-color,color,border-color,transform] duration-150 active:translate-y-0.5 active:border-b-2 motion-reduce:transition-none sm:pr-3.5 ${
+                className={`flex min-h-13 min-w-0 items-center gap-2 rounded-2xl border-b-4 last:odd:col-span-2 py-2 pr-2.5 pl-2 text-left text-sm leading-tight font-extrabold shadow-[0_10px_24px_-12px_rgb(45_36_112/0.55)] transition-[background-color,color,border-color,transform] duration-150 active:translate-y-0.5 active:border-b-2 motion-reduce:transition-none sm:pr-3.5 ${
                   on ? "border-brand-800 bg-brand-600 text-white" : "border-brand-200 bg-white text-ink"
                 }`}
               >

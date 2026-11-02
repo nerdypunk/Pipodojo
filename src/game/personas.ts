@@ -54,6 +54,15 @@ const DATA: readonly (PersonaCard & { es: PersonaText })[] = [
     tint: "from-emerald-300 to-brand-600",
     es: { name: "Joven programador", place: "Casa del árbol", blurb: "Páginas web, juegos y tareas, con Pipo Code en la laptop." },
   },
+  {
+    id: "executive",
+    name: "Busy executive",
+    emoji: "💼",
+    place: "Office tower",
+    blurb: "Flight refunds, marketplace finds and tax paperwork.",
+    tint: "from-slate-400 to-brand-700",
+    es: { name: "Ejecutivo ocupado", place: "Torre de oficinas", blurb: "Reembolsos de vuelos, compras en marketplace y papeleo de impuestos." },
+  },
 ];
 
 const inLang = (card: (typeof DATA)[number], lang: Lang): PersonaCard => {

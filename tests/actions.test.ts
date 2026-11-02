@@ -24,6 +24,7 @@ describe("tool lessons", () => {
     expect(readable([{ name: "Buns", price: 4 }, "Corn"])).toBe("Buns ($4), Corn");
     expect(readable([{ name: "Bake sale", when: "Thu 3pm" }])).toBe("Bake sale (Thu 3pm)");
     expect(readable([{ name: "Apples", value: 8 }, { name: "Candy hat", cost: 30 }])).toBe("Apples (8), Candy hat (30)");
+    expect(readable([{ label: "Work laptop", value: "$1,200" }, { label: "Notes" }])).toBe("Work laptop: $1,200, Notes");
     expect(readable(undefined)).toBe("?");
   });
 
@@ -129,6 +130,26 @@ describe("approveAction", () => {
       const done = await approveAction({ mission: invite, prompt: "Invite them", action: draft, client });
       expect(done).toEqual({ ...draft, tool: "send_whatsapp_message", outcome: "done" });
     }
+  });
+
+  it("works for a saved form: its fields become lines, and Submit finishes it", async () => {
+    const form = parseMission(readMissionFiles()["exec-08-expense-form.json"], "exec-08-expense-form.json");
+    const args = {
+      title: "Work expenses",
+      for: "Dana Reyes",
+      fields: [
+        { label: "Work laptop", value: "$1,200" },
+        { label: "Design course", value: "$300" },
+      ],
+      total: 1500,
+    };
+    const saved = pickAction(form, [{ name: "save_form_for_review", args }])!;
+    expect(saved).toMatchObject({ app: "form", outcome: "waiting" });
+    expect(actionAnswer(form, saved)).toBe(
+      "📋 Work expenses\n👤 For: Dana Reyes\n🧾 Work laptop: $1,200, Design course: $300\n💵 Total $1500\n⏳ Saved, waiting for your OK to submit",
+    );
+    const done = await approveAction({ mission: form, prompt: "Fill it in", action: saved, client: scriptedClient([new Error("offline")]).client });
+    expect(done).toMatchObject({ tool: "submit_form", app: "form", outcome: "done", args });
   });
 });
 

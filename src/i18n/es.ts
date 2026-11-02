@@ -196,6 +196,14 @@ export const es: Strings = {
       already: "✅ Ya está en el calendario",
       alreadyNote: "Pipo los puso en el calendario por ti.",
     },
+    form: {
+      ask: "Pipo llenó el formulario. ¿Lo envío?",
+      button: "Enviar 📋",
+      working: "Pipo lo está enviando…",
+      approved: "📋 ¡Enviado después de tu OK!",
+      already: "✅ Ya se envió",
+      alreadyNote: "Pipo lo envió antes de que pudieras revisarlo.",
+    },
     site: {
       askBuild: "Pipo hizo una vista previa. ¿La publico?",
       askFix: "Pipo tiene un arreglo listo. ¿Lo publico?",
@@ -261,6 +269,13 @@ export const es: Strings = {
     notAdded: "Aún no agregado",
     noEvents: "Sin eventos",
     noTime: "Sin hora",
+    forms: "Formularios",
+    formLabel: (title: string, submitted: boolean) => `Formulario: ${title}${submitted ? ", enviado" : ", guardado y esperando tu OK"}`,
+    formFor: "Para",
+    submitted: "Enviado",
+    notSubmitted: "Guardado, sin enviar",
+    noFields: "Nada llenado",
+    stamp: "Enviado ✓",
   },
 
   laptop: {

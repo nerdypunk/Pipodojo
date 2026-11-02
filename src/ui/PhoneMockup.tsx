@@ -1,4 +1,4 @@
-// The app screen inside Pipo's phone: a chat, a store cart, an email or a calendar. Built from
+// The app screen inside Pipo's phone: a chat, a store cart, an email, a calendar or a form. Built from
 // the tool call's arguments and sized to fill the phone. `flags` follow the tool's answer lines,
 // so the part that shows a gap in the prompt is outlined in red. Nothing here is a real app.
 import type { PipoAction } from "../engine/types.ts";
@@ -17,6 +17,7 @@ export function PhoneScreen({ action, flags }: Props) {
   if (action.app === "whatsapp") return <ChatScreen action={action} flags={flags} />;
   if (action.app === "email") return <EmailScreen action={action} flags={flags} />;
   if (action.app === "calendar") return <CalendarScreen action={action} flags={flags} />;
+  if (action.app === "form") return <FormScreen action={action} flags={flags} />;
   return <ShopScreen action={action} flags={flags} />;
 }
 
@@ -206,6 +207,77 @@ function CalendarScreen({ action, flags }: Props) {
           {readable(reminder)}
         </p>
       )}
+    </div>
+  );
+}
+
+/** One form field as Pipo filled it in: a label and its value. */
+function formField(field: unknown): { label: string; value: string } {
+  const { label, value } = (field ?? {}) as { label?: unknown; value?: unknown };
+  return label === undefined ? { label: readable(field), value: "" } : { label: readable(label), value: value === undefined ? "" : readable(value) };
+}
+
+/** A paperwork form, like a tidy official card: title, who it's for, the fields and a total.
+ *  Flags follow the tool's lines: title, who it's for, fields, total. Once submitted it gets a stamp. */
+function FormScreen({ action, flags }: Props) {
+  const title = readable(action.args.title);
+  const fields = (Array.isArray(action.args.fields) ? action.args.fields : []).map(formField);
+  const total = action.args.total;
+  const submitted = action.outcome === "done";
+  const { t } = useLang();
+  return (
+    <div className="flex h-full flex-col bg-brand-50" aria-label={t.screens.formLabel(title, submitted)}>
+      <div className="flex items-center justify-between bg-brand-700 px-3 py-2.5 text-white">
+        <p className="text-sm font-black">
+          <span aria-hidden="true">📋 </span>
+          {action.store ?? t.screens.forms}
+        </p>
+        <p className="text-[11px] font-bold text-white/85">{submitted ? t.screens.submitted : t.screens.notSubmitted}</p>
+      </div>
+
+      <div className="min-h-0 flex-1 overflow-y-auto p-2.5">
+        <div
+          className={`relative rounded-xl bg-white px-3 pt-2.5 pb-3 shadow-sm ${
+            submitted ? "border border-brand-100" : "border-2 border-dashed border-brand-200"
+          }`}
+        >
+          <span className="absolute inset-x-0 top-0 h-1 rounded-t-xl bg-brand-500" aria-hidden="true" />
+          <p className={`mt-1 rounded-md px-1 text-[13px] leading-tight font-black tracking-wide text-brand-900 uppercase ${flags[0] ? FLAG : ""}`}>{title}</p>
+          <p className={`mt-1 rounded-md px-1 text-[12px] font-semibold text-gray-600 ${flags[1] ? FLAG : ""}`}>
+            {t.screens.formFor}: <span className="font-black text-ink">{readable(action.args.for)}</span>
+          </p>
+
+          <dl className={`mt-2 rounded-md px-1 ${flags[2] ? FLAG : ""}`}>
+            {fields.length === 0 && <p className="py-1 text-[12px] font-semibold text-gray-500">{t.screens.noFields}</p>}
+            {fields.map((field, i) => (
+              <div key={i} className="flex items-baseline justify-between gap-2 border-b border-dotted border-brand-200 py-1.5 last:border-0">
+                <dt className="min-w-0 text-[12px] font-semibold text-gray-600">{field.label}</dt>
+                <dd className="shrink-0 text-right text-[13px] font-black text-ink">{field.value}</dd>
+              </div>
+            ))}
+          </dl>
+
+          {total !== undefined && (
+            <p
+              className={`mt-1 flex justify-between rounded-md border-t-4 border-double border-brand-200 px-1 pt-1.5 text-sm font-black text-ink ${
+                flags[3] ? FLAG : ""
+              }`}
+            >
+              <span>{t.screens.total}</span>
+              <span>${typeof total === "number" ? total.toLocaleString("en-US", { maximumFractionDigits: 2 }) : readable(total)}</span>
+            </p>
+          )}
+
+          {/* A stamp under the total once it's in (the header already says so for screen readers) */}
+          {submitted && (
+            <div className="mt-2.5 flex justify-end" aria-hidden="true">
+              <p className="pop-in -rotate-6 rounded-md border-2 border-emerald-600 px-1.5 py-0.5 text-[11px] font-black tracking-wider text-emerald-700 uppercase">
+                {t.screens.stamp}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

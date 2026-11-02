@@ -46,7 +46,9 @@ export function readable(value: unknown): string {
   if (typeof value === "string") return value.replace(/\s+/g, " ").trim();
   if (Array.isArray(value)) return value.map(readable).join(", ");
   if (typeof value === "object") {
-    const { name, price, ...rest } = value as { name?: unknown; price?: unknown; when?: unknown; value?: unknown; cost?: unknown; note?: unknown };
+    const { name, price, label, ...rest } = value as { name?: unknown; price?: unknown; label?: unknown; when?: unknown; value?: unknown; cost?: unknown; note?: unknown };
+    // Form fields: "Work laptop: $1,200".
+    if (label !== undefined && name === undefined) return rest.value === undefined ? readable(label) : `${readable(label)}: ${readable(rest.value)}`;
     if (name !== undefined) {
       if (price !== undefined) return `${readable(name)} ($${readable(price)})`;
       // Events, chart bars, game shop items and diagram steps: "Bake sale (Thu 3pm)", "Apples (8)".

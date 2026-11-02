@@ -3,13 +3,13 @@
 // and send Pipo over; click it and the camera flies in, then the town tells the screen to move on.
 import { Html, Instance, Instances, RoundedBox } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useLayoutEffect, useMemo, useRef, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import * as THREE from "three";
 import type { PipoLook } from "../../game/pipoLook.ts";
 import { PLACES, RING, SPOKE_END, placeOf, type Place, type PlaceId } from "../../game/townLayout.ts";
 import { TOUCH } from "../device.ts";
 import { Pipo3D } from "./Pipo3D.tsx";
-import { Cafe, College, Garage, House, KidHouse, SakuraShrine } from "./places.tsx";
+import { Cafe, College, Garage, House, KidHouse, OfficeTower, SakuraShrine } from "./places.tsx";
 import { Airplane, Balloon, Car, Cloud } from "./props.tsx";
 import { Birds, Flowers, Forest, IslandBase, MiniIsland, Plaza, Pond, Strollers, grow } from "./scenery.tsx";
 
@@ -186,6 +186,7 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
             {place.id === "student" && <College still={still} />}
             {place.id === "business" && <Cafe still={still} />}
             {place.id === "kid" && <KidHouse still={still} />}
+            {place.id === "executive" && <OfficeTower still={still} />}
             {place.id === "garage" && <Garage still={still} />}
           </Spot>
         ))}
@@ -444,8 +445,13 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
   const ring = useRef<THREE.Mesh>(null);
   const hover = useRef(1);
   const label = useRef<HTMLDivElement>(null);
+  const card = useRef<HTMLDivElement>(null);
   const shift = useRef(0);
   const anchor = useMemo(() => new THREE.Vector3(), []);
+  // The hover card sits above the tag, unless that would run under the header or off the top of
+  // the screen (places at the back of town); then it drops below the tag instead.
+  const [below, setBelow] = useState(false);
+  const belowNow = useRef(false);
 
   // Keep the tag on screen: on narrow phones a tag centred over a building near the edge would be
   // cut off, so slide it sideways just enough to stay TAG_MARGIN inside the edge. (The tag is
@@ -456,7 +462,14 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
     if (!el) return;
     anchor.set(place.at[0], place.tag, place.at[1]).project(camera);
     const x = ((anchor.x + 1) / 2) * size.width;
-    const half = el.offsetWidth / 2;
+    const y = ((1 - anchor.y) / 2) * size.height;
+    const cardHeight = card.current?.offsetHeight ?? 80;
+    const flip = y - el.offsetHeight - cardHeight - 8 < headerBottom(size.width);
+    if (flip !== belowNow.current) {
+      belowNow.current = flip;
+      setBelow(flip);
+    }
+    const half = Math.max(el.offsetWidth, card.current?.offsetWidth ?? 0) / 2;
     const left = x - half - TAG_MARGIN;
     const right = x + half + TAG_MARGIN - size.width;
     const next = Math.round(left < 0 ? -left : right > 0 ? -right : 0);
@@ -508,11 +521,17 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
       >
         {children}
       </group>
-      {/* The tag is pinned by its bottom edge, so the hover card grows upward, off the building. */}
+      {/* The tag is pinned by its bottom edge; the hover card hangs off it, above (off the building)
+          or, near the top of the screen, below. */}
       <Html position={[0, place.tag, 0]} zIndexRange={[20, 0]} style={{ pointerEvents: "none" }}>
-        <div ref={label} className="flex flex-col items-center gap-1.5" style={{ transform: "translate(-50%, -100%)" }}>
+        <div ref={label} className="relative" style={{ transform: "translate(-50%, -100%)" }}>
           {hovered && (
-            <div className="pop-in w-40 rounded-2xl bg-ink/90 px-3 py-2 text-center text-[11px] font-bold text-white shadow-xl sm:w-48 sm:text-xs">
+            <div
+              ref={card}
+              className={`pop-in absolute left-1/2 w-40 -translate-x-1/2 rounded-2xl bg-ink/90 px-3 py-2 text-center text-[11px] font-bold text-white shadow-xl sm:w-48 sm:text-xs ${
+                below ? "top-full mt-1.5" : "bottom-full mb-1.5"
+              }`}
+            >
               {tag.sub}
               {tag.open && tag.visit && <span className="mt-1 block text-[11px] font-black text-amber-300">{tag.visit}</span>}
             </div>

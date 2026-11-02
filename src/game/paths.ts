@@ -174,6 +174,43 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
     tint: "from-emerald-300 to-sky-500",
     es: { name: "Ayuda con la tarea", brag: "Mi agente de IA me ayudó a aprender, no a copiar 📊", blurb: "Pipo Code te ayuda a aprender y luego hace una gráfica y un diagrama para tu tarea.", lessons: ["Aprende, no copies","Haz una gráfica","Dibuja un diagrama"] },
   },
+  // Busy executive
+  {
+    id: "executive-flight",
+    mode: "build",
+    brag: "My AI agent got my cancelled flight refunded ✈️",
+    persona: "executive",
+    name: "Cancelled flight",
+    emoji: "✈️",
+    blurb: "Your flight got cancelled. Pipo works out what you're owed, asks the airline for a refund and books the new flight in.",
+    lessons: ["Find out what you're owed", "Ask the airline for a refund", "Add the new flight to your calendar"],
+    tint: "from-sky-400 to-brand-700",
+    es: { name: "Vuelo cancelado", brag: "Mi agente de IA consiguió el reembolso de mi vuelo cancelado ✈️", blurb: "Te cancelaron el vuelo. Pipo averigua qué te deben, le pide el reembolso a la aerolínea y agenda el vuelo nuevo.", lessons: ["Averigua qué te deben","Pide el reembolso a la aerolínea","Agrega el vuelo nuevo a tu calendario"] },
+  },
+  {
+    id: "executive-marketplace",
+    mode: "pick",
+    brag: "My AI agent found me a great deal on marketplace 🛋️",
+    persona: "executive",
+    name: "Marketplace find",
+    emoji: "🛋️",
+    blurb: "You want a desk chair on marketplace. Pipo compares listings, messages the seller and buys it safely.",
+    lessons: ["Compare the listings", "Message the seller", "Buy it safely"],
+    tint: "from-fuchsia-400 to-brand-700",
+    es: { name: "Compra en marketplace", brag: "Mi agente de IA me encontró una gran oferta en marketplace 🛋️", blurb: "Quieres una silla de escritorio en marketplace. Pipo compara anuncios, le escribe al vendedor y la compra de forma segura.", lessons: ["Compara los anuncios","Escríbele al vendedor","Cómprala de forma segura"] },
+  },
+  {
+    id: "executive-taxes",
+    mode: "build",
+    brag: "My AI agent got my tax paperwork done 🧾",
+    persona: "executive",
+    name: "Tax time",
+    emoji: "🧾",
+    blurb: "Tax season. Pipo lists what you need, fills in the expense form and sets up a call with your accountant.",
+    lessons: ["List what you need", "Fill in the expense form", "Email your accountant"],
+    tint: "from-emerald-300 to-brand-600",
+    es: { name: "Temporada de impuestos", brag: "Mi agente de IA dejó listo mi papeleo de impuestos 🧾", blurb: "Temporada de impuestos. Pipo hace la lista de lo que necesitas, llena el formulario de gastos y agenda una llamada con tu contador.", lessons: ["Haz la lista de lo que necesitas","Llena el formulario de gastos","Escríbele a tu contador"] },
+  },
 ];
 
 const inLang = (card: (typeof DATA)[number], lang: Lang): PathCard => {

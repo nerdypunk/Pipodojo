@@ -197,6 +197,14 @@ export const en = {
       already: "✅ Added to the calendar",
       alreadyNote: "Pipo put these in the calendar for you.",
     },
+    form: {
+      ask: "Pipo filled in the form. Submit it?",
+      button: "Submit 📋",
+      working: "Pipo is submitting it…",
+      approved: "📋 Submitted after your OK!",
+      already: "✅ Already submitted",
+      alreadyNote: "Pipo submitted it before you could check it.",
+    },
     site: {
       askBuild: "Pipo built a preview. Put it online?",
       askFix: "Pipo has a fix ready. Put it online?",
@@ -262,6 +270,13 @@ export const en = {
     notAdded: "Not added yet",
     noEvents: "No events",
     noTime: "No time set",
+    forms: "Forms",
+    formLabel: (title: string, submitted: boolean) => `Form: ${title}${submitted ? ", submitted" : ", saved and waiting for your OK"}`,
+    formFor: "For",
+    submitted: "Submitted",
+    notSubmitted: "Saved, not sent",
+    noFields: "Nothing filled in",
+    stamp: "Submitted ✓",
   },
 
   laptop: {
