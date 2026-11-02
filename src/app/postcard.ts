@@ -11,7 +11,8 @@ export type Postcard =
    */
   | { status: "ready"; src: string; painted: boolean; model?: string; ms?: number; scene?: string };
 
-export const FALLBACK_POSTCARD = `${import.meta.env.BASE_URL}postcard-fallback.webp`;
+/** Each path's ready-made postcard (public/postcards), painted ahead in the same house style. */
+export const fallbackPostcard = (pathId: string) => `${import.meta.env.BASE_URL}postcards/${pathId}.webp`;
 
 /** Muse Image usually takes about 15 seconds. */
 const PAINT_TIMEOUT_MS = 30_000;
@@ -27,8 +28,8 @@ function mimeOf(b64: string): string {
   return "image/png";
 }
 
-export async function paintPostcard(scene: string): Promise<Extract<Postcard, { status: "ready" }>> {
-  const fallback = { status: "ready", src: FALLBACK_POSTCARD, painted: false } as const;
+export async function paintPostcard(scene: string, pathId: string): Promise<Extract<Postcard, { status: "ready" }>> {
+  const fallback = { status: "ready", src: fallbackPostcard(pathId), painted: false } as const;
   if (paintingsUsed >= MAX_PAINTINGS_PER_SESSION) return fallback;
   paintingsUsed++;
   const started = performance.now();

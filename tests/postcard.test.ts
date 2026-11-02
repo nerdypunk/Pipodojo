@@ -1,5 +1,8 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { parseMission } from "../src/engine/missionLoader.ts";
+import { PATHS } from "../src/game/paths.ts";
 import { MAX_SCENE_CHARS, postcardScene } from "../src/engine/postcard.ts";
 import type { Mission, RunLog } from "../src/engine/types.ts";
 import { readMissionFiles } from "./helpers.ts";
@@ -49,5 +52,12 @@ describe("postcardScene", () => {
   it("matches the server's cap", async () => {
     const server = await import("../functions/api/image.js");
     expect(MAX_SCENE_CHARS).toBe(server.MAX_SCENE_CHARS);
+  });
+});
+
+describe("backup postcards", () => {
+  it("every path has its own ready-made postcard for when painting fails", () => {
+    const dir = join(import.meta.dirname, "..", "public", "postcards");
+    for (const path of PATHS) expect(existsSync(join(dir, `${path.id}.webp`)), path.id).toBe(true);
   });
 });

@@ -147,7 +147,7 @@ export function App() {
       );
       const ticket = ++painting.current;
       setPostcard({ status: "painting", startedAt: Date.now() });
-      void paintPostcard(scene).then((ready) => {
+      void paintPostcard(scene, path).then((ready) => {
         if (ticket === painting.current) setPostcard(ready);
       });
     }
