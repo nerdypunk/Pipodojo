@@ -7,10 +7,10 @@
   "icon": "🛍️",
   "recap": "Pipo Code set up the Candy Climb shop.",
   "funFact": "Design, build, shop: Candy Climb is ready! Coding agents build fast, so you decide what's fair and safe for your players.",
-  "postcard": "players in a candy game showing off a rainbow trail and a candy hat: {items}",
+  "postcard": "players in a candy game showing off a star trail and a candy hat: {items}",
   "situation": "Players want cool stuff! Should I add a shop to Candy Climb?",
   "facts": [
-    "🌈 Sell a rainbow trail and a candy hat",
+    "⭐ Sell a star trail and a candy hat",
     "🪙 Paid with coins found in the game",
     "💯 Prices from 10 to 50 coins",
     "🚫 No real money, ever"
@@ -133,8 +133,8 @@
       "pieces": [
         {
           "id": "add_shop",
-          "label": "Add a shop with a rainbow trail and a candy hat",
-          "text": "Add a shop to Candy Climb that sells a rainbow trail and a candy hat.",
+          "label": "Add a shop with a star trail and a candy hat",
+          "text": "Add a shop to Candy Climb that sells a star trail and a candy hat.",
           "quality": "good"
         },
         {
@@ -229,7 +229,7 @@
       "id": "vague_goal",
       "when": "picked:shop",
       "signals": [
-        "🛍️(?![^\\n]*(rainbow|hat))"
+        "🛍️(?![^\\n]*(star|hat))"
       ],
       "hint": "\"Add a shop\" doesn't say what it sells.",
       "explain": "Pipo Code didn't know what to sell, so the shop has the wrong things."

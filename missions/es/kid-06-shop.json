@@ -8,10 +8,10 @@
   "icon": "🛍️",
   "recap": "Pipo Code armó la tienda de Candy Climb.",
   "funFact": "Diseñar, construir, abrir la tienda: ¡Candy Climb está listo! Los agentes de programación construyen rápido, así que tú decides qué es justo y seguro para tus jugadores.",
-  "postcard": "players in a candy game showing off a rainbow trail and a candy hat: {items}",
+  "postcard": "players in a candy game showing off a star trail and a candy hat: {items}",
   "situation": "¡Los jugadores quieren cosas geniales! ¿Le agrego una tienda a Candy Climb?",
   "facts": [
-    "🌈 Vende una estela de arcoíris y un sombrero de dulce",
+    "⭐ Vende una estela de estrellas y un sombrero de dulce",
     "🪙 Se paga con monedas que se encuentran en el juego",
     "💯 Precios de 10 a 50 monedas",
     "🚫 Nunca dinero real"
@@ -134,8 +134,8 @@
       "pieces": [
         {
           "id": "add_shop",
-          "label": "Agrega una tienda con una estela de arcoíris y un sombrero de dulce",
-          "text": "Agrega a Candy Climb una tienda que venda una estela de arcoíris y un sombrero de dulce.",
+          "label": "Agrega una tienda con una estela de estrellas y un sombrero de dulce",
+          "text": "Agrega a Candy Climb una tienda que venda una estela de estrellas y un sombrero de dulce.",
           "quality": "good"
         },
         {
@@ -230,7 +230,7 @@
       "id": "vague_goal",
       "when": "picked:shop",
       "signals": [
-        "🛍️(?![^\\n]*(arco ?[ií]ris|sombrero))"
+        "🛍️(?![^\\n]*(estrellas?|sombrero))"
       ],
       "hint": "\"Agrega una tienda\" no dice qué vende.",
       "explain": "Pipo Code no sabía qué vender, así que la tienda tiene otras cosas."

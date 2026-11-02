@@ -191,7 +191,7 @@ function ShopView({ action, flags }: Props) {
         {list(a.items).map((item, i) => (
           <li key={i} className="flex flex-col items-center rounded-xl bg-white p-2 text-center shadow-sm">
             <span className="text-2xl" aria-hidden="true">
-              {i % 2 ? "🎩" : "🌈"}
+              {i % 2 ? "🎩" : "⭐"}
             </span>
             <span className="text-[11px] font-black text-ink">{named(item)}</span>
             <span className="text-[11px] font-bold text-amber-600">🪙 {readable(detail(item) ?? "?")}</span>
