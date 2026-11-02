@@ -119,20 +119,3 @@ function PickBadge({ pick }: { pick: "one" | "many" }) {
     </span>
   );
 }
-
-/** The prompt as a message bubble, the way it would look sent to an assistant. */
-export function PromptCard({ prompt }: { prompt: string }) {
-  const { t } = useLang();
-  return (
-    <div aria-live="polite">
-      <p className="mb-1.5 text-sm font-extrabold text-ink md:mb-2 md:text-base">{t.lesson.yourMessage}</p>
-      <p
-        className={`min-h-12 rounded-2xl rounded-br-md px-4 py-2.5 text-base leading-snug font-semibold md:min-h-[3.5rem] md:py-3 md:text-[17px] ${
-          prompt ? "bg-brand-600 text-white" : "border-2 border-dashed border-white/90 text-gray-500"
-        }`}
-      >
-        {prompt || t.lesson.tapPieces}
-      </p>
-    </div>
-  );
-}

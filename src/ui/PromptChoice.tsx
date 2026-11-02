@@ -15,12 +15,13 @@ import { PickTimer, QUICK_SECONDS, useCountdown } from "./PickTimer.tsx";
 
 const same = (a: readonly string[], b: readonly string[]) => a.length === b.length && a.every((id) => b.includes(id));
 
-export function PromptChoice({ mission, picks, choose, done }: PickerProps & { mission: Mission }) {
+export function PromptChoice({ mission, picks, choose, done, paused }: PickerProps & { mission: Mission }) {
   const { t } = useLang();
   const [pair] = useState(() => promptPair(mission));
   // Seconds into the countdown when the player first picked.
   const [pickedAt, setPickedAt] = useState<number | null>(null);
-  const elapsed = useCountdown(!done && pickedAt === null);
+  // The clock holds while the first-time tour is open over the lesson.
+  const elapsed = useCountdown(!done && !paused && pickedAt === null);
   const outOfTime = elapsed >= QUICK_SECONDS;
   const quick = pickedAt !== null && pickedAt < QUICK_SECONDS ? Math.max(1, Math.round(pickedAt)) : null;
 

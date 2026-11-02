@@ -114,6 +114,7 @@ export const en = {
 
   lesson: {
     backToPaths: "Back to paths",
+    back: "Back",
     progress: "Prompt progress",
     lessonOf: (n: number, total: number) => `Lesson ${n} of ${total}`,
     starsLabel: (n: number) => plural(n, "star", "stars"),
@@ -134,13 +135,13 @@ export const en = {
     choose: "Which message should Pipo get?",
     chooseSub: "Read both, pick one, then press Check.",
     chooseNudge: "Pick one of the two messages first.",
-    chooseIdle: "Pick a message, then check it.",
+    pickEmpty: "Pick one of the two messages above.",
     option: (side: string) => `Message ${side}`,
     yourPick: "Your pick",
     pickTimer: (seconds: number) => `Quick pick: choose within ${seconds} seconds`,
     quickPick: (seconds: number) => `⚡ Quick pick! ${seconds}s`,
     timeUp: "Take your time",
-    idle: "Build your message, then check it.",
+    buildEmpty: "Tap the pieces above. Your message builds itself here.",
     reading: "Pipo is reading your message…",
     thinkingButton: "Thinking…",
     check: "Check",
@@ -153,6 +154,24 @@ export const en = {
     ready: "Pipo is ready",
     thinking: "Pipo is thinking…",
     answered: "Pipo answered",
+  },
+
+  /** A short first-time tour of the lesson screen, shown once on whichever lesson comes first. */
+  tutorial: {
+    label: "How a lesson works",
+    stepOf: (n: number, total: number) => `${n} of ${total}`,
+    situationTitle: "This is the situation",
+    situation: "Someone needs a hand. Read what they need and what you know, so you can tell Pipo.",
+    buildTitle: "Build your message here",
+    build: "Tap the pieces to put together your message to Pipo. No typing needed.",
+    pickTitle: "Pick a message here",
+    pick: "Read the two messages to Pipo and pick the one you think works best.",
+    checkTitle: "Then check it",
+    checkBuild: "Your message shows up here as you tap. When it's ready, press Check and see what Pipo does with it.",
+    checkPick: "Your pick shows up here. Press Check and see what Pipo does with it.",
+    next: "Next",
+    done: "Let's go!",
+    skip: "Skip",
   },
 
   hood: {

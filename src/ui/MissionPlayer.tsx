@@ -8,8 +8,9 @@ import { recordingClient, type CallRecord } from "../engine/trace.ts";
 import type { Mission, ModelClient, PipoAction, PipoRun, RunLog } from "../engine/types.ts";
 import { answerLines } from "../game/feedback.ts";
 import { isDebug, liveClient, takeLiveRun } from "../app/liveClient.ts";
-import { ActionBar } from "./ActionBar.tsx";
-import { BriefBuilder, PromptCard } from "./BriefBuilder.tsx";
+import { ActionBar, MessageBubble } from "./ActionBar.tsx";
+import { BriefBuilder } from "./BriefBuilder.tsx";
+import { LessonTutorial, tutorialPending } from "./LessonTutorial.tsx";
 import { DebugPanel } from "./DebugPanel.tsx";
 import { celebrate, FloatingPhone, type PhoneStatus } from "./FloatingPhone.tsx";
 import { PipoScene } from "./PipoScene.tsx";
@@ -47,6 +48,8 @@ export interface PickerProps {
   choose: (picks: string[]) => void;
   /** Pipo has answered (or failed): show what was picked, take no more taps. */
   done: boolean;
+  /** The first-time tour is open over the lesson: hold any timers. */
+  paused: boolean;
 }
 
 export function MissionPlayer({ mission, lesson, onFinish, onBack, picker }: Props) {
@@ -59,6 +62,10 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack, picker }: Pro
   const [phone, setPhone] = useState<{ action: PipoAction; status: PhoneStatus; open: boolean } | null>(null);
   // Every real model call this attempt, for the under-the-hood timeline.
   const [calls, setCalls] = useState<CallRecord[]>([]);
+  // The first-time tour, on whichever lesson a player opens first (see LessonTutorial).
+  const [touring, setTouring] = useState(tutorialPending);
+  const buildRef = useRef<HTMLElement>(null);
+  const composerRef = useRef<HTMLDivElement>(null);
   const traced = (client: ModelClient) => recordingClient(client, () => performance.now(), (call) => setCalls((c) => [...c, call]));
 
   async function check() {
@@ -159,15 +166,16 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack, picker }: Pro
 
         <ShaderBorder mode={borderMode} roundness={0.08} className="flex flex-col">
           <section
+            ref={buildRef}
             className="glass flex flex-1 flex-col gap-3 rounded-3xl p-3 md:gap-4 md:p-5"
             aria-label={t.lesson.buildMessage}
           >
-            {/* The message being built, above its pieces. A picker shows its own finished messages. */}
-            {!picker && <PromptCard prompt={buildPrompt(mission, picks)} />}
-            {/* Phones hide the choices after Check, so show the message that was picked there. */}
-            {picker && (result || phase.name === "failed") && (
-              <div className="md:hidden">
-                <PromptCard prompt={buildPrompt(mission, picks)} />
+            {/* The pieces come first; the message they make sits at the foot, next to Check, like a
+                chat app. A picker shows its own heading and finished messages. */}
+            {!picker && (
+              <div>
+                <p className="text-base font-black text-ink md:text-lg">{t.lesson.buildMessage}</p>
+                <p className="text-sm font-semibold text-gray-600">{t.lesson.tapPieces}</p>
               </div>
             )}
             {/* Locked while Pipo thinks (the glow stays bright), faded once the answer is in.
@@ -186,21 +194,38 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack, picker }: Pro
                     setPicks(next);
                   },
                   done: !!result || phase.name === "failed",
+                  paused: touring,
                 })
               ) : (
                 <BriefBuilder mission={mission} picks={picks} onlyPicked={!!result || phase.name === "failed"} onTap={tap} />
               )}
             </div>
-            {/* On phones, Check stays pinned to the bottom of the screen while you build. */}
+            {/* On phones, the message and Check stay pinned to the bottom of the screen while you build. */}
             <div
+              ref={composerRef}
               className={`mt-auto ${
                 phase.name === "build" || thinking
                   ? "max-md:glass pointer-coarse:bg-white/95 max-md:sticky max-md:bottom-3 max-md:z-20 max-md:-mx-1 max-md:rounded-2xl max-md:px-3 max-md:pb-3"
                   : ""
               }`}
             >
-              {phase.name === "build" && <ActionBar state="build" nudge={nudge} onCheck={check} {...(picker ? { idle: t.lesson.chooseIdle } : {})} />}
-              {thinking && <ActionBar state="thinking" />}
+              {phase.name === "build" && (
+                <ActionBar
+                  state="build"
+                  nudge={nudge}
+                  onCheck={check}
+                  message={buildPrompt(mission, picks)}
+                  empty={picker ? t.lesson.pickEmpty : t.lesson.buildEmpty}
+                />
+              )}
+              {thinking && <ActionBar state="thinking" message={buildPrompt(mission, picks)} />}
+              {/* After Check, the message that was sent stays in view above the result. */}
+              {result && (
+                <div className="mb-3 space-y-1.5">
+                  <p className="text-xs font-black tracking-wide text-brand-700 uppercase">{t.lesson.yourMessage}</p>
+                  <MessageBubble text={buildPrompt(mission, picks)} empty="" />
+                </div>
+              )}
               {result && <ActionBar state="result" mission={mission} score={result.score} onTryAgain={tryAgain} next={{ label: t.common.continue, onGo: () => onFinish(result) }} />}
               {phase.name === "failed" && <ActionBar state="failed" onTryAgain={tryAgain} />}
             </div>
@@ -221,6 +246,17 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack, picker }: Pro
         waiting={thinking || phone?.status === "working"}
         score={result?.score ?? null}
       />
+
+      {touring && (
+        <LessonTutorial
+          steps={[
+            { target: sceneRef, title: t.tutorial.situationTitle, text: t.tutorial.situation },
+            { target: buildRef, title: picker ? t.tutorial.pickTitle : t.tutorial.buildTitle, text: picker ? t.tutorial.pick : t.tutorial.build },
+            { target: composerRef, title: t.tutorial.checkTitle, text: picker ? t.tutorial.checkPick : t.tutorial.checkBuild },
+          ]}
+          onDone={() => setTouring(false)}
+        />
+      )}
 
       {phone && result && (
         <FloatingPhone

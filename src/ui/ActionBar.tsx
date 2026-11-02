@@ -4,8 +4,16 @@ import { useLang } from "../i18n/index.tsx";
 import { Button } from "./Button.tsx";
 
 type Props =
-  | { state: "build"; nudge: string | null; onCheck: () => void; /** The hint before any nudge, if not the default. */ idle?: string }
-  | { state: "thinking" }
+  | {
+      state: "build";
+      nudge: string | null;
+      onCheck: () => void;
+      /** The message built so far (empty until the first piece or pick). */
+      message: string;
+      /** What to do, while there's no message yet. */
+      empty: string;
+    }
+  | { state: "thinking"; message: string }
   | { state: "result"; mission: Mission; score: Score; onTryAgain: () => void; next: NextStep }
   | { state: "failed"; onTryAgain: () => void };
 
@@ -34,19 +42,46 @@ export function ActionBar(props: Props) {
     );
   }
 
+  // Like a chat app: the message to Pipo sits right next to Check. It's built from the pieces
+  // (never typed), so an empty message is a pointer back up to them, not a text box.
   const thinking = props.state === "thinking";
+  const note = thinking ? t.lesson.reading : props.nudge;
   return (
-    <div className="flex flex-col gap-2 border-t border-white/70 pt-4 sm:flex-row sm:items-center sm:gap-4">
-      <p
-        className={`flex-1 text-sm font-bold ${!thinking && props.nudge ? "text-red-600" : "text-gray-500"}`}
-        aria-live="polite"
-      >
-        {thinking ? t.lesson.reading : (props.nudge ?? (props.state === "build" && props.idle) ?? t.lesson.idle)}
-      </p>
-      <Button className="w-full sm:w-40" disabled={thinking} onClick={thinking ? undefined : props.onCheck}>
-        {thinking ? t.lesson.thinkingButton : t.lesson.check}
-      </Button>
+    <div className="flex flex-col gap-1.5 border-t border-white/70 pt-3 md:pt-4">
+      <p className="text-xs font-black tracking-wide text-brand-700 uppercase">{t.lesson.yourMessage}</p>
+      {note && (
+        <p className={`text-sm font-bold ${thinking ? "text-gray-500" : "text-red-600"}`} aria-live="polite">
+          {note}
+        </p>
+      )}
+      <div className="flex items-end gap-2 sm:gap-3">
+        <div className="min-w-0 flex-1" aria-live="polite">
+          <MessageBubble text={props.message} empty={props.state === "build" ? props.empty : ""} />
+        </div>
+        <Button className="w-28 shrink-0 sm:w-40" disabled={thinking} onClick={thinking ? undefined : props.onCheck}>
+          {thinking ? t.lesson.thinkingButton : t.lesson.check}
+        </Button>
+      </div>
     </div>
+  );
+}
+
+/** The message to Pipo as a chat bubble; before there is one, a pointer up to the pieces. */
+export function MessageBubble({ text, empty }: { text: string; empty: string }) {
+  if (!text) {
+    return (
+      <p className="flex items-center gap-2 py-2 text-sm font-bold text-gray-500">
+        <span aria-hidden="true" className="text-lg">
+          👆
+        </span>
+        {empty}
+      </p>
+    );
+  }
+  return (
+    <p className="max-h-28 overflow-y-auto rounded-2xl rounded-br-md bg-brand-600 px-3.5 py-2.5 text-[15px] leading-snug font-semibold text-white md:max-h-40 md:text-base">
+      {text}
+    </p>
   );
 }
 

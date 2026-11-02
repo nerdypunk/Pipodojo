@@ -113,6 +113,7 @@ export const es: Strings = {
 
   lesson: {
     backToPaths: "Volver a los caminos",
+    back: "Volver",
     progress: "Avance del mensaje",
     lessonOf: (n: number, total: number) => `Lección ${n} de ${total}`,
     starsLabel: (n: number) => plural(n, "estrella", "estrellas"),
@@ -133,13 +134,13 @@ export const es: Strings = {
     choose: "¿Qué mensaje debe recibir Pipo?",
     chooseSub: "Lee los dos, elige uno y luego presiona Revisar.",
     chooseNudge: "Primero elige uno de los dos mensajes.",
-    chooseIdle: "Elige un mensaje y luego revísalo.",
+    pickEmpty: "Elige uno de los dos mensajes de arriba.",
     option: (side: string) => `Mensaje ${side}`,
     yourPick: "Tu elección",
     pickTimer: (seconds: number) => `Elección rápida: elige en menos de ${seconds} segundos`,
     quickPick: (seconds: number) => `⚡ ¡Elección rápida! ${seconds} s`,
     timeUp: "Tómate tu tiempo",
-    idle: "Arma tu mensaje y luego revísalo.",
+    buildEmpty: "Toca las piezas de arriba. Tu mensaje se arma solo aquí.",
     reading: "Pipo está leyendo tu mensaje…",
     thinkingButton: "Pensando…",
     check: "Revisar",
@@ -152,6 +153,23 @@ export const es: Strings = {
     ready: "Pipo está listo",
     thinking: "Pipo está pensando…",
     answered: "Pipo respondió",
+  },
+
+  tutorial: {
+    label: "Cómo funciona una lección",
+    stepOf: (n: number, total: number) => `${n} de ${total}`,
+    situationTitle: "Esta es la situación",
+    situation: "Alguien necesita una mano. Lee lo que necesita y lo que sabes, para decírselo a Pipo.",
+    buildTitle: "Arma tu mensaje aquí",
+    build: "Toca las piezas para armar tu mensaje para Pipo. No hace falta escribir.",
+    pickTitle: "Elige un mensaje aquí",
+    pick: "Lee los dos mensajes para Pipo y elige el que creas que funciona mejor.",
+    checkTitle: "Luego revísalo",
+    checkBuild: "Tu mensaje aparece aquí mientras tocas. Cuando esté listo, presiona Revisar y mira qué hace Pipo con él.",
+    checkPick: "Tu elección aparece aquí. Presiona Revisar y mira qué hace Pipo con ella.",
+    next: "Siguiente",
+    done: "¡Vamos!",
+    skip: "Saltar",
   },
 
   hood: {

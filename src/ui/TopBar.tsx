@@ -18,13 +18,18 @@ export function TopBar({ progress, stars, onBack, lesson }: Props) {
   const { t } = useLang();
   return (
     <header className="glass flex items-center gap-3 rounded-2xl py-1.5 pr-4 pl-1.5 md:gap-4">
+      {/* A clear, labelled way back (players missed a bare arrow): "Back" on phones, "Back to paths" wider. */}
       <button
         type="button"
         onClick={onBack}
         aria-label={t.lesson.backToPaths}
-        className="flex h-9 w-9 items-center justify-center rounded-xl text-2xl leading-none font-black text-brand-700 transition hover:bg-white/70 focus-visible:outline-3 focus-visible:outline-brand-500"
+        className="flex shrink-0 items-center gap-1.5 rounded-xl border-b-4 border-brand-800 bg-brand-600 py-1.5 pr-3 pl-2 text-sm font-black whitespace-nowrap text-white shadow-[0_8px_18px_-8px_rgb(45_36_112/0.6)] transition hover:bg-brand-700 active:translate-y-0.5 active:border-b-2 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand-500 motion-reduce:transition-none md:text-base"
       >
-        <span aria-hidden="true">‹</span>
+        <span aria-hidden="true" className="text-lg leading-none">
+          ‹
+        </span>
+        <span className="sm:hidden">{t.lesson.back}</span>
+        <span className="hidden sm:inline">{t.lesson.backToPaths}</span>
       </button>
       <span className="hidden text-lg font-black tracking-tight text-brand-700 sm:inline">Pipodojo</span>
       <span className="rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-extrabold whitespace-nowrap text-white">
