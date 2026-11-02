@@ -30,7 +30,7 @@ export function PipoBuilder({ look, onChange, onDone, first }: Props) {
     </Button>
   );
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col justify-center gap-3 p-3 pb-24 md:px-6 md:py-4">
+    <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col justify-center gap-3 p-3 pb-28 md:px-6 md:py-4">
       <header className="glass flex items-center gap-3 rounded-2xl py-1.5 pr-4 pl-1.5">
         <span className="pl-2.5 text-lg font-black tracking-tight text-brand-700">Pipodojo</span>
         <span className="rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-extrabold text-white">{first ? t.builder.welcome : t.builder.garage}</span>
@@ -44,21 +44,22 @@ export function PipoBuilder({ look, onChange, onDone, first }: Props) {
       <main className="grid gap-3 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-5">
         {/* Live preview */}
         <ShaderBorder mode="build" className="flex flex-col">
-          <section className="glass flex flex-1 flex-col gap-3 rounded-3xl p-3 md:p-4" aria-label={t.builder.yourPipo}>
-            <div className="relative flex min-h-56 flex-1 items-center justify-center overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_50%_45%,#5a46e0_0%,#2d2470_55%,#1b1640_100%)]">
+          {/* Phones: a smaller Pipo and tighter text, so the choices below peek into view. */}
+          <section className="glass flex flex-1 flex-col gap-2 rounded-3xl p-2.5 md:gap-3 md:p-4" aria-label={t.builder.yourPipo}>
+            <div className="relative flex min-h-36 flex-1 md:min-h-56 items-center justify-center overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_50%_45%,#5a46e0_0%,#2d2470_55%,#1b1640_100%)]">
               <motion.div
                 key={`${look.head}-${look.body}-${look.color}`}
                 initial={still ? false : { scale: 0.85, rotate: -4 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: "spring", bounce: 0.5, duration: 0.5 }}
               >
-                <Pipo mood="happy" look={look} className="h-48 w-48 drop-shadow-[0_12px_24px_rgba(0,0,0,0.4)] md:h-56 md:w-56" />
+                <Pipo mood="happy" look={look} className="h-32 w-32 drop-shadow-[0_12px_24px_rgba(0,0,0,0.4)] md:h-56 md:w-56" />
               </motion.div>
             </div>
-            <div className="rounded-2xl bg-white/90 p-4">
+            <div className="rounded-2xl bg-white/90 px-3.5 py-2.5 md:p-4">
               <p className="text-xs font-extrabold tracking-wide text-brand-700 uppercase">{first ? t.builder.meet : t.builder.newLook}</p>
-              <h1 className="text-2xl font-black text-ink md:text-3xl">{t.builder.title}</h1>
-              <p className="font-semibold text-gray-600">{t.builder.intro}</p>
+              <h1 className="text-xl font-black text-ink md:text-3xl">{t.builder.title}</h1>
+              <p className="text-sm font-semibold text-gray-600 md:text-base">{t.builder.intro}</p>
             </div>
           </section>
         </ShaderBorder>
@@ -101,7 +102,7 @@ export function PipoBuilder({ look, onChange, onDone, first }: Props) {
 
       {/* Narrow screens: floats at the bottom of the screen, so nobody has to scroll down to find it.
           Kept outside the cards: their frosted blur would pin it to the card instead of the screen. */}
-      <div className="fixed inset-x-0 bottom-0 z-20 flex gap-2 bg-gradient-to-t from-brand-100 via-brand-100/80 to-transparent px-3 pt-6 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-20 flex gap-2 bg-gradient-to-t from-brand-100 via-brand-100/80 to-transparent px-5 pt-8 pb-[max(1.5rem,calc(env(safe-area-inset-bottom)+0.75rem))] md:hidden">
         {go}
       </div>
     </div>
