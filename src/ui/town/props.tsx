@@ -16,7 +16,7 @@ export const INK = "#4a5163";
 export const EYES = "#2b2f3a";
 export const BRAND = { 300: "#c9d3e3", 400: "#9fb0c8", 500: "#8496b3", 600: "#71839f", 700: "#5f708c", 900: "#3e4a5e" };
 export const ORANGE = "#ff7a1a";
-/** Brick red for chimneys, doors, the dojo gate and other warm accents. */
+/** Brick red for chimneys, doors, the torii gate and other warm accents. */
 export const CORAL = "#e2725b";
 export const LEAF = ["#7cc95c", "#68b84f", "#8fd16b", "#5fae4a"];
 

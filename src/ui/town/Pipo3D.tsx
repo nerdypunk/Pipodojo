@@ -1,17 +1,18 @@
 // Your Pipo in 3D, built from the same head, body and colours you picked in the garage.
-// It floats around the dojo, and flies over to whichever place you point at.
+// It floats around the sakura shrine, and flies over to whichever place you point at.
 import { RoundedBox } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import * as THREE from "three";
 import { paletteOf, type PipoLook } from "../../game/pipoLook.ts";
+import { PIPO_ORBIT } from "../../game/townLayout.ts";
 import { INK, ORANGE } from "./props.tsx";
 
 const EYE = "#9cf3ff";
 
 interface Props {
   look: PipoLook;
-  /** Where Pipo should be heading (it drifts round the dojo when null). */
+  /** Where Pipo should be heading (it drifts round the shrine when null). */
   target: THREE.Vector3 | null;
   still: boolean;
 }
@@ -31,7 +32,7 @@ export function Pipo3D({ look, target, still }: Props) {
     const t = clock.elapsedTime;
     if (target) goal.current.copy(target);
     else if (still) goal.current.set(2.6, 3.6, 2.6);
-    else goal.current.set(Math.cos(t * 0.35) * 3.2, 3.6 + Math.sin(t * 1.4) * 0.2, Math.sin(t * 0.35) * 3.2);
+    else goal.current.set(Math.cos(t * 0.35) * PIPO_ORBIT.radius, PIPO_ORBIT.height + Math.sin(t * 1.4) * 0.2, Math.sin(t * 0.35) * PIPO_ORBIT.radius);
 
     const before = pipo.position.clone();
     pipo.position.lerp(goal.current, still ? 1 : Math.min(1, delta * 2.2));

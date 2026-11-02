@@ -1,6 +1,6 @@
 // The town's scenery: the floating island with its cliffs and clouds below, the forest and
 // flowers (instanced, so hundreds of them stay cheap), the pond with its waterfall over the
-// edge, plaza details, and a little life: people strolling round the dojo and birds overhead.
+// edge, plaza details, and a little life: people strolling round the shrine and birds overhead.
 import { Html, Instance, Instances } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
@@ -286,7 +286,7 @@ export function Pond({ still }: { still: boolean }) {
   );
 }
 
-/** Lamps and benches round the dojo. */
+/** Lamps and benches round the shrine. */
 export function Plaza() {
   const corner = RING.half - 1.3;
   return (
@@ -309,7 +309,7 @@ export function Plaza() {
               <meshStandardMaterial color="#fff2c4" emissive="#ffd88a" emissiveIntensity={0.9} toneMapped={false} />
             </mesh>
           </group>
-          {/* Bench facing the dojo */}
+          {/* Bench facing the shrine */}
           <group position={[sx! * (corner - 0.5), 0, sz! * (corner - 0.5)]} rotation={[0, Math.atan2(-sx!, -sz!), 0]}>
             <mesh position={[0, 0.22, 0]}>
               <boxGeometry args={[0.8, 0.06, 0.26]} />
@@ -332,7 +332,7 @@ export function Plaza() {
   );
 }
 
-/** Two neighbours out for a stroll round the dojo. */
+/** Two neighbours out for a stroll round the shrine. */
 export function Strollers({ still }: { still: boolean }) {
   return (
     <>

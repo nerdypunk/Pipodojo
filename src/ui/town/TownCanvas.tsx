@@ -9,7 +9,7 @@ import type { PipoLook } from "../../game/pipoLook.ts";
 import { PLACES, RING, SPOKE_END, placeOf, type Place, type PlaceId } from "../../game/townLayout.ts";
 import { TOUCH } from "../device.ts";
 import { Pipo3D } from "./Pipo3D.tsx";
-import { Cafe, College, Dojo, Garage, House, KidHouse } from "./places.tsx";
+import { Cafe, College, Garage, House, KidHouse, SakuraShrine } from "./places.tsx";
 import { Airplane, Balloon, Car, Cloud } from "./props.tsx";
 import { Birds, Flowers, Forest, IslandBase, MiniIsland, Plaza, Pond, Strollers, grow } from "./scenery.tsx";
 
@@ -168,7 +168,7 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
         <Roads />
         <Pond still={still} />
         <Popper delay={POP_START - 0.25} still={still}>
-          <Dojo still={still} />
+          <SakuraShrine still={still} />
         </Popper>
         {PLACES.map((place, i) => (
           <Spot
@@ -357,7 +357,7 @@ function Roads() {
 
   return (
     <group>
-      {/* Dojo plaza paving */}
+      {/* Shrine plaza paving */}
       <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={noRaycast}>
         <circleGeometry args={[RING.half - 0.65, 48]} />
         <meshStandardMaterial color="#e7ebf0" roughness={1} />

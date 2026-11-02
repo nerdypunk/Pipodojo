@@ -3,11 +3,11 @@
 // turns and moves it into place.
 import { RoundedBox } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import * as THREE from "three";
-import { BRAND, CORAL, Face, INK, ORANGE, Person, Roof } from "./props.tsx";
+import { BLOSSOM_SCALE, SAKURA_PADS, SAKURA_SIZE, SHRINE_DECK, sakuraBlossoms } from "../../game/townLayout.ts";
+import { BRAND, CORAL, Face, INK, Person, Roof } from "./props.tsx";
 
-const CREAM = "#fff8f0";
 const GLASS = "#c7e6ff";
 const BRICK = "#e2725b";
 const MINT = "#9fd7b5";
@@ -57,61 +57,190 @@ function Door({ position, color, w = 0.5, h = 0.8 }: { position: [number, number
   );
 }
 
-/** Pipodojo, Pipo's home: a two-tier dojo with a glowing spark on top. */
-export function Dojo({ still }: { still: boolean }) {
-  const spark = useRef<THREE.Mesh>(null);
+const SAKURA = ["#f7b3c9", "#f29bb8", "#fbc6d6", "#f4a7c1"];
+const BARK = "#6b4535";
+const STONE = "#cdd2da";
+/** Top of the shrine's grassy mound. */
+const DECK = SHRINE_DECK;
+
+type V3 = [number, number, number];
+/** A tapered piece of wood from one point to another, worked out once: where it sits, which way it points, how long. */
+interface Limb {
+  mid: THREE.Vector3;
+  turn: THREE.Quaternion;
+  length: number;
+  r0: number;
+  r1: number;
+}
+const UP = new THREE.Vector3(0, 1, 0);
+function limb(from: V3, to: V3, r0: number, r1: number): Limb {
+  const a = new THREE.Vector3(...from);
+  const b = new THREE.Vector3(...to);
+  const dir = b.clone().sub(a);
+  return { mid: a.clone().add(b).multiplyScalar(0.5), turn: new THREE.Quaternion().setFromUnitVectors(UP, dir.clone().normalize()), length: dir.length(), r0, r1 };
+}
+/** A branch with a gentle upward elbow halfway, so it arcs out rather than running straight. */
+function branch(from: V3, to: V3, r0: number, r1: number): Limb[] {
+  const elbow: V3 = [(from[0] + to[0]) / 2, (from[1] + to[1]) / 2 + 0.3, (from[2] + to[2]) / 2];
+  const rMid = (r0 + r1) / 2;
+  return [limb(from, elbow, r0, rMid), limb(elbow, to, rMid, r1)];
+}
+
+/** The trunk twists as it climbs, like an old sakura: thick at the roots, leaning one way, then the other. */
+const TRUNK: V3[] = [
+  [0, DECK, 0],
+  [0.32, 1.55, 0.12],
+  [-0.12, 2.7, -0.05],
+  [0.22, 3.75, -0.15],
+];
+const TRUNK_R = [0.46, 0.36, 0.28, 0.2];
+// Blossom pads and clumps come from the town layout, where a test keeps them clear of Pipo's loop.
+const PADS = SAKURA_PADS;
+const BLOSSOMS = sakuraBlossoms();
+const WOOD: Limb[] = [
+  ...TRUNK.slice(1).map((p, i) => limb(TRUNK[i]!, p, TRUNK_R[i]!, TRUNK_R[i + 1]!)),
+  // Branches from the top of the trunk out under each high pad, and one lower one from the bend.
+  ...PADS.slice(0, 5).flatMap(([x, y, z]) => branch(TRUNK[3]!, [x, y - 0.35, z], 0.15, 0.06)),
+  ...branch(TRUNK[2]!, [PADS[5]![0], PADS[5]![1] - 0.3, PADS[5]![2]], 0.13, 0.06),
+];
+const PETALS = 26;
+
+/** The heart of Pipodojo: an old sakura tree in a little shrine, behind a red torii gate. */
+export function SakuraShrine({ still }: { still: boolean }) {
+  const petals = useRef<THREE.Group>(null);
+  // Each petal drifts down from the canopy on its own path, then starts again at the top
+  // (in the full-size model's units, like the rest of the tree).
+  const drift = useRef(
+    Array.from({ length: PETALS }, (_, i) => ({
+      a: (i / PETALS) * Math.PI * 2 * 3.7,
+      r: 0.6 + ((i * 37) % 19) / 10,
+      speed: 0.09 + ((i * 13) % 7) / 100,
+      phase: i / PETALS,
+    })),
+  );
+  // Nothing in the shrine takes clicks: the places around it do.
+  const root = useRef<THREE.Group>(null);
+  useLayoutEffect(() => {
+    root.current?.traverse((o) => {
+      o.raycast = () => {};
+    });
+  }, []);
   useFrame(({ clock }) => {
-    if (!spark.current || still) return;
-    spark.current.scale.setScalar(1 + Math.sin(clock.elapsedTime * 2.4) * 0.12);
-    spark.current.rotation.y = clock.elapsedTime * 0.8;
+    if (!petals.current || still) return;
+    const t = clock.elapsedTime;
+    petals.current.children.forEach((petal, i) => {
+      const d = drift.current[i]!;
+      const k = (t * d.speed + d.phase) % 1;
+      const a = d.a + k * 1.6;
+      const r = d.r + k * 0.9;
+      petal.position.set(Math.cos(a) * r + Math.sin(t * 1.3 + i) * 0.15, 4.4 - k * 3.9, Math.sin(a) * r);
+      petal.rotation.set(t * 1.7 + i, t * 1.1 + i * 0.5, t * 0.9);
+    });
   });
   return (
-    <group>
-      <RoundedBox args={[4.4, 0.4, 4.4]} radius={0.16} smoothness={3} position={[0, 0.2, 0]}>
-        <meshStandardMaterial color="#dfe4ea" roughness={0.9} />
+    <group ref={root}>
+      {/* A grassy mound with a stone rim, stone steps and stepping stones up to the tree */}
+      <RoundedBox args={[4.4, DECK - 0.08, 4.4]} radius={0.12} smoothness={3} position={[0, (DECK - 0.08) / 2, 0]}>
+        <meshStandardMaterial color="#d5dbe4" roughness={0.9} />
+      </RoundedBox>
+      <RoundedBox args={[4.15, 0.16, 4.15]} radius={0.07} smoothness={3} position={[0, DECK - 0.08, 0]}>
+        <meshStandardMaterial color="#8fd16b" roughness={1} />
       </RoundedBox>
       {[0, 1].map((i) => (
         <RoundedBox key={i} args={[1.6, 0.14, 0.36]} radius={0.05} position={[0, 0.07 + i * 0.13, 2.45 - i * 0.18]}>
           <meshStandardMaterial color="#cfd6df" roughness={0.9} />
         </RoundedBox>
       ))}
-      <Walls size={[2.8, 1.4, 2.8]} position={[0, 1.1, 0]} color={CREAM} radius={0.22} />
-      {[
-        [-1.36, 1.36],
-        [1.36, 1.36],
-        [-1.36, -1.36],
-        [1.36, -1.36],
-      ].map(([x, z]) => (
-        <mesh key={`${x}${z}`} position={[x!, 1.1, z!]}>
-          <cylinderGeometry args={[0.12, 0.12, 1.4, 12]} />
-          <meshStandardMaterial color={BRAND[600]} roughness={0.6} />
+      {[1.75, 1.15].map((z, i) => (
+        <mesh key={z} position={[i ? -0.08 : 0.06, DECK + 0.01, z]}>
+          <cylinderGeometry args={[0.24, 0.26, 0.04, 7]} />
+          <meshStandardMaterial color={STONE} roughness={0.95} flatShading />
         </mesh>
       ))}
-      <Door position={[0, 0.4, 1.41]} color={CORAL} w={0.8} h={1.0} />
-      <Porthole position={[-0.9, 1.3, 1.41]} r={0.2} />
-      <Porthole position={[0.9, 1.3, 1.41]} r={0.2} />
-      {/* Puffy roofs: soft pyramids with rounded caps on the corners */}
-      <mesh position={[0, 2.15, 0]} rotation={[0, Math.PI / 4, 0]}>
-        <coneGeometry args={[2.75, 0.8, 4]} />
-        <meshStandardMaterial color={BRAND[500]} roughness={0.55} />
-      </mesh>
-      <Walls size={[1.5, 0.8, 1.5]} position={[0, 2.7, 0]} color={CREAM} radius={0.14} />
-      <Face position={[0, 2.72, 0.77]} scale={1.1} blink={!still} />
-      <mesh position={[0, 3.4, 0]} rotation={[0, Math.PI / 4, 0]}>
-        <coneGeometry args={[1.6, 0.75, 4]} />
-        <meshStandardMaterial color={BRICK} roughness={0.55} />
-      </mesh>
-      <mesh position={[0, 3.95, 0]}>
-        <cylinderGeometry args={[0.03, 0.03, 0.4, 6]} />
-        <meshStandardMaterial color={INK} />
-      </mesh>
-      <mesh ref={spark} position={[0, 4.3, 0]}>
-        <octahedronGeometry args={[0.24, 0]} />
-        <meshStandardMaterial color={ORANGE} emissive={ORANGE} emissiveIntensity={1.6} toneMapped={false} />
-      </mesh>
-      <pointLight position={[0, 4.3, 0]} color={CORAL} intensity={4} distance={6} />
-      {/* Gate in front, with round ends */}
-      <group position={[0, 0, 3.4]}>
+      {/* The tree is modelled full size, from the mound's top, and drawn smaller (SAKURA_SIZE). */}
+      <group position={[0, DECK * (1 - SAKURA_SIZE), 0]} scale={SAKURA_SIZE}>
+      {/* Low-poly trunk and branches, faceted like the blossom, with roots over the grass */}
+      {WOOD.map((w, i) => (
+        <mesh key={i} position={w.mid} quaternion={w.turn}>
+          <cylinderGeometry args={[w.r1, w.r0, w.length, 6]} />
+          <meshStandardMaterial color={BARK} roughness={0.9} flatShading />
+        </mesh>
+      ))}
+      {/* Knuckles where the trunk bends, so the pieces meet cleanly */}
+      {TRUNK.slice(1, 3).map((p, i) => (
+        <mesh key={i} position={p}>
+          <dodecahedronGeometry args={[TRUNK_R[i + 1]! * 1.05, 0]} />
+          <meshStandardMaterial color={BARK} roughness={0.9} flatShading />
+        </mesh>
+      ))}
+      {[0.4, 2.0, 3.5, 5.1].map((a) => (
+        <group key={a} position={[0, DECK, 0]} rotation={[0, a, 0]}>
+          <mesh position={[0.42, 0.1, 0]} rotation={[0, 0, -1.2]}>
+            <coneGeometry args={[0.16, 0.7, 5]} />
+            <meshStandardMaterial color={BARK} roughness={0.9} flatShading />
+          </mesh>
+        </group>
+      ))}
+      {BLOSSOMS.map(([x, y, z, r, spin], i) => (
+        <mesh key={i} position={[x, y, z]} rotation={[0, spin, 0]} scale={[...BLOSSOM_SCALE]}>
+          <icosahedronGeometry args={[r, 1]} />
+          <meshStandardMaterial color={SAKURA[i % SAKURA.length]} roughness={0.8} flatShading />
+        </mesh>
+      ))}
+      {/* Shimenawa: a sacred straw rope round the trunk, with white paper streamers */}
+      <group position={[0.18, DECK + 0.75, 0.07]}>
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[0.43, 0.07, 8, 24]} />
+          <meshStandardMaterial color="#e6cf95" roughness={0.9} />
+        </mesh>
+        {[-0.5, 0, 0.5].map((a) => (
+          <group key={a} rotation={[0, a, 0]}>
+            <mesh position={[0, -0.22, 0.49]} rotation={[0, 0, 0.15]}>
+              <boxGeometry args={[0.07, 0.3, 0.02]} />
+              <meshStandardMaterial color="#ffffff" />
+            </mesh>
+          </group>
+        ))}
+      </group>
+      {!still && (
+        <group ref={petals}>
+          {Array.from({ length: PETALS }, (_, i) => (
+            <mesh key={i}>
+              <planeGeometry args={[0.16, 0.11]} />
+              <meshStandardMaterial color={SAKURA[i % 2 ? 0 : 3]} side={THREE.DoubleSide} />
+            </mesh>
+          ))}
+        </group>
+      )}
+      </group>
+      {/* Stone lanterns either side of the path */}
+      {[-1, 1].map((side) => (
+        <group key={side} position={[side * 1.35, DECK, 1.55]}>
+          <mesh position={[0, 0.06, 0]}>
+            <boxGeometry args={[0.36, 0.12, 0.36]} />
+            <meshStandardMaterial color={STONE} roughness={0.95} />
+          </mesh>
+          <mesh position={[0, 0.36, 0]}>
+            <cylinderGeometry args={[0.07, 0.09, 0.5, 8]} />
+            <meshStandardMaterial color={STONE} roughness={0.95} />
+          </mesh>
+          <mesh position={[0, 0.72, 0]}>
+            <boxGeometry args={[0.3, 0.24, 0.3]} />
+            <meshStandardMaterial color="#fff2c4" emissive="#ffc96b" emissiveIntensity={0.8} toneMapped={false} />
+          </mesh>
+          <mesh position={[0, 0.94, 0]} rotation={[0, Math.PI / 4, 0]}>
+            <coneGeometry args={[0.32, 0.22, 4]} />
+            <meshStandardMaterial color={STONE} roughness={0.95} />
+          </mesh>
+          <mesh position={[0, 1.09, 0]}>
+            <sphereGeometry args={[0.05, 8, 6]} />
+            <meshStandardMaterial color={STONE} roughness={0.95} />
+          </mesh>
+        </group>
+      ))}
+      {/* Torii gate in front, with round ends. It stands just past the steps, inside the circle
+          the strollers walk (3.3 out), so they pass outside its posts rather than through them. */}
+      <group position={[0, 0, 2.8]}>
         {[-1, 1].map((side) => (
           <mesh key={side} position={[side * 0.9, 0.8, 0]}>
             <capsuleGeometry args={[0.1, 1.4, 4, 10]} />
@@ -215,8 +344,9 @@ export function College({ still }: { still: boolean }) {
   });
   return (
     <group>
-      <mesh position={[0, 0.02, 0.3]} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[3.3, 40]} />
+      {/* The lawn stays inside the hover ring (3.0 out), or it would cover the ring when the college lifts */}
+      <mesh position={[0, 0.02, 0.2]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[2.8, 40]} />
         <meshStandardMaterial color="#a8d98a" roughness={1} />
       </mesh>
       {[0, 1, 2].map((i) => (

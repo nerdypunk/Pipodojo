@@ -36,8 +36,52 @@ export const placeOf = (id: PlaceId) => PLACES.find((p) => p.id === id)!;
 /** A pond near the front edge; its stream spills over the edge as a waterfall. */
 export const POND = { at: [4.3, 9.7] as Vec2, radius: 1.35 };
 
-/** Dojo plaza in the middle (inside the ring road). */
+/** The shrine plaza in the middle (inside the ring road). */
 export const PLAZA_CLEAR = RING.half + RING.width;
+
+/** Pipo's idle loop round the sakura shrine: how far out, how high (it bobs about 0.2 up and down). */
+export const PIPO_ORBIT = { radius: 3.2, height: 3.6 };
+
+/**
+ * The sakura's blossom pads at its branch ends: [x, y, z, size], wide and high like a parasol.
+ * Pads reaching far from the trunk sit high enough for Pipo to fly underneath; the one low pad
+ * stays close in.
+ */
+export const SAKURA_PADS: readonly [number, number, number, number][] = [
+  [0.15, 5.45, -0.2, 1.15],
+  [-2.35, 5.2, 0.45, 0.95],
+  [2.25, 5.25, -0.55, 0.95],
+  [-0.6, 5.05, -2.15, 0.85],
+  [-1.0, 4.85, 1.7, 0.8],
+  [1.25, 4.3, 0.85, 0.7],
+];
+/** Height of the shrine's grassy mound the sakura stands on. */
+export const SHRINE_DECK = 0.4;
+/**
+ * The sakura is modelled at full size and drawn at this scale, growing from the top of the mound:
+ * small enough not to hide the places behind it.
+ */
+export const SAKURA_SIZE = 0.62;
+/** Where a point of the full-size sakura model ends up in town. */
+export function sakuraToTown([x, y, z]: readonly [number, number, number]): [number, number, number] {
+  return [x * SAKURA_SIZE, SHRINE_DECK + (y - SHRINE_DECK) * SAKURA_SIZE, z * SAKURA_SIZE];
+}
+/** How each faceted pink clump is squashed: wider than tall. */
+export const BLOSSOM_SCALE: readonly [number, number, number] = [1.15, 0.62, 1];
+
+/** Each pad as a cluster of seven clumps: [x, y, z, radius, spin]. The same every visit. */
+export function sakuraBlossoms(): [number, number, number, number, number][] {
+  const rand = seeded(41);
+  return SAKURA_PADS.flatMap(([x, y, z, size]) =>
+    Array.from({ length: 7 }, (): [number, number, number, number, number] => [
+      x + (rand() - 0.5) * 1.3 * size,
+      y + (rand() - 0.3) * 0.45 * size,
+      z + (rand() - 0.5) * 1.3 * size,
+      size * (0.55 + rand() * 0.25),
+      rand() * Math.PI,
+    ]),
+  );
+}
 
 /** A point on the ring road loop, t from 0 to 1. `heading` is the y turn that faces along the road. */
 export function ringPoint(t: number): { x: number; z: number; heading: number } {
