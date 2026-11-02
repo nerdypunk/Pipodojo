@@ -106,8 +106,14 @@ export default function TownCanvas(props: TownCanvasProps) {
   // Paused until the shaders are ready (WarmUp), so the intro never starts with a freeze.
   const [ready, setReady] = useState(false);
   const start = useCallback(() => setReady(true), []);
+  // Hidden until a whole frame of the intro is on screen, then faded in. Before that a phone can
+  // briefly show the canvas half set up (a small default-sized box being resized, an empty or
+  // half-drawn first frame), which looked like a glitch for a split second.
+  const [shown, setShown] = useState(false);
+  const show = useCallback(() => setShown(true), []);
   return (
     <Canvas
+      className={`transition-opacity duration-300 motion-reduce:transition-none ${shown ? "opacity-100" : "opacity-0"}`}
       shadows
       flat
       frameloop={ready ? "always" : "never"}
@@ -122,6 +128,7 @@ export default function TownCanvas(props: TownCanvasProps) {
         <Town {...props} />
       </ReadyContext.Provider>
       {!ready && <WarmUp onReady={start} />}
+      {ready && !shown && <Reveal onShown={show} />}
       {DEBUG && <DebugHandle />}
     </Canvas>
   );
@@ -156,6 +163,15 @@ function WarmUp({ onReady }: { onReady: () => void }) {
       live = false;
     };
   }, [gl, scene, camera, advance, clock, onReady]);
+  return null;
+}
+
+/** Once the intro runs: when the second frame starts, the first one is already on screen. */
+function Reveal({ onShown }: { onShown: () => void }) {
+  const frames = useRef(0);
+  useFrame(() => {
+    if (++frames.current === 2) onShown();
+  });
   return null;
 }
 
