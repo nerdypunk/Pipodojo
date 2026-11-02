@@ -84,15 +84,40 @@ function phoneLift(width: number, height: number): number {
 /** Bottom of the header card, in CSS pixels (it grows at the md breakpoint), plus a little room. */
 const headerBottom = (width: number) => (width >= 768 ? 122 : 68);
 
+/** The header card's box on screen (the "Who should Pipo help?" card), if it's there. */
+function headerBox(): DOMRect | null {
+  return document.querySelector("[data-town-header]")?.getBoundingClientRect() ?? null;
+}
+
+/** Bottom of the header's row of buttons (tablets; phones have a tab bar instead), or null when hidden. */
+function buttonsBottom(): number | null {
+  const box = document.querySelector("[data-town-buttons]")?.getBoundingClientRect();
+  return box && box.height > 0 ? box.bottom : null;
+}
+
+/** Where a tall screen's island floats, and whether its sign is the narrow, wrapping kind. */
+interface TallIsland {
+  at: [number, number, number];
+  scale: number;
+  compact: boolean;
+}
+
+/** Half a name tag's width, roughly, in pixels: enough to tell whether one is under a spot. */
+const TAG_HALF = 85;
+/** The narrow sign's width (w-26) and the room it needs from the screen's edge and the header. */
+const COMPACT_SIGN = 104;
+const EDGE = 8;
+
 /**
  * On tall screens (phones, narrow windows) the one island floats in the sky above the town. How
  * far up that sky reaches changes with the screen's shape, so instead of a fixed spot the island
- * is put at a screen position, toward the left (clear of the name tags over the town) and just
- * low enough that its sign clears the header, then traced back into the scene through the home
- * camera at its usual distance. On short screens the town reaches right up to the header and
- * there is no clear sky, so there is no island (null) rather than a sign over a name tag.
+ * is put at a screen position, then traced back into the scene through the home camera at its
+ * usual distance. Where there's room, it sits toward the left (clear of the name tags over the
+ * town), just low enough that its sign clears the header. On shorter phones the town reaches up
+ * to the header, so it moves to the corner beside the header card instead, smaller, with a narrow
+ * sign whose words wrap. Only when even that corner is too small is there no island (null).
  */
-function tallIslandSpot(width: number, height: number): [number, number, number] | null {
+function tallIslandSpot(width: number, height: number, header: DOMRect | null): TallIsland | null {
   const aspect = width / Math.max(1, height);
   const camera = new THREE.PerspectiveCamera(30, aspect, 0.5, 140);
   const lift = phoneLift(width, height);
@@ -100,15 +125,38 @@ function tallIslandSpot(width: number, height: number): [number, number, number]
   camera.position.copy(homeFor(aspect));
   camera.lookAt(LOOK_HOME);
   camera.updateMatrixWorld();
-  // The sign's top sits 55-70px above the island's middle, so this leaves ~25px under the header.
-  const y = headerBottom(width) + 85;
-  // The highest name tag over the town, in pixels from the top; tags are ~30px tall around that point.
-  const topTag = Math.min(...PLACES.map((p) => ((1 - new THREE.Vector3(p.at[0], p.tag, p.at[1]).project(camera).y) / 2) * height));
-  if (topTag - 15 < y) return null;
-  const ndc = new THREE.Vector3(-0.55, 1 - (2 * y) / height, 0.5);
-  const ray = ndc.unproject(camera).sub(camera.position).normalize();
-  const spot = camera.position.clone().addScaledVector(ray, camera.position.distanceTo(TALL_ISLAND_DEPTH_FROM));
-  return [spot.x, spot.y, spot.z];
+  const at = (x: number, y: number): [number, number, number] => {
+    const ndc = new THREE.Vector3((2 * x) / width - 1, 1 - (2 * y) / height, 0.5);
+    const ray = ndc.unproject(camera).sub(camera.position).normalize();
+    const spot = camera.position.clone().addScaledVector(ray, camera.position.distanceTo(TALL_ISLAND_DEPTH_FROM));
+    return [spot.x, spot.y, spot.z];
+  };
+  // The name tags over the town, in pixels; each is ~30px tall around its point.
+  const tags = PLACES.map((p) => {
+    const v = new THREE.Vector3(p.at[0], p.tag, p.at[1]).project(camera);
+    return { x: ((v.x + 1) / 2) * width, y: ((1 - v.y) / 2) * height };
+  });
+
+  // Above the town, toward the left. The sign's top sits 55-70px above the island's middle, so
+  // this leaves ~25px under the header.
+  const y = (header ? header.bottom : headerBottom(width)) + 85;
+  if (Math.min(...tags.map((t) => t.y)) - 15 >= y) return { at: at(width * 0.225, y), scale: 1, compact: false };
+
+  // Beside the header card, in the top right corner (under the row of buttons, where there is one):
+  // the sign at the top, the island under it. Narrow corners get the small island and narrow sign.
+  const left = (header ? header.right : width * 0.68) + EDGE;
+  const room = width - EDGE - left;
+  if (room < COMPACT_SIGN) return null;
+  const compact = room < 170;
+  const x = left + room / 2;
+  const buttons = buttonsBottom();
+  const top = buttons !== null ? buttons + EDGE : header ? header.top : 12;
+  // A wrapped sign is up to ~64px tall, and its bottom sits ~20px above the small island's middle;
+  // the one-line sign's top sits 55-70px above the full-size island's middle.
+  const middle = top + (compact ? 64 + 20 : 72);
+  const below = tags.filter((t) => Math.abs(t.x - x) < TAG_HALF + 30).map((t) => t.y - 15);
+  if (below.some((tagTop) => tagTop < middle + (compact ? 26 : 32))) return null;
+  return { at: at(x, middle), scale: compact ? 0.75 : 1, compact };
 }
 /** Closest a name tag may come to the screen's left or right edge, in pixels. */
 const TAG_MARGIN = 8;
@@ -198,11 +246,13 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
     if (lift) camera.setViewOffset(width, height, 0, lift, width, height);
     else camera.clearViewOffset();
   }, [camera, width, height]);
-  const islands = useMemo(() => {
-    if (wide) return ISLANDS_WIDE;
-    const spot = tallIslandSpot(width, height);
+  // The header card's size changes with the language, so the corner spot is worked out again then.
+  const islands = useMemo((): { at: [number, number, number]; scale: number; compact: boolean }[] => {
+    if (wide) return ISLANDS_WIDE.map((at, i) => ({ at, scale: i ? 0.8 : 1, compact: false }));
+    const spot = tallIslandSpot(width, height, headerBox());
     return spot ? [spot] : [];
-  }, [wide, width, height]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wide, width, height, soonLabel]);
 
   // The town casts and catches soft shadows (the scenery under the island doesn't need to).
   useLayoutEffect(() => {
@@ -300,8 +350,8 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
       <Airplane center={[0, 0]} radius={13.7} height={2.7} shadowReach={12.2} speed={0.25} still={still} />
       {/* Two small islands floating off the town: more to come. Placed for the screen's shape so
           they land in clear sky, away from the header and the name tags. */}
-      {islands.map((at, i) => (
-        <MiniIsland key={i} position={at} scale={i ? 0.8 : 1} phase={i * 2.1} label={soonLabel} still={still} />
+      {islands.map(({ at, scale, compact }, i) => (
+        <MiniIsland key={i} position={at} scale={scale} phase={i * 2.1} label={soonLabel} still={still} compact={compact} />
       ))}
     </>
   );

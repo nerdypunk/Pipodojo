@@ -460,12 +460,15 @@ export function MiniIsland({
   phase = 0,
   label,
   still,
+  compact = false,
 }: {
   position: [number, number, number];
   scale?: number;
   phase?: number;
   label: { title: string; sub: string };
   still: boolean;
+  /** A narrow sign whose words wrap, for the small corner beside the header on short phones. */
+  compact?: boolean;
 }) {
   const ready = useTownReady();
   const ref = useRef<THREE.Group>(null);
@@ -540,8 +543,18 @@ export function MiniIsland({
       </group>
       {/* The sign waits for the intro to start, like the name tags (see ready.ts). */}
       {ready && (
-        <Html position={[0, 2.6 * scale + 0.4, 0]} center zIndexRange={[10, 0]} style={{ pointerEvents: "none" }}>
-          <span className="block rounded-2xl bg-white/90 px-3 py-1.5 text-center whitespace-nowrap shadow-md ring-1 ring-white">
+        // The narrow sign wraps to any height, so its bottom edge (not its middle) sits just over the island.
+        <Html
+          position={[0, compact ? 1.6 * scale : 2.6 * scale + 0.4, 0]}
+          center={!compact}
+          zIndexRange={[10, 0]}
+          style={{ pointerEvents: "none" }}
+        >
+          <span
+            className={`block rounded-2xl bg-white/90 text-center shadow-md ring-1 ring-white ${
+              compact ? "w-26 -translate-x-1/2 -translate-y-full px-2 py-1" : "px-3 py-1.5 whitespace-nowrap"
+            }`}
+          >
             <span className="block text-[11px] leading-tight font-black text-amber-700 sm:text-xs">{label.title}</span>
             <span className="block text-[10px] leading-tight font-bold text-brand-800 sm:text-[11px]">{label.sub}</span>
           </span>

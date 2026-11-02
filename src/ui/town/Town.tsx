@@ -159,14 +159,15 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
 
       {/* Top: the title, then (wider screens) streak, stars, ranking, garage, language and sound */}
       <header className="pointer-events-none absolute inset-x-0 top-0 z-[45] flex items-start justify-between gap-2 p-3 md:gap-3 md:p-6">
-        <div className="glass pointer-events-auto min-w-0 rounded-2xl px-3 py-2 md:px-4 md:py-2.5">
+        {/* data-town-header: the 3D town keeps its "under construction" island clear of this card. */}
+        <div data-town-header className="glass pointer-events-auto min-w-0 rounded-2xl px-3 py-2 md:px-4 md:py-2.5">
           <p className="text-[11px] font-black tracking-wide text-brand-700 uppercase md:text-xs">{t.town.kicker}</p>
           {/* Nunito kerns "Wh" apart; without kerning the W sits next to the h */}
           <h1 className="text-lg leading-tight font-black text-ink [font-kerning:none] md:text-2xl">{t.town.title}</h1>
           <p className="hidden text-sm font-semibold text-gray-600 sm:block">{t.town.hint}</p>
         </div>
         {/* From sm up, one row of buttons. Phones have the tab bar along the bottom instead (PhoneTabBar). */}
-        <div className="pointer-events-auto flex shrink-0 flex-row items-center gap-2 max-sm:hidden">
+        <div data-town-buttons className="pointer-events-auto flex shrink-0 flex-row items-center gap-2 max-sm:hidden">
           <span className={`chip flex items-center gap-1 rounded-full px-3 py-2 text-sm font-black`} title={t.town.streakTitle}>
             <span aria-hidden="true">🔥</span>
             {streak} <span className="sr-only">{t.town.streak}</span>
