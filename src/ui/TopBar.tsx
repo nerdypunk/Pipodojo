@@ -58,7 +58,7 @@ export function TopBar({ progress, stars, onBack, lesson }: Props) {
         </span>
         {stars}
       </span>
-      <SoundButton compact className="-mr-2" />
+      <SoundButton compact />
     </header>
   );
 }

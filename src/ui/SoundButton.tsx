@@ -67,11 +67,14 @@ export function SoundButton({ className = "", compact = false }: { className?: s
         aria-label={t.sound.button}
         aria-expanded={open}
         title={t.sound.button}
-        className={`flex shrink-0 items-center justify-center rounded-full font-black transition active:translate-y-px focus-visible:outline-3 focus-visible:outline-brand-500 ${
-          compact ? "h-9 w-9 text-lg text-brand-700 hover:bg-white/80" : "chip px-3 py-2 text-sm hover:bg-brand-700"
+        className={`flex shrink-0 items-center justify-center rounded-full font-black transition active:translate-y-px focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand-500 ${
+          compact
+            ? "h-9 w-9 border border-brand-700 bg-brand-600 text-white shadow-sm hover:bg-brand-700"
+            : "chip px-3 py-2 text-sm hover:bg-brand-700"
         } ${className}`}
       >
-        <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>
+        {/* Compact: a white speaker drawn in the app's violet, since the emoji is pale on light glass. */}
+        {compact ? <SpeakerIcon muted={muted} /> : <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>}
       </button>
       {open &&
         createPortal(
@@ -88,6 +91,23 @@ export function SoundButton({ className = "", compact = false }: { className?: s
           document.body,
         )}
     </>
+  );
+}
+
+/** A speaker with sound waves, or with a cross when everything is off. */
+function SpeakerIcon({ muted }: { muted: boolean }) {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" />
+      {muted ? (
+        <path d="M16 9.5l5 5M21 9.5l-5 5" />
+      ) : (
+        <>
+          <path d="M15.5 9.2a4 4 0 0 1 0 5.6" />
+          <path d="M18.3 6.6a7.5 7.5 0 0 1 0 10.8" />
+        </>
+      )}
+    </svg>
   );
 }
 
