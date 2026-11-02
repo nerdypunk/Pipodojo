@@ -2,8 +2,8 @@
 // finished messages for the same task. One has everything Pipo needs; the other has two flaws
 // (facts left out, or weak bits swapped in), so the difference is easy to spot without being
 // silly. Only the chosen one goes to Pipo, scored by the same rules as every lesson. The pair is
-// fixed for the visit, so Try again can test the other. A ring counts down once per visit: the
-// first pick in time is a quick pick, and running out never stops the player.
+// fixed for the visit, so Try again can test the other. A ring counts down once per visit: a first
+// pick in the first 20 seconds is a quick pick, and after that the ring just says "Take your time".
 import { useState } from "react";
 import { play } from "../app/sound.ts";
 import { buildPrompt } from "../engine/brief.ts";
@@ -11,7 +11,7 @@ import { promptPair } from "../engine/setups.ts";
 import type { Mission } from "../engine/types.ts";
 import { useLang } from "../i18n/index.tsx";
 import type { PickerProps } from "./MissionPlayer.tsx";
-import { PICK_SECONDS, PickTimer, useCountdown } from "./PickTimer.tsx";
+import { PickTimer, QUICK_SECONDS, useCountdown } from "./PickTimer.tsx";
 
 const same = (a: readonly string[], b: readonly string[]) => a.length === b.length && a.every((id) => b.includes(id));
 
@@ -21,8 +21,8 @@ export function PromptChoice({ mission, picks, choose, done }: PickerProps & { m
   // Seconds into the countdown when the player first picked.
   const [pickedAt, setPickedAt] = useState<number | null>(null);
   const elapsed = useCountdown(!done && pickedAt === null);
-  const outOfTime = elapsed >= PICK_SECONDS;
-  const quick = pickedAt !== null && pickedAt < PICK_SECONDS ? Math.max(1, Math.round(pickedAt)) : null;
+  const outOfTime = elapsed >= QUICK_SECONDS;
+  const quick = pickedAt !== null && pickedAt < QUICK_SECONDS ? Math.max(1, Math.round(pickedAt)) : null;
 
   return (
     <div className="space-y-2.5">

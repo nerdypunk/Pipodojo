@@ -1,16 +1,20 @@
-// The quick pick ring for Pick a prompt: a circle that drains over the time limit. Picking in time
-// turns it into a small "Quick pick!" badge; running out only says "Take your time", and the
-// player can still pick and play as usual. The clock pauses while the tab is hidden.
+// The quick pick ring for Pick a prompt: a circle that counts down from 30. Picking in time turns
+// it into a small "Quick pick!" badge. With 10 seconds still on the ring it calmly gives way to
+// "Take your time" rather than racing to zero, and the player can still pick and play as usual.
+// The clock pauses while the tab is hidden.
 import { useEffect, useState } from "react";
 import { useLang } from "../i18n/index.tsx";
 
+/** What the ring starts at. */
 export const PICK_SECONDS = 30;
-/** The ring turns amber for the last few seconds. */
-const HURRY_SECONDS = 5;
+/** Seconds left on the ring when it gives way to "Take your time". */
+const CALM_SECONDS = 10;
+/** How long a pick still counts as quick. */
+export const QUICK_SECONDS = PICK_SECONDS - CALM_SECONDS;
 const TICK_MS = 200;
 
-/** Seconds that have passed while `running`, counting only time the page was visible. */
-export function useCountdown(running: boolean, limit = PICK_SECONDS) {
+/** Seconds that have passed while `running` (up to `limit`), counting only time the page was visible. */
+export function useCountdown(running: boolean, limit = QUICK_SECONDS) {
   const [elapsed, setElapsed] = useState(0);
   useEffect(() => {
     if (!running) return;
@@ -32,15 +36,13 @@ interface Props {
   elapsed: number;
   /** Seconds the player took, once they picked in time. */
   quick: number | null;
-  limit?: number;
 }
 
-export function PickTimer({ elapsed, quick, limit = PICK_SECONDS }: Props) {
+export function PickTimer({ elapsed, quick }: Props) {
   const { t } = useLang();
-  const left = Math.max(0, Math.ceil(limit - elapsed));
-  const hurry = left <= HURRY_SECONDS;
+  const left = Math.max(0, Math.ceil(PICK_SECONDS - elapsed));
 
-  if (quick !== null || left === 0) {
+  if (quick !== null || elapsed >= QUICK_SECONDS) {
     return (
       <p
         role="status"
@@ -54,7 +56,7 @@ export function PickTimer({ elapsed, quick, limit = PICK_SECONDS }: Props) {
   }
 
   return (
-    <div className="relative h-11 w-11 shrink-0" role="img" aria-label={t.lesson.pickTimer(limit)}>
+    <div className="relative h-11 w-11 shrink-0" role="img" aria-label={t.lesson.pickTimer(QUICK_SECONDS)}>
       <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90" aria-hidden="true">
         <circle cx="18" cy="18" r={R} fill="white" fillOpacity={0.8} stroke="var(--color-brand-100)" strokeWidth={4} />
         <circle
@@ -62,17 +64,17 @@ export function PickTimer({ elapsed, quick, limit = PICK_SECONDS }: Props) {
           cy="18"
           r={R}
           fill="none"
-          stroke={hurry ? "var(--color-amber-500)" : "var(--color-brand-600)"}
+          stroke="var(--color-brand-600)"
           strokeWidth={4}
           strokeLinecap="round"
           strokeDasharray={AROUND}
-          strokeDashoffset={AROUND * (elapsed / limit)}
-          className="transition-[stroke-dashoffset,stroke] duration-200 ease-linear motion-reduce:transition-none"
+          strokeDashoffset={AROUND * (elapsed / PICK_SECONDS)}
+          className="transition-[stroke-dashoffset] duration-200 ease-linear motion-reduce:transition-none"
         />
       </svg>
       <span
         aria-hidden="true"
-        className={`absolute inset-0 flex items-center justify-center text-sm font-black tabular-nums ${hurry ? "text-amber-700" : "text-brand-700"}`}
+        className="absolute inset-0 flex items-center justify-center text-sm font-black text-brand-700 tabular-nums"
       >
         {left}
       </span>
