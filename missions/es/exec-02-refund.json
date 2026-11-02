@@ -4,16 +4,16 @@
   "persona": "executive",
   "path": "executive-flight",
   "order": 2,
-  "title": "Pide el reembolso a la aerolínea",
-  "icon": "✉️",
-  "recap": "Pipo le escribió a Cloudhop Air para pedir tu reembolso.",
+  "title": "Reclama lo del hotel",
+  "icon": "🏨",
+  "recap": "Pipo le escribió a Cloudhop Air para recuperar tu noche de hotel.",
   "funFact": "Los agentes también pueden mantener tu calendario al día. ¡Ahora Pipo agrega tu vuelo nuevo!",
-  "postcard": "an airline refund email flying into an inbox, subject: {subject}",
-  "situation": "Te deben el reembolso completo. ¿Le escribo a Cloudhop Air para pedirlo?",
+  "postcard": "an airline email with a hotel receipt clipped to it, flying into an inbox, subject: {subject}",
+  "situation": "Tu reclamo de reembolso ya está. ¿Le escribo a Cloudhop Air por el hotel que pagaste esa noche?",
   "facts": [
-    "🔖 Código de reserva: QX7R4K",
-    "💵 Reembolso completo: $420",
-    "💳 A tu tarjeta, no en un cupón",
+    "🔖 Código de reserva QX7R4K, reclamo de reembolso presentado",
+    "🏨 Hotel esa noche: $85, a tu tarjeta",
+    "📎 Tienes el recibo del hotel para adjuntar",
     "👀 Quieres leerlo antes de que se envíe"
   ],
   "systemPrompt": "Eres Pipo, un asistente personal amigable para una persona ejecutiva muy ocupada. Puedes enviar correos por ella. Haces lo que te pide: si te pide enviar algo, lo envías; si pide verlo primero, escribes un borrador y esperas su OK.",
@@ -37,7 +37,7 @@
           },
           "body": {
             "type": "string",
-            "description": "El texto del correo, en español, de hasta 45 palabras"
+            "description": "El texto del correo, en español, de hasta 50 palabras"
           }
         },
         "required": [
@@ -84,7 +84,7 @@
           },
           "body": {
             "type": "string",
-            "description": "El texto del correo, en español, de hasta 45 palabras"
+            "description": "El texto del correo, en español, de hasta 50 palabras"
           }
         },
         "required": [
@@ -122,8 +122,8 @@
       "pieces": [
         {
           "id": "email_airline",
-          "label": "Escríbele a Cloudhop Air para pedir el reembolso",
-          "text": "Envíale un correo a Cloudhop Air (refunds@cloudhop-air.com) para pedir el reembolso de mi vuelo cancelado del viernes.",
+          "label": "Escríbele a Cloudhop Air por lo del hotel",
+          "text": "Envíale un correo a Cloudhop Air (refunds@cloudhop-air.com) para recuperar el hotel que tuve que pagar cuando cancelaron mi vuelo del viernes.",
           "quality": "good"
         },
         {
@@ -141,28 +141,28 @@
       "pieces": [
         {
           "id": "booking",
-          "label": "Código de reserva QX7R4K",
-          "text": "Incluye mi código de reserva: QX7R4K.",
+          "label": "Código de reserva y mi reclamo",
+          "text": "Menciona mi código de reserva QX7R4K y el reclamo de reembolso que ya presenté por el boleto.",
           "quality": "good"
         },
         {
-          "id": "refund",
-          "label": "$420 a mi tarjeta, no un cupón",
-          "text": "Pide los $420 completos de vuelta a mi tarjeta, no un cupón.",
+          "id": "hotel",
+          "label": "$85 de vuelta a mi tarjeta",
+          "text": "Pide los $85 de la noche de hotel de vuelta a mi tarjeta.",
           "quality": "good"
         },
         {
-          "id": "polite",
-          "label": "Amable pero firme",
-          "text": "Que sea amable pero firme.",
-          "quality": "neutral"
+          "id": "receipt",
+          "label": "El recibo del hotel va adjunto",
+          "text": "Di que el recibo del hotel va adjunto.",
+          "quality": "good"
         },
         {
           "id": "vent",
           "label": "¡Diles que me arruinaron la semana!",
           "text": "¡Diles que me arruinaron la semana!",
           "quality": "weak",
-          "tip": "Desahogarse se siente bien, pero un correo tranquilo con los datos consigue el reembolso más rápido."
+          "tip": "Desahogarse se siente bien, pero un correo tranquilo con los datos te devuelve el dinero más rápido."
         }
       ]
     },
@@ -191,7 +191,8 @@
       "id": "vague_who",
       "when": "picked:complain",
       "signals": [
-        "📧(?![^\\n]*cloudhop)"
+        "📧(?![^\\n]*cloudhop)",
+        "^(?![\\s\\S]*📧)"
       ],
       "hint": "\"La aerolínea\" no dice cuál ni adónde escribir.",
       "explain": "Pipo no sabía la dirección de la aerolínea, así que el correo no va a Cloudhop Air."
@@ -203,17 +204,26 @@
         "^(?![\\s\\S]*QX7R4K)"
       ],
       "hint": "No le diste a Pipo tu código de reserva.",
-      "explain": "Pipo no tenía tu código de reserva, así que la aerolínea no puede encontrar tu boleto."
+      "explain": "Pipo no tenía tu código de reserva, así que la aerolínea no puede relacionar el correo con tu reclamo."
     },
     {
-      "id": "no_refund",
-      "when": "not_picked:refund",
+      "id": "no_amount",
+      "when": "not_picked:hotel",
       "signals": [
-        "^(?![\\s\\S]*420)",
+        "^(?![\\s\\S]*(?<!\\d)85(?!\\d))",
         "^(?![\\s\\S]*tarjeta)"
       ],
-      "hint": "No le dijiste a Pipo cuánto quieres de vuelta, ni cómo.",
-      "explain": "Pipo no sabía que quieres $420 de vuelta a tu tarjeta, así que el correo deja abierta la puerta a un cupón."
+      "hint": "No le dijiste a Pipo cuánto costó el hotel, ni adónde debe ir el dinero.",
+      "explain": "Pipo no sabía que quieres $85 de vuelta a tu tarjeta, así que el correo no dice cuánto pagar ni adónde."
+    },
+    {
+      "id": "no_receipt",
+      "when": "not_picked:receipt",
+      "signals": [
+        "^(?![\\s\\S]*adjunt)"
+      ],
+      "hint": "No le dijiste a Pipo que el recibo va adjunto.",
+      "explain": "Pipo no sabía que tienes el recibo, así que el correo no lo menciona y la aerolínea podría pedirte pruebas."
     },
     {
       "id": "sent_unchecked",
@@ -226,5 +236,5 @@
       "explain": "Pipo lo envió de inmediato, así que nunca revisaste lo que pedía."
     }
   ],
-  "lesson": "Un correo de reembolso necesita tu código de reserva y exactamente lo que quieres de vuelta. Léelo antes de que salga."
+  "lesson": "Un correo de reclamo necesita tu código de reserva, el monto exacto y la prueba. Léelo antes de que salga."
 }

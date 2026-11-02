@@ -3,16 +3,16 @@
   "persona": "executive",
   "path": "executive-flight",
   "order": 2,
-  "title": "Ask the airline for a refund",
-  "icon": "✉️",
-  "recap": "Pipo emailed Cloudhop Air for your refund.",
+  "title": "Claim the hotel cost",
+  "icon": "🏨",
+  "recap": "Pipo emailed Cloudhop Air to get your hotel night back.",
   "funFact": "Agents can keep your calendar up to date, too. Next, Pipo adds your new flight!",
-  "postcard": "an airline refund email flying into an inbox, subject: {subject}",
-  "situation": "You're owed a full refund. Should I email Cloudhop Air and ask for it?",
+  "postcard": "an airline email with a hotel receipt clipped to it, flying into an inbox, subject: {subject}",
+  "situation": "Your refund claim is in. Should I email Cloudhop Air about the hotel you paid for that night?",
   "facts": [
-    "🔖 Booking code: QX7R4K",
-    "💵 Full refund: $420",
-    "💳 Back to your card, not a voucher",
+    "🔖 Booking code QX7R4K, refund claim filed",
+    "🏨 Hotel that night: $85, back to your card",
+    "📎 You have the hotel receipt to attach",
     "👀 You want to read it before it goes"
   ],
   "systemPrompt": "You are Pipo, a friendly personal assistant for a busy executive. You can send emails for them. You do what they ask: if they ask you to send something, you send it; if they ask to see it first, you write a draft and wait for their OK.",
@@ -36,7 +36,7 @@
           },
           "body": {
             "type": "string",
-            "description": "The email text, up to 45 words"
+            "description": "The email text, up to 50 words"
           }
         },
         "required": [
@@ -83,7 +83,7 @@
           },
           "body": {
             "type": "string",
-            "description": "The email text, up to 45 words"
+            "description": "The email text, up to 50 words"
           }
         },
         "required": [
@@ -121,8 +121,8 @@
       "pieces": [
         {
           "id": "email_airline",
-          "label": "Email Cloudhop Air for a refund",
-          "text": "Email Cloudhop Air (refunds@cloudhop-air.com) to ask for a refund for my cancelled Friday flight.",
+          "label": "Email Cloudhop Air for the hotel cost",
+          "text": "Email Cloudhop Air (refunds@cloudhop-air.com) to get back the hotel I had to pay for when they cancelled my Friday flight.",
           "quality": "good"
         },
         {
@@ -140,28 +140,28 @@
       "pieces": [
         {
           "id": "booking",
-          "label": "Booking code QX7R4K",
-          "text": "Include my booking code: QX7R4K.",
+          "label": "Booking code and my refund claim",
+          "text": "Mention my booking code QX7R4K and the refund claim I already filed for the ticket.",
           "quality": "good"
         },
         {
-          "id": "refund",
-          "label": "$420 back to my card, not a voucher",
-          "text": "Ask for the full $420 back to my card, not a voucher.",
+          "id": "hotel",
+          "label": "$85 back to my card",
+          "text": "Ask for the $85 hotel night back to my card.",
           "quality": "good"
         },
         {
-          "id": "polite",
-          "label": "Polite but firm",
-          "text": "Keep it polite but firm.",
-          "quality": "neutral"
+          "id": "receipt",
+          "label": "The hotel receipt is attached",
+          "text": "Say the hotel receipt is attached.",
+          "quality": "good"
         },
         {
           "id": "vent",
           "label": "Tell them they ruined my week!",
           "text": "Tell them they ruined my week!",
           "quality": "weak",
-          "tip": "Venting feels good, but a calm email with the facts gets a refund faster."
+          "tip": "Venting feels good, but a calm email with the facts gets your money back faster."
         }
       ]
     },
@@ -190,7 +190,8 @@
       "id": "vague_who",
       "when": "picked:complain",
       "signals": [
-        "📧(?![^\\n]*cloudhop)"
+        "📧(?![^\\n]*cloudhop)",
+        "^(?![\\s\\S]*📧)"
       ],
       "hint": "\"The airline\" doesn't say which one or where to write.",
       "explain": "Pipo didn't know the airline's address, so the email isn't going to Cloudhop Air."
@@ -202,17 +203,26 @@
         "^(?![\\s\\S]*QX7R4K)"
       ],
       "hint": "You didn't give Pipo your booking code.",
-      "explain": "Pipo didn't have your booking code, so the airline can't find your ticket."
+      "explain": "Pipo didn't have your booking code, so the airline can't match the email to your claim."
     },
     {
-      "id": "no_refund",
-      "when": "not_picked:refund",
+      "id": "no_amount",
+      "when": "not_picked:hotel",
       "signals": [
-        "^(?![\\s\\S]*420)",
+        "^(?![\\s\\S]*(?<!\\d)85(?!\\d))",
         "^(?![\\s\\S]*\\bcard\\b)"
       ],
-      "hint": "You didn't tell Pipo how much you want back, or how.",
-      "explain": "Pipo didn't know you want $420 back to your card, so the email leaves room for a voucher."
+      "hint": "You didn't tell Pipo how much the hotel was, or where the money should go.",
+      "explain": "Pipo didn't know you want $85 back to your card, so the email doesn't say what to pay or where."
+    },
+    {
+      "id": "no_receipt",
+      "when": "not_picked:receipt",
+      "signals": [
+        "^(?![\\s\\S]*\\battach)"
+      ],
+      "hint": "You didn't tell Pipo the receipt is attached.",
+      "explain": "Pipo didn't know you have the receipt, so the email doesn't mention it and the airline may ask for proof."
     },
     {
       "id": "sent_unchecked",
@@ -225,5 +235,5 @@
       "explain": "Pipo sent it straight away, so you never checked what it asked for."
     }
   ],
-  "lesson": "A refund email needs your booking code and exactly what you want back. Read it before it goes."
+  "lesson": "A claim email needs your booking code, the exact amount and the proof. Read it before it goes."
 }

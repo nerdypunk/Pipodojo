@@ -4,19 +4,165 @@
   "persona": "executive",
   "path": "executive-flight",
   "order": 1,
-  "title": "Averigua qué te deben",
-  "icon": "🔎",
-  "recap": "Pipo averiguó qué le puedes pedir a la aerolínea.",
-  "funFact": "Los agentes también pueden escribirles a las empresas por ti. ¡Ahora Pipo le escribe a la aerolínea para pedir tu reembolso!",
-  "postcard": "a busy executive at the airport smiling at good news on their phone: {answer}",
-  "situation": "Ay no, te cancelaron el vuelo del viernes. ¿Quieres que averigüe qué puedes pedir?",
+  "title": "Presenta el reclamo de reembolso",
+  "icon": "🧾",
+  "recap": "Pipo llenó la solicitud de reembolso de Cloudhop Air por tu boleto.",
+  "funFact": "Los agentes también pueden escribirles a las empresas por ti. ¡Ahora Pipo le escribe a Cloudhop Air para recuperar lo del hotel!",
+  "postcard": "an airline refund request form with a big friendly stamp on it, next to a plane ticket: {fields}",
+  "situation": "Ay no, Cloudhop Air te canceló el vuelo del viernes. ¿Lleno su solicitud de reembolso?",
   "facts": [
-    "❌ La aerolínea canceló tu vuelo del viernes",
+    "🔖 Código de reserva: QX7R4K",
     "💵 Tu boleto costó $420",
-    "🏨 Pagaste $85 de hotel esa noche",
-    "💳 Reservaste con otra aerolínea, así que quieres tu dinero de vuelta"
+    "💳 El dinero a tu tarjeta, no en un cupón",
+    "👀 Quieres revisarlo antes de que se envíe"
   ],
-  "systemPrompt": "Eres Pipo, un asistente personal amigable para una persona ejecutiva muy ocupada. Ayuda con lo que te pidan. Cuando des un consejo, tu primera línea dice lo principal que hay que pedir.",
+  "systemPrompt": "Eres Pipo, un asistente personal amigable para una persona ejecutiva muy ocupada. Puedes llenar formularios en línea por ella. Haces lo que te pide: si te pide enviar un formulario, lo envías; si pide revisarlo primero, lo guardas y esperas su OK.",
+  "tools": [
+    {
+      "name": "submit_form",
+      "description": "Llena el formulario y envíalo ahora, directo a quien corresponde. Usa esto cuando la persona quiere que lo resuelvas.",
+      "app": "form",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "El título del formulario, en español, por ejemplo Solicitud de reembolso"
+          },
+          "for": {
+            "type": "string",
+            "description": "A quién va el formulario: una empresa, una persona o una oficina"
+          },
+          "fields": {
+            "type": "array",
+            "description": "Cada dato que se llena en el formulario, en español, con lo que se llenó",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Qué pide el campo"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "Lo que se llenó"
+                }
+              },
+              "required": [
+                "label",
+                "value"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "El monto que se pide, en dólares"
+          }
+        },
+        "required": [
+          "title",
+          "for",
+          "fields",
+          "total"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📋",
+          "text": "{title}"
+        },
+        {
+          "emoji": "👤",
+          "text": "Para: {for}"
+        },
+        {
+          "emoji": "🧾",
+          "text": "{fields}"
+        },
+        {
+          "emoji": "💵",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Enviado"
+        }
+      ]
+    },
+    {
+      "name": "save_form_for_review",
+      "description": "Llena el formulario y guárdalo sin enviarlo, para que la persona lo revise primero. Usa esto cuando la persona quiere revisarlo antes de que se envíe.",
+      "app": "form",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "El título del formulario, en español, por ejemplo Solicitud de reembolso"
+          },
+          "for": {
+            "type": "string",
+            "description": "A quién va el formulario: una empresa, una persona o una oficina"
+          },
+          "fields": {
+            "type": "array",
+            "description": "Cada dato que se llena en el formulario, en español, con lo que se llenó",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Qué pide el campo"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "Lo que se llenó"
+                }
+              },
+              "required": [
+                "label",
+                "value"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "El monto que se pide, en dólares"
+          }
+        },
+        "required": [
+          "title",
+          "for",
+          "fields",
+          "total"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📋",
+          "text": "{title}"
+        },
+        {
+          "emoji": "👤",
+          "text": "Para: {for}"
+        },
+        {
+          "emoji": "🧾",
+          "text": "{fields}"
+        },
+        {
+          "emoji": "💵",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Guardado, esperando tu OK para enviarlo"
+        }
+      ]
+    }
+  ],
   "slots": [
     {
       "id": "want",
@@ -25,9 +171,9 @@
       "required": true,
       "pieces": [
         {
-          "id": "owed",
-          "label": "Dime qué le puedo pedir a la aerolínea",
-          "text": "La aerolínea canceló mi vuelo del viernes. Dime qué les puedo pedir.",
+          "id": "claim",
+          "label": "Llena la solicitud de reembolso de Cloudhop Air",
+          "text": "Cloudhop Air canceló mi vuelo del viernes. Llena su solicitud de reembolso en línea por mí.",
           "quality": "good"
         },
         {
@@ -40,9 +186,15 @@
     },
     {
       "id": "know",
-      "label": "¿Qué necesita saber Pipo?",
+      "label": "¿Qué va en el formulario?",
       "pick": "many",
       "pieces": [
+        {
+          "id": "booking",
+          "label": "Código de reserva QX7R4K",
+          "text": "Mi código de reserva es QX7R4K.",
+          "quality": "good"
+        },
         {
           "id": "price",
           "label": "Mi boleto costó $420",
@@ -50,15 +202,9 @@
           "quality": "good"
         },
         {
-          "id": "hotel",
-          "label": "Pagué $85 de hotel",
-          "text": "Tuve que pagar $85 de hotel esa noche.",
-          "quality": "good"
-        },
-        {
-          "id": "money_back",
-          "label": "Quiero mi dinero de vuelta, no otro vuelo",
-          "text": "Ya reservé con otra aerolínea, así que quiero mi dinero de vuelta, no otro vuelo ni un cupón.",
+          "id": "card",
+          "label": "A mi tarjeta, no un cupón",
+          "text": "Quiero el dinero de vuelta a mi tarjeta, no un cupón ni crédito de viaje.",
           "quality": "good"
         },
         {
@@ -66,59 +212,79 @@
           "label": "¡Consígueme todo lo que se pueda!",
           "text": "¡Consígueme todo lo que se pueda!",
           "quality": "weak",
-          "tip": "\"Todo lo que se pueda\" no dice qué necesitas. Los datos le dicen a Pipo qué te deben."
+          "tip": "\"Todo lo que se pueda\" no dice qué te deben. Los datos le dicen a Pipo qué va en el formulario."
         }
       ]
     },
     {
-      "id": "shape",
-      "label": "¿Cómo debe responder Pipo?",
+      "id": "check",
+      "label": "Antes de que Pipo lo envíe",
       "pick": "one",
       "pieces": [
         {
-          "id": "short",
-          "label": "Qué pedir, lo más importante primero",
-          "text": "Dime qué pedir, lo más importante primero, en pocas líneas.",
+          "id": "check_first",
+          "label": "Guárdalo para que lo revise primero",
+          "text": "Guarda el formulario y déjame revisarlo antes de enviarlo.",
           "quality": "good"
         },
         {
-          "id": "rules",
-          "label": "Explícame todas las reglas de las aerolíneas",
-          "text": "Explícame todas las reglas de las aerolíneas.",
-          "quality": "weak",
-          "tip": "Todas las reglas son mucho para leer. Si pides lo que te importa, recibes un plan."
+          "id": "go_now",
+          "label": "Envíalo de una vez",
+          "text": "Envíalo de una vez.",
+          "quality": "weak"
         }
       ]
     }
   ],
   "flaws": [
     {
+      "id": "vague_who",
+      "when": "picked:help_flight",
+      "signals": [
+        "👤(?![^\\n]*cloudhop)",
+        "^(?![\\s\\S]*📋)"
+      ],
+      "hint": "\"Mi vuelo\" no dice cuál aerolínea ni qué quieres que se haga.",
+      "explain": "Pipo no sabía que era la solicitud de reembolso de Cloudhop Air, así que el reclamo no va a la aerolínea que te debe."
+    },
+    {
+      "id": "no_booking",
+      "when": "not_picked:booking",
+      "signals": [
+        "^(?![\\s\\S]*QX7R4K)"
+      ],
+      "hint": "No le diste a Pipo tu código de reserva.",
+      "explain": "Pipo no tenía tu código de reserva, así que la aerolínea no puede encontrar tu boleto."
+    },
+    {
       "id": "no_price",
       "when": "not_picked:price",
       "signals": [
         "^(?![\\s\\S]*420)"
       ],
-      "hint": "No le dijiste a Pipo cuánto pagaste.",
-      "explain": "Pipo no sabía que pagaste $420, así que no puede decir cuánto pedir."
+      "hint": "No le dijiste a Pipo cuánto costó el boleto.",
+      "explain": "Pipo no sabía que el boleto costó $420, así que el formulario no pide el monto correcto."
     },
     {
-      "id": "no_hotel",
-      "when": "not_picked:hotel",
+      "id": "voucher",
+      "when": "not_picked:card",
       "signals": [
-        "^(?![\\s\\S]*85)"
+        "^(?![\\s\\S]*tarjeta)",
+        "(?<!(?<![a-záéíóúñü])(no|ni|sin|en vez de|en lugar de|nunca)(?![a-záéíóúñü])[^\\n]{0,15})(?<![a-záéíóúñü])(cup[oó]n(es)?|vouchers?|bonos?|cr[eé]ditos? (de viaje|a favor|para|futuro))(?![a-záéíóúñü])"
       ],
-      "hint": "No le dijiste a Pipo del hotel que pagaste.",
-      "explain": "Pipo no sabía de los $85 de hotel, así que no te dijo que los pidas de vuelta."
+      "hint": "No le dijiste a Pipo cómo quieres el dinero de vuelta.",
+      "explain": "Pipo no sabía que quieres el dinero en tu tarjeta, así que el formulario no lo pide y la aerolínea podría darte un cupón."
     },
     {
-      "id": "rebook",
-      "when": "not_picked:money_back",
+      "id": "submitted_unchecked",
+      "when": "picked:go_now",
       "signals": [
-        "(?<!(?<![a-záéíóúñü])(no|ni|sin|evita|rechaza|rechazar|recházal[oa]s?|nada de|en vez de|en lugar de|nunca|no necesitas)(?![a-záéíóúñü])[^\\n]{0,25})(reprogram|reubic|reasign|reacomod|(?<![a-záéíóúñü])(nuevo|otro|pr[oó]ximo|siguiente|alternativo)s? vuelos?(?![a-záéíóúñü])|vuelos? (nuevo|alternativo|siguiente)s?|cambio de vuelo|(?<![a-záéíóúñü])(cup[oó]n(es)?(?! (de|para) comida)|vouchers?(?! de comida)|bonos?|millas|cr[eé]ditos? (de viaje|a favor|para|futuro)))"
+        "✅",
+        "(?<![a-záéíóúñü])(enviad[oa]|presentad[oa])(?![a-záéíóúñü])(?![^\\n]*esper)"
       ],
-      "hint": "No le dijiste a Pipo que quieres tu dinero de vuelta, no otro vuelo.",
-      "explain": "Pipo no sabía que ya reservaste con otra aerolínea, así que te ofreció otro vuelo o un cupón que no quieres."
+      "hint": "Revisar un reclamo antes de enviarlo te deja corregir errores cuando todavía es fácil.",
+      "explain": "Pipo lo envió de inmediato, así que no pudiste revisarlo."
     }
   ],
-  "lesson": "Dale a Pipo los datos: qué pasó, cuánto pagaste y qué quieres de vuelta."
+  "lesson": "En un formulario de reclamo, dale a Pipo el código de reserva, el monto y cómo lo quieres de vuelta, y revísalo antes de que se envíe."
 }

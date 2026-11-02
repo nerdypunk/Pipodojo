@@ -1,7 +1,7 @@
 // Pipo's phone, floating over the lesson after Pipo acts in an app. It starts top right on wide
 // screens (clear of the result buttons) and bottom centre on phones. You can drag it, it tilts
 // toward the pointer, and it folds into a small button. When Pipo is holding something for your
-// OK (a draft, a cart or a saved form), Send / Pay / Submit asks Pipo to go ahead and Pipo finishes it with its own call.
+// OK (a draft, a cart, a saved form or listings to save), Send / Pay / Submit asks Pipo to go ahead and Pipo finishes it with its own call.
 import confetti from "canvas-confetti";
 import { motion, useMotionTemplate, useReducedMotion, useSpring } from "motion/react";
 import { useRef, type PointerEvent } from "react";
@@ -201,6 +201,11 @@ function footerCopy(action: PipoAction, t: Strings) {
         ...d.form,
         tone: "bg-brand-700 hover:bg-brand-800",
       };
+    case "listings":
+      return {
+        ...d.listings,
+        tone: "bg-brand-600 hover:bg-brand-700",
+      };
     case "site":
       return {
         ask: action.args.problem === undefined ? d.site.askBuild : d.site.askFix,
@@ -320,6 +325,7 @@ const DONE_SOUND: Record<PipoAction["app"], Sfx> = {
   shop: "pay",
   calendar: "add",
   form: "send",
+  listings: "add",
   site: "publish",
   game: "publish",
   chart: "add",

@@ -4,19 +4,95 @@
   "persona": "executive",
   "path": "executive-taxes",
   "order": 1,
-  "title": "Haz la lista de lo que necesitas",
-  "icon": "🗂️",
-  "recap": "Pipo hizo tu lista para el papeleo de impuestos de este año.",
-  "funFact": "Los agentes pueden llenar formularios por ti, pero llevan tu nombre. Ahora Pipo llena tu formulario de gastos, y tú decides cuándo se envía.",
-  "postcard": "a tidy desk with a neat stack of tax papers and a checklist: {answer}",
-  "situation": "¡Se acerca la temporada de impuestos! ¿Te hago la lista de lo que necesitas juntar?",
+  "title": "Reúne tus documentos",
+  "icon": "🧾",
+  "recap": "Pipo le pidió a Leo tu resumen de pagos de 2026.",
+  "funFact": "Los agentes no solo te dicen qué reunir: pueden ir a pedirlo por ti. Ahora Pipo llena tu formulario de gastos, y tú decides cuándo se envía.",
+  "postcard": "a phone on a tidy desk lighting up with Pipo's friendly message to a bakery owner about a yearly payment summary: {message}",
+  "situation": "¡Se acerca la temporada de impuestos! ¿Le pido a tu cliente de diseño los papeles que necesitas?",
   "facts": [
-    "💼 Un trabajo con sueldo, más diseño freelance",
-    "💻 Compraste una laptop para el trabajo",
-    "💝 Donaste a una organización benéfica local",
-    "📋 Quieres una lista corta"
+    "🎨 Leo, de Panadería Bloom, tu cliente de diseño freelance",
+    "🧾 Necesitas un resumen de lo que te pagaron en 2026",
+    "📅 Dana, tu contadora, lo necesita antes del 20 de noviembre",
+    "👀 Quieres revisarlo antes de que se envíe"
   ],
-  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Ayudas con lo que te piden. Habla de impuestos en general, sin atarte a las reglas de un solo país.",
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Puedes enviar mensajes de WhatsApp por esa persona. Haces lo que te pide: si te pide enviar algo, lo envías; si te pide verlo primero, escribes un borrador y esperas su OK. Habla de impuestos en general, sin atarte a las reglas de un solo país.",
+  "tools": [
+    {
+      "name": "send_whatsapp_message",
+      "description": "Envía un mensaje de WhatsApp de inmediato. Úsala cuando la persona quiere que se envíe.",
+      "app": "whatsapp",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el mensaje: un contacto o un chat de grupo"
+          },
+          "message": {
+            "type": "string",
+            "description": "El texto del mensaje en español, de hasta 35 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Enviado"
+        }
+      ]
+    },
+    {
+      "name": "draft_whatsapp_message",
+      "description": "Escribe el mensaje de WhatsApp y muéstraselo a la persona sin enviarlo, para que lo revise primero. Úsala cuando la persona quiere verlo antes de que salga.",
+      "app": "whatsapp",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el mensaje: un contacto o un chat de grupo"
+          },
+          "message": {
+            "type": "string",
+            "description": "El texto del mensaje en español, de hasta 35 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Borrador listo, esperando tu OK para enviarlo"
+        }
+      ]
+    }
+  ],
   "slots": [
     {
       "id": "want",
@@ -25,100 +101,109 @@
       "required": true,
       "pieces": [
         {
-          "id": "list_papers",
-          "label": "Haz la lista de papeles para mis impuestos",
-          "text": "Haz la lista de los documentos y recibos que necesito juntar para el papeleo de impuestos de este año.",
+          "id": "ask_leo",
+          "label": "Pídele a Leo de Panadería Bloom un resumen de pagos",
+          "text": "Escríbele a Leo, mi cliente de diseño freelance en Panadería Bloom. Pídele un resumen de todos los pagos que Panadería Bloom me hizo, para mi papeleo de impuestos.",
           "quality": "good"
         },
         {
-          "id": "help_taxes",
-          "label": "Ayúdame con mis impuestos",
-          "text": "Ayúdame con mis impuestos.",
+          "id": "ask_client",
+          "label": "Pídele a mi cliente lo de los impuestos",
+          "text": "Pídele a mi cliente lo de los impuestos.",
           "quality": "weak"
         }
       ]
     },
     {
-      "id": "know",
-      "label": "¿Qué necesita saber Pipo?",
+      "id": "say",
+      "label": "¿Qué debe decir el mensaje?",
       "pick": "many",
       "pieces": [
         {
-          "id": "freelance",
-          "label": "Trabajo con sueldo, más diseño freelance",
-          "text": "Tengo un trabajo con sueldo y además hice trabajos de diseño freelance para clientes.",
+          "id": "year",
+          "label": "Es para el año 2026",
+          "text": "Di que el resumen es del año 2026.",
           "quality": "good"
         },
         {
-          "id": "laptop",
-          "label": "Compré una laptop para el trabajo",
-          "text": "Este año compré una laptop para el trabajo.",
+          "id": "deadline",
+          "label": "Lo necesito antes del 20 de noviembre",
+          "text": "Di que lo necesito antes del 20 de noviembre, para que mi contadora tenga tiempo.",
           "quality": "good"
         },
         {
-          "id": "charity",
-          "label": "Doné a una organización benéfica",
-          "text": "Doné dinero a una organización benéfica local.",
+          "id": "thanks",
+          "label": "Agradécele a Leo por un gran año",
+          "text": "Agradécele por un gran año de trabajo juntos.",
           "quality": "neutral"
         },
         {
-          "id": "usual",
-          "label": "Lo de siempre, tú sabes",
-          "text": "Lo de siempre, tú sabes.",
+          "id": "hurry",
+          "label": "¡Dile que se apure, es urgente!",
+          "text": "¡Dile que se apure, es urgente!",
           "quality": "weak",
-          "tip": "Pipo no sabe qué es lo de siempre para ti. Tus trabajos y tus compras grandes para el trabajo son lo que cambia la lista."
+          "tip": "Apurar a un cliente puede sonar brusco. Una fecha clara le da tiempo y aun así consigues lo que necesitas."
         }
       ]
     },
     {
-      "id": "shape",
-      "label": "¿Cómo debe responder Pipo?",
+      "id": "check",
+      "label": "Antes de que Pipo lo envíe",
       "pick": "one",
       "pieces": [
         {
-          "id": "checklist",
-          "label": "Una lista corta",
-          "text": "Dame una lista corta, una cosa por línea.",
+          "id": "check_first",
+          "label": "Muéstrame el mensaje primero",
+          "text": "Muéstrame el mensaje antes de enviarlo.",
           "quality": "good"
         },
         {
-          "id": "explain_all",
-          "label": "Explícame cómo funcionan los impuestos",
-          "text": "Explícame también cómo funcionan los impuestos.",
-          "quality": "weak",
-          "tip": "Una clase sobre impuestos es larga. Una lista es algo que puedes hacer hoy mismo."
+          "id": "go_now",
+          "label": "Envíalo ya",
+          "text": "Envíalo ya.",
+          "quality": "weak"
         }
       ]
     }
   ],
   "flaws": [
     {
-      "id": "vague_goal",
-      "when": "picked:help_taxes",
+      "id": "vague_who",
+      "when": "picked:ask_client",
       "signals": [
-        "(?<![a-záéíóúñü])(presenta\\w*|declarar|fecha l[ií]mite|plazos?|software|deduc\\w*|contrata\\w*|calcula\\w*|estima\\w*|separa\\w*|organiza\\w*|registra\\w*|guarda\\w*|conserva\\w*|consulta\\w*|lleva|bit[aá]coras?)(?![a-záéíóúñü])"
+        "📨(?![^\\n]*\\bleo\\b)"
       ],
-      "hint": "\"Ayúdame con mis impuestos\" no dice que quieres una lista de papeles para juntar.",
-      "explain": "Pipo no sabía que querías una lista de papeles, así que te dio consejos generales de impuestos."
+      "hint": "\"Mi cliente\" no dice cuál cliente ni qué necesitas.",
+      "explain": "Pipo no sabía cuál cliente, así que el mensaje no va dirigido a Leo."
     },
     {
-      "id": "no_freelance",
-      "when": "not_picked:freelance",
+      "id": "no_year",
+      "when": "not_picked:year",
       "signals": [
-        "^(?![\\s\\S]*(freelanc|emitidas|independiente|aut[oó]nom|por cuenta propia|honorarios|dise[ñn]o))"
+        "^(?![\\s\\S]*(?<![0-9])2026(?![0-9]))"
       ],
-      "hint": "No le contaste a Pipo de tu trabajo freelance.",
-      "explain": "Pipo no sabía que trabajas como freelance, así que tus facturas no están en la lista."
+      "hint": "No le dijiste a Pipo de qué año es el resumen.",
+      "explain": "Pipo no sabía el año, así que Leo no sabe qué pagos sumar."
     },
     {
-      "id": "no_laptop",
-      "when": "not_picked:laptop",
+      "id": "no_deadline",
+      "when": "not_picked:deadline",
       "signals": [
-        "^(?![\\s\\S]*(laptop|computadora|port[aá]til|ordenador|compu))"
+        "^(?![\\s\\S]*(noviembre|(?<![0-9])20(?![0-9])))"
       ],
-      "hint": "No le contaste a Pipo de la laptop que compraste para el trabajo.",
-      "explain": "Pipo no sabía de la laptop, así que su recibo no está en la lista."
+      "hint": "No le dijiste a Pipo para cuándo lo necesitas.",
+      "explain": "Pipo no sabía lo del 20 de noviembre, así que Leo no sabe que hay una fecha."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(enviad[oa]s?|entregad[oa]s?)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Si pides ver el mensaje primero, puedes corregirlo antes de que Leo lo lea.",
+      "explain": "Pipo lo envió de inmediato, así que nunca pudiste revisarlo."
     }
   ],
-  "lesson": "Pipo solo puede hacer una lista a tu medida si le cuentas lo que pasa en tu vida: tus trabajos y tus gastos grandes."
+  "lesson": "Di para quién es, qué necesitas y para cuándo. Luego revísalo antes de que salga."
 }

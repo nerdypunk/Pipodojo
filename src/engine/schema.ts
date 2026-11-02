@@ -57,8 +57,8 @@ export const ToolSchema = z.strictObject({
   name: z.string().regex(/^[a-z][a-z0-9_]{0,63}$/, "Use lowercase letters, numbers or _"),
   /** Told to the model: when to use this tool. */
   description: text,
-  /** Which mockup shows the result: phone apps, or laptop apps for Pipo Code (site, game, chart). */
-  app: z.enum(["whatsapp", "shop", "email", "calendar", "form", "site", "game", "chart"]),
+  /** Which mockup shows the result: phone apps (listings: a marketplace saved list), or laptop apps for Pipo Code (site, game, chart). */
+  app: z.enum(["whatsapp", "shop", "email", "calendar", "form", "listings", "site", "game", "chart"]),
   /** The store's name on the shop screen, e.g. "TicketHub" (default FreshCart). */
   store: text.optional(),
   /** Label for the shop's "delivery" row, e.g. "Visit" for tickets (default Delivery). */

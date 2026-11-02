@@ -1,8 +1,9 @@
-// The app screen inside Pipo's phone: a chat, a store cart, an email, a calendar or a form. Built from
+// The app screen inside Pipo's phone: a chat, a store cart, an email, a calendar, a form or a list of
+// saved marketplace listings. Built from
 // the tool call's arguments and sized to fill the phone. `flags` follow the tool's answer lines,
 // so the part that shows a gap in the prompt is outlined in red. Nothing here is a real app.
 import type { PipoAction } from "../engine/types.ts";
-import { readable } from "../engine/actions.ts";
+import { listingLineCount, readable, stars } from "../engine/actions.ts";
 import { useLang } from "../i18n/index.tsx";
 
 interface Props {
@@ -18,6 +19,7 @@ export function PhoneScreen({ action, flags }: Props) {
   if (action.app === "email") return <EmailScreen action={action} flags={flags} />;
   if (action.app === "calendar") return <CalendarScreen action={action} flags={flags} />;
   if (action.app === "form") return <FormScreen action={action} flags={flags} />;
+  if (action.app === "listings") return <ListingsScreen action={action} flags={flags} />;
   return <ShopScreen action={action} flags={flags} />;
 }
 
@@ -278,6 +280,90 @@ function FormScreen({ action, flags }: Props) {
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+/** One saved listing as Pipo filled it in. */
+function listing(item: unknown) {
+  const { name, price, condition, rating, distance } = (item ?? {}) as Record<string, unknown>;
+  return {
+    name: readable(name ?? item),
+    price: price === undefined ? undefined : readable(price).replace(/^$/, ""),
+    condition: condition === undefined || condition === "" ? undefined : readable(condition),
+    rating: rating === undefined || rating === null ? undefined : stars(rating),
+    distance: distance === undefined || distance === "" ? undefined : readable(distance),
+  };
+}
+
+/** Soft photo backgrounds, so the saved cards don't all look the same. */
+const PHOTO_TONES = ["bg-brand-100", "bg-sky-100", "bg-violet-100", "bg-indigo-100"];
+
+/** Marketplace's saved list: a card per listing Pipo saved, with a photo, price, condition, the
+ *  seller's stars and how far away it is. The listings fill the first answer lines, one each, so a
+ *  gap outlines the very card that shows it. */
+function ListingsScreen({ action, flags }: Props) {
+  const items = (Array.isArray(action.args.items) ? action.args.items : []).map(listing);
+  const saved = action.outcome === "done";
+  const { t } = useLang();
+  const first = listingLineCount(action);
+  return (
+    <div className="flex h-full flex-col bg-brand-50" aria-label={t.screens.listingsLabel(items.length, saved)}>
+      <div className="flex items-center justify-between bg-brand-700 px-3 py-2.5 text-white">
+        <p className="text-sm font-black">
+          <span aria-hidden="true">🏷️ </span>
+          {action.store ?? t.screens.marketplace}
+        </p>
+        <p className="text-[11px] font-bold text-white/85">
+          {saved ? t.screens.savedList : t.screens.notSavedYet} · {t.screens.listings(items.length)}
+        </p>
+      </div>
+
+      <ul className="min-h-0 flex-1 space-y-2 overflow-y-auto p-2.5">
+        {items.length === 0 && <li className={`rounded-xl px-1 py-1 text-sm font-semibold text-gray-500 ${flags[0] ? FLAG : ""}`}>{t.screens.noListings}</li>}
+        {items.map((item, i) => (
+          <li
+            key={i}
+            className={`flex gap-2.5 rounded-xl bg-white p-2 shadow-sm ${saved ? "border border-brand-100" : "border-2 border-dashed border-brand-200"} ${
+              i < first && flags[i] ? FLAG : ""
+            }`}
+          >
+            <span
+              className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-lg text-3xl ${PHOTO_TONES[i % PHOTO_TONES.length]}`}
+              aria-hidden="true"
+            >
+              🪑
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-start justify-between gap-1.5">
+                <p className="line-clamp-2 text-[12px] leading-tight font-bold text-ink">{item.name}</p>
+                <span className={`shrink-0 text-sm leading-none ${saved ? "" : "opacity-40"}`} aria-hidden="true">
+                  🔖
+                </span>
+              </div>
+              {item.price !== undefined && <p className="mt-0.5 text-[15px] leading-tight font-black text-brand-700">${item.price}</p>}
+              <p className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11px] font-semibold text-gray-600">
+                {item.condition !== undefined && (
+                  <span className="rounded-full bg-brand-50 px-1.5 py-px font-bold text-brand-800">{item.condition}</span>
+                )}
+                {item.rating !== undefined && (
+                  <span className="font-bold text-amber-600">
+                    <span aria-hidden="true">★ </span>
+                    <span className="sr-only">{t.screens.sellerRating(item.rating)}</span>
+                    <span aria-hidden="true">{item.rating}</span>
+                  </span>
+                )}
+                {item.distance !== undefined && (
+                  <span>
+                    <span aria-hidden="true">📍</span>
+                    {item.distance}
+                  </span>
+                )}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

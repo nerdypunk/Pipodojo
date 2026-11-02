@@ -3,19 +3,95 @@
   "persona": "executive",
   "path": "executive-taxes",
   "order": 1,
-  "title": "List what you need",
-  "icon": "🗂️",
-  "recap": "Pipo made your checklist for this year's tax paperwork.",
-  "funFact": "Agents can fill in forms for you, but your name goes on them. Next, Pipo fills in your expense form, and you decide when it's submitted.",
-  "postcard": "a tidy desk with a neat stack of tax papers and a checklist: {answer}",
-  "situation": "Tax time is coming up! Want me to list what you need to gather?",
+  "title": "Gather your documents",
+  "icon": "🧾",
+  "recap": "Pipo asked Leo for your 2026 payment summary.",
+  "funFact": "Agents don't just tell you what to gather, they can go and ask for it. Next, Pipo fills in your expense form, and you decide when it's submitted.",
+  "postcard": "a phone on a tidy desk lighting up with Pipo's friendly message to a bakery owner about a yearly payment summary: {message}",
+  "situation": "Tax time is coming up! Should I ask your design client for the papers you need?",
   "facts": [
-    "💼 A salary job, plus freelance design work",
-    "💻 You bought a laptop for work",
-    "💝 You gave to a local charity",
-    "📋 You want a short checklist"
+    "🎨 Leo at Bloom Bakery, your freelance design client",
+    "🧾 You need a summary of what they paid you in 2026",
+    "📅 Dana, your accountant, needs it by November 20",
+    "👀 You want to check it before it's sent"
   ],
-  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. Help with what they ask. Keep tax talk general, not tied to one country's rules.",
+  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. You can send WhatsApp messages for them. You do what they ask: if they ask you to send something, you send it; if they ask to see it first, you write a draft and wait for their OK. Keep tax talk general, not tied to one country's rules.",
+  "tools": [
+    {
+      "name": "send_whatsapp_message",
+      "description": "Send a WhatsApp message right away. Use this when the user wants it sent.",
+      "app": "whatsapp",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the message: a contact or a group chat"
+          },
+          "message": {
+            "type": "string",
+            "description": "The message text, up to 35 words"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Sent"
+        }
+      ]
+    },
+    {
+      "name": "draft_whatsapp_message",
+      "description": "Write the WhatsApp message and show it to the user without sending it, so they can check it first. Use this when the user wants to see it before it goes out.",
+      "app": "whatsapp",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the message: a contact or a group chat"
+          },
+          "message": {
+            "type": "string",
+            "description": "The message text, up to 35 words"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Draft ready, waiting for your OK to send"
+        }
+      ]
+    }
+  ],
   "slots": [
     {
       "id": "want",
@@ -24,100 +100,109 @@
       "required": true,
       "pieces": [
         {
-          "id": "list_papers",
-          "label": "List the papers to gather for my taxes",
-          "text": "List the documents and receipts I need to gather for this year's tax paperwork.",
+          "id": "ask_leo",
+          "label": "Ask Leo at Bloom Bakery for a payment summary",
+          "text": "Message Leo, my freelance design client at Bloom Bakery. Ask for a summary of all the payments Bloom Bakery made me, for my tax paperwork.",
           "quality": "good"
         },
         {
-          "id": "help_taxes",
-          "label": "Help me with my taxes",
-          "text": "Help me with my taxes.",
+          "id": "ask_client",
+          "label": "Ask my client for the tax stuff",
+          "text": "Ask my client for the tax stuff.",
           "quality": "weak"
         }
       ]
     },
     {
-      "id": "know",
-      "label": "What does Pipo need to know?",
+      "id": "say",
+      "label": "What should the message say?",
       "pick": "many",
       "pieces": [
         {
-          "id": "freelance",
-          "label": "A salary job, plus freelance design",
-          "text": "I have a salary job, and I also did freelance design work for clients.",
+          "id": "year",
+          "label": "It's for the year 2026",
+          "text": "Say the summary is for the year 2026.",
           "quality": "good"
         },
         {
-          "id": "laptop",
-          "label": "I bought a laptop for work",
-          "text": "I bought a laptop for work this year.",
+          "id": "deadline",
+          "label": "I need it by November 20",
+          "text": "Say I need it by November 20, so my accountant has time.",
           "quality": "good"
         },
         {
-          "id": "charity",
-          "label": "I gave to a local charity",
-          "text": "I gave money to a local charity.",
+          "id": "thanks",
+          "label": "Thank Leo for a great year",
+          "text": "Thank them for a great year of working together.",
           "quality": "neutral"
         },
         {
-          "id": "usual",
-          "label": "Just the usual stuff, you know",
-          "text": "Just the usual stuff, you know.",
+          "id": "hurry",
+          "label": "Tell them to hurry, it's urgent!",
+          "text": "Tell them to hurry, it's urgent!",
           "quality": "weak",
-          "tip": "Pipo doesn't know what's usual for you. Your jobs and big work purchases are what change the list."
+          "tip": "Rushing a client can feel pushy. A clear date gives them time and still gets you what you need."
         }
       ]
     },
     {
-      "id": "shape",
-      "label": "How should Pipo answer?",
+      "id": "check",
+      "label": "Before Pipo sends it",
       "pick": "one",
       "pieces": [
         {
-          "id": "checklist",
-          "label": "A short checklist",
-          "text": "Give me a short checklist, one item per line.",
+          "id": "check_first",
+          "label": "Show me the message first",
+          "text": "Show me the message before you send it.",
           "quality": "good"
         },
         {
-          "id": "explain_all",
-          "label": "Explain how taxes work",
-          "text": "Explain how taxes work too.",
-          "quality": "weak",
-          "tip": "A lesson on taxes is long. A checklist is something you can act on today."
+          "id": "go_now",
+          "label": "Send it right away",
+          "text": "Send it right away.",
+          "quality": "weak"
         }
       ]
     }
   ],
   "flaws": [
     {
-      "id": "vague_goal",
-      "when": "picked:help_taxes",
+      "id": "vague_who",
+      "when": "picked:ask_client",
       "signals": [
-        "\\b(file|filing|submit|deadlines?|software|deduct\\w*|hire|calculate|estimate|separate\\w*|organi[sz]e\\w*|track\\w*|logs?|keep)\\b"
+        "📨(?![^\\n]*\\bleo\\b)"
       ],
-      "hint": "\"Help me with my taxes\" doesn't say you want a list of papers to gather.",
-      "explain": "Pipo didn't know you wanted a list of papers, so it gave general tax tips instead."
+      "hint": "\"My client\" doesn't say which client or what you need.",
+      "explain": "Pipo didn't know which client, so the message isn't addressed to Leo."
     },
     {
-      "id": "no_freelance",
-      "when": "not_picked:freelance",
+      "id": "no_year",
+      "when": "not_picked:year",
       "signals": [
-        "^(?![\\s\\S]*(freelanc|invoice|self-employ|side (job|work|gig|income)|1099))"
+        "^(?![\\s\\S]*\\b2026\\b)"
       ],
-      "hint": "You didn't tell Pipo about your freelance work.",
-      "explain": "Pipo didn't know you freelance, so your invoices aren't on the list."
+      "hint": "You didn't tell Pipo which year the summary is for.",
+      "explain": "Pipo didn't know the year, so Leo doesn't know which payments to add up."
     },
     {
-      "id": "no_laptop",
-      "when": "not_picked:laptop",
+      "id": "no_deadline",
+      "when": "not_picked:deadline",
       "signals": [
-        "^(?![\\s\\S]*(laptop|computer))"
+        "^(?![\\s\\S]*\\b(nov(ember)?|20(th)?)\\b)"
       ],
-      "hint": "You didn't tell Pipo about the laptop you bought for work.",
-      "explain": "Pipo didn't know about the laptop, so its receipt isn't on the list."
+      "hint": "You didn't tell Pipo when you need it.",
+      "explain": "Pipo didn't know about November 20, so Leo doesn't know there's a date."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\b(sent|delivered)\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Asking to see the message first lets you fix it before Leo reads it.",
+      "explain": "Pipo sent it straight away, so you never got to check it."
     }
   ],
-  "lesson": "Pipo can only list what fits your life if you tell it what's in your life: your jobs and your big costs."
+  "lesson": "Say who it's for, what you need and by when. Then check it before it goes."
 }

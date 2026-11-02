@@ -40,7 +40,7 @@ Other commands:
 
 Make your Pipo, then explore **Pipodojo Town**, a little 3D floating island. Each person Pipo can help lives somewhere in town: the busy parent at home, the student at the college, the café owner at the café, a young coder in a treehouse home, and a busy executive in an office tower. Click a place to see their three paths, then play a path's lessons. All five people have three paths of three lessons: 45 lessons in all.
 
-In each path, the first lesson is a short answer from Pipo; the next two have Pipo act in a pretend app on its phone: WhatsApp, email, a calendar, an online store or a paperwork form.
+In each path, the first lesson is a short answer from Pipo; the next two have Pipo act in a pretend app on its phone: WhatsApp, email, a calendar, an online store or a paperwork form. The busy executive's paths go further: Pipo acts in every lesson, like a real agent filing a claim or searching a marketplace for you.
 
 The young coder uses **Pipo Code**, a coding agent on a laptop, to build a website about a hamster, make an obstacle-course game in BlockStudio (a pretend game studio) and make charts and diagrams for homework. Each laptop app shows a live preview and a code view. They're drawn by the game from Pipo's choices, so nothing the model writes is ever run. These lessons also teach staying safe: no personal details online, no real money in games, and learning instead of copying.
 

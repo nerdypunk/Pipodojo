@@ -205,6 +205,14 @@ export const en = {
       already: "✅ Already submitted",
       alreadyNote: "Pipo submitted it before you could check it.",
     },
+    listings: {
+      ask: "Pipo picked these. Save them to your list?",
+      button: "Save 🔖",
+      working: "Pipo is saving them…",
+      approved: "🔖 Saved after your OK!",
+      already: "✅ Saved to your list",
+      alreadyNote: "Pipo searched marketplace and saved these for you.",
+    },
     site: {
       askBuild: "Pipo built a preview. Put it online?",
       askFix: "Pipo has a fix ready. Put it online?",
@@ -277,6 +285,13 @@ export const en = {
     notSubmitted: "Saved, not sent",
     noFields: "Nothing filled in",
     stamp: "Submitted ✓",
+    marketplace: "Marketplace",
+    savedList: "Saved",
+    notSavedYet: "Not saved yet",
+    listings: (n: number) => plural(n, "listing", "listings"),
+    listingsLabel: (n: number, saved: boolean) => `Marketplace saved list, ${plural(n, "listing", "listings")}${saved ? "" : ", waiting for your OK"}`,
+    noListings: "Nothing saved yet",
+    sellerRating: (rating: string) => `Seller rated ${rating} stars`,
   },
 
   laptop: {

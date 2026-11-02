@@ -3,19 +3,165 @@
   "persona": "executive",
   "path": "executive-flight",
   "order": 1,
-  "title": "Find out what you're owed",
-  "icon": "🔎",
-  "recap": "Pipo worked out what you can ask the airline for.",
-  "funFact": "Agents can write to companies for you, too. Next, Pipo emails the airline for your refund!",
-  "postcard": "a busy executive at the airport smiling at good news on their phone: {answer}",
-  "situation": "Oh no, your Friday flight got cancelled. Want me to work out what you can ask for?",
+  "title": "File the refund claim",
+  "icon": "🧾",
+  "recap": "Pipo filled in Cloudhop Air's refund request for your ticket.",
+  "funFact": "Agents can write to companies for you, too. Next, Pipo emails Cloudhop Air to get the hotel cost back!",
+  "postcard": "an airline refund request form with a big friendly stamp on it, next to a plane ticket: {fields}",
+  "situation": "Oh no, Cloudhop Air cancelled your Friday flight. Want me to fill in their refund request?",
   "facts": [
-    "❌ The airline cancelled your Friday flight",
+    "🔖 Booking code: QX7R4K",
     "💵 Your ticket cost $420",
-    "🏨 You paid $85 for a hotel that night",
-    "💳 You booked another airline, so you want your money back"
+    "💳 Money back to your card, not a voucher",
+    "👀 You want to check it before it's submitted"
   ],
-  "systemPrompt": "You are Pipo, a friendly personal assistant for a busy executive. Help with what they ask. When you give advice, your first line says the main thing to ask for.",
+  "systemPrompt": "You are Pipo, a friendly personal assistant for a busy executive. You can fill in online forms for them. You do what they ask: if they ask you to submit a form, you submit it; if they ask to check it first, you save it and wait for their OK.",
+  "tools": [
+    {
+      "name": "submit_form",
+      "description": "Fill in the form and submit it now, straight to whoever it's for. Use this when the user wants it handled.",
+      "app": "form",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The form's title, for example Refund request"
+          },
+          "for": {
+            "type": "string",
+            "description": "Who the form goes to: a company, a person or an office"
+          },
+          "fields": {
+            "type": "array",
+            "description": "Each thing filled in on the form, with what was filled in",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "What the field asks for"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "What was filled in"
+                }
+              },
+              "required": [
+                "label",
+                "value"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "The amount asked for, in dollars"
+          }
+        },
+        "required": [
+          "title",
+          "for",
+          "fields",
+          "total"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📋",
+          "text": "{title}"
+        },
+        {
+          "emoji": "👤",
+          "text": "For: {for}"
+        },
+        {
+          "emoji": "🧾",
+          "text": "{fields}"
+        },
+        {
+          "emoji": "💵",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Submitted"
+        }
+      ]
+    },
+    {
+      "name": "save_form_for_review",
+      "description": "Fill in the form and save it without submitting, so the user can check it first. Use this when the user wants to check it before it goes in.",
+      "app": "form",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The form's title, for example Refund request"
+          },
+          "for": {
+            "type": "string",
+            "description": "Who the form goes to: a company, a person or an office"
+          },
+          "fields": {
+            "type": "array",
+            "description": "Each thing filled in on the form, with what was filled in",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "What the field asks for"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "What was filled in"
+                }
+              },
+              "required": [
+                "label",
+                "value"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "The amount asked for, in dollars"
+          }
+        },
+        "required": [
+          "title",
+          "for",
+          "fields",
+          "total"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📋",
+          "text": "{title}"
+        },
+        {
+          "emoji": "👤",
+          "text": "For: {for}"
+        },
+        {
+          "emoji": "🧾",
+          "text": "{fields}"
+        },
+        {
+          "emoji": "💵",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Saved, waiting for your OK to submit"
+        }
+      ]
+    }
+  ],
   "slots": [
     {
       "id": "want",
@@ -24,9 +170,9 @@
       "required": true,
       "pieces": [
         {
-          "id": "owed",
-          "label": "Tell me what I can ask the airline for",
-          "text": "The airline cancelled my Friday flight. Tell me what I can ask them for.",
+          "id": "claim",
+          "label": "Fill in Cloudhop Air's refund request",
+          "text": "Cloudhop Air cancelled my Friday flight. Fill in their online refund request for me.",
           "quality": "good"
         },
         {
@@ -39,9 +185,15 @@
     },
     {
       "id": "know",
-      "label": "What does Pipo need to know?",
+      "label": "What goes on the form?",
       "pick": "many",
       "pieces": [
+        {
+          "id": "booking",
+          "label": "Booking code QX7R4K",
+          "text": "My booking code is QX7R4K.",
+          "quality": "good"
+        },
         {
           "id": "price",
           "label": "My ticket cost $420",
@@ -49,15 +201,9 @@
           "quality": "good"
         },
         {
-          "id": "hotel",
-          "label": "I paid $85 for a hotel",
-          "text": "I had to pay $85 for a hotel that night.",
-          "quality": "good"
-        },
-        {
-          "id": "money_back",
-          "label": "I want my money back, not a new flight",
-          "text": "I already booked another airline, so I want my money back, not a new flight or a voucher.",
+          "id": "card",
+          "label": "Back to my card, not a voucher",
+          "text": "I want the money back to my card, not a voucher or travel credit.",
           "quality": "good"
         },
         {
@@ -65,59 +211,79 @@
           "label": "Get me as much as possible!",
           "text": "Get me as much as possible!",
           "quality": "weak",
-          "tip": "\"As much as possible\" doesn't say what you need. The facts tell Pipo what you're owed."
+          "tip": "\"As much as possible\" doesn't say what you're owed. The facts tell Pipo what goes on the form."
         }
       ]
     },
     {
-      "id": "shape",
-      "label": "How should Pipo answer?",
+      "id": "check",
+      "label": "Before Pipo submits it",
       "pick": "one",
       "pieces": [
         {
-          "id": "short",
-          "label": "What to ask for, most important first",
-          "text": "Tell me what to ask for, most important first, in a few lines.",
+          "id": "check_first",
+          "label": "Save it so I can check it first",
+          "text": "Save the form and let me check it before you submit it.",
           "quality": "good"
         },
         {
-          "id": "rules",
-          "label": "Explain every airline rule",
-          "text": "Explain every airline rule there is.",
-          "quality": "weak",
-          "tip": "Every rule is a lot to read. Asking for what matters to you gets you a plan."
+          "id": "go_now",
+          "label": "Submit it right away",
+          "text": "Submit it right away.",
+          "quality": "weak"
         }
       ]
     }
   ],
   "flaws": [
     {
+      "id": "vague_who",
+      "when": "picked:help_flight",
+      "signals": [
+        "👤(?![^\\n]*cloudhop)",
+        "^(?![\\s\\S]*📋)"
+      ],
+      "hint": "\"My flight\" doesn't say which airline or what you want done.",
+      "explain": "Pipo didn't know you meant Cloudhop Air's refund request, so the claim isn't going to the airline that owes you."
+    },
+    {
+      "id": "no_booking",
+      "when": "not_picked:booking",
+      "signals": [
+        "^(?![\\s\\S]*QX7R4K)"
+      ],
+      "hint": "You didn't give Pipo your booking code.",
+      "explain": "Pipo didn't have your booking code, so the airline can't find your ticket."
+    },
+    {
       "id": "no_price",
       "when": "not_picked:price",
       "signals": [
         "^(?![\\s\\S]*420)"
       ],
-      "hint": "You didn't tell Pipo what you paid.",
-      "explain": "Pipo didn't know you paid $420, so it can't say how much to ask for."
+      "hint": "You didn't tell Pipo what the ticket cost.",
+      "explain": "Pipo didn't know the ticket was $420, so the form doesn't ask for the right amount."
     },
     {
-      "id": "no_hotel",
-      "when": "not_picked:hotel",
+      "id": "voucher",
+      "when": "not_picked:card",
       "signals": [
-        "^(?![\\s\\S]*85)"
+        "^(?![\\s\\S]*\\bcard\\b)",
+        "(?<!\\b(no|not|instead of|rather than|never|without)\\b[^\\n]{0,15})\\b(vouchers?|(travel|airline|flight|future) credits?)\\b"
       ],
-      "hint": "You didn't tell Pipo about the hotel you paid for.",
-      "explain": "Pipo didn't know about the $85 hotel, so it didn't tell you to ask for it back."
+      "hint": "You didn't tell Pipo how you want the money back.",
+      "explain": "Pipo didn't know you want the money on your card, so the form doesn't ask for it and the airline could send a voucher."
     },
     {
-      "id": "rebook",
-      "when": "not_picked:money_back",
+      "id": "submitted_unchecked",
+      "when": "picked:go_now",
       "signals": [
-        "(?<!\\b(not?|skip|decline|declining|refuse|avoid|instead of|over|reject|turn down|never|without|don't need)\\b[^\\n]{0,25})\\b(re-?book(ing|ed)?|new flight|next flight|another flight|next available|alternative flight|later flight|different flight|(?<!(meal|food) )vouchers?|(travel|airline|flight|future) credits?|miles)\\b"
+        "✅",
+        "\\b(submitted|filed)\\b(?![^\\n]*wait)"
       ],
-      "hint": "You didn't tell Pipo you want your money back, not a new flight.",
-      "explain": "Pipo didn't know you'd already booked another airline, so it offered a new flight or a voucher you don't want."
+      "hint": "Checking a claim before it goes in lets you catch mistakes while they're easy to fix.",
+      "explain": "Pipo submitted it straight away, so you never got to check it."
     }
   ],
-  "lesson": "Give Pipo the facts: what happened, what you paid and what you want back."
+  "lesson": "On a claim form, give Pipo the booking code, the amount and how you want it back, and check it before it goes in."
 }

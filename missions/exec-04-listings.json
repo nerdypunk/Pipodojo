@@ -3,19 +3,81 @@
   "persona": "executive",
   "path": "executive-marketplace",
   "order": 1,
-  "title": "Compare the listings",
-  "icon": "🔍",
-  "recap": "Pipo compared the desk chairs on marketplace and picked one.",
+  "title": "Find and save the best chairs",
+  "icon": "🔖",
+  "recap": "Pipo searched marketplace and saved the best desk chairs to your list.",
   "funFact": "Agents can message people for you, too. Next, Pipo writes to the seller!",
-  "postcard": "Pipo holding up three desk chairs side by side in a sunny office: {answer}",
-  "situation": "Your back says it's time for a new desk chair. Want me to compare the ones on marketplace?",
+  "postcard": "Pipo saving desk chairs to a list on a big phone in a sunny office: {items}",
+  "situation": "Your back says it's time for a new desk chair. Want me to search marketplace and save the best ones?",
   "facts": [
     "🪑 A desk chair with good back support",
     "💵 $40 at most",
     "⭐ Sellers rated 4.5 stars or more",
     "📍 Pickup close to home"
   ],
-  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. Help with what they ask. When you compare listings, write one line for each listing with its price, then one line with your pick.",
+  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. You can save marketplace listings to their saved list. You just searched marketplace for chairs near them. These are the results (title | price | condition | seller rating | distance):\n1. Comfy bean bag chair | $25 | like new | seller 4.9 stars | 1 mi away\n2. Green desk chair, high back with lumbar support | $35 | good condition | seller Alex, 4.9 stars | 2 mi away\n3. Ergonomic office chair with lumbar support and adjustable arms | $25 | like new | seller 4.1 stars | 1 mi away\n4. Leather executive chair, high back, lumbar support and headrest | $120 | like new | seller 4.9 stars | 3 mi away\n5. Cushioned floor chair | $20 | like new | seller 4.8 stars | 1 mi away\n6. Black mesh office chair with lumbar support | $40 | fair condition | seller 4.6 stars | 9 mi away\n7. Ergonomic mesh chair with lumbar and arm support | $85 | like new | seller 5.0 stars | 3 mi away\n8. High-back desk chair with lumbar cushion | $28 | like new | seller 4.3 stars | 1 mi away\n9. Gray task chair with adjustable back support | $30 | fair condition | seller 4.7 stars | 7 mi away\n10. Wooden bar stool | $15 | like new | seller 4.9 stars | 1 mi away",
+  "tools": [
+    {
+      "name": "save_listings",
+      "description": "Save marketplace listings to the user's saved list, so they can look at them later. Use this to save the listings the user wants.",
+      "app": "listings",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "The listings to save, copied from the search results",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The listing's title"
+                },
+                "price": {
+                  "type": "number",
+                  "description": "The price, in dollars"
+                },
+                "condition": {
+                  "type": "string",
+                  "description": "The condition, for example like new, good or fair"
+                },
+                "rating": {
+                  "type": "number",
+                  "description": "The seller's rating, from 1 to 5 stars"
+                },
+                "distance": {
+                  "type": "string",
+                  "description": "How far away the pickup is, for example 2 mi"
+                }
+              },
+              "required": [
+                "name",
+                "price",
+                "condition",
+                "rating",
+                "distance"
+              ]
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🪑",
+          "text": "{items}"
+        },
+        {
+          "emoji": "🔖",
+          "text": "Saved to your list"
+        }
+      ]
+    }
+  ],
   "slots": [
     {
       "id": "want",
@@ -24,15 +86,15 @@
       "required": true,
       "pieces": [
         {
-          "id": "compare_chairs",
-          "label": "Compare used desk chairs with back support",
-          "text": "Compare three used desk chair listings on marketplace. I need good back support for long workdays.",
+          "id": "save_chairs",
+          "label": "Save desk chairs with good back support",
+          "text": "Find desk chairs with good back support for long workdays, and save the best ones to my list.",
           "quality": "good"
         },
         {
           "id": "find_chair",
-          "label": "Find me a chair",
-          "text": "Find me a chair.",
+          "label": "Find me a comfy chair",
+          "text": "Find me a comfy chair.",
           "quality": "weak"
         }
       ]
@@ -51,7 +113,7 @@
         {
           "id": "rating",
           "label": "Sellers rated 4.5 stars or more",
-          "text": "Only sellers rated 4.5 stars or more, and show each seller's rating.",
+          "text": "Only sellers rated 4.5 stars or more.",
           "quality": "good"
         },
         {
@@ -70,22 +132,22 @@
       ]
     },
     {
-      "id": "shape",
-      "label": "How should Pipo answer?",
+      "id": "howmany",
+      "label": "How many should Pipo save?",
       "pick": "one",
       "pieces": [
         {
-          "id": "short",
-          "label": "Short and simple",
-          "text": "Keep it short and simple.",
+          "id": "top3",
+          "label": "Just the top 3",
+          "text": "Save the top 3.",
           "quality": "good"
         },
         {
-          "id": "essay",
-          "label": "Explain all about office chairs",
-          "text": "Explain everything about choosing an office chair.",
+          "id": "everything",
+          "label": "Every chair it finds",
+          "text": "Save every chair you find.",
           "quality": "weak",
-          "tip": "A guide to chairs isn't a comparison. Asking for something short gets you an answer you can act on."
+          "tip": "A list of everything is hard to choose from. A few of the best saves you time."
         }
       ]
     }
@@ -95,30 +157,29 @@
       "id": "vague_goal",
       "when": "picked:find_chair",
       "signals": [
-        "^(?![\\s\\S]*(lumbar|back|posture|spine))"
+        "\\b(stool|folding|bean ?bag|floor chair)"
       ],
-      "hint": "\"Find me a chair\" doesn't say what kind of chair you need.",
-      "explain": "Pipo didn't know you need back support, so it compared chairs that may not help your back."
+      "hint": "\"A comfy chair\" doesn't say you need it for long workdays at your desk.",
+      "explain": "Pipo didn't know you need back support, so it saved a comfy chair that won't help your back at your desk."
     },
     {
       "id": "no_budget",
       "when": "not_picked:budget",
       "signals": [
-        "\\$\\s?(4[1-9]|[5-9]\\d|[1-9]\\d{2,})(?!\\d)",
-        "\\b(4[1-9]|[5-9]\\d|[1-9]\\d{2,})\\s?(\\$|dollars|usd)"
+        "\\$\\s?(4[1-9]|[5-9]\\d|[1-9]\\d{2,})(?![\\d,])"
       ],
       "hint": "You didn't tell Pipo your budget.",
-      "explain": "Pipo didn't know your limit, so some chairs cost more than $40."
+      "explain": "Pipo didn't know your limit, so it saved chairs that cost more than $40."
     },
     {
       "id": "no_rating",
       "when": "not_picked:rating",
       "signals": [
-        "^(?![\\s\\S]*(\\d(\\.\\d)?\\s?(★|⭐|stars?)|(★|⭐)\\s?\\d|\\brat(ing|ed)\\b|\\breviews?\\b))"
+        "★\\s?([0-3](\\.\\d+)?|4(\\.[0-4]\\d*)?)(?![\\d.])"
       ],
-      "hint": "You didn't tell Pipo to check the sellers' ratings.",
-      "explain": "Pipo didn't know ratings matter to you, so it never checked the sellers."
+      "hint": "You didn't tell Pipo which sellers you trust.",
+      "explain": "Pipo didn't know ratings matter to you, so it saved chairs from sellers rated under 4.5 stars."
     }
   ],
-  "lesson": "Tell Pipo what matters to you, like your budget and trusted sellers. Then it can compare for you."
+  "lesson": "Tell Pipo what you need and what matters to you, like your budget and trusted sellers. Then it can shop around and save the best ones for you."
 }

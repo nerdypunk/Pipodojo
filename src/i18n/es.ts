@@ -204,6 +204,14 @@ export const es: Strings = {
       already: "✅ Ya se envió",
       alreadyNote: "Pipo lo envió antes de que pudieras revisarlo.",
     },
+    listings: {
+      ask: "Pipo eligió estos. ¿Los guardo en tu lista?",
+      button: "Guardar 🔖",
+      working: "Pipo los está guardando…",
+      approved: "🔖 ¡Guardados después de tu OK!",
+      already: "✅ Guardados en tu lista",
+      alreadyNote: "Pipo buscó en marketplace y los guardó por ti.",
+    },
     site: {
       askBuild: "Pipo hizo una vista previa. ¿La publico?",
       askFix: "Pipo tiene un arreglo listo. ¿Lo publico?",
@@ -276,6 +284,13 @@ export const es: Strings = {
     notSubmitted: "Guardado, sin enviar",
     noFields: "Nada llenado",
     stamp: "Enviado ✓",
+    marketplace: "Marketplace",
+    savedList: "Guardados",
+    notSavedYet: "Aún sin guardar",
+    listings: (n: number) => plural(n, "anuncio", "anuncios"),
+    listingsLabel: (n: number, saved: boolean) => `Lista de guardados en marketplace, ${plural(n, "anuncio", "anuncios")}${saved ? "" : ", esperando tu OK"}`,
+    noListings: "Aún no hay nada guardado",
+    sellerRating: (rating: string) => `Vendedor con ${rating} estrellas`,
   },
 
   laptop: {

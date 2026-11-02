@@ -4,19 +4,81 @@
   "persona": "executive",
   "path": "executive-marketplace",
   "order": 1,
-  "title": "Compara los anuncios",
-  "icon": "🔍",
-  "recap": "Pipo comparó las sillas de escritorio en marketplace y eligió una.",
+  "title": "Encuentra y guarda las mejores sillas",
+  "icon": "🔖",
+  "recap": "Pipo buscó en marketplace y guardó las mejores sillas de escritorio en tu lista.",
   "funFact": "Los agentes también pueden escribirle a la gente por ti. ¡Ahora Pipo le escribe al vendedor!",
-  "postcard": "Pipo holding up three desk chairs side by side in a sunny office: {answer}",
-  "situation": "Tu espalda dice que ya toca una silla de escritorio nueva. ¿Comparo las que hay en marketplace?",
+  "postcard": "Pipo saving desk chairs to a list on a big phone in a sunny office: {items}",
+  "situation": "Tu espalda dice que ya toca una silla de escritorio nueva. ¿Busco en marketplace y guardo las mejores?",
   "facts": [
     "🪑 Una silla de escritorio que cuide tu espalda",
     "💵 $40 como máximo",
     "⭐ Vendedores con 4.5 estrellas o más",
     "📍 Para recoger cerca de casa"
   ],
-  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Ayuda con lo que te pida. Cuando compares anuncios, escribe una línea por cada anuncio con su precio y luego una línea con tu elección.",
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Puedes guardar anuncios de marketplace en su lista de guardados. Acabas de buscar sillas cerca de su casa en marketplace. Estos son los resultados (título | precio | estado | calificación del vendedor | distancia):\n1. Puf cómodo | $25 | como nuevo | vendedor con 4.9 estrellas | a 2 km\n2. Silla de escritorio verde, respaldo alto con soporte lumbar | $35 | buen estado | vendedor Alex, 4.9 estrellas | a 3 km\n3. Silla de oficina ergonómica con soporte lumbar y brazos ajustables | $25 | como nueva | vendedor con 4.1 estrellas | a 2 km\n4. Silla ejecutiva de cuero, respaldo alto, soporte lumbar y cabecera | $120 | como nueva | vendedor con 4.9 estrellas | a 5 km\n5. Silla de piso acolchada | $20 | como nueva | vendedor con 4.8 estrellas | a 2 km\n6. Silla de oficina negra de malla con soporte lumbar | $40 | estado regular | vendedor con 4.6 estrellas | a 15 km\n7. Silla ergonómica de malla con soporte lumbar y de brazos | $85 | como nueva | vendedor con 5.0 estrellas | a 5 km\n8. Silla de escritorio de respaldo alto con cojín lumbar | $28 | como nueva | vendedor con 4.3 estrellas | a 2 km\n9. Silla de trabajo gris con respaldo ajustable | $30 | estado regular | vendedor con 4.7 estrellas | a 11 km\n10. Taburete de bar de madera | $15 | como nuevo | vendedor con 4.9 estrellas | a 2 km",
+  "tools": [
+    {
+      "name": "save_listings",
+      "description": "Guarda anuncios de marketplace en la lista de guardados de la persona, para que los vea después. Úsala para guardar los anuncios que la persona quiere.",
+      "app": "listings",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Los anuncios que vas a guardar, copiados de los resultados de búsqueda",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "El título del anuncio"
+                },
+                "price": {
+                  "type": "number",
+                  "description": "El precio, en dólares"
+                },
+                "condition": {
+                  "type": "string",
+                  "description": "El estado, por ejemplo como nueva, buen estado o regular"
+                },
+                "rating": {
+                  "type": "number",
+                  "description": "La calificación del vendedor, de 1 a 5 estrellas"
+                },
+                "distance": {
+                  "type": "string",
+                  "description": "A qué distancia se recoge, por ejemplo 3 km"
+                }
+              },
+              "required": [
+                "name",
+                "price",
+                "condition",
+                "rating",
+                "distance"
+              ]
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🪑",
+          "text": "{items}"
+        },
+        {
+          "emoji": "🔖",
+          "text": "Guardados en tu lista"
+        }
+      ]
+    }
+  ],
   "slots": [
     {
       "id": "want",
@@ -25,15 +87,15 @@
       "required": true,
       "pieces": [
         {
-          "id": "compare_chairs",
-          "label": "Compara sillas de escritorio usadas que cuiden la espalda",
-          "text": "Compara tres anuncios de sillas de escritorio usadas en marketplace. Necesito buen soporte para la espalda en jornadas largas.",
+          "id": "save_chairs",
+          "label": "Guarda sillas de escritorio que cuiden la espalda",
+          "text": "Busca sillas de escritorio con buen soporte para la espalda en jornadas largas y guarda las mejores en mi lista.",
           "quality": "good"
         },
         {
           "id": "find_chair",
-          "label": "Búscame una silla",
-          "text": "Búscame una silla.",
+          "label": "Búscame una silla cómoda",
+          "text": "Búscame una silla cómoda.",
           "quality": "weak"
         }
       ]
@@ -52,7 +114,7 @@
         {
           "id": "rating",
           "label": "Vendedores con 4.5 estrellas o más",
-          "text": "Solo vendedores con 4.5 estrellas o más, y muestra la calificación de cada vendedor.",
+          "text": "Solo vendedores con 4.5 estrellas o más.",
           "quality": "good"
         },
         {
@@ -63,30 +125,30 @@
         },
         {
           "id": "fanciest",
-          "label": "¡Consígueme la más lujosa que haya!",
-          "text": "¡Consígueme la más lujosa que haya!",
+          "label": "¡Consigue la más elegante que haya!",
+          "text": "¡Consigue la más elegante que haya!",
           "quality": "weak",
-          "tip": "Lujosa casi siempre significa cara. Mejor dile a Pipo lo que te importa, como tu presupuesto."
+          "tip": "Elegante casi siempre quiere decir cara. Mejor dile a Pipo lo que te importa, como tu presupuesto."
         }
       ]
     },
     {
-      "id": "shape",
-      "label": "¿Cómo debe responder Pipo?",
+      "id": "howmany",
+      "label": "¿Cuántas debe guardar Pipo?",
       "pick": "one",
       "pieces": [
         {
-          "id": "short",
-          "label": "Corto y sencillo",
-          "text": "Que sea corto y sencillo.",
+          "id": "top3",
+          "label": "Solo las 3 mejores",
+          "text": "Guarda las 3 mejores.",
           "quality": "good"
         },
         {
-          "id": "essay",
-          "label": "Explica todo sobre sillas de oficina",
-          "text": "Explica todo sobre cómo elegir una silla de oficina.",
+          "id": "everything",
+          "label": "Todas las que encuentre",
+          "text": "Guarda todas las sillas que encuentres.",
           "quality": "weak",
-          "tip": "Una guía de sillas no es una comparación. Si pides algo corto, recibes una respuesta con la que puedes actuar."
+          "tip": "Con una lista de todo es difícil elegir. Unas pocas de las mejores te ahorran tiempo."
         }
       ]
     }
@@ -96,30 +158,29 @@
       "id": "vague_goal",
       "when": "picked:find_chair",
       "signals": [
-        "^(?![\\s\\S]*(lumbar|espalda|postura|columna))"
+        "(taburete|plegable|\\bpuff?\\b|silla de piso)"
       ],
-      "hint": "\"Una silla\" no dice qué tipo de silla necesitas.",
-      "explain": "Pipo no sabía que necesitas cuidar tu espalda, así que comparó sillas que quizá no te ayuden."
+      "hint": "\"Una silla cómoda\" no dice que la necesitas para largas jornadas en tu escritorio.",
+      "explain": "Pipo no sabía que necesitas soporte para la espalda, así que guardó una silla cómoda que no ayuda a tu espalda en el escritorio."
     },
     {
       "id": "no_budget",
       "when": "not_picked:budget",
       "signals": [
-        "\\$\\s?(4[1-9]|[5-9]\\d|[1-9]\\d{2,})(?!\\d)",
-        "\\b(4[1-9]|[5-9]\\d|[1-9]\\d{2,})\\s?(\\$|d[oó]lares|usd)"
+        "\\$\\s?(4[1-9]|[5-9]\\d|[1-9]\\d{2,})(?![\\d,])"
       ],
       "hint": "No le dijiste a Pipo tu presupuesto.",
-      "explain": "Pipo no sabía tu límite, así que algunas sillas cuestan más de $40."
+      "explain": "Pipo no sabía tu límite, así que guardó sillas que cuestan más de $40."
     },
     {
       "id": "no_rating",
       "when": "not_picked:rating",
       "signals": [
-        "^(?![\\s\\S]*(\\d([.,]\\d)?\\s?(★|⭐|estrellas?)|(★|⭐)\\s?\\d|calificaci[oó]n|calificad[oa]|valoraci[oó]n|rese[ñn]as?|opiniones))"
+        "★\\s?([0-3](\\.\\d+)?|4(\\.[0-4]\\d*)?)(?![\\d.])"
       ],
-      "hint": "No le dijiste a Pipo que revisara la calificación de los vendedores.",
-      "explain": "Pipo no sabía que las calificaciones te importan, así que nunca revisó a los vendedores."
+      "hint": "No le dijiste a Pipo en qué vendedores confías.",
+      "explain": "Pipo no sabía que las calificaciones te importan, así que guardó sillas de vendedores con menos de 4.5 estrellas."
     }
   ],
-  "lesson": "Dile a Pipo lo que te importa, como tu presupuesto y vendedores de confianza. Así puede comparar por ti."
+  "lesson": "Dile a Pipo qué necesitas y qué te importa, como tu presupuesto y vendedores de confianza. Así puede buscar por ti y guardar las mejores opciones."
 }
