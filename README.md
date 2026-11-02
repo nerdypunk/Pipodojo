@@ -56,7 +56,7 @@ New ways to play are tried out in a separate Lab, opened by adding `#lab` to the
 
 ## English and Spanish
 
-The whole game plays in English or Latin American Spanish; the 🌐 button on the first screen and in town switches it, and a first visit follows the browser's language.
+The whole game plays in English or Latin American Spanish; the 🌐 button on the first screen and in town switches it, and a first visit follows the browser's main language (Spanish if it's Spanish, English otherwise).
 
 - Screen text lives in `src/i18n/en.ts` and `src/i18n/es.ts`. The Spanish file must match the English one entry for entry, or the build fails.
 - Each lesson in `/missions` has a Spanish twin in `/missions/es` with the same ids, pieces and scoring rules, only the words and the answer checks rewritten for Spanish. `tests/spanish.test.ts` keeps every twin in step, and a missing twin falls back to English.

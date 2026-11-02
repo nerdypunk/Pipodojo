@@ -18,8 +18,9 @@ export function initialLang(): Lang {
   } catch {
     // No storage: fall back to the browser's language.
   }
-  const langs = navigator.languages?.length ? navigator.languages : [navigator.language];
-  return langs.some((l) => l?.toLowerCase().startsWith("es")) ? "es" : "en";
+  // Only the browser's main language counts: Spanish gets Spanish; English, or anything else, gets English.
+  const main = navigator.languages?.[0] ?? navigator.language;
+  return main?.toLowerCase().startsWith("es") ? "es" : "en";
 }
 
 export function saveLang(lang: Lang) {
