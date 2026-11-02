@@ -21,7 +21,7 @@ export const HEADS: readonly { id: PipoHead; label: string; es: string; describe
 
 export const BODIES: readonly { id: PipoBody; label: string; es: string; describe: string }[] = [
   { id: "hover", label: "Hover", es: "Flotante", describe: "a small hovering body with a glowing core" },
-  { id: "wheels", label: "Wheels", es: "Rueda", describe: "a body that rolls on one big wheel" },
+  { id: "wheels", label: "Wheels", es: "Rueda", describe: "a body with one big wheel underneath, hovering off the ground" },
   { id: "rocket", label: "Rocket", es: "Cohete", describe: "a body with a little rocket flame underneath" },
 ];
 
@@ -44,11 +44,11 @@ export function paletteOf(color: PipoColor): Palette {
   return (COLORS.find((c) => c.id === color) ?? COLORS[0]!).palette;
 }
 
-/** Plain words for the image prompt, e.g. "a sleek, cool orange robot with a round glass-dome head, ...". */
+/** Plain words for the image prompt, e.g. "a cute, sleek orange robot with a round glass-dome head, ...". */
 export function describeLook(look: PipoLook): string {
   const head = HEADS.find((h) => h.id === look.head)?.describe ?? HEADS[0]!.describe;
   const body = BODIES.find((b) => b.id === look.body)?.describe ?? BODIES[0]!.describe;
-  return `a sleek, cool ${paletteOf(look.color).describe} robot named Pipo with ${head}, a dark glass visor with glowing LED eyes, and ${body}`;
+  return `a cute, sleek ${paletteOf(look.color).describe} robot named Pipo with ${head}, a dark glass visor with glowing LED eyes, and ${body}`;
 }
 
 /** Reads a stored look, falling back to the default for anything unknown. */
