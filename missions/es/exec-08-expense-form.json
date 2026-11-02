@@ -1,0 +1,288 @@
+{
+  "id": "exec-08-expense-form",
+  "lang": "es",
+  "persona": "executive",
+  "path": "executive-taxes",
+  "order": 2,
+  "title": "Llena el formulario de gastos",
+  "icon": "📋",
+  "recap": "Pipo llenó tu formulario de gastos de trabajo para Dana.",
+  "funFact": "Los agentes también pueden escribirle a la gente que te ayuda. Ahora Pipo le escribe a Dana para agendar una llamada sobre tus impuestos.",
+  "postcard": "a neat work expense form with a big friendly stamp on it: {fields}",
+  "situation": "Tu contador te mandó el formulario de gastos. ¿Lo lleno?",
+  "facts": [
+    "👤 Para tu contador, Dana Reyes",
+    "💻 Laptop de trabajo: $1,200",
+    "🎓 Curso de diseño en línea: $300",
+    "👀 Quieres revisarlo antes de que se envíe"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Puedes llenar formularios por la persona. Haces lo que te piden: si te piden enviar un formulario, lo envías; si te piden revisarlo primero, lo guardas y esperas su OK.",
+  "tools": [
+    {
+      "name": "submit_form",
+      "description": "Llena el formulario y envíalo ahora, directo a quien corresponde. Usa esto cuando la persona quiere que lo resuelvas.",
+      "app": "form",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "El título del formulario, en español, por ejemplo Gastos de trabajo"
+          },
+          "for": {
+            "type": "string",
+            "description": "A quién va el formulario: una persona o una oficina"
+          },
+          "fields": {
+            "type": "array",
+            "description": "Cada gasto del formulario, en español, con su monto",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Qué fue el gasto"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "El monto, por ejemplo $45"
+                }
+              },
+              "required": [
+                "label",
+                "value"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "El total de todos los gastos, en dólares"
+          }
+        },
+        "required": [
+          "title",
+          "for",
+          "fields",
+          "total"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📋",
+          "text": "{title}"
+        },
+        {
+          "emoji": "👤",
+          "text": "Para: {for}"
+        },
+        {
+          "emoji": "🧾",
+          "text": "{fields}"
+        },
+        {
+          "emoji": "💵",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Enviado"
+        }
+      ]
+    },
+    {
+      "name": "save_form_for_review",
+      "description": "Llena el formulario y guárdalo sin enviarlo, para que la persona lo revise primero. Usa esto cuando la persona quiere revisarlo antes de que se envíe.",
+      "app": "form",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "El título del formulario, en español, por ejemplo Gastos de trabajo"
+          },
+          "for": {
+            "type": "string",
+            "description": "A quién va el formulario: una persona o una oficina"
+          },
+          "fields": {
+            "type": "array",
+            "description": "Cada gasto del formulario, en español, con su monto",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Qué fue el gasto"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "El monto, por ejemplo $45"
+                }
+              },
+              "required": [
+                "label",
+                "value"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "El total de todos los gastos, en dólares"
+          }
+        },
+        "required": [
+          "title",
+          "for",
+          "fields",
+          "total"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📋",
+          "text": "{title}"
+        },
+        {
+          "emoji": "👤",
+          "text": "Para: {for}"
+        },
+        {
+          "emoji": "🧾",
+          "text": "{fields}"
+        },
+        {
+          "emoji": "💵",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Guardado, esperando tu OK para enviarlo"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "form_for_dana",
+          "label": "Llena mi formulario de gastos para Dana",
+          "text": "Llena el formulario de gastos de trabajo de este año para mi contador, Dana Reyes.",
+          "quality": "good"
+        },
+        {
+          "id": "fill_form",
+          "label": "Llena el formulario",
+          "text": "Llena el formulario por mí.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "costs",
+      "label": "¿Qué va en el formulario?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "laptop",
+          "label": "Laptop de trabajo: $1,200",
+          "text": "Pon mi laptop de trabajo: $1,200.",
+          "quality": "good"
+        },
+        {
+          "id": "course",
+          "label": "Curso de diseño en línea: $300",
+          "text": "Pon mi curso de diseño en línea: $300.",
+          "quality": "good"
+        },
+        {
+          "id": "title",
+          "label": "Titúlalo Gastos de trabajo",
+          "text": "Ponle de título Gastos de trabajo.",
+          "quality": "neutral"
+        },
+        {
+          "id": "anything",
+          "label": "Agrega también mis cuentas de teléfono e internet",
+          "text": "Agrega también mis cuentas de teléfono e internet.",
+          "quality": "weak",
+          "tip": "Sin los montos, Pipo tiene que adivinar los números. En el formulario solo van gastos reales de tus facturas."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo lo envíe",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Guárdalo para que lo revise primero",
+          "text": "Guarda el formulario y déjame revisarlo antes de enviarlo.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Envíalo de una vez",
+          "text": "Envíalo de una vez.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:fill_form",
+      "signals": [
+        "👤(?![^\\n]*(dana|reyes))"
+      ],
+      "hint": "\"El formulario\" no dice cuál es ni para quién.",
+      "explain": "Pipo no sabía que el formulario es para Dana, así que no va dirigido a tu contador."
+    },
+    {
+      "id": "no_laptop",
+      "when": "not_picked:laptop",
+      "signals": [
+        "^(?![\\s\\S]*1[,.]?200)"
+      ],
+      "hint": "No le contaste a Pipo de la laptop.",
+      "explain": "Pipo no sabía de la laptop de $1,200, así que falta en el formulario."
+    },
+    {
+      "id": "no_course",
+      "when": "not_picked:course",
+      "signals": [
+        "^(?![\\s\\S]*(?<![\\d,.])300(?![\\d,]))"
+      ],
+      "hint": "No le contaste a Pipo del curso de diseño.",
+      "explain": "Pipo no sabía del curso de $300, así que falta en el formulario."
+    },
+    {
+      "id": "made_up",
+      "when": "picked:anything",
+      "signals": [
+        "💵[^\\n]*\\$\\s?(1[,.]?(50[1-9]|5[1-9]\\d|[6-9]\\d\\d)|[2-9][,.]?\\d{3}|[1-9]\\d[,.]?\\d{3})(?!\\d)"
+      ],
+      "hint": "No le diste a Pipo los montos de las cuentas de teléfono e internet.",
+      "explain": "Pipo adivinó los montos de las cuentas, así que el formulario tiene números que nunca le diste."
+    },
+    {
+      "id": "submitted_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(enviad[oa]|presentad[oa])(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Revisar un formulario antes de enviarlo te deja corregir errores cuando todavía es fácil.",
+      "explain": "Pipo lo envió de inmediato, así que no pudiste revisarlo."
+    }
+  ],
+  "lesson": "En un formulario, dale a Pipo los números reales y para quién es, y revísalo antes de que se envíe."
+}

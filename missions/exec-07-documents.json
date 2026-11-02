@@ -1,0 +1,123 @@
+{
+  "id": "exec-07-documents",
+  "persona": "executive",
+  "path": "executive-taxes",
+  "order": 1,
+  "title": "List what you need",
+  "icon": "🗂️",
+  "recap": "Pipo made your checklist for this year's tax paperwork.",
+  "funFact": "Agents can fill in forms for you, but your name goes on them. Next, Pipo fills in your expense form, and you decide when it's submitted.",
+  "postcard": "a tidy desk with a neat stack of tax papers and a checklist: {answer}",
+  "situation": "Tax time is coming up! Want me to list what you need to gather?",
+  "facts": [
+    "💼 A salary job, plus freelance design work",
+    "💻 You bought a laptop for work",
+    "💝 You gave to a local charity",
+    "📋 You want a short checklist"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. Help with what they ask. Keep tax talk general, not tied to one country's rules.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "list_papers",
+          "label": "List the papers to gather for my taxes",
+          "text": "List the documents and receipts I need to gather for this year's tax paperwork.",
+          "quality": "good"
+        },
+        {
+          "id": "help_taxes",
+          "label": "Help me with my taxes",
+          "text": "Help me with my taxes.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "What does Pipo need to know?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "freelance",
+          "label": "A salary job, plus freelance design",
+          "text": "I have a salary job, and I also did freelance design work for clients.",
+          "quality": "good"
+        },
+        {
+          "id": "laptop",
+          "label": "I bought a laptop for work",
+          "text": "I bought a laptop for work this year.",
+          "quality": "good"
+        },
+        {
+          "id": "charity",
+          "label": "I gave to a local charity",
+          "text": "I gave money to a local charity.",
+          "quality": "neutral"
+        },
+        {
+          "id": "usual",
+          "label": "Just the usual stuff, you know",
+          "text": "Just the usual stuff, you know.",
+          "quality": "weak",
+          "tip": "Pipo doesn't know what's usual for you. Your jobs and big work purchases are what change the list."
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "label": "How should Pipo answer?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "checklist",
+          "label": "A short checklist",
+          "text": "Give me a short checklist, one item per line.",
+          "quality": "good"
+        },
+        {
+          "id": "explain_all",
+          "label": "Explain how taxes work",
+          "text": "Explain how taxes work too.",
+          "quality": "weak",
+          "tip": "A lesson on taxes is long. A checklist is something you can act on today."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:help_taxes",
+      "signals": [
+        "\\b(file|filing|submit|deadlines?|software|deduct\\w*|hire|calculate|estimate|separate\\w*|organi[sz]e\\w*|track\\w*|logs?|keep)\\b"
+      ],
+      "hint": "\"Help me with my taxes\" doesn't say you want a list of papers to gather.",
+      "explain": "Pipo didn't know you wanted a list of papers, so it gave general tax tips instead."
+    },
+    {
+      "id": "no_freelance",
+      "when": "not_picked:freelance",
+      "signals": [
+        "^(?![\\s\\S]*(freelanc|invoice|self-employ|side (job|work|gig|income)|1099))"
+      ],
+      "hint": "You didn't tell Pipo about your freelance work.",
+      "explain": "Pipo didn't know you freelance, so your invoices aren't on the list."
+    },
+    {
+      "id": "no_laptop",
+      "when": "not_picked:laptop",
+      "signals": [
+        "^(?![\\s\\S]*(laptop|computer))"
+      ],
+      "hint": "You didn't tell Pipo about the laptop you bought for work.",
+      "explain": "Pipo didn't know about the laptop, so its receipt isn't on the list."
+    }
+  ],
+  "lesson": "Pipo can only list what fits your life if you tell it what's in your life: your jobs and your big costs."
+}

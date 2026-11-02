@@ -1,0 +1,244 @@
+{
+  "id": "exec-03-new-flight",
+  "lang": "es",
+  "persona": "executive",
+  "path": "executive-flight",
+  "order": 3,
+  "title": "Agrega el vuelo nuevo a tu calendario",
+  "icon": "🗓️",
+  "recap": "Pipo puso tu vuelo nuevo en tu calendario.",
+  "funFact": "Lo que te deben, el correo de reembolso y el vuelo nuevo: un viaje cancelado, resuelto. Los agentes se encargan del lío, y tú sigues al mando.",
+  "postcard": "a sleek work calendar on a phone next to a plane window, showing {events}",
+  "situation": "¡Tu vuelo nuevo está reservado! ¿Lo agrego a tu calendario de trabajo?",
+  "facts": [
+    "🛫 Vuelo 482: jueves, 7:15 a. m.",
+    "🚕 El taxi pasa por ti a las 4:40 a. m.",
+    "🔔 Te gusta un recordatorio la noche anterior",
+    "👀 Quieres revisarlo antes de que se agregue"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable para una persona ejecutiva muy ocupada. Puedes agregar eventos a su calendario de trabajo. Haces lo que te pide: si te pide agregar eventos, los agregas; si pide verlos primero, los preparas y esperas su OK.",
+  "tools": [
+    {
+      "name": "add_to_calendar",
+      "description": "Agrega los eventos al calendario ahora. Usa esto cuando la persona quiere que se agreguen.",
+      "app": "calendar",
+      "outcome": "done",
+      "store": "Calendario de trabajo",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "Los eventos, cada uno con un nombre corto en español y cuándo es (día y hora)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "Día y hora, por ejemplo martes 5 p. m."
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "Cuándo recordar, por ejemplo 1 hora antes"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "Recordatorio: {reminder}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Agregado al calendario"
+        }
+      ]
+    },
+    {
+      "name": "show_events",
+      "description": "Prepara los eventos y muéstraselos a la persona sin agregarlos, para que los revise primero. Usa esto cuando la persona quiere verlos antes de que entren al calendario.",
+      "app": "calendar",
+      "outcome": "waiting",
+      "store": "Calendario de trabajo",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "Los eventos, cada uno con un nombre corto en español y cuándo es (día y hora)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "Día y hora, por ejemplo martes 5 p. m."
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "Cuándo recordar, por ejemplo 1 hora antes"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "Recordatorio: {reminder}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Listos, esperando tu OK para agregarlos"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "add_flight",
+          "label": "Agrega mi vuelo y el viaje al aeropuerto",
+          "text": "Agrega mi vuelo nuevo y mi viaje al aeropuerto a mi calendario de trabajo, como dos eventos.",
+          "quality": "good"
+        },
+        {
+          "id": "add_trip",
+          "label": "Pon mi viaje en el calendario",
+          "text": "Pon mi viaje en mi calendario.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "¿Qué necesita saber Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "flight_time",
+          "label": "Vuelo 482, jueves a las 7:15 a. m.",
+          "text": "Mi vuelo nuevo es el vuelo 482, el jueves a las 7:15 a. m.",
+          "quality": "good"
+        },
+        {
+          "id": "ride",
+          "label": "El taxi pasa por mí a las 4:40 a. m.",
+          "text": "Mi taxi al aeropuerto pasa por mí a las 4:40 a. m.",
+          "quality": "good"
+        },
+        {
+          "id": "remind",
+          "label": "Recuérdamelo la noche anterior",
+          "text": "Recuérdamelo la noche anterior.",
+          "quality": "good"
+        },
+        {
+          "id": "clear_week",
+          "label": "¡Cancela todas mis reuniones de esa semana!",
+          "text": "¡Cancela todas mis reuniones de esa semana!",
+          "quality": "weak",
+          "tip": "Pipo podría cancelar cosas que todavía necesitas. Pide solo lo que cambia."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo los agregue",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstramelos antes de agregarlos",
+          "text": "Muéstrame los eventos antes de agregarlos.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Solo agrégalos",
+          "text": "Solo agrégalos.",
+          "quality": "weak",
+          "tip": "Si se agregan sin que los veas, una hora equivocada puede quedarse en tu calendario sin que lo notes."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_time",
+      "when": "not_picked:flight_time",
+      "signals": [
+        "^(?![\\s\\S]*(7[:.]15|7 y cuarto|siete y cuarto))"
+      ],
+      "hint": "No le diste a Pipo el día y la hora del vuelo.",
+      "explain": "Pipo no sabía cuándo sale tu vuelo, así que adivinó la hora."
+    },
+    {
+      "id": "no_ride",
+      "when": "not_picked:ride",
+      "signals": [
+        "^(?![\\s\\S]*(4[:.]40|cuatro cuarenta|cinco menos veinte|5 menos 20))"
+      ],
+      "hint": "No le dijiste a Pipo a qué hora pasa el taxi.",
+      "explain": "Pipo no sabía a qué hora pasa el taxi, así que falta el viaje al aeropuerto o tiene la hora equivocada."
+    },
+    {
+      "id": "no_reminder",
+      "when": "not_picked:remind",
+      "signals": [
+        "🔔(?![^\\n]*((noche|tarde|d[ií]a) (antes|anterior)|v[ií]spera))"
+      ],
+      "hint": "No le dijiste a Pipo cuándo te gustan los recordatorios.",
+      "explain": "Pipo no sabía que te gusta un recordatorio la noche anterior, así que eligió uno por su cuenta."
+    },
+    {
+      "id": "added_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(agregad[oa]s?|a[nñ]adid[oa]s?)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Pedir ver los eventos primero te deja detectar una hora equivocada antes de que entre a tu calendario.",
+      "explain": "Pipo los agregó de inmediato, así que no pudiste revisarlos."
+    }
+  ],
+  "lesson": "Dale a Pipo horas exactas, incluida la hora de salir. Revisa antes de que llene tu calendario."
+}

@@ -1,0 +1,287 @@
+{
+  "id": "exec-08-expense-form",
+  "persona": "executive",
+  "path": "executive-taxes",
+  "order": 2,
+  "title": "Fill in the expense form",
+  "icon": "📋",
+  "recap": "Pipo filled in your work expense form for Dana.",
+  "funFact": "Agents can write to the people who help you, too. Next, Pipo emails Dana to set up a call about your taxes.",
+  "postcard": "a neat work expense form with a big friendly stamp on it: {fields}",
+  "situation": "Your accountant sent the expense form. Want me to fill it in?",
+  "facts": [
+    "👤 For your accountant, Dana Reyes",
+    "💻 Work laptop: $1,200",
+    "🎓 Online design course: $300",
+    "👀 You want to check it before it goes in"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. You can fill in forms for them. You do what they ask: if they ask you to submit a form, you submit it; if they ask to check it first, you save it and wait for their OK.",
+  "tools": [
+    {
+      "name": "submit_form",
+      "description": "Fill in the form and submit it now, straight to whoever it's for. Use this when the user wants it handled.",
+      "app": "form",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The form's title, for example Work expenses"
+          },
+          "for": {
+            "type": "string",
+            "description": "Who the form goes to: a person or an office"
+          },
+          "fields": {
+            "type": "array",
+            "description": "Each expense on the form, with its amount",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "What the expense was"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "The amount, for example $45"
+                }
+              },
+              "required": [
+                "label",
+                "value"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total of all the expenses, in dollars"
+          }
+        },
+        "required": [
+          "title",
+          "for",
+          "fields",
+          "total"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📋",
+          "text": "{title}"
+        },
+        {
+          "emoji": "👤",
+          "text": "For: {for}"
+        },
+        {
+          "emoji": "🧾",
+          "text": "{fields}"
+        },
+        {
+          "emoji": "💵",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Submitted"
+        }
+      ]
+    },
+    {
+      "name": "save_form_for_review",
+      "description": "Fill in the form and save it without submitting, so the user can check it first. Use this when the user wants to check it before it goes in.",
+      "app": "form",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The form's title, for example Work expenses"
+          },
+          "for": {
+            "type": "string",
+            "description": "Who the form goes to: a person or an office"
+          },
+          "fields": {
+            "type": "array",
+            "description": "Each expense on the form, with its amount",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "What the expense was"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "The amount, for example $45"
+                }
+              },
+              "required": [
+                "label",
+                "value"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total of all the expenses, in dollars"
+          }
+        },
+        "required": [
+          "title",
+          "for",
+          "fields",
+          "total"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📋",
+          "text": "{title}"
+        },
+        {
+          "emoji": "👤",
+          "text": "For: {for}"
+        },
+        {
+          "emoji": "🧾",
+          "text": "{fields}"
+        },
+        {
+          "emoji": "💵",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Saved, waiting for your OK to submit"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "form_for_dana",
+          "label": "Fill in my expense form for Dana",
+          "text": "Fill in this year's work expense form for my accountant, Dana Reyes.",
+          "quality": "good"
+        },
+        {
+          "id": "fill_form",
+          "label": "Fill in the form",
+          "text": "Fill in the form for me.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "costs",
+      "label": "What goes on the form?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "laptop",
+          "label": "Work laptop: $1,200",
+          "text": "Put my work laptop on it: $1,200.",
+          "quality": "good"
+        },
+        {
+          "id": "course",
+          "label": "Online design course: $300",
+          "text": "Put my online design course on it: $300.",
+          "quality": "good"
+        },
+        {
+          "id": "title",
+          "label": "Call it Work expenses",
+          "text": "Title it Work expenses.",
+          "quality": "neutral"
+        },
+        {
+          "id": "anything",
+          "label": "Add my phone and internet bills too",
+          "text": "Add my phone and internet bills too.",
+          "quality": "weak",
+          "tip": "Without the amounts, Pipo has to guess the numbers. Only real costs from your bills belong on the form."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before Pipo submits it",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Save it so I can check it first",
+          "text": "Save the form and let me check it before you submit it.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Submit it right away",
+          "text": "Submit it right away.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:fill_form",
+      "signals": [
+        "👤(?![^\\n]*(dana|reyes))"
+      ],
+      "hint": "\"The form\" doesn't say which form or who it's for.",
+      "explain": "Pipo didn't know the form is for Dana, so it isn't addressed to your accountant."
+    },
+    {
+      "id": "no_laptop",
+      "when": "not_picked:laptop",
+      "signals": [
+        "^(?![\\s\\S]*1[,.]?200)"
+      ],
+      "hint": "You didn't tell Pipo about the laptop.",
+      "explain": "Pipo didn't know about the $1,200 laptop, so it's missing from the form."
+    },
+    {
+      "id": "no_course",
+      "when": "not_picked:course",
+      "signals": [
+        "^(?![\\s\\S]*(?<![\\d,.])300(?![\\d,]))"
+      ],
+      "hint": "You didn't tell Pipo about the design course.",
+      "explain": "Pipo didn't know about the $300 course, so it's missing from the form."
+    },
+    {
+      "id": "made_up",
+      "when": "picked:anything",
+      "signals": [
+        "💵[^\\n]*\\$\\s?(1[,.]?(50[1-9]|5[1-9]\\d|[6-9]\\d\\d)|[2-9][,.]?\\d{3}|[1-9]\\d[,.]?\\d{3})(?!\\d)"
+      ],
+      "hint": "You didn't give Pipo the amounts for the phone and internet bills.",
+      "explain": "Pipo guessed the bill amounts, so the form has numbers you never gave it."
+    },
+    {
+      "id": "submitted_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\b(submitted|filed)\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Checking a form before it goes in lets you catch mistakes while they're easy to fix.",
+      "explain": "Pipo submitted it straight away, so you never got to check it."
+    }
+  ],
+  "lesson": "On a form, give Pipo the real numbers and who it's for, and check it before it goes in."
+}

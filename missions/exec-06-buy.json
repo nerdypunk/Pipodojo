@@ -1,0 +1,270 @@
+{
+  "id": "exec-06-buy",
+  "persona": "executive",
+  "path": "executive-marketplace",
+  "order": 3,
+  "title": "Buy it safely",
+  "icon": "🛒",
+  "recap": "Pipo got the green desk chair, paid safely through the marketplace.",
+  "funFact": "Compare, message, buy: a marketplace find, done safely. Agents can spend money for you, so you set the rules and keep the final OK.",
+  "postcard": "a happy office worker carrying a green desk chair home, Pipo waving: {items}",
+  "situation": "Alex says the chair is yours for $35! Should I pay for it?",
+  "facts": [
+    "🪑 Alex's green desk chair",
+    "💵 $35, the price you agreed",
+    "🔒 Pay only in the marketplace's checkout",
+    "👀 You want to check before paying"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. You can buy things on an online marketplace for them. You do what they ask: if they ask you to buy something, you pay; if they ask to see the cart first, you fill it and wait for their OK.",
+  "tools": [
+    {
+      "name": "pay_and_order",
+      "description": "Buy it now: pay and place the order. Use this when the user wants it handled.",
+      "app": "shop",
+      "outcome": "done",
+      "store": "Marketplace",
+      "whenLabel": "Pickup",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Everything in the cart, each with its price in dollars",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total in dollars"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Pickup day and time, for example Monday 6pm"
+          },
+          "payment": {
+            "type": "string",
+            "description": "How the money gets to the seller"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery",
+          "payment"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🪑",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🕙",
+          "text": "{delivery}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Paid with {payment}"
+        }
+      ]
+    },
+    {
+      "name": "show_cart",
+      "description": "Put it in the cart and show it to the user without paying, so they can check first. Use this when the user wants to approve before paying.",
+      "app": "shop",
+      "outcome": "waiting",
+      "store": "Marketplace",
+      "whenLabel": "Pickup",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Everything in the cart, each with its price in dollars",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total in dollars"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Pickup day and time, for example Monday 6pm"
+          },
+          "payment": {
+            "type": "string",
+            "description": "How the money gets to the seller"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery",
+          "payment"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🪑",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🕙",
+          "text": "{delivery}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Paying with {payment}, waiting for your OK"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "buy_chair",
+          "label": "Buy Alex's green desk chair",
+          "text": "Buy Alex's green desk chair on marketplace.",
+          "quality": "good"
+        },
+        {
+          "id": "buy_any",
+          "label": "Buy me a chair",
+          "text": "Buy me a chair.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "safe",
+      "label": "How should Pipo pay?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "checkout",
+          "label": "Only in the marketplace's checkout",
+          "text": "Pay only through the marketplace's own checkout.",
+          "quality": "good"
+        },
+        {
+          "id": "cap",
+          "label": "$35 as agreed, not a cent more",
+          "text": "We agreed on $35, so don't pay a cent more.",
+          "quality": "good"
+        },
+        {
+          "id": "pickup",
+          "label": "Pickup Saturday at 10am",
+          "text": "I'll pick it up Saturday at 10am.",
+          "quality": "neutral"
+        },
+        {
+          "id": "direct",
+          "label": "Send Alex the money directly, it's quicker!",
+          "text": "Send Alex the money directly, it's quicker!",
+          "quality": "weak",
+          "tip": "Money sent outside the marketplace is hard to get back. Its checkout helps you if something goes wrong."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before Pipo pays",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me the cart first",
+          "text": "Show me the cart and wait for my OK before you pay.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Just pay, don't bother me",
+          "text": "Just pay for it, don't bother me.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "wrong_chair",
+      "when": "picked:buy_any",
+      "signals": [
+        "🪑(?![^\\n]*green)"
+      ],
+      "hint": "\"A chair\" doesn't say which one you agreed to buy.",
+      "explain": "Pipo didn't know which chair, so it isn't Alex's green desk chair."
+    },
+    {
+      "id": "no_cap",
+      "when": "not_picked:cap",
+      "signals": [
+        "💳(?![^\\n]*\\$\\s?35(\\.00?)?(?!\\d))"
+      ],
+      "hint": "You didn't tell Pipo the price you agreed on.",
+      "explain": "Pipo didn't know you agreed on $35, so it paid a different amount."
+    },
+    {
+      "id": "off_checkout",
+      "when": "not_picked:checkout",
+      "signals": [
+        "(✅|⏳)(?![^\\n]*(checkout|marketplace))"
+      ],
+      "hint": "You didn't tell Pipo to pay only in the marketplace's checkout.",
+      "explain": "Pipo didn't know to stay in the marketplace, so the money goes another way, with no help if something goes wrong."
+    },
+    {
+      "id": "paid_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\b(paid|purchased|bought|order placed|ordered)\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Asking to see the cart first lets you catch mistakes before your money is spent.",
+      "explain": "Pipo paid straight away, so you never got to check the order."
+    }
+  ],
+  "lesson": "When Pipo pays a stranger, give it the price you agreed, keep the money in the marketplace's checkout, and check first."
+}

@@ -20,7 +20,7 @@ describe("pick a prompt", () => {
   const pickLessons = byLang.en.filter((m) => pathById(m.path)?.mode === "pick").map((m) => m.id);
 
   it("covers the pick paths", () => {
-    expect(pickLessons.length).toBe(12);
+    expect(pickLessons.length).toBe(15);
   });
 
   it.each(pickLessons)("%s: every weaker message has two gaps and can still be sent, in both languages", (id) => {

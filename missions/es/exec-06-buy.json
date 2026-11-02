@@ -1,0 +1,271 @@
+{
+  "id": "exec-06-buy",
+  "lang": "es",
+  "persona": "executive",
+  "path": "executive-marketplace",
+  "order": 3,
+  "title": "Cómprala de forma segura",
+  "icon": "🛒",
+  "recap": "Pipo consiguió la silla de escritorio verde y pagó de forma segura dentro del marketplace.",
+  "funFact": "Comparar, escribir, comprar: una compra en marketplace, hecha con cuidado. Los agentes pueden gastar dinero por ti, así que tú pones las reglas y das el último OK.",
+  "postcard": "a happy office worker carrying a green desk chair home, Pipo waving: {items}",
+  "situation": "¡Alex dice que la silla es tuya por $35! ¿La pago?",
+  "facts": [
+    "🪑 La silla de escritorio verde de Alex",
+    "💵 $35, el precio que acordaron",
+    "🔒 Paga solo con el pago del marketplace",
+    "👀 Quieres revisar antes de pagar"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Puedes comprar cosas en un marketplace en línea por esa persona. Haces lo que te pide: si te pide comprar algo, pagas; si te pide ver el carrito primero, lo llenas y esperas su OK.",
+  "tools": [
+    {
+      "name": "pay_and_order",
+      "description": "Cómpralo ahora: paga y haz el pedido. Usa esto cuando la persona quiere que lo resuelvas.",
+      "app": "shop",
+      "outcome": "done",
+      "store": "Marketplace",
+      "whenLabel": "Recoger",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Todo lo que hay en el carrito, cada cosa con su nombre en español y su precio en dólares",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total en dólares"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Día y hora para recogerlo, por ejemplo lunes 6 p. m."
+          },
+          "payment": {
+            "type": "string",
+            "description": "Cómo le llega el dinero al vendedor, en español"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery",
+          "payment"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🪑",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🕙",
+          "text": "{delivery}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Pagado con {payment}"
+        }
+      ]
+    },
+    {
+      "name": "show_cart",
+      "description": "Ponlo en el carrito y muéstraselo a la persona sin pagar, para que lo revise primero. Usa esto cuando la persona quiere aprobar antes de pagar.",
+      "app": "shop",
+      "outcome": "waiting",
+      "store": "Marketplace",
+      "whenLabel": "Recoger",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Todo lo que hay en el carrito, cada cosa con su nombre en español y su precio en dólares",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total en dólares"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Día y hora para recogerlo, por ejemplo lunes 6 p. m."
+          },
+          "payment": {
+            "type": "string",
+            "description": "Cómo le llega el dinero al vendedor, en español"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery",
+          "payment"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🪑",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🕙",
+          "text": "{delivery}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Pago con {payment}, esperando tu OK"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "buy_chair",
+          "label": "Compra la silla de escritorio verde de Alex",
+          "text": "Compra la silla de escritorio verde de Alex en marketplace.",
+          "quality": "good"
+        },
+        {
+          "id": "buy_any",
+          "label": "Cómprame una silla",
+          "text": "Cómprame una silla.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "safe",
+      "label": "¿Cómo debe pagar Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "checkout",
+          "label": "Solo con el pago del marketplace",
+          "text": "Paga solo con el sistema de pago del propio marketplace.",
+          "quality": "good"
+        },
+        {
+          "id": "cap",
+          "label": "$35 como acordamos, ni un centavo más",
+          "text": "Acordamos $35, así que no pagues ni un centavo más.",
+          "quality": "good"
+        },
+        {
+          "id": "pickup",
+          "label": "La recojo el sábado a las 10 a. m.",
+          "text": "La recojo el sábado a las 10 a. m.",
+          "quality": "neutral"
+        },
+        {
+          "id": "direct",
+          "label": "¡Mándale el dinero directo a Alex, es más rápido!",
+          "text": "¡Mándale el dinero directo a Alex, es más rápido!",
+          "quality": "weak",
+          "tip": "El dinero que mandas fuera del marketplace es difícil de recuperar. Su sistema de pago te ayuda si algo sale mal."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo pague",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstrame el carrito primero",
+          "text": "Muéstrame el carrito y espera mi OK antes de pagar.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Solo paga, no me molestes",
+          "text": "Solo págala, no me molestes.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "wrong_chair",
+      "when": "picked:buy_any",
+      "signals": [
+        "🪑(?![^\\n]*verde)"
+      ],
+      "hint": "\"Una silla\" no dice cuál acordaste comprar.",
+      "explain": "Pipo no sabía cuál silla, así que no es la silla de escritorio verde de Alex."
+    },
+    {
+      "id": "no_cap",
+      "when": "not_picked:cap",
+      "signals": [
+        "💳(?![^\\n]*\\$\\s?35([.,]00?)?(?!\\d))"
+      ],
+      "hint": "No le dijiste a Pipo el precio que acordaron.",
+      "explain": "Pipo no sabía que acordaron $35, así que pagó otra cantidad."
+    },
+    {
+      "id": "off_checkout",
+      "when": "not_picked:checkout",
+      "signals": [
+        "(✅|⏳)(?![^\\n]*(marketplace|checkout|plataforma))"
+      ],
+      "hint": "No le dijiste a Pipo que pagara solo con el pago del marketplace.",
+      "explain": "Pipo no sabía que debía quedarse en el marketplace, así que el dinero va por otro lado, sin ayuda si algo sale mal."
+    },
+    {
+      "id": "paid_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(pagad[oa]s?|comprad[oa]s?|pedido realizado)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Pedir ver el carrito primero te deja detectar errores antes de gastar tu dinero.",
+      "explain": "Pipo pagó de inmediato, así que no pudiste revisar el pedido."
+    }
+  ],
+  "lesson": "Cuando Pipo le paga a un desconocido, dale el precio acordado, mantén el dinero dentro del marketplace y revisa primero."
+}

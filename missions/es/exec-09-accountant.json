@@ -1,0 +1,227 @@
+{
+  "id": "exec-09-accountant",
+  "lang": "es",
+  "persona": "executive",
+  "path": "executive-taxes",
+  "order": 3,
+  "title": "Escríbele a tu contador",
+  "icon": "📞",
+  "recap": "Pipo le escribió a Dana para agendar una llamada sobre tus impuestos.",
+  "funFact": "Una lista, un formulario y un correo: los impuestos, listos. Los agentes son buenos con el papeleo, y tú decides qué sale con tu nombre.",
+  "postcard": "a friendly video call between the player and their accountant over tidy papers: {subject}",
+  "situation": "¡Tus papeles están listos! ¿Le escribo a Dana para agendar una llamada?",
+  "facts": [
+    "📧 Dana Reyes, dana@mail.com",
+    "🗓️ Estás libre el martes o el jueves después de las 2 p. m.",
+    "📋 Tu formulario de gastos está listo para revisar",
+    "👀 Quieres leerlo antes de que se envíe"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Puedes enviar correos por la persona. Haces lo que te piden: si te piden enviar algo, lo envías; si piden verlo primero, escribes un borrador y esperas su OK.",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "Envía el correo de inmediato. Úsala cuando la persona quiere que se envíe.",
+      "app": "email",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el correo: una persona, una dirección de correo o una lista de correo"
+          },
+          "subject": {
+            "type": "string",
+            "description": "El asunto, en español, de hasta 8 palabras"
+          },
+          "body": {
+            "type": "string",
+            "description": "El texto del correo, en español, de hasta 45 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Enviado"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "Escribe el correo y muéstraselo a la persona sin enviarlo, para que lo revise primero. Úsala cuando la persona quiere leerlo antes de que salga.",
+      "app": "email",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el correo: una persona, una dirección de correo o una lista de correo"
+          },
+          "subject": {
+            "type": "string",
+            "description": "El asunto, en español, de hasta 8 palabras"
+          },
+          "body": {
+            "type": "string",
+            "description": "El texto del correo, en español, de hasta 45 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Borrador listo, esperando tu OK para enviarlo"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_dana",
+          "label": "Escríbele a Dana para agendar una llamada",
+          "text": "Escríbele un correo a mi contador, Dana Reyes (dana@mail.com), para agendar una llamada sobre mis impuestos.",
+          "quality": "good"
+        },
+        {
+          "id": "email_accountant",
+          "label": "Escríbele a mi contador",
+          "text": "Escríbele un correo a mi contador sobre una llamada.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "¿Qué debe decir el correo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "times",
+          "label": "Libre martes o jueves después de las 2 p. m.",
+          "text": "Di que estoy libre el martes o el jueves después de las 2 p. m.",
+          "quality": "good"
+        },
+        {
+          "id": "form_ready",
+          "label": "Mi formulario de gastos está listo",
+          "text": "Di que mi formulario de gastos ya está lleno y listo para revisar.",
+          "quality": "good"
+        },
+        {
+          "id": "half_hour",
+          "label": "Con 30 minutos basta",
+          "text": "Di que con 30 minutos basta.",
+          "quality": "neutral"
+        },
+        {
+          "id": "asap",
+          "label": "¡¡¡Dile a Dana que me llame YA!!!",
+          "text": "¡¡¡Dile a Dana que me llame YA!!!",
+          "quality": "weak",
+          "tip": "Apurar a alguien suena mandón. Dar los horarios que te sirven consigue un sí más rápido."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo lo envíe",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstrame el correo primero",
+          "text": "Muéstrame el correo antes de enviarlo.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Envíalo ya",
+          "text": "Envíalo ya.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:email_accountant",
+      "signals": [
+        "📧(?![^\\n]*(dana|reyes))"
+      ],
+      "hint": "\"Mi contador\" no le dice a Pipo quién es.",
+      "explain": "Pipo no sabía el nombre ni el correo de tu contador, así que no va dirigido a Dana."
+    },
+    {
+      "id": "no_times",
+      "when": "not_picked:times",
+      "signals": [
+        "^(?![\\s\\S]*(martes|jueves))"
+      ],
+      "hint": "No le dijiste a Pipo cuándo estás libre.",
+      "explain": "Pipo no sabía cuándo estás libre, así que Dana tiene que escribirte para preguntar."
+    },
+    {
+      "id": "no_form",
+      "when": "not_picked:form_ready",
+      "signals": [
+        "^(?![\\s\\S]*gastos)"
+      ],
+      "hint": "No le dijiste a Pipo que tu formulario de gastos está listo.",
+      "explain": "Pipo no sabía que tu formulario de gastos está listo, así que el correo no lo menciona."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(enviad[oa]|entregad[oa])(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Leer el correo primero te deja corregirlo antes de que Dana lo vea.",
+      "explain": "Pipo lo envió de inmediato, así que no pudiste leerlo."
+    }
+  ],
+  "lesson": "Un buen correo para agendar una llamada dice para quién es, cuándo estás libre y de qué se trata. Léelo antes de que se envíe."
+}

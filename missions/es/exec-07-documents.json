@@ -1,0 +1,124 @@
+{
+  "id": "exec-07-documents",
+  "lang": "es",
+  "persona": "executive",
+  "path": "executive-taxes",
+  "order": 1,
+  "title": "Haz la lista de lo que necesitas",
+  "icon": "🗂️",
+  "recap": "Pipo hizo tu lista para el papeleo de impuestos de este año.",
+  "funFact": "Los agentes pueden llenar formularios por ti, pero llevan tu nombre. Ahora Pipo llena tu formulario de gastos, y tú decides cuándo se envía.",
+  "postcard": "a tidy desk with a neat stack of tax papers and a checklist: {answer}",
+  "situation": "¡Se acerca la temporada de impuestos! ¿Te hago la lista de lo que necesitas juntar?",
+  "facts": [
+    "💼 Un trabajo con sueldo, más diseño freelance",
+    "💻 Compraste una laptop para el trabajo",
+    "💝 Donaste a una organización benéfica local",
+    "📋 Quieres una lista corta"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Ayudas con lo que te piden. Habla de impuestos en general, sin atarte a las reglas de un solo país.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "list_papers",
+          "label": "Haz la lista de papeles para mis impuestos",
+          "text": "Haz la lista de los documentos y recibos que necesito juntar para el papeleo de impuestos de este año.",
+          "quality": "good"
+        },
+        {
+          "id": "help_taxes",
+          "label": "Ayúdame con mis impuestos",
+          "text": "Ayúdame con mis impuestos.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "¿Qué necesita saber Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "freelance",
+          "label": "Trabajo con sueldo, más diseño freelance",
+          "text": "Tengo un trabajo con sueldo y además hice trabajos de diseño freelance para clientes.",
+          "quality": "good"
+        },
+        {
+          "id": "laptop",
+          "label": "Compré una laptop para el trabajo",
+          "text": "Este año compré una laptop para el trabajo.",
+          "quality": "good"
+        },
+        {
+          "id": "charity",
+          "label": "Doné a una organización benéfica",
+          "text": "Doné dinero a una organización benéfica local.",
+          "quality": "neutral"
+        },
+        {
+          "id": "usual",
+          "label": "Lo de siempre, tú sabes",
+          "text": "Lo de siempre, tú sabes.",
+          "quality": "weak",
+          "tip": "Pipo no sabe qué es lo de siempre para ti. Tus trabajos y tus compras grandes para el trabajo son lo que cambia la lista."
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "label": "¿Cómo debe responder Pipo?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "checklist",
+          "label": "Una lista corta",
+          "text": "Dame una lista corta, una cosa por línea.",
+          "quality": "good"
+        },
+        {
+          "id": "explain_all",
+          "label": "Explícame cómo funcionan los impuestos",
+          "text": "Explícame también cómo funcionan los impuestos.",
+          "quality": "weak",
+          "tip": "Una clase sobre impuestos es larga. Una lista es algo que puedes hacer hoy mismo."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:help_taxes",
+      "signals": [
+        "(?<![a-záéíóúñü])(presenta\\w*|declarar|fecha l[ií]mite|plazos?|software|deduc\\w*|contrata\\w*|calcula\\w*|estima\\w*|separa\\w*|organiza\\w*|registra\\w*|guarda\\w*|conserva\\w*|consulta\\w*|lleva|bit[aá]coras?)(?![a-záéíóúñü])"
+      ],
+      "hint": "\"Ayúdame con mis impuestos\" no dice que quieres una lista de papeles para juntar.",
+      "explain": "Pipo no sabía que querías una lista de papeles, así que te dio consejos generales de impuestos."
+    },
+    {
+      "id": "no_freelance",
+      "when": "not_picked:freelance",
+      "signals": [
+        "^(?![\\s\\S]*(freelanc|emitidas|independiente|aut[oó]nom|por cuenta propia|honorarios|dise[ñn]o))"
+      ],
+      "hint": "No le contaste a Pipo de tu trabajo freelance.",
+      "explain": "Pipo no sabía que trabajas como freelance, así que tus facturas no están en la lista."
+    },
+    {
+      "id": "no_laptop",
+      "when": "not_picked:laptop",
+      "signals": [
+        "^(?![\\s\\S]*(laptop|computadora|port[aá]til|ordenador|compu))"
+      ],
+      "hint": "No le contaste a Pipo de la laptop que compraste para el trabajo.",
+      "explain": "Pipo no sabía de la laptop, así que su recibo no está en la lista."
+    }
+  ],
+  "lesson": "Pipo solo puede hacer una lista a tu medida si le cuentas lo que pasa en tu vida: tus trabajos y tus gastos grandes."
+}

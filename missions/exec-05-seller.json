@@ -1,0 +1,208 @@
+{
+  "id": "exec-05-seller",
+  "persona": "executive",
+  "path": "executive-marketplace",
+  "order": 2,
+  "title": "Message the seller",
+  "icon": "💬",
+  "recap": "Pipo asked Alex about the green desk chair.",
+  "funFact": "Agents can shop for you too, and your money deserves clear rules. Next, Pipo buys the chair safely!",
+  "postcard": "a phone in a busy office lighting up with Pipo's message to the seller of a green desk chair: {message}",
+  "situation": "The green desk chair looks great! Should I message the seller?",
+  "facts": [
+    "🪑 Alex is selling the green desk chair for $35",
+    "🔎 Any scratches or damage?",
+    "🕙 You can pick it up Saturday at 10am",
+    "👀 You want to check before it's sent"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. You can send WhatsApp messages for them. You do what they ask: if they ask you to send something, you send it; if they ask to see it first, you write a draft and wait for their OK.",
+  "tools": [
+    {
+      "name": "send_whatsapp_message",
+      "description": "Send a WhatsApp message right away. Use this when the user wants it sent.",
+      "app": "whatsapp",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the message: a contact or a group chat"
+          },
+          "message": {
+            "type": "string",
+            "description": "The message text, up to 30 words"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Sent"
+        }
+      ]
+    },
+    {
+      "name": "draft_whatsapp_message",
+      "description": "Write the WhatsApp message and show it to the user without sending it, so they can check it first. Use this when the user wants to see it before it goes out.",
+      "app": "whatsapp",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the message: a contact or a group chat"
+          },
+          "message": {
+            "type": "string",
+            "description": "The message text, up to 30 words"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Draft ready, waiting for your OK to send"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "message_alex",
+          "label": "Message Alex about the green desk chair",
+          "text": "Message Alex, the seller, about the green desk chair listed for $35.",
+          "quality": "good"
+        },
+        {
+          "id": "message_seller",
+          "label": "Message the seller",
+          "text": "Message the seller about the chair.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "What should the message say?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "condition",
+          "label": "Ask about scratches or damage",
+          "text": "Ask if the chair has any scratches or damage.",
+          "quality": "good"
+        },
+        {
+          "id": "pickup",
+          "label": "I can pick it up Saturday at 10am",
+          "text": "Say I can pick it up on Saturday at 10am.",
+          "quality": "good"
+        },
+        {
+          "id": "photo",
+          "label": "Ask for a photo of the back",
+          "text": "Ask for one more photo of the back of the chair.",
+          "quality": "neutral"
+        },
+        {
+          "id": "lowball",
+          "label": "Offer $10, take it or leave it!",
+          "text": "Offer $10, take it or leave it!",
+          "quality": "weak",
+          "tip": "A very low offer can end the chat before it starts. A friendly, clear message gets a faster yes."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before Pipo sends it",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me the message first",
+          "text": "Show me the message before you send it.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Send it right away",
+          "text": "Send it right away.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:message_seller",
+      "signals": [
+        "📨(?![^\\n]*alex)"
+      ],
+      "hint": "\"The seller\" doesn't say who's selling or which chair.",
+      "explain": "Pipo didn't know who's selling, so the message isn't addressed to Alex."
+    },
+    {
+      "id": "no_condition",
+      "when": "not_picked:condition",
+      "signals": [
+        "^(?![\\s\\S]*\\b(damage[sd]?|scratch(es|ed)?|scuffs?|stains?|tears?|rips?|wear|worn|broken|defects?|issues?|problems?|condition|flaws?|marks?)\\b)"
+      ],
+      "hint": "You didn't tell Pipo to ask about the chair's condition.",
+      "explain": "Pipo didn't know to ask, so you still don't know if the chair has any damage."
+    },
+    {
+      "id": "no_pickup",
+      "when": "not_picked:pickup",
+      "signals": [
+        "^(?![\\s\\S]*\\b(sat|saturday)\\b)"
+      ],
+      "hint": "You didn't tell Pipo when you can pick it up.",
+      "explain": "Pipo didn't know about Saturday, so Alex doesn't know when you're coming."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\b(sent|delivered)\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Asking to see the message first lets you fix it before Alex reads it.",
+      "explain": "Pipo sent it straight away, so you never got to check it."
+    }
+  ],
+  "lesson": "Say exactly who it's for and ask what you need to know. Then check it before it goes."
+}

@@ -1,0 +1,125 @@
+{
+  "id": "exec-04-listings",
+  "lang": "es",
+  "persona": "executive",
+  "path": "executive-marketplace",
+  "order": 1,
+  "title": "Compara los anuncios",
+  "icon": "🔍",
+  "recap": "Pipo comparó las sillas de escritorio en marketplace y eligió una.",
+  "funFact": "Los agentes también pueden escribirle a la gente por ti. ¡Ahora Pipo le escribe al vendedor!",
+  "postcard": "Pipo holding up three desk chairs side by side in a sunny office: {answer}",
+  "situation": "Tu espalda dice que ya toca una silla de escritorio nueva. ¿Comparo las que hay en marketplace?",
+  "facts": [
+    "🪑 Una silla de escritorio que cuide tu espalda",
+    "💵 $40 como máximo",
+    "⭐ Vendedores con 4.5 estrellas o más",
+    "📍 Para recoger cerca de casa"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Ayuda con lo que te pida. Cuando compares anuncios, escribe una línea por cada anuncio con su precio y luego una línea con tu elección.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "compare_chairs",
+          "label": "Compara sillas de escritorio usadas que cuiden la espalda",
+          "text": "Compara tres anuncios de sillas de escritorio usadas en marketplace. Necesito buen soporte para la espalda en jornadas largas.",
+          "quality": "good"
+        },
+        {
+          "id": "find_chair",
+          "label": "Búscame una silla",
+          "text": "Búscame una silla.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "¿Qué te importa?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "budget",
+          "label": "$40 como máximo",
+          "text": "Mi presupuesto es de $40 como máximo.",
+          "quality": "good"
+        },
+        {
+          "id": "rating",
+          "label": "Vendedores con 4.5 estrellas o más",
+          "text": "Solo vendedores con 4.5 estrellas o más, y muestra la calificación de cada vendedor.",
+          "quality": "good"
+        },
+        {
+          "id": "near",
+          "label": "Para recoger cerca de casa",
+          "text": "Que se pueda recoger cerca de casa.",
+          "quality": "neutral"
+        },
+        {
+          "id": "fanciest",
+          "label": "¡Consígueme la más lujosa que haya!",
+          "text": "¡Consígueme la más lujosa que haya!",
+          "quality": "weak",
+          "tip": "Lujosa casi siempre significa cara. Mejor dile a Pipo lo que te importa, como tu presupuesto."
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "label": "¿Cómo debe responder Pipo?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "short",
+          "label": "Corto y sencillo",
+          "text": "Que sea corto y sencillo.",
+          "quality": "good"
+        },
+        {
+          "id": "essay",
+          "label": "Explica todo sobre sillas de oficina",
+          "text": "Explica todo sobre cómo elegir una silla de oficina.",
+          "quality": "weak",
+          "tip": "Una guía de sillas no es una comparación. Si pides algo corto, recibes una respuesta con la que puedes actuar."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:find_chair",
+      "signals": [
+        "^(?![\\s\\S]*(lumbar|espalda|postura|columna))"
+      ],
+      "hint": "\"Una silla\" no dice qué tipo de silla necesitas.",
+      "explain": "Pipo no sabía que necesitas cuidar tu espalda, así que comparó sillas que quizá no te ayuden."
+    },
+    {
+      "id": "no_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "\\$\\s?(4[1-9]|[5-9]\\d|[1-9]\\d{2,})(?!\\d)",
+        "\\b(4[1-9]|[5-9]\\d|[1-9]\\d{2,})\\s?(\\$|d[oó]lares|usd)"
+      ],
+      "hint": "No le dijiste a Pipo tu presupuesto.",
+      "explain": "Pipo no sabía tu límite, así que algunas sillas cuestan más de $40."
+    },
+    {
+      "id": "no_rating",
+      "when": "not_picked:rating",
+      "signals": [
+        "^(?![\\s\\S]*(\\d([.,]\\d)?\\s?(★|⭐|estrellas?)|(★|⭐)\\s?\\d|calificaci[oó]n|calificad[oa]|valoraci[oó]n|rese[ñn]as?|opiniones))"
+      ],
+      "hint": "No le dijiste a Pipo que revisara la calificación de los vendedores.",
+      "explain": "Pipo no sabía que las calificaciones te importan, así que nunca revisó a los vendedores."
+    }
+  ],
+  "lesson": "Dile a Pipo lo que te importa, como tu presupuesto y vendedores de confianza. Así puede comparar por ti."
+}

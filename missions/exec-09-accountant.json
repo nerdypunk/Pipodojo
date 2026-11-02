@@ -1,0 +1,226 @@
+{
+  "id": "exec-09-accountant",
+  "persona": "executive",
+  "path": "executive-taxes",
+  "order": 3,
+  "title": "Email your accountant",
+  "icon": "📞",
+  "recap": "Pipo emailed Dana to set up a call about your taxes.",
+  "funFact": "A checklist, a form and an email: tax time sorted. Agents are great with paperwork, and you stay in charge of what goes out with your name on it.",
+  "postcard": "a friendly video call between the player and their accountant over tidy papers: {subject}",
+  "situation": "Your papers are ready! Should I email Dana to set up a call?",
+  "facts": [
+    "📧 Dana Reyes, dana@mail.com",
+    "🗓️ You're free Tuesday or Thursday after 2pm",
+    "📋 Your expense form is ready to look at",
+    "👀 You want to read it before it goes"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. You can send emails for them. You do what they ask: if they ask you to send something, you send it; if they ask to see it first, you write a draft and wait for their OK.",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "Send the email right away. Use this when the user wants it sent.",
+      "app": "email",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the email: a person, an email address or a mailing list"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The subject line, up to 8 words"
+          },
+          "body": {
+            "type": "string",
+            "description": "The email text, up to 45 words"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Sent"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "Write the email and show it to the user without sending it, so they can check it first. Use this when the user wants to read it before it goes out.",
+      "app": "email",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Who gets the email: a person, an email address or a mailing list"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The subject line, up to 8 words"
+          },
+          "body": {
+            "type": "string",
+            "description": "The email text, up to 45 words"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "To: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Draft ready, waiting for your OK to send"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_dana",
+          "label": "Email Dana to set up a call",
+          "text": "Email my accountant, Dana Reyes (dana@mail.com), to set up a call about my taxes.",
+          "quality": "good"
+        },
+        {
+          "id": "email_accountant",
+          "label": "Email my accountant",
+          "text": "Email my accountant about a call.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "What should the email say?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "times",
+          "label": "Free Tuesday or Thursday after 2pm",
+          "text": "Say I'm free Tuesday or Thursday after 2pm.",
+          "quality": "good"
+        },
+        {
+          "id": "form_ready",
+          "label": "My expense form is ready",
+          "text": "Say my expense form is filled in and ready to look at.",
+          "quality": "good"
+        },
+        {
+          "id": "half_hour",
+          "label": "30 minutes should be enough",
+          "text": "Say 30 minutes should be enough.",
+          "quality": "neutral"
+        },
+        {
+          "id": "asap",
+          "label": "Tell Dana to call me ASAP!!!",
+          "text": "Tell Dana to call me ASAP!!!",
+          "quality": "weak",
+          "tip": "Rushing someone sounds bossy. Giving the times that work for you gets a quicker yes."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Before Pipo sends it",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Show me the email first",
+          "text": "Show me the email before you send it.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Send it now",
+          "text": "Send it now.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:email_accountant",
+      "signals": [
+        "📧(?![^\\n]*(dana|reyes))"
+      ],
+      "hint": "\"My accountant\" doesn't tell Pipo who that is.",
+      "explain": "Pipo didn't know your accountant's name or email, so it isn't addressed to Dana."
+    },
+    {
+      "id": "no_times",
+      "when": "not_picked:times",
+      "signals": [
+        "^(?![\\s\\S]*\\b(tue|thu))"
+      ],
+      "hint": "You didn't tell Pipo when you're free.",
+      "explain": "Pipo didn't know when you're free, so Dana has to write back to ask."
+    },
+    {
+      "id": "no_form",
+      "when": "not_picked:form_ready",
+      "signals": [
+        "^(?![\\s\\S]*expense)"
+      ],
+      "hint": "You didn't tell Pipo your expense form is ready.",
+      "explain": "Pipo didn't know your expense form is ready, so the email doesn't mention it."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "\\b(sent|delivered)\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Reading the email first lets you fix it before Dana sees it.",
+      "explain": "Pipo sent it straight away, so you never got to read it."
+    }
+  ],
+  "lesson": "A good email to set up a call says who it's for, when you're free and what it's about. Read it before it goes."
+}

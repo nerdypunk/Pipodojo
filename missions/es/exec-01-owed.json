@@ -1,0 +1,124 @@
+{
+  "id": "exec-01-owed",
+  "lang": "es",
+  "persona": "executive",
+  "path": "executive-flight",
+  "order": 1,
+  "title": "Averigua qué te deben",
+  "icon": "🔎",
+  "recap": "Pipo averiguó qué le puedes pedir a la aerolínea.",
+  "funFact": "Los agentes también pueden escribirles a las empresas por ti. ¡Ahora Pipo le escribe a la aerolínea para pedir tu reembolso!",
+  "postcard": "a busy executive at the airport smiling at good news on their phone: {answer}",
+  "situation": "Ay no, te cancelaron el vuelo del viernes. ¿Quieres que averigüe qué puedes pedir?",
+  "facts": [
+    "❌ La aerolínea canceló tu vuelo del viernes",
+    "💵 Tu boleto costó $420",
+    "🏨 Pagaste $85 de hotel esa noche",
+    "💳 Reservaste con otra aerolínea, así que quieres tu dinero de vuelta"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable para una persona ejecutiva muy ocupada. Ayuda con lo que te pidan. Cuando des un consejo, tu primera línea dice lo principal que hay que pedir.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "owed",
+          "label": "Dime qué le puedo pedir a la aerolínea",
+          "text": "La aerolínea canceló mi vuelo del viernes. Dime qué les puedo pedir.",
+          "quality": "good"
+        },
+        {
+          "id": "help_flight",
+          "label": "Ayúdame con mi vuelo",
+          "text": "Ayúdame con mi vuelo.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "¿Qué necesita saber Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "price",
+          "label": "Mi boleto costó $420",
+          "text": "Mi boleto costó $420.",
+          "quality": "good"
+        },
+        {
+          "id": "hotel",
+          "label": "Pagué $85 de hotel",
+          "text": "Tuve que pagar $85 de hotel esa noche.",
+          "quality": "good"
+        },
+        {
+          "id": "money_back",
+          "label": "Quiero mi dinero de vuelta, no otro vuelo",
+          "text": "Ya reservé con otra aerolínea, así que quiero mi dinero de vuelta, no otro vuelo ni un cupón.",
+          "quality": "good"
+        },
+        {
+          "id": "everything",
+          "label": "¡Consígueme todo lo que se pueda!",
+          "text": "¡Consígueme todo lo que se pueda!",
+          "quality": "weak",
+          "tip": "\"Todo lo que se pueda\" no dice qué necesitas. Los datos le dicen a Pipo qué te deben."
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "label": "¿Cómo debe responder Pipo?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "short",
+          "label": "Qué pedir, lo más importante primero",
+          "text": "Dime qué pedir, lo más importante primero, en pocas líneas.",
+          "quality": "good"
+        },
+        {
+          "id": "rules",
+          "label": "Explícame todas las reglas de las aerolíneas",
+          "text": "Explícame todas las reglas de las aerolíneas.",
+          "quality": "weak",
+          "tip": "Todas las reglas son mucho para leer. Si pides lo que te importa, recibes un plan."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_price",
+      "when": "not_picked:price",
+      "signals": [
+        "^(?![\\s\\S]*420)"
+      ],
+      "hint": "No le dijiste a Pipo cuánto pagaste.",
+      "explain": "Pipo no sabía que pagaste $420, así que no puede decir cuánto pedir."
+    },
+    {
+      "id": "no_hotel",
+      "when": "not_picked:hotel",
+      "signals": [
+        "^(?![\\s\\S]*85)"
+      ],
+      "hint": "No le dijiste a Pipo del hotel que pagaste.",
+      "explain": "Pipo no sabía de los $85 de hotel, así que no te dijo que los pidas de vuelta."
+    },
+    {
+      "id": "rebook",
+      "when": "not_picked:money_back",
+      "signals": [
+        "(?<!(?<![a-záéíóúñü])(no|ni|sin|evita|rechaza|rechazar|recházal[oa]s?|nada de|en vez de|en lugar de|nunca|no necesitas)(?![a-záéíóúñü])[^\\n]{0,25})(reprogram|reubic|reasign|reacomod|(?<![a-záéíóúñü])(nuevo|otro|pr[oó]ximo|siguiente|alternativo)s? vuelos?(?![a-záéíóúñü])|vuelos? (nuevo|alternativo|siguiente)s?|cambio de vuelo|(?<![a-záéíóúñü])(cup[oó]n(es)?(?! (de|para) comida)|vouchers?(?! de comida)|bonos?|millas|cr[eé]ditos? (de viaje|a favor|para|futuro)))"
+      ],
+      "hint": "No le dijiste a Pipo que quieres tu dinero de vuelta, no otro vuelo.",
+      "explain": "Pipo no sabía que ya reservaste con otra aerolínea, así que te ofreció otro vuelo o un cupón que no quieres."
+    }
+  ],
+  "lesson": "Dale a Pipo los datos: qué pasó, cuánto pagaste y qué quieres de vuelta."
+}

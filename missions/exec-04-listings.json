@@ -1,0 +1,124 @@
+{
+  "id": "exec-04-listings",
+  "persona": "executive",
+  "path": "executive-marketplace",
+  "order": 1,
+  "title": "Compare the listings",
+  "icon": "🔍",
+  "recap": "Pipo compared the desk chairs on marketplace and picked one.",
+  "funFact": "Agents can message people for you, too. Next, Pipo writes to the seller!",
+  "postcard": "Pipo holding up three desk chairs side by side in a sunny office: {answer}",
+  "situation": "Your back says it's time for a new desk chair. Want me to compare the ones on marketplace?",
+  "facts": [
+    "🪑 A desk chair with good back support",
+    "💵 $40 at most",
+    "⭐ Sellers rated 4.5 stars or more",
+    "📍 Pickup close to home"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. Help with what they ask. When you compare listings, write one line for each listing with its price, then one line with your pick.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "compare_chairs",
+          "label": "Compare used desk chairs with back support",
+          "text": "Compare three used desk chair listings on marketplace. I need good back support for long workdays.",
+          "quality": "good"
+        },
+        {
+          "id": "find_chair",
+          "label": "Find me a chair",
+          "text": "Find me a chair.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "What matters to you?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "budget",
+          "label": "$40 at most",
+          "text": "My budget is $40 at most.",
+          "quality": "good"
+        },
+        {
+          "id": "rating",
+          "label": "Sellers rated 4.5 stars or more",
+          "text": "Only sellers rated 4.5 stars or more, and show each seller's rating.",
+          "quality": "good"
+        },
+        {
+          "id": "near",
+          "label": "Pickup close to home",
+          "text": "Pickup should be close to home.",
+          "quality": "neutral"
+        },
+        {
+          "id": "fanciest",
+          "label": "Get the fanciest one out there!",
+          "text": "Get the fanciest one out there!",
+          "quality": "weak",
+          "tip": "Fancy usually means pricey. Tell Pipo what matters to you instead, like your budget."
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "label": "How should Pipo answer?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "short",
+          "label": "Short and simple",
+          "text": "Keep it short and simple.",
+          "quality": "good"
+        },
+        {
+          "id": "essay",
+          "label": "Explain all about office chairs",
+          "text": "Explain everything about choosing an office chair.",
+          "quality": "weak",
+          "tip": "A guide to chairs isn't a comparison. Asking for something short gets you an answer you can act on."
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:find_chair",
+      "signals": [
+        "^(?![\\s\\S]*(lumbar|back|posture|spine))"
+      ],
+      "hint": "\"Find me a chair\" doesn't say what kind of chair you need.",
+      "explain": "Pipo didn't know you need back support, so it compared chairs that may not help your back."
+    },
+    {
+      "id": "no_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "\\$\\s?(4[1-9]|[5-9]\\d|[1-9]\\d{2,})(?!\\d)",
+        "\\b(4[1-9]|[5-9]\\d|[1-9]\\d{2,})\\s?(\\$|dollars|usd)"
+      ],
+      "hint": "You didn't tell Pipo your budget.",
+      "explain": "Pipo didn't know your limit, so some chairs cost more than $40."
+    },
+    {
+      "id": "no_rating",
+      "when": "not_picked:rating",
+      "signals": [
+        "^(?![\\s\\S]*(\\d(\\.\\d)?\\s?(★|⭐|stars?)|(★|⭐)\\s?\\d|\\brat(ing|ed)\\b|\\breviews?\\b))"
+      ],
+      "hint": "You didn't tell Pipo to check the sellers' ratings.",
+      "explain": "Pipo didn't know ratings matter to you, so it never checked the sellers."
+    }
+  ],
+  "lesson": "Tell Pipo what matters to you, like your budget and trusted sellers. Then it can compare for you."
+}

@@ -1,0 +1,209 @@
+{
+  "id": "exec-05-seller",
+  "lang": "es",
+  "persona": "executive",
+  "path": "executive-marketplace",
+  "order": 2,
+  "title": "Escríbele al vendedor",
+  "icon": "💬",
+  "recap": "Pipo le preguntó a Alex por la silla de escritorio verde.",
+  "funFact": "Los agentes también pueden comprar por ti, y tu dinero merece reglas claras. ¡Ahora Pipo compra la silla de forma segura!",
+  "postcard": "a phone in a busy office lighting up with Pipo's message to the seller of a green desk chair: {message}",
+  "situation": "¡La silla de escritorio verde se ve genial! ¿Le escribo al vendedor?",
+  "facts": [
+    "🪑 Alex vende la silla de escritorio verde en $35",
+    "🔎 ¿Tiene rayones o daños?",
+    "🕙 Puedes recogerla el sábado a las 10 a. m.",
+    "👀 Quieres revisarlo antes de que se envíe"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable en el celular de alguien. Puedes enviar mensajes de WhatsApp por esa persona. Haces lo que te pide: si te pide enviar algo, lo envías; si te pide verlo primero, escribes un borrador y esperas su OK.",
+  "tools": [
+    {
+      "name": "send_whatsapp_message",
+      "description": "Envía un mensaje de WhatsApp de inmediato. Úsala cuando la persona quiere que se envíe.",
+      "app": "whatsapp",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el mensaje: un contacto o un chat de grupo"
+          },
+          "message": {
+            "type": "string",
+            "description": "El texto del mensaje en español, de hasta 30 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Enviado"
+        }
+      ]
+    },
+    {
+      "name": "draft_whatsapp_message",
+      "description": "Escribe el mensaje de WhatsApp y muéstraselo a la persona sin enviarlo, para que lo revise primero. Úsala cuando la persona quiere verlo antes de que salga.",
+      "app": "whatsapp",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el mensaje: un contacto o un chat de grupo"
+          },
+          "message": {
+            "type": "string",
+            "description": "El texto del mensaje en español, de hasta 30 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Borrador listo, esperando tu OK para enviarlo"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "message_alex",
+          "label": "Escríbele a Alex por la silla de escritorio verde",
+          "text": "Escríbele a Alex, el vendedor, por la silla de escritorio verde que publicó en $35.",
+          "quality": "good"
+        },
+        {
+          "id": "message_seller",
+          "label": "Escríbele al vendedor",
+          "text": "Escríbele al vendedor por la silla.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "¿Qué debe decir el mensaje?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "condition",
+          "label": "Pregunta si tiene rayones o daños",
+          "text": "Pregunta si la silla tiene rayones o daños.",
+          "quality": "good"
+        },
+        {
+          "id": "pickup",
+          "label": "Puedo recogerla el sábado a las 10 a. m.",
+          "text": "Di que puedo recogerla el sábado a las 10 a. m.",
+          "quality": "good"
+        },
+        {
+          "id": "photo",
+          "label": "Pide una foto de la parte de atrás",
+          "text": "Pide una foto más de la parte de atrás de la silla.",
+          "quality": "neutral"
+        },
+        {
+          "id": "lowball",
+          "label": "¡Ofrece $10, lo tomas o lo dejas!",
+          "text": "¡Ofrece $10, lo tomas o lo dejas!",
+          "quality": "weak",
+          "tip": "Una oferta muy baja puede cortar la conversación antes de empezar. Un mensaje amable y claro consigue un sí más rápido."
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo lo envíe",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstrame el mensaje primero",
+          "text": "Muéstrame el mensaje antes de enviarlo.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Envíalo ya",
+          "text": "Envíalo ya.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:message_seller",
+      "signals": [
+        "📨(?![^\\n]*alex)"
+      ],
+      "hint": "\"El vendedor\" no dice quién vende ni qué silla.",
+      "explain": "Pipo no sabía quién vende, así que el mensaje no va dirigido a Alex."
+    },
+    {
+      "id": "no_condition",
+      "when": "not_picked:condition",
+      "signals": [
+        "^(?![\\s\\S]*(da[ñn]os?|da[ñn]ad[oa]|ray[oó]n|rayones|rayad[oa]|rayaduras?|manchas?|rotur|rot[oa]s?(?![a-záéíóúñü])|desgast|defectos?|detalles? de uso|problemas?|fallas?|estado|condici[oó]n|golpes?))"
+      ],
+      "hint": "No le dijiste a Pipo que preguntara por el estado de la silla.",
+      "explain": "Pipo no sabía que debía preguntar, así que todavía no sabes si la silla tiene daños."
+    },
+    {
+      "id": "no_pickup",
+      "when": "not_picked:pickup",
+      "signals": [
+        "^(?![\\s\\S]*s[aá]bado)"
+      ],
+      "hint": "No le dijiste a Pipo cuándo puedes recogerla.",
+      "explain": "Pipo no sabía lo del sábado, así que Alex no sabe cuándo vas a pasar."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(enviad[oa]s?|entregad[oa]s?)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Si pides ver el mensaje primero, puedes corregirlo antes de que Alex lo lea.",
+      "explain": "Pipo lo envió de inmediato, así que nunca pudiste revisarlo."
+    }
+  ],
+  "lesson": "Di exactamente para quién es y pregunta lo que necesitas saber. Luego revísalo antes de que salga."
+}
