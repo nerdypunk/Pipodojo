@@ -68,7 +68,7 @@ export function FloatingPhone({ action, flags, status, open, onOpen, onClose, on
         onClick={onOpen}
         initial={still ? false : { scale: 0.6, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="fixed bottom-4 left-[calc(50%-80px)] z-40 flex items-center gap-2 rounded-full bg-ink px-4 py-3 font-extrabold text-white shadow-[0_12px_30px_-8px_rgb(27_22_64/0.7)] md:top-24 md:right-8 md:bottom-auto md:left-auto"
+        className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-[calc(50%-80px)] z-40 flex items-center gap-2 rounded-full bg-ink px-4 py-3 font-extrabold text-white shadow-[0_12px_30px_-8px_rgb(27_22_64/0.7)] md:top-24 md:right-8 md:bottom-auto md:left-auto"
       >
         <span aria-hidden="true">{laptop ? "💻" : "📱"}</span> {laptop ? t.device.laptop : t.device.phone}
         {status === "review" && <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-amber-300 motion-reduce:animate-none" />}
@@ -99,7 +99,7 @@ export function FloatingPhone({ action, flags, status, open, onOpen, onClose, on
         style={{ rotateX, rotateY, transformPerspective: 1600 }}
         onPointerMove={tilt}
         onPointerLeave={untilt}
-        className={`fixed bottom-3 z-50 cursor-grab touch-none md:top-20 md:right-8 md:bottom-auto md:left-auto ${
+        className={`fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-50 cursor-grab touch-none md:top-20 md:right-8 md:bottom-auto md:left-auto ${
           laptop
             ? "left-[calc(50%-170px)] h-[min(400px,calc(100dvh-1.5rem))] w-[340px] md:h-[min(420px,calc(100dvh-14rem))] md:w-[460px]"
             : "left-[calc(50%-136px)] h-[min(568px,calc(100dvh-1.5rem))] w-[272px] md:h-[min(568px,calc(100dvh-18rem))]"
