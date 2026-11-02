@@ -35,7 +35,7 @@ export function Leaderboard({ onClose }: Props) {
   const yourRank = ready && you ? ready.countries.findIndex((row) => row.country === you) : -1;
 
   return (
-    <div className="fixed inset-0 z-40" onClick={onClose}>
+    <div className="fixed inset-0 z-[55]" onClick={onClose}>
       <section
         role="dialog"
         aria-modal="true"

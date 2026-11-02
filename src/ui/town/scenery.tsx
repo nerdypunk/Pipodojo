@@ -136,49 +136,74 @@ function CloudPuff({ position, scale, still, phase }: { position: [number, numbe
 }
 
 /** Every tree in town, drawn as a few instanced meshes. Grows in at the start. */
+/** One trunk or crown of the forest: its full height and size, and whether it sways. */
+interface TreePart {
+  object: THREE.Object3D | null;
+  y: number;
+  size: number;
+  sways: boolean;
+}
+
 export function Forest({ still }: { still: boolean }) {
   const trees = useMemo(() => scatterTrees(58), []);
-  const group = useRef<THREE.Group>(null);
-  const crowns = useRef<(THREE.Object3D | null)[]>([]);
+  const parts = useRef<TreePart[]>([]);
+  const grown = useRef(false);
+  // Every tree grows up out of the ground on its own (height and lift), and the crowns sway.
+  // Not by squashing one group around the whole forest: drei's Instances splits each tree's
+  // world matrix into move, turn and size, and a swaying crown inside a group squashed to
+  // almost nothing can't be split like that. On the first frame of growth the crowns came out
+  // dozens of times too tall, as giant green columns across the screen (worst on phones, where
+  // a frame is longer and the forest grows more in one step).
   useFrame(({ clock }) => {
     const t = clock.elapsedTime;
-    if (group.current) group.current.scale.set(1, grow(t, 0.9, still), 1);
-    if (still) return;
-    crowns.current.forEach((crown, i) => {
-      if (crown) crown.rotation.z = Math.sin(t * 1.2 + i * 0.7) * 0.04;
+    const g = grow(t, 0.9, still);
+    const growing = !grown.current;
+    if (g === 1) grown.current = true;
+    if (!growing && still) return;
+    parts.current.forEach((part, i) => {
+      const o = part.object;
+      if (!o) return;
+      if (growing) {
+        o.position.y = part.y * g;
+        o.scale.set(part.size, part.size * g, part.size);
+      }
+      if (part.sways && !still) o.rotation.z = Math.sin(t * 1.2 + i * 0.7) * 0.04;
     });
   });
 
   const round = trees.filter((t) => t.kind !== "pine");
   const pine = trees.filter((t) => t.kind === "pine");
   const tint = (t: TreeSpot, i: number) => (t.kind === "blossom" ? BLOSSOM[i % BLOSSOM.length]! : LEAF[i % LEAF.length]!);
-  let crown = 0;
-  const keep = () => {
-    const index = crown++;
+  let count = 0;
+  /** Registers a part; it starts flat on the ground until the first frame grows it. */
+  const keep = (y: number, size: number, sways: boolean) => {
+    const index = count++;
     return (o: THREE.Object3D | null) => {
-      crowns.current[index] = o;
+      parts.current[index] = { object: o, y, size, sways };
     };
   };
+  const at = (x: number, z: number): [number, number, number] => [x, 0, z];
+  const flat = (size: number): [number, number, number] => [size, still ? size : 0.001, size];
 
   return (
-    <group ref={group}>
+    <group>
       <Instances limit={trees.length} raycast={noRaycast}>
         <cylinderGeometry args={[0.08, 0.12, 0.6, 6]} />
         <meshStandardMaterial color="#9c6b4a" roughness={0.9} />
         {trees.map((t, i) => (
-          <Instance key={i} position={[t.x, 0.3 * t.scale, t.z]} scale={t.scale} />
+          <Instance key={i} ref={keep(0.3 * t.scale, t.scale, false)} position={at(t.x, t.z)} scale={flat(t.scale)} />
         ))}
       </Instances>
       <Instances limit={round.length * 2} raycast={noRaycast}>
         <sphereGeometry args={[0.5, 14, 10]} />
         <meshStandardMaterial roughness={0.9} />
         {round.flatMap((t, i) => [
-          <Instance key={`a${i}`} ref={keep()} position={[t.x, 0.9 * t.scale, t.z]} scale={t.scale} color={tint(t, i)} />,
+          <Instance key={`a${i}`} ref={keep(0.9 * t.scale, t.scale, true)} position={at(t.x, t.z)} scale={flat(t.scale)} color={tint(t, i)} />,
           <Instance
             key={`b${i}`}
-            ref={keep()}
-            position={[t.x + 0.18 * t.scale, 1.17 * t.scale, t.z + 0.05]}
-            scale={t.scale * 0.6}
+            ref={keep(1.17 * t.scale, t.scale * 0.6, true)}
+            position={at(t.x + 0.18 * t.scale, t.z + 0.05)}
+            scale={flat(t.scale * 0.6)}
             color={tint(t, i + 1)}
           />,
         ])}
@@ -187,8 +212,14 @@ export function Forest({ still }: { still: boolean }) {
         <coneGeometry args={[0.45, 0.8, 16]} />
         <meshStandardMaterial roughness={0.9} />
         {pine.flatMap((t, i) => [
-          <Instance key={`a${i}`} ref={keep()} position={[t.x, 0.9 * t.scale, t.z]} scale={t.scale} color={LEAF[(i + 1) % LEAF.length]!} />,
-          <Instance key={`b${i}`} ref={keep()} position={[t.x, 1.35 * t.scale, t.z]} scale={t.scale * 0.72} color={LEAF[(i + 1) % LEAF.length]!} />,
+          <Instance key={`a${i}`} ref={keep(0.9 * t.scale, t.scale, true)} position={at(t.x, t.z)} scale={flat(t.scale)} color={LEAF[(i + 1) % LEAF.length]!} />,
+          <Instance
+            key={`b${i}`}
+            ref={keep(1.35 * t.scale, t.scale * 0.72, true)}
+            position={at(t.x, t.z)}
+            scale={flat(t.scale * 0.72)}
+            color={LEAF[(i + 1) % LEAF.length]!}
+          />,
         ])}
       </Instances>
     </group>

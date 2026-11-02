@@ -136,7 +136,7 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
       )}
 
       {/* Top: title, stars and the garage */}
-      <header className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3 md:gap-3 md:p-6">
+      <header className="pointer-events-none absolute inset-x-0 top-0 z-[45] flex items-start justify-between gap-2 p-3 md:gap-3 md:p-6">
         <div className="glass pointer-events-auto min-w-0 rounded-2xl px-3 py-2 md:px-4 md:py-2.5">
           <p className="text-[11px] font-black tracking-wide text-brand-700 uppercase md:text-xs">{t.town.kicker}</p>
           {/* Nunito kerns "Wh" apart; without kerning the W sits next to the h */}
@@ -183,7 +183,7 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
 
       {/* Bottom: the same places as buttons, and who powers Pipo. On tall phone screens the island
           sits mid-screen, so lift these up to tuck under it instead of hugging the bottom edge. */}
-      <nav className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 p-3 max-sm:bottom-[8dvh] md:p-6" aria-label={t.town.places}>
+      <nav className="absolute inset-x-0 bottom-0 z-[45] flex flex-col items-center gap-2 p-3 max-sm:bottom-[8dvh] md:p-6" aria-label={t.town.places}>
         {/* Equal, chunky buttons (two a row on phones, the odd one out centred at the same size; a row on wider
             screens, wrapping if it must) that press down when tapped. */}
         <div className="grid w-full max-w-sm grid-cols-2 gap-2 sm:flex sm:w-auto sm:max-w-none sm:flex-wrap sm:justify-center">
