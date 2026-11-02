@@ -117,8 +117,8 @@ function audio(): AudioContext | null {
 }
 
 /**
- * Call once at start-up: the first tap or key press anywhere wakes the audio up (browsers keep
- * it asleep until then). The music then waits for cueMusic(), if it's on.
+ * Call once at start-up: taps and key presses wake the audio up (browsers keep it asleep until
+ * then). The music then waits for cueMusic(), if it's on.
  */
 let installed = false;
 
@@ -159,20 +159,24 @@ export function installHoverSounds() {
 export function installAudioUnlock() {
   if (installed) return;
   installed = true;
+  // Phones only allow sound once a tap ends (a finger landing doesn't count yet), so this keeps
+  // asking on every tap and key press until the audio is really running, then stops listening.
+  const EVENTS = ["pointerdown", "pointerup", "touchend", "keydown", "click"] as const;
+  const awake = () => {
+    if (unlocked) return;
+    unlocked = true;
+    applyMusic();
+    for (const type of EVENTS) window.removeEventListener(type, unlock, true);
+  };
   const unlock = () => {
     const c = audio();
     if (!c) return;
-    void c.resume().then(() => {
-      unlocked = true;
-      applyMusic();
-    });
-    if (c.state === "running") {
-      unlocked = true;
-      applyMusic();
-    }
-    for (const type of EVENTS) window.removeEventListener(type, unlock, true);
+    if (c.state === "running") return awake();
+    void c.resume().then(
+      () => c.state === "running" && awake(),
+      () => {},
+    );
   };
-  const EVENTS = ["pointerdown", "touchend", "keydown", "click"] as const;
   for (const type of EVENTS) window.addEventListener(type, unlock, true);
   // Save battery: no music while the tab is hidden.
   document.addEventListener("visibilitychange", applyMusic);
