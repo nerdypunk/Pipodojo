@@ -59,15 +59,42 @@ const POP_STEP = 0.14;
 const noRaycast = () => null;
 /**
  * Where the "under construction" islands float. On wide screens: two, in the open sky on either
- * side of the town (left, and lower right), clear of the buildings and name tags; on tall phone
- * screens: one, in the sky above it, clear of the header and the button column. (Worked out by
- * projecting through the home camera.)
+ * side of the town (left, and lower right), clear of the buildings and name tags. (Worked out by
+ * projecting through the home camera.) Tall screens get one, placed by `tallIslandSpot`.
  */
 const ISLANDS_WIDE: [number, number, number][] = [
   [-19.5, -6, 5.5],
   [16.5, 3.5, 7.5],
 ];
-const ISLANDS_TALL: [number, number, number][] = [[-15, 6, -19.5]];
+/** The tall-screen island's old fixed spot, kept only for how far it sits from the camera (its size). */
+const TALL_ISLAND_DEPTH_FROM = new THREE.Vector3(-15, 6, -19.5);
+/** Bottom of the header card, in CSS pixels (it grows at the md breakpoint), plus a little room. */
+const headerBottom = (width: number) => (width >= 768 ? 122 : 68);
+
+/**
+ * On tall screens (phones, narrow windows) the one island floats in the sky above the town. How
+ * far up that sky reaches changes with the screen's shape, so instead of a fixed spot the island
+ * is put at a screen position, toward the left (clear of the name tags over the town) and just
+ * low enough that its sign clears the header, then traced back into the scene through the home
+ * camera at its usual distance. On short screens the town reaches right up to the header and
+ * there is no clear sky, so there is no island (null) rather than a sign over a name tag.
+ */
+function tallIslandSpot(width: number, height: number): [number, number, number] | null {
+  const aspect = width / Math.max(1, height);
+  const camera = new THREE.PerspectiveCamera(30, aspect, 0.5, 140);
+  camera.position.copy(homeFor(aspect));
+  camera.lookAt(LOOK_HOME);
+  camera.updateMatrixWorld();
+  // The sign's top sits 55-70px above the island's middle, so this leaves ~25px under the header.
+  const y = headerBottom(width) + 85;
+  // The highest name tag over the town, in pixels from the top; tags are ~30px tall around that point.
+  const topTag = Math.min(...PLACES.map((p) => ((1 - new THREE.Vector3(p.at[0], p.tag, p.at[1]).project(camera).y) / 2) * height));
+  if (topTag - 15 < y) return null;
+  const ndc = new THREE.Vector3(-0.55, 1 - (2 * y) / height, 0.5);
+  const ray = ndc.unproject(camera).sub(camera.position).normalize();
+  const spot = camera.position.clone().addScaledVector(ray, camera.position.distanceTo(TALL_ISLAND_DEPTH_FROM));
+  return [spot.x, spot.y, spot.z];
+}
 /** Closest a name tag may come to the screen's left or right edge, in pixels. */
 const TAG_MARGIN = 8;
 
@@ -90,7 +117,14 @@ export default function TownCanvas(props: TownCanvasProps) {
 
 function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, still, soonLabel }: TownCanvasProps) {
   const root = useRef<THREE.Group>(null);
-  const wide = useThree((s) => s.size.width / Math.max(1, s.size.height) >= 1.3);
+  const width = useThree((s) => s.size.width);
+  const height = useThree((s) => s.size.height);
+  const wide = width / Math.max(1, height) >= 1.3;
+  const islands = useMemo(() => {
+    if (wide) return ISLANDS_WIDE;
+    const spot = tallIslandSpot(width, height);
+    return spot ? [spot] : [];
+  }, [wide, width, height]);
 
   // The town casts and catches soft shadows (the scenery under the island doesn't need to).
   useLayoutEffect(() => {
@@ -175,7 +209,7 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
       <Airplane center={[0, 0]} radius={13.7} height={2.7} shadowReach={12.2} speed={0.25} still={still} />
       {/* Two small islands floating off the town: more to come. Placed for the screen's shape so
           they land in clear sky, away from the header and the name tags. */}
-      {(wide ? ISLANDS_WIDE : ISLANDS_TALL).map((at, i) => (
+      {islands.map((at, i) => (
         <MiniIsland key={i} position={at} scale={i ? 0.8 : 1} phase={i * 2.1} label={soonLabel} still={still} />
       ))}
     </>
