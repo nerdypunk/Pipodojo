@@ -1,7 +1,7 @@
 // The end-of-path postcard: one picture scene built from what Pipo really did in each lesson
 // of the path (the menu it planned, the invite it sent, the food it bought) and the player's
 // own Pipo look. One image per finished path keeps it cheap.
-import type { Mission, RunLog } from "./types.ts";
+import type { Mission, Persona, RunLog } from "./types.ts";
 
 /** Matches the image endpoint's cap (functions/api/image.js). */
 export const MAX_SCENE_CHARS = 700;
@@ -33,10 +33,17 @@ export function postcardPart(mission: Mission, log: RunLog): string {
   });
 }
 
+/** Who the person Pipo helps is, where the painter would otherwise guess (the executive is a man). */
+const CAST: Partial<Record<Persona, string>> = {
+  executive: "The person Pipo helps is a businessman, a man in a smart suit.",
+};
+
 /** The full scene sent to the painter. `look` is the player's Pipo in plain words. */
 export function postcardScene(look: string, runs: readonly { mission: Mission; log: RunLog }[]): string {
   const parts = runs.map(({ mission, log }) => postcardPart(mission, log)).filter(Boolean);
-  const scene = `Starring ${look}. ${parts.length ? `One happy scene that shows ${joinAnd(parts)}.` : ""}`;
+  const persona = runs[0]?.mission.persona;
+  const cast = persona ? CAST[persona] : undefined;
+  const scene = `Starring ${look}.${cast ? ` ${cast}` : ""} ${parts.length ? `One happy scene that shows ${joinAnd(parts)}.` : ""}`;
   return clip(scene.trim(), MAX_SCENE_CHARS);
 }
 

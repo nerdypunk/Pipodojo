@@ -10,12 +10,15 @@ export const MAX_SCENE_CHARS = 700;
 export const MAX_BODY_BYTES = 4 * 1024;
 export const UPSTREAM_TIMEOUT_MS = 45_000;
 export const STYLE =
-  "A kawaii anime-style illustrated postcard with clean line art, soft pastel purple and blue colours with warm " +
-  "orange highlights, cheerful and cosy. Any people are cute kawaii anime characters. Pipo the robot is a cute " +
-  "kawaii robot with a cool, sleek design: a smooth glossy rounded shell, a dark glass visor with glowing LED " +
-  "eyes, small arms and a cheerful, confident pose, like a little robot hero. Pipo always hovers in the air: no " +
-  "legs, never standing or walking on the ground. Cute, but never a baby: no baby face, no chubby toddler body, " +
-  "no plush-toy look. " +
+  "A bright illustrated postcard in the look of a classic Saturday-morning adventure anime: clean bold line art, " +
+  "crisp cel shading and vivid, natural everyday colours (grass green, clear sky blue, warm wood, white, and " +
+  "Pipo's own colour). Not pastel, not pink or purple-tinted, no soft dreamy haze. Any people are friendly anime " +
+  "characters, drawn as the scene describes them. Pipo the robot is cute with a cool, sleek design: a smooth " +
+  "glossy rounded shell, a dark glass visor with glowing LED eyes, small arms and a confident pose, like a little " +
+  "robot hero. Pipo always hovers in the air: no legs, never standing or walking on the ground. Never a baby: no " +
+  "baby face, no chubby toddler body, no plush-toy look. No creatures or monsters. Every object is drawn the way " +
+  "it really looks: chairs, desks, phones and laptops are normal everyday things, nothing melted, merged or oddly " +
+  "shaped. " +
   'The only text in the picture is the web address "pipodojo.com", written once, small and neat, in a bottom corner. ' +
   "No other words, letters, numbers or logos anywhere.";
 

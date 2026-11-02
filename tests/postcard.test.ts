@@ -43,6 +43,17 @@ describe("postcardScene", () => {
     expect(scene).not.toMatch(/\$|🎉|\*\*/);
   });
 
+  it("says the executive is a man, so the painter doesn't guess", () => {
+    const execRuns = Object.keys(missions)
+      .filter((id) => id.startsWith("exec-"))
+      .sort()
+      .slice(0, 3)
+      .map((id) => ({ mission: missions[id]!, log: log(id, "Done") }));
+    expect(postcardScene("Pipo", execRuns)).toMatch(/^Starring Pipo\. The person Pipo helps is a businessman/);
+    const parentRuns = ids.map((id) => ({ mission: missions[id]!, log: log(id, "Done") }));
+    expect(postcardScene("Pipo", parentRuns)).not.toContain("businessman");
+  });
+
   it("stays under the painter's limit however long the answers are", () => {
     const long = "word ".repeat(400);
     const runs = ids.map((id) => ({ mission: missions[id]!, log: log(id, long, { message: long, items: [long] }) }));
