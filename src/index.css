@@ -3,7 +3,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: "Nunito Variable", ui-rounded, system-ui, sans-serif;
+  /* The flags font only covers flag characters, so it changes nothing else (see main.tsx). */
+  --font-sans: "Twemoji Country Flags", "Nunito Variable", ui-rounded, system-ui, sans-serif;
 
   /* Pipodojo palette: blue-violet brand for actions and your picks, amber for stars and misses. */
   --color-brand-50: #f3f2ff;
