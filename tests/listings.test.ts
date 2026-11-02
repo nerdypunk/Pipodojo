@@ -2,7 +2,7 @@
 // its own answer line, so a gap (too pricey, a low-rated seller, no back support) points at the
 // one listing that shows it, on the result card and on the phone.
 import { describe, expect, it } from "vitest";
-import { actionAnswer, listingLineCount, pickAction, readable, stars } from "../src/engine/actions.ts";
+import { actionAnswer, distance, listingLineCount, pickAction, readable, stars } from "../src/engine/actions.ts";
 import { evaluate } from "../src/engine/evaluator.ts";
 import { parseMission } from "../src/engine/missionLoader.ts";
 import { bestPicks, keySetups } from "../src/engine/setups.ts";
@@ -65,5 +65,15 @@ describe("listings app", () => {
     const score = evaluate(chairs, picks, answer);
     expect(score.visibleFlaws).toEqual([flaw]);
     expect(answerLines(chairs, score, answer).map((l) => l.flagged)).toEqual([false, true, false]);
+  });
+});
+
+describe("pickup distance", () => {
+  it("shows just the distance, even when the model adds 'a' or 'at'", () => {
+    expect(distance("3 km")).toBe("3 km");
+    expect(distance("a 3 km")).toBe("3 km");
+    expect(distance("at 2 mi")).toBe("2 mi");
+    expect(distance("A 1.5 km")).toBe("1.5 km");
+    expect(readable({ name: "Silla verde", price: 35, condition: "buena", rating: 4.9, distance: "a 3 km" })).toBe("Silla verde ($35) · buena · ★ 4.9 · 3 km");
   });
 });

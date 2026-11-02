@@ -50,7 +50,7 @@
                 },
                 "distance": {
                   "type": "string",
-                  "description": "A qué distancia se recoge, por ejemplo 3 km"
+                  "description": "La distancia, solo el número y km, por ejemplo 3 km"
                 }
               },
               "required": [

@@ -3,7 +3,7 @@
 // the tool call's arguments and sized to fill the phone. `flags` follow the tool's answer lines,
 // so the part that shows a gap in the prompt is outlined in red. Nothing here is a real app.
 import type { PipoAction } from "../engine/types.ts";
-import { listingLineCount, readable, stars } from "../engine/actions.ts";
+import { distance as distanceText, listingLineCount, readable, stars } from "../engine/actions.ts";
 import { useLang } from "../i18n/index.tsx";
 
 interface Props {
@@ -292,7 +292,7 @@ function listing(item: unknown) {
     price: price === undefined ? undefined : readable(price).replace(/^$/, ""),
     condition: condition === undefined || condition === "" ? undefined : readable(condition),
     rating: rating === undefined || rating === null ? undefined : stars(rating),
-    distance: distance === undefined || distance === "" ? undefined : readable(distance),
+    distance: distance === undefined || distance === "" ? undefined : distanceText(distance),
   };
 }
 

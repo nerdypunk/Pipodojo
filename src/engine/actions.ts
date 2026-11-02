@@ -79,9 +79,11 @@ export function readable(value: unknown): string {
     if (label !== undefined && name === undefined) return rest.value === undefined ? readable(label) : `${readable(label)}: ${readable(rest.value)}`;
     if (name !== undefined) {
       // Marketplace listings: "Green desk chair ($35) · good · ★ 4.9 · 2 mi".
-      const listing = [rest.condition, rest.rating === undefined || rest.rating === null ? undefined : `★ ${stars(rest.rating)}`, rest.distance]
-        .filter((part) => part !== undefined && part !== null && part !== "")
-        .map(readable);
+      const listing = [
+        rest.condition === undefined ? undefined : readable(rest.condition),
+        rest.rating === undefined || rest.rating === null ? undefined : `★ ${stars(rest.rating)}`,
+        rest.distance === undefined || rest.distance === null || rest.distance === "" ? undefined : distance(rest.distance),
+      ].filter((part): part is string => part !== undefined && part !== "");
       if (price !== undefined) return [`${readable(name)} ($${readable(price)})`, ...listing].join(" · ");
       // Events, chart bars, game shop items and diagram steps: "Bake sale (Thu 3pm)", "Apples (8)".
       const detail = rest.when ?? rest.value ?? rest.cost ?? rest.note;
@@ -90,6 +92,11 @@ export function readable(value: unknown): string {
     }
   }
   return String(value);
+}
+
+/** A pickup distance on its own: "3 km", not "a 3 km" or "at 2 mi" (the model sometimes adds the word). */
+export function distance(value: unknown): string {
+  return readable(value).replace(/^\s*(a|at)\s+(?=\d)/i, "");
 }
 
 /** A star rating the way a person reads it: 4.9, 5 or 4.5 (not 4.90). */
