@@ -206,12 +206,17 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
 
       <PhoneTabBar streak={streak} stars={total} pathsDone={pathsDone} onRanking={() => setShowBoard(true)} />
 
-      {/* Bottom: the same places as buttons, and who powers Pipo. On phones they sit just above the tab bar.
-          A soft fade behind them lifts them off the island; taps on the faded part still reach the town. */}
-      <nav className="pointer-events-none absolute inset-x-0 bottom-0 z-[45] flex flex-col items-center gap-2 bg-gradient-to-t from-brand-100 via-brand-100/80 to-transparent p-3 pt-10 max-sm:bottom-[calc(4rem+env(safe-area-inset-bottom))] max-sm:gap-1.5 max-sm:pb-2 md:p-6 md:pt-12" aria-label={t.town.places}>
+      {/* Bottom: the same places as buttons, and who powers Pipo. On phones they sit just above the tab bar. */}
+      <nav className="absolute inset-x-0 bottom-0 z-[45] flex flex-col items-center gap-2 p-3 max-sm:bottom-[calc(4rem+env(safe-area-inset-bottom))] max-sm:gap-1.5 max-sm:pb-2 md:p-6" aria-label={t.town.places}>
+        {/* A soft fade behind the buttons, rising from the screen's bottom edge (behind the tab bar on
+            phones) to just above them. Taps on the faded part above the buttons still reach the town. */}
+        <div
+          className="pointer-events-none absolute inset-x-0 -top-10 bottom-0 -z-10 bg-gradient-to-t from-brand-100 via-brand-100/80 to-transparent max-sm:-bottom-[calc(4rem+env(safe-area-inset-bottom))]"
+          aria-hidden="true"
+        />
         {/* Equal, chunky buttons (two a row on phones, kept short there so the island shows; a row on wider
             screens, wrapping if it must) that press down when tapped. */}
-        <div className="pointer-events-auto grid w-full max-w-sm grid-cols-2 gap-2 max-sm:gap-1.5 sm:flex sm:w-auto sm:max-w-none sm:flex-wrap sm:justify-center">
+        <div className="grid w-full max-w-sm grid-cols-2 gap-2 max-sm:gap-1.5 sm:flex sm:w-auto sm:max-w-none sm:flex-wrap sm:justify-center">
           {places.map((place) => {
             const on = hovered === place.id;
             return (
@@ -242,7 +247,7 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
             );
           })}
         </div>
-        <div className="pointer-events-auto flex flex-col items-center gap-1 rounded-2xl bg-white/70 px-3.5 py-2 text-xs font-extrabold text-brand-800 ring-1 ring-white max-sm:gap-0.5 max-sm:py-1.5 max-sm:text-[11px] sm:flex-row sm:gap-2 sm:rounded-full sm:py-1">
+        <div className="flex flex-col items-center gap-1 rounded-2xl bg-white/70 px-3.5 py-2 text-xs font-extrabold text-brand-800 ring-1 ring-white max-sm:gap-0.5 max-sm:py-1.5 max-sm:text-[11px] sm:flex-row sm:gap-2 sm:rounded-full sm:py-1">
           {/* Both lines share one shape (icon in a fixed slot, same size and weight), and on phones
               each is centred, so the stacked pair sits in the middle. */}
           <p className="inline-flex items-center gap-1.5">
