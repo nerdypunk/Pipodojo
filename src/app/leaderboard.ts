@@ -60,6 +60,20 @@ export async function reportLesson(missionId: string, stars: number): Promise<vo
   }
 }
 
+let country: Promise<string | null> | null = null;
+
+/**
+ * The player's two-letter country code, as Cloudflare sees it (e.g. "HN"), or null if it isn't
+ * known. Asked once per visit; a miss is asked again next time.
+ */
+export function fetchCountry(): Promise<string | null> {
+  country ??= fetchLeaderboard().then((board) => {
+    if (!board?.you) country = null;
+    return board?.you ?? null;
+  });
+  return country;
+}
+
 /** Countries by stars today and all time, or null if the leaderboard can't be reached. */
 export async function fetchLeaderboard(): Promise<Leaderboard | null> {
   try {

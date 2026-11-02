@@ -1,6 +1,7 @@
 // The end-of-path share card: a 1080x1350 image (Instagram portrait size) drawn on a canvas.
-// Big brag headline, what your agent did, the Muse Image postcard, your streak, stars and badge.
+// Big brag headline, what your agent did, the Muse Image postcard, your streak, stars, badge and country.
 // Everything is drawn here in the browser, so it costs nothing and works offline.
+import { flagOf } from "../game/countries.ts";
 import type { Strings } from "../i18n/en.ts";
 
 export interface ShareInfo {
@@ -12,6 +13,8 @@ export interface ShareInfo {
   lessons: number;
   /** Days in a row. */
   streak: number;
+  /** The player's country, e.g. { code: "HN", name: "Honduras" }; null leaves it off. */
+  country: { code: string; name: string } | null;
   /** The postcard picture (data URL or same-site file); null draws a placeholder. */
   postcard: string | null;
   /** True when Meta's Muse Image painted it live (not the ready-made fallback): the card says so. */
@@ -59,6 +62,51 @@ function pill(ctx: CanvasRenderingContext2D, text: string, x: number, y: number,
   ctx.fillText(text, left + size * 0.6, y + h / 2 + 2);
   ctx.textBaseline = "alphabetic";
   return w;
+}
+
+const GAP = 18;
+
+/** Width of a pill drawn by pill(). */
+function pillWidth(ctx: CanvasRenderingContext2D, text: string, size: number) {
+  ctx.font = `900 ${size}px ${FONT}`;
+  return ctx.measureText(text).width + size * 1.2;
+}
+
+/**
+ * Some systems (Windows) draw a flag emoji as two plain letters. Draws one off-screen and looks
+ * for colour: a real flag has some, plain letters drawn in black don't.
+ */
+let flagsWork: boolean | null = null;
+function canDrawFlags(): boolean {
+  if (flagsWork !== null) return flagsWork;
+  const c = document.createElement("canvas");
+  c.width = c.height = 32;
+  const g = c.getContext("2d", { willReadFrequently: true });
+  if (!g) return (flagsWork = false);
+  g.fillStyle = "#000";
+  g.font = "28px sans-serif";
+  g.textBaseline = "top";
+  g.fillText(flagOf("HN"), 0, 0);
+  const px = g.getImageData(0, 0, 32, 32).data;
+  flagsWork = false;
+  for (let i = 0; i < px.length; i += 4) if (px[i + 3]! > 0 && Math.abs(px[i]! - px[i + 2]!) > 40) flagsWork = true;
+  return flagsWork;
+}
+
+/**
+ * The bottom row: stars, lessons and the player's flag and country, at the biggest size that fits
+ * the card (long names like "Bosnia y Herzegovina" make the row a little smaller).
+ */
+function statsRow(ctx: CanvasRenderingContext2D, info: ShareInfo): { pills: string[]; size: number } {
+  const w = info.words;
+  const stats = [w.stars(info.stars, info.maxStars), w.lessons(info.lessons)];
+  if (!info.country) return { pills: stats, size: 32 };
+  const pills = [...stats, `${canDrawFlags() ? flagOf(info.country.code) : "📍"} ${info.country.name}`];
+  for (const size of [32, 30, 28, 26, 24]) {
+    const total = pills.reduce((sum, text) => sum + pillWidth(ctx, text, size), 0) + GAP * (pills.length - 1);
+    if (total <= W - 144) return { pills, size };
+  }
+  return { pills: stats, size: 32 };
 }
 
 async function loadImage(src: string): Promise<HTMLImageElement | null> {
@@ -167,9 +215,10 @@ export async function drawShareCard(info: ShareInfo): Promise<Blob> {
   ctx.fillText(badge, -bw + 28, 2);
   ctx.restore();
 
-  // Stats and footer
-  const left = pill(ctx, w.stars(info.stars, info.maxStars), 72, 1176, "rgba(255,255,255,0.92)", "#4936bd", 32);
-  pill(ctx, w.lessons(info.lessons), 72 + left + 18, 1176, "rgba(255,255,255,0.92)", "#4936bd", 32);
+  // Stats (and the player's country) in one row, then the footer
+  let x = 72;
+  const row = statsRow(ctx, info);
+  for (const text of row.pills) x += pill(ctx, text, x, 1176 + (32 - row.size) * 0.875, "rgba(255,255,255,0.92)", "#4936bd", row.size) + GAP;
   ctx.font = `700 28px ${FONT}`;
   ctx.fillStyle = "rgba(255,255,255,0.75)";
   ctx.fillText(w.footer(info.site), 72, 1300);

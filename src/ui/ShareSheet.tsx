@@ -4,15 +4,20 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { drawShareCard, type ShareInfo } from "./shareCard.ts";
+import { fetchCountry } from "../app/leaderboard.ts";
+import { countryName } from "../game/countries.ts";
 import { useLang } from "../i18n/index.tsx";
 
 interface Props {
   open: boolean;
   /** Everything for the card. `postcard` is null while Muse Image is still painting. */
-  info: Omit<ShareInfo, "site" | "words">;
+  info: Omit<ShareInfo, "site" | "words" | "country">;
   painting: boolean;
   onClose: () => void;
 }
+
+/** How long the card waits to learn the player's country before drawing without it. */
+const COUNTRY_WAIT_MS = 2500;
 
 const site = () => (/^(localhost|127\.|\[::1\])/.test(window.location.hostname) ? "Pipodojo" : window.location.host);
 
@@ -28,11 +33,15 @@ export function ShareSheet({ open, info, painting, onClose }: Props) {
     if (!open || painting) return;
     let cancelled = false;
     let url = "";
-    void drawShareCard({ ...info, site: site(), words: t.card }).then((blob) => {
-      if (cancelled) return;
-      url = URL.createObjectURL(blob);
-      setCard({ blob, url });
-    });
+    // The player's country goes on the card too; if it takes too long, the card goes without it.
+    const code = Promise.race([fetchCountry(), new Promise<null>((done) => setTimeout(() => done(null), COUNTRY_WAIT_MS))]);
+    void code
+      .then((c) => drawShareCard({ ...info, country: c ? { code: c, name: countryName(c, lang) } : null, site: site(), words: t.card }))
+      .then((blob) => {
+        if (cancelled) return;
+        url = URL.createObjectURL(blob);
+        setCard({ blob, url });
+      });
     return () => {
       cancelled = true;
       if (url) URL.revokeObjectURL(url);

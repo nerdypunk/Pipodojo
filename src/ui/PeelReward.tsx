@@ -6,6 +6,7 @@ import confetti from "canvas-confetti";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { fetchCountry } from "../app/leaderboard.ts";
 import { postcardFileName, type Postcard } from "../app/postcard.ts";
 import { Peel, type PeelInstance } from "../vendor/peel/index.ts";
 import { Pipo } from "./Pipo.tsx";
@@ -31,6 +32,8 @@ const PEEL_FINISH_AT = 0.45;
 const PEEL_RELEASE_AT = 0.25;
 
 export function PeelReward({ pathName, lessons, stars, postcard, share }: Props) {
+  // Ask for the player's country now, so it's known by the time they share.
+  useEffect(() => void fetchCountry(), []);
   const el = useRef<HTMLDivElement>(null);
   const peel = useRef<PeelInstance | null>(null);
   const [open, setOpen] = useState(false);
