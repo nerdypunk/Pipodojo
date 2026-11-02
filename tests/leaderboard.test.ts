@@ -77,6 +77,10 @@ describe("leaderboard", () => {
         { country: "HN", stars: 5, lessons: 2 },
         { country: "MX", stars: 3, lessons: 1 },
       ],
+      allTime: [
+        { country: "HN", stars: 5, lessons: 2 },
+        { country: "MX", stars: 3, lessons: 1 },
+      ],
       you: "MX",
     });
   });
@@ -94,13 +98,26 @@ describe("leaderboard", () => {
     expect((await board(db)).countries).toEqual([{ country: "HN", stars: 1, lessons: 1 }]);
   });
 
-  it("starts a new board each UTC day", async () => {
+  it("starts a new board each UTC day, and adds every day up all time", async () => {
     const db = fakeD1();
     const today = await issueReceipt(db, from("HN"), T0);
     await score(db, { receipt: today, stars: 3 });
     const tomorrow = T0 + 24 * 60 * 60_000;
     expect((await board(db, "HN", tomorrow)).countries).toEqual([]);
     expect((await board(db, "HN", T0)).countries).toHaveLength(1);
+
+    for (const [country, stars] of [["HN", 2], ["MX", 3], ["MX", 3]] as const) {
+      await score(db, { receipt: await issueReceipt(db, from(country), tomorrow), stars }, tomorrow);
+    }
+    const next = await board(db, "HN", tomorrow);
+    expect(next.countries).toEqual([
+      { country: "MX", stars: 6, lessons: 2 },
+      { country: "HN", stars: 2, lessons: 1 },
+    ]);
+    expect(next.allTime).toEqual([
+      { country: "MX", stars: 6, lessons: 2 },
+      { country: "HN", stars: 5, lessons: 2 },
+    ]);
   });
 
   it("makes no receipt without a database or a real country", async () => {

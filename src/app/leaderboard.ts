@@ -11,7 +11,10 @@ export interface CountryRow {
 
 export interface Leaderboard {
   day: string;
+  /** Today's countries by stars. */
   countries: CountryRow[];
+  /** Every day added up. */
+  allTime: CountryRow[];
   /** The player's own country, or null if it isn't known. */
   you: string | null;
 }
@@ -57,12 +60,13 @@ export async function reportLesson(missionId: string, stars: number): Promise<vo
   }
 }
 
-/** Today's countries by stars, or null if the leaderboard can't be reached. */
+/** Countries by stars today and all time, or null if the leaderboard can't be reached. */
 export async function fetchLeaderboard(): Promise<Leaderboard | null> {
   try {
     const res = await fetch("/api/leaderboard");
     if (!res.ok) return null;
-    return (await res.json()) as Leaderboard;
+    const board = (await res.json()) as Leaderboard;
+    return { ...board, allTime: board.allTime ?? [] };
   } catch {
     return null;
   }

@@ -1,5 +1,5 @@
-// Today's leaderboard: countries ranked by the stars their players earned today, opened from the
-// 🏆 button in town. Countries only (no names, no accounts, no cookies); the player's own country
+// The leaderboard: countries ranked by the stars their players earned, today or all time (two
+// tabs), opened from the 🏆 button in town. Countries only (no names, no accounts, no cookies); the player's own country
 // is highlighted, and shown under the top ten if it isn't in it.
 import { useEffect, useRef, useState } from "react";
 import { fetchLeaderboard, type CountryRow, type Leaderboard as Board } from "../../app/leaderboard.ts";
@@ -8,6 +8,8 @@ import { useLang } from "../../i18n/index.tsx";
 
 const TOP = 10;
 const MEDALS = ["🥇", "🥈", "🥉"];
+const TABS = ["today", "allTime"] as const;
+type Tab = (typeof TABS)[number];
 
 interface Props {
   onClose: () => void;
@@ -16,6 +18,7 @@ interface Props {
 export function Leaderboard({ onClose }: Props) {
   const { t, lang } = useLang();
   const [board, setBoard] = useState<Board | null | "loading">("loading");
+  const [tab, setTab] = useState<Tab>("today");
   const close = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -32,7 +35,9 @@ export function Leaderboard({ onClose }: Props) {
 
   const ready = board !== "loading" && board !== null ? board : null;
   const you = ready?.you ?? null;
-  const yourRank = ready && you ? ready.countries.findIndex((row) => row.country === you) : -1;
+  const rows = ready ? (tab === "today" ? ready.countries : ready.allTime) : [];
+  const yourRank = you ? rows.findIndex((row) => row.country === you) : -1;
+  const empty = tab === "today" ? t.town.leaderboardEmpty : t.town.leaderboardEmptyAll;
 
   return (
     <div className="fixed inset-0 z-[55]" onClick={onClose}>
@@ -48,7 +53,7 @@ export function Leaderboard({ onClose }: Props) {
             <h2 id="leaderboard-title" className="text-lg font-black text-ink">
               🏆 {t.town.leaderboard}
             </h2>
-            <p className="text-xs font-semibold text-gray-600">{t.town.leaderboardSub}</p>
+            <p className="text-xs font-semibold text-gray-600">{tab === "today" ? t.town.leaderboardSub : t.town.leaderboardSubAll}</p>
           </div>
           <button
             ref={close}
@@ -61,15 +66,31 @@ export function Leaderboard({ onClose }: Props) {
           </button>
         </div>
 
+        <div role="group" aria-label={t.town.leaderboardTabs} className="mt-3 grid grid-cols-2 gap-1 rounded-full bg-brand-50 p-1">
+          {TABS.map((id) => (
+            <button
+              key={id}
+              type="button"
+              aria-pressed={tab === id}
+              onClick={() => setTab(id)}
+              className={`rounded-full py-1.5 text-sm font-black transition-colors focus-visible:outline-3 focus-visible:outline-brand-500 ${
+                tab === id ? "bg-brand-600 text-white shadow" : "text-brand-700 hover:bg-brand-100"
+              }`}
+            >
+              {id === "today" ? t.town.leaderboardToday : t.town.leaderboardAllTime}
+            </button>
+          ))}
+        </div>
+
         <div className="mt-3" aria-live="polite">
           {board === "loading" && <p className="py-4 text-center text-sm font-bold text-gray-600">{t.town.leaderboardLoading}</p>}
           {board === null && <p className="py-4 text-center text-sm font-bold text-gray-600">{t.town.leaderboardOff}</p>}
-          {ready && ready.countries.length === 0 && (
-            <p className="py-4 text-center text-sm font-bold text-gray-600">{t.town.leaderboardEmpty(you ? `${flagOf(you)} ${countryName(you, lang)}` : "🌎")}</p>
+          {ready && rows.length === 0 && (
+            <p className="py-4 text-center text-sm font-bold text-gray-600">{empty(you ? `${flagOf(you)} ${countryName(you, lang)}` : "🌎")}</p>
           )}
-          {ready && ready.countries.length > 0 && (
+          {ready && rows.length > 0 && (
             <ol className="space-y-1.5">
-              {ready.countries.slice(0, TOP).map((row, i) => (
+              {rows.slice(0, TOP).map((row, i) => (
                 <Row key={row.country} row={row} rank={i} mine={row.country === you} lang={lang} lessons={t.town.leaderboardLessons} />
               ))}
               {yourRank >= TOP && (
@@ -77,7 +98,7 @@ export function Leaderboard({ onClose }: Props) {
                   <li aria-hidden="true" className="text-center text-xs font-black text-gray-400">
                     ⋯
                   </li>
-                  <Row row={ready.countries[yourRank]!} rank={yourRank} mine lang={lang} lessons={t.town.leaderboardLessons} />
+                  <Row row={rows[yourRank]!} rank={yourRank} mine lang={lang} lessons={t.town.leaderboardLessons} />
                 </>
               )}
             </ol>

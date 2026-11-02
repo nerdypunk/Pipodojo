@@ -1,4 +1,5 @@
-// Today's leaderboard: stars earned by players in each country, from Cloudflare D1 (binding DB).
+// The leaderboard: stars earned by players in each country, today and all time, from Cloudflare D1
+// (binding DB). Daily rows are kept, so all time is every day added up.
 // Privacy by design: no accounts, no cookies, no IP addresses, nothing about a person. Only a
 // country code (the one Cloudflare attaches to every request) and daily totals per country.
 //
@@ -102,7 +103,7 @@ export function createScoreHandler({ now = Date.now } = {}) {
   };
 }
 
-/** GET /api/leaderboard: today's countries by stars, and the caller's own country. */
+/** GET /api/leaderboard: countries by stars today and all time (every day added up), and the caller's own country. */
 export function createLeaderboardHandler({ now = Date.now } = {}) {
   let cached = null;
   return async function onLeaderboard({ request, env }) {
@@ -113,13 +114,22 @@ export function createLeaderboardHandler({ now = Date.now } = {}) {
     const day = dayOf(t);
     if (!cached || cached.day !== day || t - cached.at > CACHE_MS) {
       await ensureTables(db);
-      const { results } = await db
-        .prepare("SELECT country, stars, lessons FROM daily WHERE day = ? ORDER BY stars DESC, lessons DESC, country ASC LIMIT ?")
-        .bind(day, MAX_ROWS)
-        .all();
-      cached = { day, at: t, countries: results ?? [] };
+      const [today, allTime] = await Promise.all([
+        db
+          .prepare("SELECT country, stars, lessons FROM daily WHERE day = ? ORDER BY stars DESC, lessons DESC, country ASC LIMIT ?")
+          .bind(day, MAX_ROWS)
+          .all(),
+        db
+          .prepare(
+            "SELECT country, SUM(stars) AS stars, SUM(lessons) AS lessons FROM daily GROUP BY country ORDER BY stars DESC, lessons DESC, country ASC LIMIT ?",
+          )
+          .bind(MAX_ROWS)
+          .all(),
+      ]);
+      cached = { day, at: t, countries: today.results ?? [], allTime: allTime.results ?? [] };
     }
-    return json(200, { day, countries: cached.countries, you: countryOf(request) }, { "cache-control": "no-store" });
+    const body = { day, countries: cached.countries, allTime: cached.allTime, you: countryOf(request) };
+    return json(200, body, { "cache-control": "no-store" });
   };
 }
 
