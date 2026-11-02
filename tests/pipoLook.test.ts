@@ -10,7 +10,7 @@ describe("Pipo's look", () => {
 
   it("describes the look in plain words for the postcard prompt", () => {
     expect(describeLook({ head: "boxy", body: "wheels", color: "sky" })).toBe(
-      "a small friendly sky blue robot named Pipo with a square head with little bolts, a dark visor with glowing eyes, and a body that rolls on one big wheel",
+      "a sleek, cool sky blue robot named Pipo with a square head with little bolts, a dark glass visor with glowing LED eyes, and a body that rolls on one big wheel",
     );
   });
 });

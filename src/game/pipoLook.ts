@@ -44,11 +44,11 @@ export function paletteOf(color: PipoColor): Palette {
   return (COLORS.find((c) => c.id === color) ?? COLORS[0]!).palette;
 }
 
-/** Plain words for the image prompt, e.g. "a small orange robot with a round glass-dome head, ...". */
+/** Plain words for the image prompt, e.g. "a sleek, cool orange robot with a round glass-dome head, ...". */
 export function describeLook(look: PipoLook): string {
   const head = HEADS.find((h) => h.id === look.head)?.describe ?? HEADS[0]!.describe;
   const body = BODIES.find((b) => b.id === look.body)?.describe ?? BODIES[0]!.describe;
-  return `a small friendly ${paletteOf(look.color).describe} robot named Pipo with ${head}, a dark visor with glowing eyes, and ${body}`;
+  return `a sleek, cool ${paletteOf(look.color).describe} robot named Pipo with ${head}, a dark glass visor with glowing LED eyes, and ${body}`;
 }
 
 /** Reads a stored look, falling back to the default for anything unknown. */
