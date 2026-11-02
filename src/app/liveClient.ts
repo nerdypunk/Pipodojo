@@ -6,11 +6,26 @@ const MODEL_TIMEOUT_MS = 10_000;
 /** Cost control: live runs allowed per page session. */
 const MAX_LIVE_RUNS_PER_SESSION = 50;
 
+/** The leaderboard receipt from the latest real answer (see functions/api/leaderboard.js). */
+let receipt: { id: string; at: number } | null = null;
+
 export const liveClient = createHttpModelClient({
   url: "/api/chat",
-  fetch: (url, init) => fetch(url, init),
+  fetch: async (url, init) => {
+    const res = await fetch(url, init);
+    const id = res.headers.get("x-pipodojo-receipt");
+    if (id) receipt = { id, at: Date.now() };
+    return res;
+  },
   timeoutMs: MODEL_TIMEOUT_MS,
 });
+
+/** Hands over the latest receipt once (null if there's none from the last 30 minutes). */
+export function takeReceipt(): string | null {
+  const fresh = receipt && Date.now() - receipt.at < 30 * 60_000 ? receipt.id : null;
+  receipt = null;
+  return fresh;
+}
 
 let liveRunsUsed = 0;
 

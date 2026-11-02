@@ -2,7 +2,7 @@
 // one to see their paths. Pipo's garage changes your Pipo's look. The buttons along the bottom
 // do the same as clicking the town, for keyboards and screen readers, and stand in for the town
 // if a browser can't draw 3D.
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { missions } from "../../app/missions.ts";
 import type { Persona } from "../../engine/types.ts";
 import { pathsOf } from "../../game/paths.ts";
@@ -14,6 +14,7 @@ import { SoundButton } from "../SoundButton.tsx";
 import { hover, play } from "../../app/sound.ts";
 import { PLACES, type PlaceId } from "../../game/townLayout.ts";
 import { Pipo } from "../Pipo.tsx";
+import { Leaderboard } from "./Leaderboard.tsx";
 import type { PlaceTag } from "./TownCanvas.tsx";
 
 const REPO_URL = "https://github.com/nerdypunk/Pipodojo";
@@ -49,6 +50,9 @@ function canDraw3D(): boolean {
 export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
   const [hovered, setHovered] = useState<PlaceId | null>(null);
   const [selected, setSelected] = useState<PlaceId | null>(null);
+  // Today's leaderboard, opened from the 🏆 button.
+  const [showBoard, setShowBoard] = useState(false);
+  const closeBoard = useCallback(() => setShowBoard(false), []);
   const [has3D] = useState(canDraw3D);
   const [still] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   // The 3D places set a pointer cursor on hover; never leave it behind.
@@ -149,6 +153,16 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
           </span>
           <button
             type="button"
+            onClick={() => setShowBoard(true)}
+            className="chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-extrabold transition hover:bg-brand-700 active:translate-y-px focus-visible:outline-3 focus-visible:outline-white md:px-4"
+            aria-label={t.town.leaderboard}
+            title={t.town.leaderboard}
+            aria-haspopup="dialog"
+          >
+            <span aria-hidden="true">🏆</span>
+          </button>
+          <button
+            type="button"
             onClick={() => select("garage")}
             className="chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-extrabold transition hover:bg-brand-700 active:translate-y-px focus-visible:outline-3 focus-visible:outline-white md:px-4"
             aria-label={t.town.garage}
@@ -160,6 +174,8 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
           <SoundButton />
         </div>
       </header>
+
+      {showBoard && <Leaderboard onClose={closeBoard} />}
 
       {/* Bottom: the same places as buttons, and who powers Pipo. On tall phone screens the island
           sits mid-screen, so lift these up to tuck under it instead of hugging the bottom edge. */}

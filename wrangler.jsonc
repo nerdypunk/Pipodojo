@@ -11,6 +11,11 @@
     "run_worker_first": ["/api/*"]
   },
   "observability": { "enabled": true },
+  // Today's leaderboard (functions/api/leaderboard.js): daily star totals per country, and
+  // one-time receipts for real answers. No personal data. The tables are made on first use.
+  "d1_databases": [
+    { "binding": "DB", "database_name": "pipodojo-leaderboard", "database_id": "bcb2faf7-0684-4710-951e-e8651141be2c" }
+  ],
   // Deploys keep any variables set in the dashboard instead of wiping them (secrets always stay).
   "keep_vars": true
 }

@@ -1,12 +1,13 @@
-// The Cloudflare Worker that serves Pipodojo: the built game from `dist`, plus the two API routes.
+// The Cloudflare Worker that serves Pipodojo: the built game from `dist`, plus the API routes.
 // The API code lives in functions/api (written as Pages Functions); this file runs it the same
 // way on Workers: the guard first (same-site only, per-visitor limits), then the endpoint.
 // wrangler.jsonc sends only /api/* here; everything else is served straight from the files.
 import { onRequest as guard } from "../functions/api/_middleware.js";
 import { onRequest as chat } from "../functions/api/chat.js";
 import { onRequest as image } from "../functions/api/image.js";
+import { onLeaderboard as leaderboard, onScore as score } from "../functions/api/leaderboard.js";
 
-const ROUTES = { "/api/chat": chat, "/api/image": image };
+const ROUTES = { "/api/chat": chat, "/api/image": image, "/api/score": score, "/api/leaderboard": leaderboard };
 
 export default {
   async fetch(request, env) {

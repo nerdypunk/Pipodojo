@@ -16,6 +16,7 @@ import { PromptChoice } from "../ui/PromptChoice.tsx";
 import { preloadTown, Town } from "../ui/town/Town.tsx";
 import { Lab } from "../ui/lab/Lab.tsx";
 import { initialLang, LangContext, saveLang, type Lang } from "../i18n/index.tsx";
+import { reportLesson } from "./leaderboard.ts";
 import { missionsIn } from "./missions.ts";
 import { paintPostcard, type Postcard } from "./postcard.ts";
 import { cueMusic, installAudioUnlock, installHoverSounds } from "./sound.ts";
@@ -135,6 +136,8 @@ export function App() {
     });
     setStars((s) => ({ ...s, [log.missionId]: Math.max(s[log.missionId] ?? 0, log.score.stars) }));
     runs.current[log.missionId] = log;
+    // Today's leaderboard: this lesson's stars count for the player's country.
+    void reportLesson(log.missionId, log.score.stars);
     const lessons = lessonsOf(path);
     if (index === lessons.length - 1) {
       // Last lesson: Pipo starts painting now, while the box and the gift come up.

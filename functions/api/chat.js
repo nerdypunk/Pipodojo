@@ -4,7 +4,11 @@
 // temperature, rejects oversized bodies, adds tool_choice only when tools are
 // present, returns the upstream response unchanged, never logs request bodies.
 
+import { issueReceipt } from "./leaderboard.js";
+
 export const UPSTREAM_URL = "https://api.meta.ai/v1/chat/completions";
+/** Response header carrying the one-time leaderboard receipt for a real answer. */
+export const RECEIPT_HEADER = "x-pipodojo-receipt";
 // The client never picks the model. The server may choose one of ALLOWED_MODELS via
 // the MODEL_ID env var; anything else falls back to MODEL.
 // Decision (Oct 31): Pipodojo uses the -contributor tier everywhere, deployed too. It is much
@@ -99,9 +103,17 @@ export async function onRequest({ request, env }) {
     return errorResponse(timedOut ? 504 : 502, timedOut ? "The model took too long." : "Could not reach the model.");
   }
 
-  // Pass the upstream response through unchanged (status, body, content type).
-  return new Response(upstream.body, {
-    status: upstream.status,
-    headers: { "content-type": upstream.headers.get("content-type") ?? "application/json" },
-  });
+  // Pass the upstream response through unchanged (status, body, content type). A real answer also
+  // gets a one-time leaderboard receipt for the caller's country (see leaderboard.js); if that
+  // can't be made, the answer goes back without one and the game plays on as usual.
+  const headers = { "content-type": upstream.headers.get("content-type") ?? "application/json" };
+  if (upstream.ok) {
+    try {
+      const receipt = await issueReceipt(env.DB, request);
+      if (receipt) headers[RECEIPT_HEADER] = receipt;
+    } catch {
+      // No receipt this time.
+    }
+  }
+  return new Response(upstream.body, { status: upstream.status, headers });
 }

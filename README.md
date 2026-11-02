@@ -34,7 +34,8 @@ Other commands:
 - `src/engine`: pure TypeScript game engine (prompt building, asking Pipo, rule-based stars). No React. A model never scores the player.
 - `src/ui`: the screens. `src/ui/town` is the 3D overworld (React Three Fiber), built from simple shapes in code.
 - `functions/api/chat.js`: the chat proxy. It holds the API key, picks the model, and caps cost.
-- `functions/api/_middleware.js`: guards both endpoints. It only answers the Pipodojo page itself (other sites and scripts get 403) and limits each visitor to 100 chat calls and 6 postcards per 10 minutes (in memory, best effort). When blocked, the game quietly shows a replay or the ready-made postcard.
+- `functions/api/leaderboard.js`: today's leaderboard (`/api/score` and `/api/leaderboard`), backed by Cloudflare D1 (the `DB` binding in `wrangler.jsonc`). Its tables are made on first use, locally and live.
+- `functions/api/_middleware.js`: guards the endpoints. It only answers the Pipodojo page itself (other sites and scripts get 403) and limits each visitor to 100 chat calls and 6 postcards per 10 minutes (in memory, best effort). When blocked, the game quietly shows a replay or the ready-made postcard.
 
 ## Playing
 
@@ -65,6 +66,8 @@ The whole game plays in English or Latin American Spanish; the 🌐 button on th
 ## Privacy
 
 No accounts and no cookies. Your settings (language, sound, your Pipo's look, your streak) stay in your own browser's storage and are never sent anywhere. The live site uses [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/) to count visits, pages, countries and devices; it's cookie-free and doesn't identify anyone (`src/app/analytics.ts`, off when running locally).
+
+**Today's leaderboard** (the 🏆 button in town) ranks countries, not people, by the stars their players earned today. The server keeps only daily totals per country in Cloudflare D1, using the country code Cloudflare attaches to each request; it never stores names, IP addresses or anything about a person. To keep it fair, each real answer from Muse Spark comes with a one-time receipt, and a finished lesson counts by handing that receipt in (`functions/api/leaderboard.js`). This device remembers which lessons it already counted today, in its own storage, so replays don't count twice.
 
 ## Powered by Muse Spark
 

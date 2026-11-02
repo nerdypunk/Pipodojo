@@ -11,6 +11,9 @@
 export const LIMITS = {
   "/api/chat": { limit: 100, windowMs: 10 * 60_000 },
   "/api/image": { limit: 6, windowMs: 10 * 60_000 },
+  // One per finished lesson, and the town reads the leaderboard when it opens.
+  "/api/score": { limit: 30, windowMs: 10 * 60_000 },
+  "/api/leaderboard": { limit: 60, windowMs: 10 * 60_000 },
 };
 /** Past this many tracked visitors, forget the ones whose window is over. */
 const MAX_TRACKED = 5000;
@@ -23,10 +26,14 @@ function json(status, message, headers = {}) {
   });
 }
 
-/** True when the request comes from a page on this same site (or from localhost to localhost). */
+/**
+ * True when the request comes from a page on this same site (or from localhost to localhost).
+ * Browsers send Origin with POSTs; a same-site GET (the leaderboard) has no Origin, but every
+ * modern browser marks it Sec-Fetch-Site: same-origin.
+ */
 export function fromOurPage(request) {
   const origin = request.headers.get("origin");
-  if (!origin) return false;
+  if (!origin) return request.method === "GET" && request.headers.get("sec-fetch-site") === "same-origin";
   let from;
   try {
     from = new URL(origin);
