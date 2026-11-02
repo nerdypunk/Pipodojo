@@ -33,11 +33,20 @@ export function usePageTransition() {
   const [direction, setDirection] = useState<SweepDirection>("to-right");
   const busy = useRef(false);
   const covered = useRef(false);
+  // Which half is running. A tap while the new screen slides in (uncover) is remembered and runs
+  // as soon as it's done, so a quick tap on a button that just appeared isn't lost. A tap while the
+  // old screen slides away (cover) is ignored: it belongs to the screen that's leaving, and a
+  // double tap must not start the same thing twice.
+  const phase = useRef<"cover" | "uncover" | null>(null);
+  const queued = useRef<{ dir: SweepDirection; swap: () => void } | null>(null);
+  const goRef = useRef<(dir: SweepDirection, swap: () => void) => Promise<void>>(async () => {});
 
   /** Sweep the panel over the page and leave it there. Resolves once the page is covered. */
   const cover = useCallback(async (dir: SweepDirection): Promise<boolean> => {
     if (busy.current || covered.current) return false;
     busy.current = true;
+    phase.current = "cover";
+    queued.current = null;
     try {
       flushSync(() => setDirection(dir));
       html().classList.toggle("swup-theme-reverse", dir === "to-left");
@@ -52,6 +61,7 @@ export function usePageTransition() {
       return false;
     } finally {
       busy.current = false;
+      phase.current = null;
     }
   }, []);
 
@@ -59,6 +69,7 @@ export function usePageTransition() {
   const uncover = useCallback(async (swap: () => void) => {
     if (busy.current || !covered.current) return;
     busy.current = true;
+    phase.current = "uncover";
     try {
       flushSync(swap);
       window.scrollTo(0, 0);
@@ -72,16 +83,26 @@ export function usePageTransition() {
       clearClasses();
       covered.current = false;
       busy.current = false;
+      phase.current = null;
     }
+    // A tap that came in while this screen was sliding in.
+    const next = queued.current;
+    queued.current = null;
+    if (next) void goRef.current(next.dir, next.swap);
   }, []);
 
   /** Cover, swap and uncover in one move. */
   const go = useCallback(
     async (dir: SweepDirection, swap: () => void) => {
+      if (busy.current) {
+        if (phase.current === "uncover") queued.current = { dir, swap };
+        return;
+      }
       if (await cover(dir)) await uncover(swap);
     },
     [cover, uncover],
   );
+  goRef.current = go;
 
   return { direction, go, cover, uncover };
 }
