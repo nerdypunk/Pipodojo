@@ -88,7 +88,7 @@ Pipodojo's game, lessons and Pipo were built during the hackathon. It also uses 
 - [smoothui](https://smoothui.dev) (Siri orb, dynamic island) and [React Bits](https://reactbits.dev) (StarBorder, PixelTransition and more), added with the shadcn CLI into `src/components`
 - [three.js](https://threejs.org), [React Three Fiber](https://github.com/pmndrs/react-three-fiber) and [drei](https://github.com/pmndrs/drei) (MIT) for the 3D town
 - [Paper Shaders](https://github.com/paper-design/shaders) (mesh gradient background, card glow), [swup](https://swup.js.org) overlay and slide themes (page transitions), [egjs Flicking](https://naver.github.io/egjs-flicking/) (path carousel), [Motion](https://motion.dev), [canvas-confetti](https://github.com/catdad/canvas-confetti)
-- [Nunito](https://fonts.google.com/specimen/Nunito) and [Silkscreen](https://fonts.google.com/specimen/Silkscreen) (the town's place tags) fonts via Fontsource (SIL Open Font License)
+- [Nunito](https://fonts.google.com/specimen/Nunito) font via Fontsource (SIL Open Font License)
 
 Third-party code keeps its own license (React Bits components are under its MIT + Commons Clause terms).
 

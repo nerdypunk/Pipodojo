@@ -4,8 +4,6 @@
 
 @theme {
   --font-sans: "Nunito Variable", ui-rounded, system-ui, sans-serif;
-  /* The pixel-art tags floating over the town */
-  --font-pixel: "Silkscreen", ui-monospace, monospace;
 
   /* Pipodojo palette: blue-violet brand for actions and your picks, amber for stars and misses. */
   --color-brand-50: #f3f2ff;

@@ -1,7 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "@fontsource-variable/nunito/wght.css";
-import "@fontsource/silkscreen/700.css";
 import "./index.css";
 import { App } from "./app/App.tsx";
 import { startAnalytics } from "./app/analytics.ts";
