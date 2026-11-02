@@ -38,6 +38,19 @@ describe("tool lessons", () => {
       "🛒 Burgers ($12)\n💳 Total $58.50\n🚚 Delivery Saturday 1pm\n✅ Paid and ordered",
     );
   });
+
+  it("every chat lesson says who the chat is with, so the phone fits the lesson", () => {
+    // A group chat or one person, and the message before Pipo's: never a stranger's line from another lesson.
+    for (const [file, raw] of [...Object.entries(readMissionFiles()), ...Object.entries(readMissionFiles("es")).map(([f, r]) => [`es/${f}`, r] as const)]) {
+      const mission = parseMission(raw, file);
+      for (const tool of mission.tools ?? []) {
+        if (tool.app !== "whatsapp") continue;
+        expect(tool.chat, `${file} ${tool.name}`).toBeDefined();
+        const action = pickAction(mission, [{ name: tool.name, args: { to: "Someone", message: "Hi" } }]);
+        expect(action?.chat).toEqual(tool.chat);
+      }
+    }
+  });
 });
 
 describe("askPipo with tools", () => {
@@ -120,6 +133,7 @@ describe("approveAction", () => {
       app: "whatsapp",
       outcome: "done",
       args: { to: "Barbecue crew", message: "BBQ Saturday 4pm!" },
+      chat: { group: true, earlier: { from: "Sam", text: "Anyone up for something fun this Saturday? 🍔" } },
     });
   });
 

@@ -63,6 +63,14 @@ export const ToolSchema = z.strictObject({
   store: text.optional(),
   /** Label for the shop's "delivery" row, e.g. "Visit" for tickets (default Delivery). */
   whenLabel: text.optional(),
+  /** The chat screen: a group chat or one person, and the message just before Pipo's, if any, so
+   *  the chat fits the lesson (no group header for Grandma, no stranger's message in it). */
+  chat: z
+    .strictObject({
+      group: z.boolean(),
+      earlier: z.strictObject({ from: text, text }).optional(),
+    })
+    .optional(),
   /** done: Pipo went ahead (sent, paid). waiting: Pipo is holding it for your OK. */
   outcome: z.enum(["done", "waiting"]),
   /** JSON Schema for the arguments, passed to the model as is. */

@@ -59,6 +59,8 @@ export interface PipoAction {
   /** Shop screen wording from the tool, e.g. "TicketHub" and "Visit". */
   store?: string;
   whenLabel?: string;
+  /** Chat screen details from the tool: a group or one person, and an earlier message. */
+  chat?: Tool["chat"];
 }
 
 export type PipoRun =

@@ -5,10 +5,11 @@ import type { Mission, ModelClient, ModelReply, ModelRequest } from "../src/engi
 
 export const MISSIONS_DIR = join(import.meta.dirname, "..", "missions");
 
-export function readMissionFiles(): Record<string, unknown> {
+/** The English lessons by file name, or with `dir: "es"` the Spanish ones. */
+export function readMissionFiles(dir = ""): Record<string, unknown> {
   const files: Record<string, unknown> = {};
-  for (const name of readdirSync(MISSIONS_DIR).filter((n) => n.endsWith(".json"))) {
-    files[name] = JSON.parse(readFileSync(join(MISSIONS_DIR, name), "utf8"));
+  for (const name of readdirSync(join(MISSIONS_DIR, dir)).filter((n) => n.endsWith(".json"))) {
+    files[name] = JSON.parse(readFileSync(join(MISSIONS_DIR, dir, name), "utf8"));
   }
   return files;
 }

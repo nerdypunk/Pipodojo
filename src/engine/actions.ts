@@ -22,6 +22,7 @@ export function pickAction(mission: Mission, calls: readonly ToolCall[] | undefi
         args: call.args,
         ...(tool.store ? { store: tool.store } : {}),
         ...(tool.whenLabel ? { whenLabel: tool.whenLabel } : {}),
+        ...(tool.chat ? { chat: tool.chat } : {}),
       };
     }
   }

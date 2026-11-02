@@ -22,6 +22,13 @@
       "name": "send_whatsapp_message",
       "description": "Envía un mensaje de WhatsApp de inmediato. Usa esto cuando la persona quiere que se envíe.",
       "app": "whatsapp",
+      "chat": {
+        "group": true,
+        "earlier": {
+          "from": "Sam",
+          "text": "¿Alguien se apunta a algo divertido este sábado? 🍔"
+        }
+      },
       "outcome": "done",
       "parameters": {
         "type": "object",
@@ -59,6 +66,13 @@
       "name": "draft_whatsapp_message",
       "description": "Escribe el mensaje de WhatsApp y muéstraselo a la persona sin enviarlo, para que lo revise primero. Usa esto cuando la persona quiere verlo antes de que salga.",
       "app": "whatsapp",
+      "chat": {
+        "group": true,
+        "earlier": {
+          "from": "Sam",
+          "text": "¿Alguien se apunta a algo divertido este sábado? 🍔"
+        }
+      },
       "outcome": "waiting",
       "parameters": {
         "type": "object",

@@ -23,11 +23,14 @@ export function PhoneScreen({ action, flags }: Props) {
   return <ShopScreen action={action} flags={flags} />;
 }
 
-/** A group chat. A draft waits in the typing box; once sent it's a bubble in the chat. */
+/** A chat with a group or one person, as the lesson says (tool.chat), with the message just before
+ *  Pipo's when the lesson has one. A draft waits in the typing box; once sent it's a bubble in the chat. */
 function ChatScreen({ action, flags }: Props) {
   const to = readable(action.args.to);
   const message = typeof action.args.message === "string" ? action.args.message.trim() : readable(action.args.message);
   const sent = action.outcome === "done";
+  const group = action.chat?.group ?? false;
+  const earlier = action.chat?.earlier;
   const { t } = useLang();
   return (
     <div className="flex h-full flex-col" aria-label={t.screens.chatLabel(to, sent)}>
@@ -35,23 +38,26 @@ function ChatScreen({ action, flags }: Props) {
         <span aria-hidden="true" className="text-lg leading-none">
           ‹
         </span>
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-base" aria-hidden="true">
-          👥
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-base font-black" aria-hidden="true">
+          {group ? "👥" : to.trim().charAt(0).toUpperCase() || "👤"}
         </span>
         <div className="min-w-0">
           <p className="truncate text-sm font-black">{to}</p>
-          <p className="text-[11px] font-semibold text-white/80">{t.screens.groupInfo}</p>
+          <p className="text-[11px] font-semibold text-white/80">{group ? t.screens.groupChat : t.screens.online}</p>
         </div>
       </div>
 
       {/* Conversation */}
       <div className="flex min-h-0 flex-1 flex-col justify-end gap-2 overflow-y-auto bg-[#efeae2] px-3 py-3">
         <span className="self-center rounded-md bg-white/80 px-2 py-0.5 text-[10px] font-bold text-gray-600">{t.screens.today}</span>
-        <p className="max-w-[80%] self-start rounded-2xl rounded-tl-sm bg-white px-3 py-1.5 text-[13px] leading-snug font-semibold text-ink shadow-sm">
-          <span className="block text-[11px] font-black text-orange-600">Alex</span>
-          {t.screens.friendLine}
-          <span className="block text-right text-[10px] font-bold text-gray-400">3:58 PM</span>
-        </p>
+        {earlier && (
+          <p className="max-w-[80%] self-start rounded-2xl rounded-tl-sm bg-white px-3 py-1.5 text-[13px] leading-snug font-semibold text-ink shadow-sm">
+            {/* Like a real chat: the sender's name only shows in a group. */}
+            {group && <span className="block text-[11px] font-black text-orange-600">{earlier.from}</span>}
+            {earlier.text}
+            <span className="block text-right text-[10px] font-bold text-gray-400">3:58 PM</span>
+          </p>
+        )}
         {sent && (
           <p
             className={`pop-in max-w-[88%] self-end rounded-2xl rounded-tr-sm bg-[#d9fdd3] px-3 py-2 text-[13px] leading-snug font-semibold whitespace-pre-line text-ink shadow-sm ${

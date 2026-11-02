@@ -21,6 +21,13 @@
       "name": "send_whatsapp_message",
       "description": "Send a WhatsApp message right away. Use this when the user wants it sent.",
       "app": "whatsapp",
+      "chat": {
+        "group": true,
+        "earlier": {
+          "from": "Priya",
+          "text": "So who's doing what for the presentation? 🌍"
+        }
+      },
       "outcome": "done",
       "parameters": {
         "type": "object",
@@ -58,6 +65,13 @@
       "name": "draft_whatsapp_message",
       "description": "Write the WhatsApp message and show it to the user without sending it, so they can check it first. Use this when the user wants to see it before it goes out.",
       "app": "whatsapp",
+      "chat": {
+        "group": true,
+        "earlier": {
+          "from": "Priya",
+          "text": "So who's doing what for the presentation? 🌍"
+        }
+      },
       "outcome": "waiting",
       "parameters": {
         "type": "object",

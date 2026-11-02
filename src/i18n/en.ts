@@ -302,9 +302,9 @@ export const en = {
 
   screens: {
     chatLabel: (to: string, sent: boolean) => `Message to ${to}${sent ? ", sent" : ", draft waiting for your OK"}`,
-    groupInfo: "tap here for group info",
+    groupChat: "Group chat",
+    online: "online",
     today: "Today",
-    friendLine: "Anyone free this weekend? ☀️",
     messagePlaceholder: "Message",
     cartLabel: (total: string, paid: boolean) => `Shopping cart, total $${total}${paid ? ", paid" : ", waiting for your OK to pay"}`,
     orderPlaced: "Order placed",

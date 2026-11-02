@@ -299,9 +299,9 @@ export const es: Strings = {
 
   screens: {
     chatLabel: (to: string, sent: boolean) => `Mensaje para ${to}${sent ? ", enviado" : ", borrador esperando tu OK"}`,
-    groupInfo: "toca aquí para ver el grupo",
+    groupChat: "Chat de grupo",
+    online: "en línea",
     today: "Hoy",
-    friendLine: "¿Alguien libre este fin de semana? ☀️",
     messagePlaceholder: "Mensaje",
     cartLabel: (total: string, paid: boolean) => `Carrito, total $${total}${paid ? ", pagado" : ", esperando tu OK para pagar"}`,
     orderPlaced: "Pedido hecho",
