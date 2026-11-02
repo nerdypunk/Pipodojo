@@ -140,7 +140,10 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
   const pipoTarget = useMemo(() => {
     if (!active) return null;
     const place = placeOf(active);
-    return new THREE.Vector3(place.at[0] * 0.82, place.tag + 0.4, place.at[1] * 0.82 + 0.6);
+    // Just outside the place's footprint on the camera's side, low: beside the building (never inside
+    // it) and well below its name tag and hover card.
+    const toCamera = new THREE.Vector3(CAMERA_HOME.x, 0, CAMERA_HOME.z).normalize().multiplyScalar(place.clear + 0.4);
+    return new THREE.Vector3(place.at[0] + toCamera.x, Math.min(2.4, place.tag * 0.55), place.at[1] + toCamera.z);
   }, [active]);
 
   return (
@@ -523,7 +526,8 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
       </group>
       {/* The tag is pinned by its bottom edge; the hover card hangs off it, above (off the building)
           or, near the top of the screen, below. */}
-      <Html position={[0, place.tag, 0]} zIndexRange={[20, 0]} style={{ pointerEvents: "none" }}>
+      {/* The hovered place's tag and card stack above every other tag, so nearby tags never cover its card. */}
+      <Html position={[0, place.tag, 0]} zIndexRange={hovered ? [40, 30] : [20, 0]} style={{ pointerEvents: "none" }}>
         <div ref={label} className="relative" style={{ transform: "translate(-50%, -100%)" }}>
           {hovered && (
             <div

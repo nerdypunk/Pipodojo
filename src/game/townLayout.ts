@@ -24,12 +24,12 @@ export interface Place {
 }
 
 export const PLACES: readonly Place[] = [
-  { id: "parent", at: [-7.9, 4.3], turn: 0.35, clear: 3.0, tag: 3.9 },
+  { id: "parent", at: [-7.9, 4.3], turn: Math.PI / 2, clear: 3.0, tag: 3.9 },
   { id: "business", at: [7.4, 4.6], turn: 0, clear: 3.2, tag: 4.1 },
   { id: "student", at: [7.2, -6.6], turn: 0, clear: 3.6, tag: 4.6 },
   { id: "kid", at: [-7.2, -6.6], turn: Math.PI / 4, clear: 3.2, tag: 4.1 },
   { id: "executive", at: [2.7, -8.4], turn: 0, clear: 2.4, tag: 4.2 },
-  { id: "garage", at: [-2.9, 8.6], turn: 0, clear: 1.9, tag: 2.6 },
+  { id: "garage", at: [-2.9, 8.6], turn: Math.PI / 2, clear: 1.9, tag: 2.6 },
 ];
 
 export const placeOf = (id: PlaceId) => PLACES.find((p) => p.id === id)!;

@@ -368,7 +368,8 @@ export function Birds({ still }: { still: boolean }) {
     const t = clock.elapsedTime;
     if (flock.current) flock.current.rotation.y = -t * 0.12;
     wings.current.forEach((w, i) => {
-      if (w) w.children.forEach((wing, side) => (wing.rotation.x = (side ? 1 : -1) * (0.25 + Math.sin(t * 9 + i) * 0.45)));
+      // Wings spread across the direction of flight and flap up and down together.
+      if (w) w.children.forEach((wing, side) => (wing.rotation.z = (side ? 1 : -1) * (0.25 + Math.sin(t * 9 + i) * 0.45)));
     });
   });
   return (
@@ -378,13 +379,20 @@ export function Birds({ still }: { still: boolean }) {
         [10.8, 8.9, -0.8],
         [9.4, 9.1, -1.1],
       ].map(([x, y, z], i) => (
-        <group key={i} position={[x!, y!, z!]} rotation={[0, Math.PI, 0]}>
+        // The flock turns so each bird moves along +z: body along z, wings out to the sides on x.
+        <group key={i} position={[x!, y!, z!]}>
+          <mesh scale={[0.6, 0.6, 1.4]} raycast={noRaycast}>
+            <sphereGeometry args={[0.07, 8, 6]} />
+            <meshStandardMaterial color="#ffffff" />
+          </mesh>
           <group ref={(g) => void (wings.current[i] = g)}>
             {[-1, 1].map((side) => (
-              <mesh key={side} position={[0, 0, side * 0.18]} raycast={noRaycast}>
-                <boxGeometry args={[0.16, 0.03, 0.36]} />
-                <meshStandardMaterial color="#ffffff" />
-              </mesh>
+              <group key={side}>
+                <mesh position={[side * 0.18, 0, 0]} raycast={noRaycast}>
+                  <boxGeometry args={[0.36, 0.03, 0.16]} />
+                  <meshStandardMaterial color="#ffffff" />
+                </mesh>
+              </group>
             ))}
           </group>
         </group>
