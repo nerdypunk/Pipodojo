@@ -206,9 +206,10 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
       <PhoneTabBar streak={streak} stars={total} pathsDone={pathsDone} onRanking={() => setShowBoard(true)} />
 
       {/* Bottom: the same places as buttons, and who powers Pipo. On phones they sit just above the tab bar. */}
-      <nav className="absolute inset-x-0 bottom-0 z-[45] flex flex-col items-center gap-2 p-3 max-sm:bottom-[calc(4rem+env(safe-area-inset-bottom))] md:p-6" aria-label={t.town.places}>
-        {/* Equal, chunky buttons (two a row on phones; a row on wider screens, wrapping if it must) that press down when tapped. */}
-        <div className="grid w-full max-w-sm grid-cols-2 gap-2 sm:flex sm:w-auto sm:max-w-none sm:flex-wrap sm:justify-center">
+      <nav className="absolute inset-x-0 bottom-0 z-[45] flex flex-col items-center gap-2 p-3 max-sm:bottom-[calc(4rem+env(safe-area-inset-bottom))] max-sm:gap-1.5 max-sm:pb-2 md:p-6" aria-label={t.town.places}>
+        {/* Equal, chunky buttons (two a row on phones, kept short there so the island shows; a row on wider
+            screens, wrapping if it must) that press down when tapped. */}
+        <div className="grid w-full max-w-sm grid-cols-2 gap-2 max-sm:gap-1.5 sm:flex sm:w-auto sm:max-w-none sm:flex-wrap sm:justify-center">
           {places.map((place) => {
             const on = hovered === place.id;
             return (
@@ -220,26 +221,26 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
                 onMouseLeave={() => !selected && setHovered(null)}
                 onFocus={() => !selected && setHovered(place.id)}
                 onBlur={() => !selected && setHovered(null)}
-                className={`${place.phoneOnly ? "sm:hidden" : ""} flex min-h-13 min-w-0 items-center gap-2 rounded-2xl border-b-4 last:odd:col-span-2 last:odd:w-[calc(50%-0.25rem)] last:odd:justify-self-center sm:last:odd:w-auto py-2 pr-2.5 pl-2 text-left text-sm leading-tight font-extrabold shadow-[0_10px_24px_-12px_rgb(45_36_112/0.55)] transition-[background-color,color,border-color,transform] duration-150 active:translate-y-0.5 active:border-b-2 motion-reduce:transition-none sm:pr-3.5 ${
+                className={`${place.phoneOnly ? "sm:hidden" : ""} flex min-h-13 min-w-0 items-center gap-2 rounded-2xl border-b-4 py-2 pr-2.5 pl-2 text-left text-sm leading-tight font-extrabold max-sm:min-h-10 max-sm:gap-1.5 max-sm:rounded-xl max-sm:border-b-[3px] max-sm:py-1 max-sm:pr-2 max-sm:pl-1.5 max-sm:text-[13px] shadow-[0_10px_24px_-12px_rgb(45_36_112/0.55)] transition-[background-color,color,border-color,transform] duration-150 active:translate-y-0.5 active:border-b-2 motion-reduce:transition-none sm:pr-3.5 ${
                   on ? "border-brand-800 bg-brand-600 text-white" : "border-brand-200 bg-white text-ink"
                 }`}
               >
                 <span
-                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xl ${on ? "bg-white/20" : "bg-brand-50"}`}
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xl max-sm:h-7 max-sm:w-7 max-sm:rounded-lg max-sm:text-base ${on ? "bg-white/20" : "bg-brand-50"}`}
                   aria-hidden="true"
                 >
                   {place.emoji}
                 </span>
                 <span className="min-w-0 flex-1">{place.name}</span>
                 {tags[place.id].badge && <span aria-label={t.town.pathComplete}>{tags[place.id].badge}</span>}
-                <span className={`text-lg leading-none ${on ? "text-white/80" : "text-brand-400"}`} aria-hidden="true">
+                <span className={`text-lg leading-none max-sm:text-base ${on ? "text-white/80" : "text-brand-400"}`} aria-hidden="true">
                   ›
                 </span>
               </button>
             );
           })}
         </div>
-        <div className="flex flex-col items-center gap-1 rounded-2xl bg-white/70 px-3.5 py-2 text-xs font-extrabold text-brand-800 ring-1 ring-white sm:flex-row sm:gap-2 sm:rounded-full sm:py-1">
+        <div className="flex flex-col items-center gap-1 rounded-2xl bg-white/70 px-3.5 py-2 text-xs font-extrabold text-brand-800 ring-1 ring-white max-sm:gap-0.5 max-sm:py-1.5 max-sm:text-[11px] sm:flex-row sm:gap-2 sm:rounded-full sm:py-1">
           {/* Both lines share one shape (icon in a fixed slot, same size and weight), and on phones
               each is centred, so the stacked pair sits in the middle. */}
           <p className="inline-flex items-center gap-1.5">

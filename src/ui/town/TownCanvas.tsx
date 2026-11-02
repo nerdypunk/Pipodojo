@@ -72,6 +72,15 @@ const ISLANDS_WIDE: [number, number, number][] = [
 ];
 /** The tall-screen island's old fixed spot, kept only for how far it sits from the camera (its size). */
 const TALL_ISLAND_DEPTH_FROM = new THREE.Vector3(-15, 6, -19.5);
+/**
+ * On phones the place buttons and the tab bar fill the bottom of the screen, so the island is drawn
+ * higher, closer to the title: the picture moves up by this share of the screen. It's a camera view
+ * offset, so the name tags and the floating island, worked out through the same camera, move with it.
+ */
+const PHONE_LIFT = 0.1;
+function phoneLift(width: number, height: number): number {
+  return width < 640 && width / Math.max(1, height) < 1.3 ? Math.round(height * PHONE_LIFT) : 0;
+}
 /** Bottom of the header card, in CSS pixels (it grows at the md breakpoint), plus a little room. */
 const headerBottom = (width: number) => (width >= 768 ? 122 : 68);
 
@@ -86,6 +95,8 @@ const headerBottom = (width: number) => (width >= 768 ? 122 : 68);
 function tallIslandSpot(width: number, height: number): [number, number, number] | null {
   const aspect = width / Math.max(1, height);
   const camera = new THREE.PerspectiveCamera(30, aspect, 0.5, 140);
+  const lift = phoneLift(width, height);
+  if (lift) camera.setViewOffset(width, height, 0, lift, width, height);
   camera.position.copy(homeFor(aspect));
   camera.lookAt(LOOK_HOME);
   camera.updateMatrixWorld();
@@ -180,6 +191,13 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
   const width = useThree((s) => s.size.width);
   const height = useThree((s) => s.size.height);
   const wide = width / Math.max(1, height) >= 1.3;
+  const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
+  // Phones: the island drawn a little higher (see PHONE_LIFT).
+  useLayoutEffect(() => {
+    const lift = phoneLift(width, height);
+    if (lift) camera.setViewOffset(width, height, 0, lift, width, height);
+    else camera.clearViewOffset();
+  }, [camera, width, height]);
   const islands = useMemo(() => {
     if (wide) return ISLANDS_WIDE;
     const spot = tallIslandSpot(width, height);
