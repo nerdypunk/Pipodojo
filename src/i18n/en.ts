@@ -6,7 +6,7 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
 
 export const en = {
   /** The other language, for the switch button. */
-  switchTo: { short: "ES", label: "Cambiar a español" },
+  switchTo: { short: "ES", label: "Cambiar a español", name: "Español" },
 
   lab: {
     kicker: "🧪 Testing area",
@@ -88,6 +88,13 @@ export const en = {
     streak: "day streak",
     stars: "stars",
     garage: "Pipo's garage",
+    tabs: "Menu",
+    tabYou: "You",
+    tabRanking: "Ranking",
+    tabSound: "Sound",
+    meTitle: "Your progress",
+    mePaths: "paths finished",
+    meNote: "Saved on this device only. No account needed.",
     places: "Places in town",
     pathComplete: "Path complete",
     loading: "Building the town…",

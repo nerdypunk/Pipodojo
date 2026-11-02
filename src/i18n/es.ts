@@ -5,7 +5,7 @@ import type { Strings } from "./en.ts";
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 
 export const es: Strings = {
-  switchTo: { short: "EN", label: "Switch to English" },
+  switchTo: { short: "EN", label: "Switch to English", name: "English" },
 
   lab: {
     kicker: "🧪 Zona de pruebas",
@@ -87,6 +87,13 @@ export const es: Strings = {
     streak: "días seguidos",
     stars: "estrellas",
     garage: "Taller de Pipo",
+    tabs: "Menú",
+    tabYou: "Tú",
+    tabRanking: "Ranking",
+    tabSound: "Sonido",
+    meTitle: "Tu progreso",
+    mePaths: "caminos completados",
+    meNote: "Guardado solo en este dispositivo. No necesitas cuenta.",
     places: "Lugares del pueblo",
     pathComplete: "Camino completo",
     loading: "Construyendo el pueblo…",

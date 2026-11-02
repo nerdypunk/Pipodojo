@@ -16,10 +16,8 @@ import { hover, play } from "../../app/sound.ts";
 import { PLACES, type PlaceId } from "../../game/townLayout.ts";
 import { Pipo } from "../Pipo.tsx";
 import { Leaderboard } from "./Leaderboard.tsx";
+import { PhoneTabBar } from "./PhoneTabBar.tsx";
 import type { PlaceTag } from "./TownCanvas.tsx";
-
-/** Header buttons on phones: small and centred, so six of them fit in a compact grid. */
-const PILL = "max-sm:h-9 max-sm:justify-center max-sm:px-2.5 max-sm:py-0 max-sm:text-[13px]";
 
 const REPO_URL = "https://github.com/nerdypunk/Pipodojo";
 const SITE_URL = "https://nerdypunk.dev";
@@ -90,6 +88,29 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stars, lang]);
 
+  // Whole paths finished, across every place (for the phone's progress card).
+  const pathsDone = useMemo(
+    () =>
+      personas.reduce(
+        (sum, persona) =>
+          sum +
+          pathsOf(persona.id, lang).filter((path) => {
+            const lessons = missions.filter((m) => m.path === path.id);
+            return lessons.length > 0 && lessons.every((m) => (stars[m.id] ?? 0) > 0);
+          }).length,
+        0,
+      ),
+    // personas follow lang
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [stars, lang],
+  );
+  // The place buttons: every persona, then (phones only, where the header buttons give way to the
+  // tab bar) Pipo's garage as a place of its own, which also pairs up the last row.
+  const places: { id: PlaceId; emoji: string; name: string; phoneOnly?: boolean }[] = [
+    ...personas.map((persona) => ({ id: persona.id as PlaceId, emoji: persona.emoji, name: persona.name })),
+    { id: "garage", emoji: "🔧", name: t.town.garage, phoneOnly: true },
+  ];
+
   // A soft chime when the mouse moves onto a place in the 3D town, a different note per place.
   const hoverPlace = (id: PlaceId | null) => {
     if (id && id !== hovered) hover(PLACES.findIndex((p) => p.id === id));
@@ -136,7 +157,7 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
         </div>
       )}
 
-      {/* Top: title, stars and the garage */}
+      {/* Top: the title, then (wider screens) streak, stars, ranking, garage, language and sound */}
       <header className="pointer-events-none absolute inset-x-0 top-0 z-[45] flex items-start justify-between gap-2 p-3 md:gap-3 md:p-6">
         <div className="glass pointer-events-auto min-w-0 rounded-2xl px-3 py-2 md:px-4 md:py-2.5">
           <p className="text-[11px] font-black tracking-wide text-brand-700 uppercase md:text-xs">{t.town.kicker}</p>
@@ -144,13 +165,13 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
           <h1 className="text-lg leading-tight font-black text-ink [font-kerning:none] md:text-2xl">{t.town.title}</h1>
           <p className="hidden text-sm font-semibold text-gray-600 sm:block">{t.town.hint}</p>
         </div>
-        {/* On phones: a compact two-column grid of small buttons; from sm up, one row. */}
-        <div className="pointer-events-auto grid shrink-0 grid-cols-2 gap-1.5 sm:flex sm:flex-row sm:items-center sm:gap-2">
-          <span className={`chip flex items-center gap-1 rounded-full px-3 py-2 text-sm font-black ${PILL}`} title={t.town.streakTitle}>
+        {/* From sm up, one row of buttons. Phones have the tab bar along the bottom instead (PhoneTabBar). */}
+        <div className="pointer-events-auto flex shrink-0 flex-row items-center gap-2 max-sm:hidden">
+          <span className={`chip flex items-center gap-1 rounded-full px-3 py-2 text-sm font-black`} title={t.town.streakTitle}>
             <span aria-hidden="true">🔥</span>
             {streak} <span className="sr-only">{t.town.streak}</span>
           </span>
-          <span className={`chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-black ${PILL}`}>
+          <span className={`chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-black`}>
             <span className="text-amber-300" aria-hidden="true">
               ★
             </span>
@@ -159,7 +180,7 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
           <button
             type="button"
             onClick={() => setShowBoard(true)}
-            className={`chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-extrabold transition hover:bg-brand-700 active:translate-y-px focus-visible:outline-3 focus-visible:outline-white md:px-4 ${PILL}`}
+            className={`chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-extrabold transition hover:bg-brand-700 active:translate-y-px focus-visible:outline-3 focus-visible:outline-white md:px-4`}
             aria-label={t.town.leaderboard}
             title={t.town.leaderboard}
             aria-haspopup="dialog"
@@ -169,37 +190,37 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
           <button
             type="button"
             onClick={() => select("garage")}
-            className={`chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-extrabold transition hover:bg-brand-700 active:translate-y-px focus-visible:outline-3 focus-visible:outline-white md:px-4 ${PILL}`}
+            className={`chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-extrabold transition hover:bg-brand-700 active:translate-y-px focus-visible:outline-3 focus-visible:outline-white md:px-4`}
             aria-label={t.town.garage}
           >
             <span aria-hidden="true">🔧</span>
             <span className="hidden sm:inline">{t.town.garage}</span>
           </button>
-          <LangSwitch className={`${PILL} max-sm:[&>span:first-child]:hidden`} />
-          <SoundButton className={PILL} />
+          <LangSwitch />
+          <SoundButton />
         </div>
       </header>
 
       {showBoard && <Leaderboard onClose={closeBoard} />}
 
-      {/* Bottom: the same places as buttons, and who powers Pipo. On tall phone screens the island
-          sits mid-screen, so lift these up to tuck under it instead of hugging the bottom edge. */}
-      <nav className="absolute inset-x-0 bottom-0 z-[45] flex flex-col items-center gap-2 p-3 max-sm:bottom-[8dvh] md:p-6" aria-label={t.town.places}>
-        {/* Equal, chunky buttons (two a row on phones, the odd one out centred at the same size; a row on wider
-            screens, wrapping if it must) that press down when tapped. */}
+      <PhoneTabBar streak={streak} stars={total} pathsDone={pathsDone} onRanking={() => setShowBoard(true)} />
+
+      {/* Bottom: the same places as buttons, and who powers Pipo. On phones they sit just above the tab bar. */}
+      <nav className="absolute inset-x-0 bottom-0 z-[45] flex flex-col items-center gap-2 p-3 max-sm:bottom-[calc(4rem+env(safe-area-inset-bottom))] md:p-6" aria-label={t.town.places}>
+        {/* Equal, chunky buttons (two a row on phones; a row on wider screens, wrapping if it must) that press down when tapped. */}
         <div className="grid w-full max-w-sm grid-cols-2 gap-2 sm:flex sm:w-auto sm:max-w-none sm:flex-wrap sm:justify-center">
-          {personas.map((persona) => {
-            const on = hovered === persona.id;
+          {places.map((place) => {
+            const on = hovered === place.id;
             return (
               <button
-                key={persona.id}
+                key={place.id}
                 type="button"
-                onClick={() => select(persona.id)}
-                onMouseEnter={() => !selected && setHovered(persona.id)}
+                onClick={() => select(place.id)}
+                onMouseEnter={() => !selected && setHovered(place.id)}
                 onMouseLeave={() => !selected && setHovered(null)}
-                onFocus={() => !selected && setHovered(persona.id)}
+                onFocus={() => !selected && setHovered(place.id)}
                 onBlur={() => !selected && setHovered(null)}
-                className={`flex min-h-13 min-w-0 items-center gap-2 rounded-2xl border-b-4 last:odd:col-span-2 last:odd:w-[calc(50%-0.25rem)] last:odd:justify-self-center sm:last:odd:w-auto py-2 pr-2.5 pl-2 text-left text-sm leading-tight font-extrabold shadow-[0_10px_24px_-12px_rgb(45_36_112/0.55)] transition-[background-color,color,border-color,transform] duration-150 active:translate-y-0.5 active:border-b-2 motion-reduce:transition-none sm:pr-3.5 ${
+                className={`${place.phoneOnly ? "sm:hidden" : ""} flex min-h-13 min-w-0 items-center gap-2 rounded-2xl border-b-4 last:odd:col-span-2 last:odd:w-[calc(50%-0.25rem)] last:odd:justify-self-center sm:last:odd:w-auto py-2 pr-2.5 pl-2 text-left text-sm leading-tight font-extrabold shadow-[0_10px_24px_-12px_rgb(45_36_112/0.55)] transition-[background-color,color,border-color,transform] duration-150 active:translate-y-0.5 active:border-b-2 motion-reduce:transition-none sm:pr-3.5 ${
                   on ? "border-brand-800 bg-brand-600 text-white" : "border-brand-200 bg-white text-ink"
                 }`}
               >
@@ -207,10 +228,10 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
                   className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xl ${on ? "bg-white/20" : "bg-brand-50"}`}
                   aria-hidden="true"
                 >
-                  {persona.emoji}
+                  {place.emoji}
                 </span>
-                <span className="min-w-0 flex-1">{persona.name}</span>
-                {tags[persona.id].badge && <span aria-label={t.town.pathComplete}>{tags[persona.id].badge}</span>}
+                <span className="min-w-0 flex-1">{place.name}</span>
+                {tags[place.id].badge && <span aria-label={t.town.pathComplete}>{tags[place.id].badge}</span>}
                 <span className={`text-lg leading-none ${on ? "text-white/80" : "text-brand-400"}`} aria-hidden="true">
                   ›
                 </span>

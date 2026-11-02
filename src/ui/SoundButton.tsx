@@ -12,21 +12,31 @@ export function useSoundSettings(): SoundSettings {
 
 const PANEL_WIDTH = 208;
 
-export function SoundButton({ className = "", compact = false }: { className?: string; compact?: boolean }) {
+export function SoundButton({
+  className = "",
+  compact = false,
+  tab,
+}: {
+  className?: string;
+  compact?: boolean;
+  /** In the phone tab bar: the speaker over this label, styled by className, and the panel opens above. */
+  tab?: string;
+}) {
   const { t } = useLang();
   const settings = useSoundSettings();
   const [open, setOpen] = useState(false);
   const button = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
-  const [at, setAt] = useState({ top: 0, left: 0 });
+  const [at, setAt] = useState<{ top?: number; bottom?: number; left: number }>({ left: 0 });
   const muted = !settings.music && !settings.sfx;
 
-  // Under the button, right edges lined up, kept on screen.
+  // Under the button (above it in the tab bar), right edges lined up, kept on screen.
   useLayoutEffect(() => {
     if (!open || !button.current) return;
     const place = () => {
       const r = button.current!.getBoundingClientRect();
-      setAt({ top: r.bottom + 8, left: Math.max(8, Math.min(r.right - PANEL_WIDTH, window.innerWidth - PANEL_WIDTH - 8)) });
+      const left = Math.max(8, Math.min(r.right - PANEL_WIDTH, window.innerWidth - PANEL_WIDTH - 8));
+      setAt(tab ? { bottom: window.innerHeight - r.top + 8, left } : { top: r.bottom + 8, left });
     };
     place();
     window.addEventListener("resize", place);
@@ -35,7 +45,7 @@ export function SoundButton({ className = "", compact = false }: { className?: s
       window.removeEventListener("resize", place);
       window.removeEventListener("scroll", place, true);
     };
-  }, [open]);
+  }, [open, tab]);
 
   // Close on a tap outside or Escape.
   useEffect(() => {
@@ -67,14 +77,23 @@ export function SoundButton({ className = "", compact = false }: { className?: s
         aria-label={t.sound.button}
         aria-expanded={open}
         title={t.sound.button}
-        className={`flex shrink-0 items-center justify-center rounded-full font-black transition active:translate-y-px focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand-500 ${
+        className={tab ? className : `flex shrink-0 items-center justify-center rounded-full font-black transition active:translate-y-px focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand-500 ${
           compact
             ? "h-9 w-9 border border-brand-700 bg-brand-600 text-white shadow-sm hover:bg-brand-700"
             : "chip px-3 py-2 text-sm hover:bg-brand-700"
         } ${className}`}
       >
         {/* Compact: a white speaker drawn in the app's violet, since the emoji is pale on light glass. */}
-        {compact ? <SpeakerIcon muted={muted} /> : <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>}
+        {tab ? (
+          <>
+            <SpeakerIcon muted={muted} className="h-6 w-6" />
+            <span>{tab}</span>
+          </>
+        ) : compact ? (
+          <SpeakerIcon muted={muted} />
+        ) : (
+          <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>
+        )}
       </button>
       {open &&
         createPortal(
@@ -82,7 +101,7 @@ export function SoundButton({ className = "", compact = false }: { className?: s
             ref={panel}
             role="group"
             aria-label={t.sound.button}
-            style={{ top: at.top, left: at.left, width: PANEL_WIDTH }}
+            style={{ ...at, width: PANEL_WIDTH }}
             className="pop-in fixed z-[10050] space-y-1 rounded-2xl bg-white p-2 shadow-xl ring-1 ring-brand-100"
           >
             <Switch label={`🎵 ${t.sound.music}`} on={settings.music} onFlip={() => flip("music")} onText={t.sound.on} offText={t.sound.off} />
@@ -95,9 +114,9 @@ export function SoundButton({ className = "", compact = false }: { className?: s
 }
 
 /** A speaker with sound waves, or with a cross when everything is off. */
-function SpeakerIcon({ muted }: { muted: boolean }) {
+function SpeakerIcon({ muted, className = "h-5 w-5" }: { muted: boolean; className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" />
       {muted ? (
         <path d="M16 9.5l5 5M21 9.5l-5 5" />
