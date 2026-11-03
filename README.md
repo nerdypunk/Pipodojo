@@ -1,10 +1,10 @@
 # Pipodojo
 
-**Learn to use AI agents, one tap at a time.** Pipodojo is a Duolingo-style game where people with no technical background learn to prompt a personal AI agent. Pipo, a little robot assistant powered by Meta's Muse Spark, gets a real-life request. You build the prompt by tapping ready-made pieces (no typing), then see what Pipo does with it. Leave out something that matters and you'll see it in Pipo's answer.
+**Learn to use AI agents, one tap at a time.** Pipodojo is a free AI playground where anyone, with no technical background, learns to give clear instructions to a personal AI agent. Pipo, a little robot agent powered by Meta's Muse Spark, gets a real-life request. You build the instruction by tapping ready-made pieces (no typing), then see what Pipo does with it. Leave out something that matters and you'll see it in Pipo's answer.
 
-Built solo for the Meta Global AI Developer Hackathon (Indie Developer track), Oct 27 to Nov 4, 2026.
+**Try it: [pipodojo.com](https://pipodojo.com)**, in English or Spanish, on a phone or a computer.
 
-> Work in progress. Live link, Meta tools used, and the full "built during the hackathon" story are coming.
+Built solo for the Meta Global AI Developer Hackathon (Indie Developer track), Oct 27 to Nov 4, 2026, with Meta's **Muse Spark** (Pipo's answers and actions) and **Muse Image** (the postcards). See [Powered by Muse Spark](#powered-by-muse-spark).
 
 ## Run it locally
 
@@ -18,7 +18,7 @@ npm run dev                      # open http://localhost:5173
 
 `npm run dev` starts Vite and the Cloudflare Worker (`worker/index.js`, running the API code in `functions/api`) together. Vite forwards `/api/*` to the Worker, which holds the API key.
 
-**Deploying.** The site is a Cloudflare Worker connected to this GitHub repo: every push to `main` runs `npm run build` and `npx wrangler deploy` (see `wrangler.jsonc`). The Worker serves the built game from `dist` and runs code only for `/api/*`. Set `MODEL_API_KEY` in the Worker's **Settings → Variables and Secrets** with type **Secret**, not Text: a secret is encrypted, can't be read back, and survives every deploy, while a Text value is readable in the dashboard.
+**Deploying.** The site is a Cloudflare Worker connected to this GitHub repo: every push to `main` runs `npm run build` and `npx wrangler deploy` (see `wrangler.jsonc`). The Worker serves the built site from `dist` and runs code only for `/api/*`. Set `MODEL_API_KEY` in the Worker's **Settings → Variables and Secrets** with type **Secret**, not Text: a secret is encrypted, can't be read back, and survives every deploy, while a Text value is readable in the dashboard.
 
 Add `?debug=1` to the URL (http://localhost:5173/?debug=1) to see the run log and score breakdown.
 
@@ -31,11 +31,11 @@ Other commands:
 ## How it works
 
 - `missions/*.json`: one file per lesson (the situation, the prompt pieces, and what goes wrong when a piece is missing), validated with Zod. Adding a lesson needs no code changes.
-- `src/engine`: pure TypeScript game engine (prompt building, asking Pipo, rule-based stars). No React. A model never scores the player.
+- `src/engine`: pure TypeScript engine (prompt building, asking Pipo, rule-based stars). No React. A model never scores the player.
 - `src/ui`: the screens. `src/ui/town` is the 3D overworld (React Three Fiber), built from simple shapes in code.
 - `functions/api/chat.js`: the chat proxy. It holds the API key, picks the model, and caps cost.
 - `functions/api/leaderboard.js`: today's leaderboard (`/api/score` and `/api/leaderboard`), backed by Cloudflare D1 (the `DB` binding in `wrangler.jsonc`). Its tables are made on first use, locally and live.
-- `functions/api/_middleware.js`: guards the endpoints. It only answers the Pipodojo page itself (other sites and scripts get 403) and limits each visitor to 100 chat calls and 6 postcards per 10 minutes (in memory, best effort). When blocked, the game quietly shows a replay or the ready-made postcard.
+- `functions/api/_middleware.js`: guards the endpoints. It only answers the Pipodojo page itself (other sites and scripts get 403) and limits each visitor to 100 chat calls and 6 postcards per 10 minutes (in memory, best effort). When blocked, Pipodojo quietly shows a replay or the ready-made postcard.
 
 ## Playing
 
@@ -43,11 +43,11 @@ Make your Pipo, then explore **Pipodojo Town**, a little 3D floating island. Eac
 
 In each path, the first lesson is a short answer from Pipo; the next two have Pipo act in a pretend app on its phone: WhatsApp, email, a calendar, an online store or a paperwork form. The busy executive's paths go further: Pipo acts in every lesson, like a real agent filing a claim or searching a marketplace for you.
 
-The young coder uses **Pipo Code**, a coding agent on a laptop, to build a website about a hamster, make an obstacle-course game in BlockStudio (a pretend game studio) and make charts and diagrams for homework. Each laptop app shows a live preview and a code view. They're drawn by the game from Pipo's choices, so nothing the model writes is ever run. These lessons also teach staying safe: no personal details online, no real money in games, and learning instead of copying.
+The young coder uses **Pipo Code**, a coding agent on a laptop, to build a website about a hamster, make an obstacle-course game in BlockStudio (a pretend game studio) and make charts and diagrams for homework. Each laptop app shows a live preview and a code view. They're drawn by Pipodojo from Pipo's choices, so nothing the model writes is ever run. These lessons also teach staying safe: no personal details online, no real money in games, and learning instead of copying.
 
 ## Music and sound
 
-Every sound effect is made in code with the browser's Web Audio API (`src/app/sound.ts`): no audio files, nothing to license. The music is one looping track at `public/music/theme.mp3` (no track, no music). Sound effects start after the player's first tap; the music waits until they press "Let's go to town" (or open any later screen, like the Lab), then fades in and loops softly under the game, and the 🔊 button turns music and sound effects off separately (remembered per device).
+Every sound effect is made in code with the browser's Web Audio API (`src/app/sound.ts`): no audio files, nothing to license. The music is one looping track at `public/music/theme.mp3` (no track, no music). Sound effects start after the player's first tap; the music waits until they press "Let's go to town" (or open any later screen, like the Lab), then fades in and loops softly in the background, and the 🔊 button turns music and sound effects off separately (remembered per device).
 
 ## Pipo's Lab
 
@@ -57,7 +57,7 @@ New ways to play are tried out in a separate Lab, opened by adding `#lab` to the
 
 ## English and Spanish
 
-The whole game plays in English or Latin American Spanish; the 🌐 button on the first screen and in town switches it, and a first visit follows the browser's main language (Spanish if it's Spanish, English otherwise).
+All of Pipodojo works in English or Latin American Spanish; the 🌐 button on the first screen and in town switches it, and a first visit follows the browser's main language (Spanish if it's Spanish, English otherwise).
 
 - Screen text lives in `src/i18n/en.ts` and `src/i18n/es.ts`. The Spanish file must match the English one entry for entry, or the build fails.
 - Each lesson in `/missions` has a Spanish twin in `/missions/es` with the same ids, pieces and scoring rules, only the words and the answer checks rewritten for Spanish. `tests/spanish.test.ts` keeps every twin in step, and a missing twin falls back to English.
@@ -73,11 +73,11 @@ No accounts and no cookies. Your settings (language, sound, your Pipo's look, yo
 
 ## Powered by Muse Spark
 
-Pipo's answers come live from Meta's **Muse Spark** model through the Meta Model API. Pipodojo uses the `muse-spark-1.2-contributor` tier everywhere, locally and deployed: it costs less, and in return Meta may use the prompts to improve its models. Players never type, so every prompt is built from the game's own preset pieces and nothing personal is sent. Pipo's role and answer format come from each lesson file; the stars are worked out by the game's own rules, never by a model.
+Pipo's answers come live from Meta's **Muse Spark** model through the Meta Model API. Pipodojo uses the `muse-spark-1.2-contributor` tier everywhere, locally and deployed: it costs less, and in return Meta may use the prompts to improve its models. Players never type, so every prompt is built from Pipodojo's own preset pieces and nothing personal is sent. Pipo's role and answer format come from each lesson file; the stars are worked out by Pipodojo's own rules, never by a model.
 
-In later lessons Pipo **acts**, using Muse Spark tool calling: each lesson offers pretend app actions (send or draft a WhatsApp message; pay and order, or show the cart first). Muse Spark picks one and fills in the details, and the game shows the result on a floating phone you can drag around. When Pipo is waiting for your OK, tap Send or Pay on that phone: Pipo is told to go ahead and finishes the job with a second tool call. Nothing real is ever sent or bought.
+In later lessons Pipo **acts**, using Muse Spark tool calling: each lesson offers pretend app actions (send or draft a WhatsApp message; pay and order, or show the cart first). Muse Spark picks one and fills in the details, and Pipodojo shows the result on a floating phone you can drag around. When Pipo is waiting for your OK, tap Send or Pay on that phone: Pipo is told to go ahead and finishes the job with a second tool call. Nothing real is ever sent or bought.
 
-Tap **🔧 Under the hood** below the boxes to see the real calls: the message your pieces built, the app actions offered, what Muse Spark sent back (with the model name and timing), and the scoring step, which is the game's own rules.
+Tap **🔧 Under the hood** below the boxes to see the real calls: the message your pieces built, the app actions offered, what Muse Spark sent back (with the model name and timing), and the scoring step, which is Pipodojo's own rules.
 
 Finishing a lesson keeps your **day streak** 🔥 going (saved on your device only). At the end of each path you can **share your win**: a ready-to-post image with your streak, stars, badge and the postcard Pipo painted, shared through your phone's share menu or saved as an image.
 
@@ -91,7 +91,7 @@ Pipodojo is free for everyone, with no ads and no accounts. If it helped you or 
 
 ## Credits
 
-Pipodojo's game, lessons and Pipo were built during the hackathon. It also uses these open-source projects:
+Pipodojo's town, lessons and Pipo were built during the hackathon. It also uses these open-source projects:
 
 - [peel.js](https://github.com/andrewplummer/peel-js) by Andrew Plummer (MIT), copied into `src/vendor/peel` for the path reward
 - [smoothui](https://smoothui.dev) (Siri orb, dynamic island) and [React Bits](https://reactbits.dev) (StarBorder, PixelTransition and more), added with the shadcn CLI into `src/components`
