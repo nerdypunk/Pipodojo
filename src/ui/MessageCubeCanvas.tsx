@@ -1,7 +1,8 @@
 // The message cube's 3D scene (react-three-fiber), loaded on its own so phones never download it.
 // It builds itself live as you tap: a good piece flies in and clicks into its place, a weak one
-// bumps against the cube and rolls off to the floor, a small extra perches on top. Tap a piece
-// again and it flies back out. A whole cube smiles; press Check and it does a happy little spin.
+// bumps against the cube and rolls off to the floor, and an optional extra becomes a gold star on
+// top. Tap a piece again and it flies back out. A whole cube smiles; press Check and it does a
+// happy little spin.
 import { Sparkles } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useLayoutEffect, useMemo, useRef, type RefObject } from "react";
@@ -27,6 +28,21 @@ const BUMPED = new THREE.Color("#c4bfdc");
 const INK = "#2a2140";
 
 const CUBIE = new RoundedBoxGeometry(0.9, 0.9, 0.9, 4, 0.17);
+
+/** A puffy five-point star, 1 wide: what an optional extra piece turns into (a bonus on top, not a part). */
+const STAR = (() => {
+  const shape = new THREE.Shape();
+  for (let i = 0; i < 10; i++) {
+    const r = i % 2 ? 0.22 : 0.5;
+    const a = Math.PI / 2 + (i * Math.PI) / 5;
+    if (i) shape.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+    else shape.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+  }
+  const star = new THREE.ExtrudeGeometry(shape, { depth: 0.14, bevelEnabled: true, bevelThickness: 0.07, bevelSize: 0.06, bevelSegments: 4 });
+  star.center();
+  return star;
+})();
+const GOLD = "#ffc93c";
 const at = (c: Cell) => new THREE.Vector3(c[0] - 0.5, c[1] - 0.5, c[2] - 0.5);
 const now = () => performance.now() / 1000;
 
@@ -148,8 +164,12 @@ interface PieceProps {
 function PieceMesh({ piece, times, still, perch, perches, bump }: PieceProps) {
   const anchor = useRef<THREE.Group>(null);
   const centroid = useMemo(() => piece.cells.reduce((sum, c) => sum.add(at(c)), new THREE.Vector3()).divideScalar(piece.cells.length), [piece]);
-  const base = useMemo(() => new THREE.Color(COLORS[piece.color % COLORS.length]), [piece.color]);
-  const material = useMemo(() => new THREE.MeshStandardMaterial({ color: base, roughness: 0.48 }), [base]);
+  const star = piece.quality === "neutral";
+  const base = useMemo(() => new THREE.Color(star ? GOLD : COLORS[piece.color % COLORS.length]), [piece.color, star]);
+  const material = useMemo(
+    () => new THREE.MeshStandardMaterial({ color: base, roughness: star ? 0.3 : 0.48, emissive: star ? GOLD : "#000000", emissiveIntensity: star ? 0.25 : 0 }),
+    [base, star],
+  );
   useEffect(() => () => material.dispose(), [material]);
   // Each piece comes in from (and goes back out to) its own spot up and to one side.
   const offstage = useMemo(() => {
@@ -159,7 +179,7 @@ function PieceMesh({ piece, times, still, perch, perches, bump }: PieceProps) {
   const motion = useRef({ vel: new THREE.Vector3(), scale: 0, scaleVel: 0, snapped: false, started: false });
   const goal = useMemo(() => ({ pos: new THREE.Vector3(), rot: new THREE.Quaternion(), euler: new THREE.Euler() }), []);
 
-  useFrame((_, delta) => {
+  useFrame(({ clock }, delta) => {
     const g = anchor.current;
     if (!g) return;
     const dt = Math.min(delta, 1 / 30);
@@ -182,10 +202,12 @@ function PieceMesh({ piece, times, still, perch, perches, bump }: PieceProps) {
     } else if (piece.quality === "good") {
       goal.pos.copy(centroid);
     } else if (piece.quality === "neutral") {
-      // A little bobble on top of the cube.
-      goal.pos.set((perch - (perches - 1) / 2) * 0.55, 1.28, 0);
-      goal.rot.setFromEuler(goal.euler.set(0, 0.6, 0));
-      scale = 0.34;
+      // A gold star on top of the cube: a bonus, not a part. It sways and bobs a little but keeps
+      // facing you (turned against the cube's own turn), so it never shows its thin side.
+      const t = clock.elapsedTime + perch;
+      goal.pos.set((perch - (perches - 1) / 2) * 0.62, 1.32 + (still ? 0 : Math.sin(t * 2) * 0.04), 0.1);
+      goal.rot.setFromEuler(goal.euler.set(0, 0.55 + (still ? 0 : Math.sin(t * 1.6) * 0.35), still ? 0 : Math.sin(t * 1.3) * 0.12));
+      scale = 0.56;
     } else if (age < BUMP_AFTER) {
       // A weak piece tries the cube first...
       goal.pos.copy(offstage).setY(0.3).setLength(1.4);
@@ -224,11 +246,15 @@ function PieceMesh({ piece, times, still, perch, perches, bump }: PieceProps) {
 
   return (
     <group ref={anchor} scale={0}>
-      <group position={centroid.clone().negate()}>
-        {piece.cells.map((c) => (
-          <mesh key={c.join(",")} geometry={CUBIE} material={material} position={at(c)} />
-        ))}
-      </group>
+      {star ? (
+        <mesh geometry={STAR} material={material} />
+      ) : (
+        <group position={centroid.clone().negate()}>
+          {piece.cells.map((c) => (
+            <mesh key={c.join(",")} geometry={CUBIE} material={material} position={at(c)} />
+          ))}
+        </group>
+      )}
     </group>
   );
 }
