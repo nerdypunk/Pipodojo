@@ -6,6 +6,93 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
 
 export const es: Strings = {
   langMenu: { label: "Idioma" },
+  landing: {
+    nav: {
+      label: "Principal",
+      about: "Qué es",
+      teachers: "Para docentes y familias",
+      researchers: "Para investigadores",
+      contact: "Contacto",
+      menu: "Menú",
+      close: "Cerrar menú",
+    },
+    hero: {
+      tag: "Un espacio gratuito para practicar con IA",
+      title: "Aprende a guiar agentes de IA, un toque a la vez",
+      lead: "Pipo es un pequeño robot agente. Arma un mensaje con piezas listas, presiona Revisar y mira qué hace Pipo con él.",
+      cta: "Ir a practicar",
+      note: "Gratis · Sin cuenta · En el celular o la computadora",
+    },
+    about: {
+      title: "¿Qué es Pipodojo?",
+      lead: "Los agentes de IA pueden escribir, planear y actuar por nosotros, pero solo si sabemos pedirlo. Pipodojo deja que cualquiera lo practique con unos toques, sin escribir y sin instalar nada.",
+      steps: [
+        { emoji: "🏡", title: "Elige una situación", text: "Una parrillada con amigos, una oferta en el café, una semana llena de clases: cosas de todos los días en las que un agente puede ayudar." },
+        { emoji: "🧩", title: "Toca las piezas", text: "Elige lo que quieres, lo que Pipo necesita saber y cómo debe verse la respuesta." },
+        { emoji: "⭐", title: "Mira qué hace Pipo", text: "Presiona Revisar. Pipo responde al instante y ves qué hizo bien tu mensaje o qué le faltó." },
+      ],
+      powered: "Las respuestas de Pipo llegan en vivo de Muse Spark, de Meta.",
+    },
+    teachers: {
+      title: "Para docentes y familias",
+      lead: "Una forma tranquila y segura de mostrarle a cualquiera cómo funcionan los agentes de IA, en clase o en la mesa de la cocina.",
+      points: [
+        { emoji: "🔒", title: "Sin cookies ni cuentas", text: "Cualquiera puede jugar sin registrarse. Solo miramos conteos anónimos, como visitas y estrellas por país, nunca quién eres." },
+        { emoji: "👆", title: "Sin escribir, sin chat abierto", text: "Los mensajes se arman con piezas listas, así que no hay una caja de chat de la cual preocuparse." },
+        { emoji: "🌎", title: "Cualquier dispositivo, tres idiomas", text: "Funciona en el navegador del celular o la computadora, en español, inglés y japonés." },
+        { emoji: "🎒", title: "Cinco caminos de la vida diaria", text: "Estudiante, familia ocupada, dueño de café, joven programador y ejecutivo ocupado, con lecciones cortas y estrellas." },
+      ],
+      idea: "Pruébenlo juntos: jueguen una lección y luego conversen sobre por qué Pipo acertó o qué le faltó.",
+    },
+    researchers: {
+      title: "Para investigadores",
+      lead: "Pipodojo lo hace un educador de Honduras para ayudar a cerrar la brecha de IA para quienes viven lejos de los centros tecnológicos, empezando por Latinoamérica.",
+      points: [
+        { emoji: "📖", title: "Revisa el código", text: "Cada lección, las reglas de puntaje y los mensajes que recibe Pipo son públicos en GitHub, para que revises exactamente cómo funciona." },
+        { emoji: "📏", title: "Puntaje con reglas claras", text: "Las estrellas salen de reglas escritas en el código, nunca de una IA que juzga a quien juega." },
+        { emoji: "🗺️", title: "Datos de uso anónimos", text: "Estamos preparando datos anónimos por región sobre cómo la gente usa agentes de IA: qué lecciones juega, cómo le va y dónde se atasca. Sin nombres, sin cuentas, sin cookies." },
+      ],
+      invite: "¿Quieres acceder a los datos anónimos y a las tendencias por región cuando estén listos? Únete a la lista.",
+      code: "Ver el código en GitHub",
+    },
+    contact: {
+      title: "Escríbenos",
+      lead: "¿Preguntas, ideas o una clase que quiere probar Pipodojo? Escríbenos.",
+      copy: "Copiar correo",
+      copied: "¡Copiado!",
+    },
+    accounts: {
+      title: "Pronto: cuentas para familias y escuelas",
+      text: "Muy pronto las familias y las escuelas podrán crear cuentas. Déjanos tu correo y te avisamos cuando estén listas.",
+    },
+    waitlist: {
+      label: "Únete a la lista de espera",
+      email: "Tu correo",
+      emailPlaceholder: "tu@correo.com",
+      role: "Soy",
+      roles: { parent: "Familia", teacher: "Docente o escuela", researcher: "Investigador(a)" },
+      birthYear: "Año en que naciste",
+      submit: "Avísenme",
+      sending: "Guardando…",
+      done: "¡Ya estás en la lista! Te escribiremos cuando abra.",
+      invalid: "Ese correo no parece correcto. ¿Lo revisas?",
+      tooYoung: "¡Gracias por tu interés! Esta lista es para personas adultas: pídele a tu mamá, papá o docente que se una por ti.",
+      failed: "No pudimos guardarlo ahora. Intenta de nuevo en un momento o escríbenos a hello@pipodojo.com.",
+      privacy: "Solo guardamos tu correo, lo que elegiste y tu idioma, para avisarte cuando abra. Nunca lo compartimos ni lo vendemos, y lo borramos cuando nos lo pidas en hello@pipodojo.com.",
+    },
+    foot: {
+      tagline: "Un espacio gratuito de IA donde cualquiera aprende a guiar agentes de IA, un toque a la vez.",
+      pipodojo: "Pipodojo",
+      playground: "Ir a practicar",
+      project: "Proyecto abierto",
+      code: "Código en GitHub",
+      privacy: "Privacidad",
+      involved: "Participa",
+      waitlist: "Únete a la lista",
+      support: "Apoya a Pipodojo",
+      powered: "Funciona con Muse Spark, de Meta",
+    },
+  },
 
   lab: {
     kicker: "🧪 Zona de pruebas",
@@ -38,6 +125,7 @@ export const es: Strings = {
   },
 
   common: {
+    home: "Ir a la página de inicio",
     poweredBy: "Pipo funciona con Muse Spark de Meta",
     openSourceA: "Un",
     openSourceLink: "proyecto de código abierto",
@@ -72,7 +160,7 @@ export const es: Strings = {
   },
 
   town: {
-    kicker: "Pueblo Pipodojo",
+    backHome: "Volver al inicio",
     title: "¿A quién ayuda Pipo?",
     hint: "Haz clic en un lugar del pueblo para ver sus caminos.",
     streakTitle: "Días seguidos",

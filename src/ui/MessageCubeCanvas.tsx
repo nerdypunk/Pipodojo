@@ -22,7 +22,7 @@ export interface MessageCubeProps {
   paused: boolean;
 }
 
-/** Soft sweet-shop colours, one per piece (neighbours always differ). */
+/** Soft sweet-shop colors, one per piece (neighbors always differ). */
 const COLORS = ["#a99cff", "#8fd3ff", "#7ee2c0", "#ffb48a", "#ff9ec7", "#ffd166", "#c3f08f", "#9ee6ff", "#d7a6ff", "#ffc2a8"];
 const BUMPED = new THREE.Color("#c4bfdc");
 const INK = "#2a2140";
@@ -187,7 +187,7 @@ function PieceMesh({ piece, times, still, perch, perches, bump }: PieceProps) {
     const tapped = times.current?.get(piece.id);
     const age = tapped === undefined ? 0 : now() - tapped;
     let scale = 1;
-    let grey = false;
+    let gray = false;
     goal.rot.identity();
 
     if (!m.started) {
@@ -213,11 +213,11 @@ function PieceMesh({ piece, times, still, perch, perches, bump }: PieceProps) {
       goal.pos.copy(offstage).setY(0.3).setLength(1.4);
       scale = 0.55;
     } else {
-      // ...bumps off, and rolls to the floor beside the cube, a little grey.
+      // ...bumps off, and rolls to the floor beside the cube, a little gray.
       goal.pos.copy(FLOOR[bump % FLOOR.length]!);
       goal.rot.setFromEuler(goal.euler.set(0, 0.35, (bump % 2 ? 1 : -1) * 0.5));
       scale = 0.42;
-      grey = true;
+      gray = true;
     }
 
     if (still) {
@@ -241,7 +241,7 @@ function PieceMesh({ piece, times, still, perch, perches, bump }: PieceProps) {
     }
     g.scale.setScalar(m.scale);
     g.visible = m.scale > 0.01;
-    material.color.lerp(grey ? BUMPED : base, still ? 1 : 1 - Math.exp(-5 * dt));
+    material.color.lerp(gray ? BUMPED : base, still ? 1 : 1 - Math.exp(-5 * dt));
   });
 
   return (

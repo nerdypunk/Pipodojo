@@ -16,6 +16,11 @@
   "d1_databases": [
     { "binding": "DB", "database_name": "pipodojo-leaderboard", "database_id": "bcb2faf7-0684-4710-951e-e8651141be2c" }
   ],
+  // The daily waitlist digest (functions/api/digest.js): sent through Cloudflare Email Service by
+  // this binding, every morning at 13:00 UTC (7am in Honduras). The address it goes to is a secret
+  // (DIGEST_TO), and so is the key for sending it by hand (DIGEST_KEY).
+  "send_email": [{ "name": "DIGEST" }],
+  "triggers": { "crons": ["0 13 * * *"] },
   // Deploys keep any variables set in the dashboard instead of wiping them (secrets always stay).
   "keep_vars": true
 }

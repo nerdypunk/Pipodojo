@@ -65,7 +65,7 @@ function pillWidth(ctx: CanvasRenderingContext2D, text: string, size: number) {
 
 /**
  * Some systems (Windows) draw a flag emoji as two plain letters. Draws one off-screen and looks
- * for colour: a real flag has some, plain letters drawn in black don't.
+ * for color: a real flag has some, plain letters drawn in black don't.
  */
 let flagsWork: boolean | null = null;
 function canDrawFlags(): boolean {

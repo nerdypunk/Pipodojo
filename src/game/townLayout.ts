@@ -1,5 +1,5 @@
 // Where everything sits in Pipodojo Town (world units, y up, z toward the camera).
-// Pure data and maths, so the scatter of trees can be tested without a browser.
+// Pure data and math, so the scatter of trees can be tested without a browser.
 import type { Persona } from "../engine/types.ts";
 
 export type Vec2 = readonly [x: number, z: number];
@@ -17,7 +17,7 @@ export interface Place {
   at: Vec2;
   /** Turn around y, in radians, so the front faces a road and the camera. */
   turn: number;
-  /** Keep trees this far from the centre. */
+  /** Keep trees this far from the center. */
   clear: number;
   /** Height of the floating name tag. */
   tag: number;
@@ -59,7 +59,7 @@ export const SAKURA_PADS: readonly [number, number, number, number][] = [
 /** Height of the shrine's grassy mound the sakura stands on. */
 export const SHRINE_DECK = 0.4;
 /**
- * The sakura is modelled at full size and drawn at this scale, growing from the top of the mound:
+ * The sakura is modeled at full size and drawn at this scale, growing from the top of the mound:
  * small enough not to hide the places behind it.
  */
 export const SAKURA_SIZE = 0.62;
@@ -150,7 +150,7 @@ export function scatterTrees(count: number, seed = 7): TreeSpot[] {
 export interface FlowerSpot {
   x: number;
   z: number;
-  /** Index into the flower colours. */
+  /** Index into the flower colors. */
   color: number;
 }
 

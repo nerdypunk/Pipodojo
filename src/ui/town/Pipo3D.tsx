@@ -1,4 +1,4 @@
-// Your Pipo in 3D, built from the same head, body and colours you picked in the garage.
+// Your Pipo in 3D, built from the same head, body and colors you picked in the garage.
 // It floats around the sakura shrine, and flies over to whichever place you point at.
 import { RoundedBox } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";

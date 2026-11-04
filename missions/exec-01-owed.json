@@ -5,21 +5,21 @@
   "order": 1,
   "title": "File the refund claim",
   "icon": "🧾",
-  "recap": "Pipo filled in Cloudhop Air's refund request for your ticket.",
+  "recap": "Pipo filled out Cloudhop Air's refund request for your ticket.",
   "funFact": "Agents can write to companies for you, too. Next, Pipo emails Cloudhop Air to get the hotel cost back!",
   "postcard": "an airline refund request form with a big friendly stamp on it, next to a plane ticket: {fields}",
-  "situation": "Oh no, Cloudhop Air cancelled your Friday flight. Want me to fill in their refund request?",
+  "situation": "Oh no, Cloudhop Air canceled your Friday flight. Want me to fill out their refund request?",
   "facts": [
     "🔖 Booking code: QX7R4K",
     "💵 Your ticket cost $420",
     "💳 Money back to your card, not a voucher",
     "👀 You want to check it before it's submitted"
   ],
-  "systemPrompt": "You are Pipo, a friendly personal assistant for a busy executive. You can fill in online forms for them. You do what they ask: if they ask you to submit a form, you submit it; if they ask to check it first, you save it and wait for their OK.",
+  "systemPrompt": "You are Pipo, a friendly personal assistant for a busy executive. You can fill out online forms for them. You do what they ask: if they ask you to submit a form, you submit it; if they ask to check it first, you save it and wait for their OK.",
   "tools": [
     {
       "name": "submit_form",
-      "description": "Fill in the form and submit it now, straight to whoever it's for. Use this when the user wants it handled.",
+      "description": "Fill out the form and submit it now, straight to whoever it's for. Use this when the user wants it handled.",
       "app": "form",
       "outcome": "done",
       "parameters": {
@@ -91,7 +91,7 @@
     },
     {
       "name": "save_form_for_review",
-      "description": "Fill in the form and save it without submitting, so the user can check it first. Use this when the user wants to check it before it goes in.",
+      "description": "Fill out the form and save it without submitting, so the user can check it first. Use this when the user wants to check it before it goes in.",
       "app": "form",
       "outcome": "waiting",
       "parameters": {
@@ -171,8 +171,8 @@
       "pieces": [
         {
           "id": "claim",
-          "label": "Fill in Cloudhop Air's refund request",
-          "text": "Cloudhop Air cancelled my Friday flight. Fill in their online refund request for me.",
+          "label": "Fill out Cloudhop Air's refund request",
+          "text": "Cloudhop Air canceled my Friday flight. Fill out their online refund request for me.",
           "quality": "good"
         },
         {

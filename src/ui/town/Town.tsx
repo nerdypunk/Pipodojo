@@ -9,6 +9,7 @@ import { pathsOf } from "../../game/paths.ts";
 import type { PipoLook } from "../../game/pipoLook.ts";
 import { personasIn } from "../../game/personas.ts";
 import { useLang } from "../../i18n/index.tsx";
+import { HomeLink } from "../HomeLink.tsx";
 import { LangSwitch } from "../LangSwitch.tsx";
 import { SoundButton } from "../SoundButton.tsx";
 import { SupportButton } from "../Support.tsx";
@@ -161,7 +162,9 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
       <header className="pointer-events-none absolute inset-x-0 top-0 z-[45] flex items-start justify-between gap-2 p-3 md:gap-3 md:p-6">
         {/* data-town-header: the 3D town keeps its "under construction" island clear of this card. */}
         <div data-town-header className="glass pointer-events-auto min-w-0 rounded-2xl px-3 py-2 md:px-4 md:py-2.5">
-          <p className="text-[11px] font-black tracking-wide text-brand-700 uppercase md:text-xs">{t.town.kicker}</p>
+          <p className="text-xs font-black text-brand-700 md:text-sm">
+            <HomeLink>‹ {t.town.backHome}</HomeLink>
+          </p>
           {/* Nunito kerns "Wh" apart; without kerning the W sits next to the h */}
           <h1 className="text-lg leading-tight font-black text-ink [font-kerning:none] md:text-2xl">{t.town.title}</h1>
           <p className="hidden text-sm font-semibold text-gray-600 sm:block">{t.town.hint}</p>
@@ -249,7 +252,7 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
         </div>
         <div className="flex flex-col items-center gap-1 rounded-2xl bg-white/70 px-3.5 py-2 text-xs font-extrabold text-brand-800 ring-1 ring-white max-sm:gap-0.5 max-sm:py-1.5 max-sm:text-[11px] sm:flex-row sm:gap-2 sm:rounded-full sm:py-1">
           {/* Both lines share one shape (icon in a fixed slot, same size and weight), and on phones
-              each is centred, so the stacked pair sits in the middle. */}
+              each is centered, so the stacked pair sits in the middle. */}
           <p className="inline-flex items-center gap-1.5">
             <span className="w-4 text-center" aria-hidden="true">
               ⚡

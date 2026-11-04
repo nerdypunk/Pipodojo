@@ -6,7 +6,7 @@
   "title": "Email your accountant",
   "icon": "📞",
   "recap": "Pipo emailed Dana to set up a call about your taxes.",
-  "funFact": "A message, a form and an email: tax time sorted. Agents are great with paperwork, and you stay in charge of what goes out with your name on it.",
+  "funFact": "A message, a form and an email: tax time, handled. Agents are great with paperwork, and you stay in charge of what goes out with your name on it.",
   "postcard": "a friendly video call between a businessman and his accountant over tidy papers: {subject}",
   "situation": "Your papers are ready! Should I email Dana to set up a call?",
   "facts": [
@@ -145,7 +145,7 @@
         {
           "id": "form_ready",
           "label": "My expense form is ready",
-          "text": "Say my expense form is filled in and ready to look at.",
+          "text": "Say my expense form is filled out and ready to look at.",
           "quality": "good"
         },
         {

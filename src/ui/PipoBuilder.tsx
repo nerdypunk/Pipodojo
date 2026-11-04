@@ -1,10 +1,11 @@
-// "Make your Pipo": pick a head, a body and colours before heading into town (and any time
+// "Make your Pipo": pick a head, a body and colors before heading into town (and any time
 // later from Pipo's garage). Everything is drawn
 // in code, so it's instant and free; the look also goes into the end-of-path postcard prompt.
 import { motion, useReducedMotion } from "motion/react";
 import { BODIES, COLORS, HEADS, paletteOf, type PipoLook } from "../game/pipoLook.ts";
 import { useLang } from "../i18n/index.tsx";
 import { Button } from "./Button.tsx";
+import { HomeLink } from "./HomeLink.tsx";
 import { LangSwitch } from "./LangSwitch.tsx";
 import { SoundButton } from "./SoundButton.tsx";
 import { play } from "../app/sound.ts";
@@ -32,7 +33,7 @@ export function PipoBuilder({ look, onChange, onDone, first }: Props) {
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col justify-center gap-3 p-3 pb-28 md:px-6 md:py-4">
       <header className="glass flex items-center gap-3 rounded-2xl py-1.5 pr-4 pl-1.5">
-        <span className="pl-2.5 text-lg font-black tracking-tight text-brand-700">Pipodojo</span>
+        <HomeLink className="ml-2.5 text-lg font-black tracking-tight text-brand-700" />
         <span className="rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-extrabold text-white">{first ? t.builder.welcome : t.builder.garage}</span>
         <span className="ml-auto hidden items-center gap-1.5 text-xs font-extrabold text-brand-800 sm:inline-flex">
           <span aria-hidden="true">⚡</span> {t.common.poweredBy}

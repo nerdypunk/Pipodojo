@@ -191,7 +191,7 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
           </div>
         )}
         {/* The back of the paper, seen while peeling */}
-        {/* inline colour: peel.css sets its own default for .peel-back */}
+        {/* inline color: peel.css sets its own default for .peel-back */}
         {!open && <div className="peel-back rounded-2xl" style={{ backgroundColor: "#e8e6ff" }} />}
       </div>
 

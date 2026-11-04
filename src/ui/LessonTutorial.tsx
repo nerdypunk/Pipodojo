@@ -48,9 +48,9 @@ function placeCard(spot: Box, card: { width: number; height: number }, view: { w
   const middleY = clampY(spot.top + spot.height / 2 - card.height / 2);
   if (spot.left + spot.width + GAP + card.width + EDGE <= view.width) return { left: spot.left + spot.width + GAP, top: middleY };
   if (spot.left - GAP - card.width >= EDGE) return { left: spot.left - GAP - card.width, top: middleY };
-  const centredX = clampX(spot.left + spot.width / 2 - card.width / 2);
-  if (spot.top + spot.height + GAP + card.height + EDGE <= view.height) return { left: centredX, top: spot.top + spot.height + GAP };
-  if (spot.top - GAP - card.height >= EDGE) return { left: centredX, top: spot.top - GAP - card.height };
+  const centeredX = clampX(spot.left + spot.width / 2 - card.width / 2);
+  if (spot.top + spot.height + GAP + card.height + EDGE <= view.height) return { left: centeredX, top: spot.top + spot.height + GAP };
+  if (spot.top - GAP - card.height >= EDGE) return { left: centeredX, top: spot.top - GAP - card.height };
   return { left: clampX((view.width - card.width) / 2), top: view.height - card.height - EDGE };
 }
 

@@ -3,9 +3,9 @@
   "persona": "executive",
   "path": "executive-taxes",
   "order": 2,
-  "title": "Fill in the expense form",
+  "title": "Fill out the expense form",
   "icon": "📋",
-  "recap": "Pipo filled in your work expense form for Dana.",
+  "recap": "Pipo filled out your work expense form for Dana.",
   "funFact": "Agents can write to the people who help you, too. Next, Pipo emails Dana to set up a call about your taxes.",
   "postcard": "a neat work expense form with a big friendly stamp on it: {fields}",
   "situation": "Your accountant sent the expense form. Want me to fill it in?",
@@ -15,11 +15,11 @@
     "🎓 Online design course: $300",
     "👀 You want to check it before it goes in"
   ],
-  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. You can fill in forms for them. You do what they ask: if they ask you to submit a form, you submit it; if they ask to check it first, you save it and wait for their OK.",
+  "systemPrompt": "You are Pipo, a friendly personal assistant on someone's phone. You can fill out forms for them. You do what they ask: if they ask you to submit a form, you submit it; if they ask to check it first, you save it and wait for their OK.",
   "tools": [
     {
       "name": "submit_form",
-      "description": "Fill in the form and submit it now, straight to whoever it's for. Use this when the user wants it handled.",
+      "description": "Fill out the form and submit it now, straight to whoever it's for. Use this when the user wants it handled.",
       "app": "form",
       "outcome": "done",
       "parameters": {
@@ -91,7 +91,7 @@
     },
     {
       "name": "save_form_for_review",
-      "description": "Fill in the form and save it without submitting, so the user can check it first. Use this when the user wants to check it before it goes in.",
+      "description": "Fill out the form and save it without submitting, so the user can check it first. Use this when the user wants to check it before it goes in.",
       "app": "form",
       "outcome": "waiting",
       "parameters": {
@@ -171,14 +171,14 @@
       "pieces": [
         {
           "id": "form_for_dana",
-          "label": "Fill in my expense form for Dana",
-          "text": "Fill in this year's work expense form for my accountant, Dana Reyes.",
+          "label": "Fill out my expense form for Dana",
+          "text": "Fill out this year's work expense form for my accountant, Dana Reyes.",
           "quality": "good"
         },
         {
           "id": "fill_form",
-          "label": "Fill in the form",
-          "text": "Fill in the form for me.",
+          "label": "Fill out the form",
+          "text": "Fill out the form for me.",
           "quality": "weak"
         }
       ]

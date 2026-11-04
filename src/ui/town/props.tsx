@@ -9,9 +9,9 @@ import { DYNAMIC, Static } from "./Static.tsx";
 
 type V3 = [number, number, number];
 
-// A friendly toy-city palette: slate roofs and roads, light grey paving, natural greens and
-// buildings in clear, not-too-bright colours. Pipo keeps its orange. (BRAND here is the slate scale.)
-/** Soft plum grey for small dark details (poles, legs, wheels). */
+// A friendly toy-city palette: slate roofs and roads, light gray paving, natural greens and
+// buildings in clear, not-too-bright colors. Pipo keeps its orange. (BRAND here is the slate scale.)
+/** Soft plum gray for small dark details (poles, legs, wheels). */
 export const INK = "#4a5163";
 /** Eyes and smiles on the kawaii faces. */
 export const EYES = "#2b2f3a";

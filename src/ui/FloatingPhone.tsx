@@ -1,5 +1,5 @@
 // Pipo's phone, floating over the lesson after Pipo acts in an app. It starts top right on wide
-// screens (clear of the result buttons) and bottom centre on phones. You can drag it, it tilts
+// screens (clear of the result buttons) and bottom center on phones. You can drag it, it tilts
 // toward the pointer, and it folds into a small button. When Pipo is holding something for your
 // OK (a draft, a cart, a saved form or listings to save), Send / Pay / Submit asks Pipo to go ahead and Pipo finishes it with its own call.
 import confetti from "canvas-confetti";

@@ -15,6 +15,8 @@ import { PipoBuilder } from "../ui/PipoBuilder.tsx";
 import { PromptChoice } from "../ui/PromptChoice.tsx";
 import { preloadTown, Town } from "../ui/town/Town.tsx";
 import { Lab } from "../ui/lab/Lab.tsx";
+import { Landing } from "../ui/landing/Landing.tsx";
+import { HomeContext } from "../ui/HomeLink.tsx";
 import { initialLang, LangContext, saveLang, type Lang } from "../i18n/index.tsx";
 import { loadJapaneseFont } from "./japaneseFont.ts";
 import { reportLesson } from "./leaderboard.ts";
@@ -23,7 +25,9 @@ import { paintPostcard, type Postcard } from "./postcard.ts";
 import { cueMusic, installAudioUnlock, installHoverSounds } from "./sound.ts";
 
 type Screen =
-  /** Make your Pipo: first thing on arrival, and later from Pipo's garage in town. */
+  /** The front page: what Pipodojo is, and the way into the playground. */
+  | { kind: "landing" }
+  /** Make your Pipo: first thing in the playground, and later from Pipo's garage in town. */
   | { kind: "build"; first: boolean }
   | { kind: "town" }
   | { kind: "paths"; persona: Persona }
@@ -65,13 +69,13 @@ interface Finished {
 }
 
 /**
- * Make your Pipo, then Pipodojo Town, then a persona's paths, then that path's lessons in order.
- * Screens change behind a dark full-page sweep: forward left to right, back right to left.
+ * The front page, then make your Pipo, then Pipodojo Town, then a persona's paths, then that
+ * path's lessons in order. Screens change behind a dark full-page sweep: forward left to right, back right to left.
  * After a lesson the sweep stops halfway, covering the page, and the lesson complete box sits
  * on it; Continue sweeps it away into the next lesson.
  */
 export function App() {
-  const [screen, setScreen] = useState<Screen>(() => (isLabLink() ? { kind: "lab" } : { kind: "build", first: true }));
+  const [screen, setScreen] = useState<Screen>(() => (isLabLink() ? { kind: "lab" } : { kind: "landing" }));
   // Typing #lab into the address while playing opens the Lab too.
   useEffect(() => {
     const open = () => isLabLink() && setScreen({ kind: "lab" });
@@ -104,10 +108,10 @@ export function App() {
   // Fetch the 3D town while the player is still picking a look.
   useEffect(preloadTown, []);
   // Wake the audio on the first tap. The music waits for "Let's go to town" (or any screen past
-  // the first one, like the Lab), then fades in.
+  // making your Pipo, like the Lab), then fades in. The front page stays quiet.
   useEffect(installAudioUnlock, []);
   useEffect(installHoverSounds, []);
-  const firstScreen = screen.kind === "build" && screen.first;
+  const firstScreen = screen.kind === "landing" || (screen.kind === "build" && screen.first);
   useEffect(() => {
     if (!firstScreen) cueMusic();
   }, [firstScreen]);
@@ -123,6 +127,8 @@ export function App() {
   // Lessons come sorted by path and order (see missionLoader).
   const lessonsOf = (path: string) => missions.filter((m) => m.path === path);
   const toTown = () => void go("to-left", () => setScreen({ kind: "town" }));
+  // "Pipodojo" in the playground's headers leads back to the front page.
+  const goHome = () => void go("to-left", () => setScreen({ kind: "landing" }));
   const toPaths = (persona: Persona) => void go("to-left", () => setScreen({ kind: "paths", persona }));
 
   const finish = async (persona: Persona, path: string, index: number, log: RunLog) => {
@@ -195,6 +201,8 @@ export function App() {
         }}
       />
     );
+  } else if (screen.kind === "landing") {
+    content = <Landing onPlay={() => void go("to-right", () => setScreen({ kind: "build", first: true }))} />;
   } else if (screen.kind === "town") {
     content = (
       <Town
@@ -222,11 +230,13 @@ export function App() {
 
   return (
     <LangContext.Provider value={{ lang, setLang }}>
+    <HomeContext.Provider value={goHome}>
     <PipoLookContext.Provider value={look}>
-      <Backdrop />
+      {/* The front page has its own dark backgrounds that cover this one completely. */}
+      <Backdrop paused={screen.kind === "landing"} />
       <div className="swup-transition-main">{content}</div>
       <TransitionOverlay direction={direction} />
-      <DesktopNote />
+      {screen.kind !== "landing" && <DesktopNote />}
       {finished && (
         <LessonComplete
           pathName={pathById(finished.path, lang)?.name ?? ""}
@@ -243,6 +253,7 @@ export function App() {
         />
       )}
     </PipoLookContext.Provider>
+    </HomeContext.Provider>
     </LangContext.Provider>
   );
 }

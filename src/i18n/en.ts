@@ -7,6 +7,97 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
 export const en = {
   /** The language menu (each language is listed in its own words). */
   langMenu: { label: "Language" },
+  /** The front page, before the playground. */
+  landing: {
+    nav: {
+      label: "Main",
+      about: "About",
+      teachers: "For teachers and parents",
+      researchers: "For researchers",
+      contact: "Contact",
+      menu: "Menu",
+      close: "Close menu",
+    },
+    hero: {
+      tag: "A free AI playground",
+      title: "Learn to guide AI agents, one tap at a time",
+      lead: "Pipo is a little robot agent. Build a message from ready-made pieces, press Check, and see what Pipo does with it.",
+      cta: "Go to playground",
+      note: "Free · No account · Phone or computer",
+    },
+    about: {
+      title: "What is Pipodojo?",
+      lead: "AI agents can write, plan and act for us, but only if we know how to ask. Pipodojo lets anyone practice that in a few taps, with no typing and nothing to install.",
+      steps: [
+        { emoji: "🏡", title: "Pick a situation", text: "A barbecue with friends, a café sale, a busy school week: everyday things an agent can help with." },
+        { emoji: "🧩", title: "Tap the pieces", text: "Choose what you want, what Pipo needs to know and how the answer should look." },
+        { emoji: "⭐", title: "See what Pipo does", text: "Press Check. Pipo answers right away, and you see what your message got right or left out." },
+      ],
+      powered: "Pipo's answers come live from Meta's Muse Spark.",
+    },
+    teachers: {
+      title: "For teachers and parents",
+      lead: "A calm, safe way to show anyone how AI agents work, in class or at the kitchen table.",
+      points: [
+        { emoji: "🔒", title: "No cookies, no account needed", text: "Anyone can play without signing up. We only look at anonymous counts, like visits and stars per country, never at who you are." },
+        { emoji: "👆", title: "No typing, no open chat", text: "Players build messages from ready-made pieces, so there's no chat box to worry about." },
+        { emoji: "🌎", title: "Any device, three languages", text: "It runs in the browser on a phone or a computer, in English, Spanish and Japanese." },
+        { emoji: "🎒", title: "Five everyday paths", text: "A student, a busy parent, a café owner, a young coder and a busy executive, with short lessons and stars." },
+      ],
+      idea: "Try it together: play a lesson, then talk about why Pipo got it right, or what it was missing.",
+    },
+    researchers: {
+      title: "For researchers",
+      lead: "Pipodojo is made by an educator from Honduras to help close the AI gap for people outside tech hubs, starting with Latin America.",
+      points: [
+        { emoji: "📖", title: "Audit the code", text: "Every lesson, the scoring rules and the messages Pipo receives are open on GitHub, so you can check exactly how it works." },
+        { emoji: "📏", title: "Scored by clear rules", text: "Stars come from rules written in code, never from an AI judging the player." },
+        { emoji: "🗺️", title: "Anonymous usage data", text: "We're preparing anonymous, region-level data on how people use AI agents: which lessons they play, how they score and where they get stuck. No names, no accounts, no cookies." },
+      ],
+      invite: "Want access to the anonymous data and the regional trends when they open? Join the list.",
+      code: "See the code on GitHub",
+    },
+    contact: {
+      title: "Say hello",
+      lead: "Questions, ideas, or a class that wants to try Pipodojo? Write to us.",
+      copy: "Copy address",
+      copied: "Copied!",
+    },
+    /** Accounts for parents and schools: coming, with a waitlist. */
+    accounts: {
+      title: "Accounts for parents and schools are coming",
+      text: "Soon parents and schools will be able to make accounts. Leave your email and we'll let you know when they open.",
+    },
+    /** The waitlist form (adults only). */
+    waitlist: {
+      label: "Join the waitlist",
+      email: "Your email",
+      emailPlaceholder: "you@example.com",
+      role: "I'm a",
+      roles: { parent: "Parent", teacher: "Teacher or school", researcher: "Researcher" },
+      birthYear: "Year you were born",
+      submit: "Notify me",
+      sending: "Saving…",
+      done: "You're on the list! We'll email you when it opens.",
+      invalid: "That email doesn't look right. Mind checking it?",
+      tooYoung: "Thanks for your interest! This list is for grown-ups, so ask a parent or teacher to join it for you.",
+      failed: "We couldn't save that just now. Please try again in a moment, or write to us at hello@pipodojo.com.",
+      privacy: "We keep only your email, what you picked and your language, to tell you when it opens. We never share or sell it, and we'll delete it whenever you ask at hello@pipodojo.com.",
+    },
+    /** The footer under the front page. */
+    foot: {
+      tagline: "A free AI playground where anyone learns to guide AI agents, one tap at a time.",
+      pipodojo: "Pipodojo",
+      playground: "Go to playground",
+      project: "Open project",
+      code: "Code on GitHub",
+      privacy: "Privacy",
+      involved: "Get involved",
+      waitlist: "Join the waitlist",
+      support: "Support Pipodojo",
+      powered: "Powered by Meta's Muse Spark",
+    },
+  },
 
   lab: {
     kicker: "🧪 Testing area",
@@ -39,6 +130,8 @@ export const en = {
   },
 
   common: {
+    /** Tooltip on "Pipodojo" in the playground's headers. */
+    home: "Go to the home page",
     poweredBy: "Pipo is powered by Meta's Muse Spark",
     openSourceA: "An",
     openSourceLink: "open source project",
@@ -74,7 +167,8 @@ export const en = {
   },
 
   town: {
-    kicker: "Pipodojo Town",
+    /** Above the town's title: the way back to the front page. */
+    backHome: "Back to homepage",
     title: "Who should Pipo help?",
     hint: "Click a place in town to see their paths.",
     streakTitle: "Days in a row",
@@ -261,7 +355,7 @@ export const en = {
       alreadyNote: "Pipo put these in the calendar for you.",
     },
     form: {
-      ask: "Pipo filled in the form. Submit it?",
+      ask: "Pipo filled out the form. Submit it?",
       button: "Submit 📋",
       working: "Pipo is submitting it…",
       approved: "📋 Submitted after your OK!",

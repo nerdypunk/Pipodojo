@@ -13,8 +13,11 @@ const STILL_GRADIENT = [
   "#d9d4ff",
 ].join(", ");
 
-/** Slow-moving mesh gradient behind every screen. Holds still for reduced motion and on phones. */
-export function Backdrop() {
+/**
+ * Slow-moving mesh gradient behind every screen. Holds still for reduced motion and on phones, and
+ * while `paused` (something covers it, like the front page's hero): at speed 0 it stops drawing.
+ */
+export function Backdrop({ paused = false }: { paused?: boolean }) {
   const [still, setStill] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
   useEffect(() => {
@@ -33,7 +36,7 @@ export function Backdrop() {
         colors={COLORS}
         distortion={0.8}
         swirl={0.15}
-        speed={still ? 0 : 0.15}
+        speed={still || paused ? 0 : 0.15}
         maxPixelCount={1920 * 1080}
       />
     </div>

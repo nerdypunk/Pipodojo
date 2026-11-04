@@ -1,4 +1,4 @@
-// The places in Pipodojo Town, in a friendly toy-city style: rounded walls in clear colours,
+// The places in Pipodojo Town, in a friendly toy-city style: rounded walls in clear colors,
 // slate roofs, brick accents and a little face on every building. Each is built facing +z (its front) at its own origin; the town
 // turns and moves it into place.
 import { RoundedBox } from "@react-three/drei";
@@ -200,7 +200,7 @@ export function SakuraShrine({ still }: { still: boolean }) {
           <meshStandardMaterial color={STONE} roughness={0.95} flatShading />
         </mesh>
       ))}
-      {/* The tree is modelled full size, from the mound's top, and drawn smaller (SAKURA_SIZE). */}
+      {/* The tree is modeled full size, from the mound's top, and drawn smaller (SAKURA_SIZE). */}
       <group position={[0, DECK * (1 - SAKURA_SIZE), 0]} scale={SAKURA_SIZE}>
       {/* Low-poly trunk and branches, faceted like the blossom, with roots over the grass: one mesh */}
       <mesh geometry={tree.wood}>

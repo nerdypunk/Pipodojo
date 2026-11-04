@@ -6,8 +6,10 @@ import { onRequest as guard } from "../functions/api/_middleware.js";
 import { onRequest as chat } from "../functions/api/chat.js";
 import { onRequest as image } from "../functions/api/image.js";
 import { onLeaderboard as leaderboard, onScore as score } from "../functions/api/leaderboard.js";
+import { onWaitlist as waitlist } from "../functions/api/waitlist.js";
+import { onDigest as digest, sendDigest } from "../functions/api/digest.js";
 
-const ROUTES = { "/api/chat": chat, "/api/image": image, "/api/score": score, "/api/leaderboard": leaderboard };
+const ROUTES = { "/api/chat": chat, "/api/image": image, "/api/score": score, "/api/leaderboard": leaderboard, "/api/waitlist": waitlist, "/api/waitlist/digest": digest };
 
 export default {
   async fetch(request, env) {
@@ -19,5 +21,9 @@ export default {
       });
     }
     return guard({ request, env, next: () => route({ request, env }) });
+  },
+  // The Cron Trigger in wrangler.jsonc (every morning): email yesterday's waitlist sign-ups.
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(sendDigest(env, { now: event.scheduledTime }));
   },
 };

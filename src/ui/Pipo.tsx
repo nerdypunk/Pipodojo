@@ -1,5 +1,5 @@
 // Pipo, drawn in code: a small hovering robot with a glossy shell, a dark glass visor with LED
-// eyes that change with its mood, and a glowing core. The head, body and colours follow the
+// eyes that change with its mood, and a glowing core. The head, body and colors follow the
 // player's look (PipoLookContext), or can be passed in directly (the look builder's previews).
 import { createContext, useContext, useId } from "react";
 import { DEFAULT_LOOK, paletteOf, type PipoLook } from "../game/pipoLook.ts";

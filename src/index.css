@@ -170,6 +170,21 @@ body {
 }
 
 /* Pipo hovers: the robot bobs, its shadow breathes, its core glows. */
+/* The stars over Pipodojo Town in the front page's footer. */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.twinkle {
+  animation: twinkle 3.6s ease-in-out infinite;
+}
+
 @keyframes pipo-float {
   50% {
     transform: translateY(-4px);
@@ -285,6 +300,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .pick-pop,
+  .twinkle,
   .pop-in,
   .slide-up,
   .pipo-float,

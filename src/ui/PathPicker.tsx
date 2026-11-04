@@ -49,7 +49,7 @@ export function PathPicker({ persona, stars, onStart, onBack }: Props) {
       // an arrow or a swipe) was lost, so it took two. We use the rule below instead.
       preventClickOnDrag: false,
     });
-    // A click counts unless the pointer itself travelled like a swipe between press and release.
+    // A click counts unless the pointer itself traveled like a swipe between press and release.
     let from: { x: number; y: number } | null = null;
     const press = (e: PointerEvent) => void (from = { x: e.clientX, y: e.clientY });
     const click = (e: MouseEvent) => {

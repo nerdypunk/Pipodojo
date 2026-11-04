@@ -48,6 +48,7 @@ Other commands:
 - `src/ui`: the screens. `src/ui/town` is the 3D overworld (React Three Fiber), built from simple shapes in code.
 - `functions/api/chat.js`: the chat proxy. It holds the API key, picks the model, and caps cost.
 - `functions/api/leaderboard.js`: today's leaderboard (`/api/score` and `/api/leaderboard`), backed by Cloudflare D1 (the `DB` binding in `wrangler.jsonc`). Its tables are made on first use, locally and live.
+- `functions/api/waitlist.js`: the accounts waitlist (`/api/waitlist`), adults only, in the same D1 database. See Privacy below.
 - `functions/api/_middleware.js`: guards the endpoints. It only answers the Pipodojo page itself (other sites and scripts get 403) and limits each visitor to 100 chat calls and 6 postcards per 10 minutes (in memory, best effort). When blocked, Pipodojo quietly shows a replay or the ready-made postcard.
 
 ## Playing
@@ -79,9 +80,11 @@ All of Pipodojo works in English, Latin American Spanish or Japanese; the 🌐 m
 
 ## Privacy
 
-No accounts and no cookies. Your settings (language, sound, your Pipo's look, your streak) stay in your own browser's storage and are never sent anywhere. The live site uses [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/) to count visits, pages, countries and devices; it's cookie-free and doesn't identify anyone (`src/app/analytics.ts`, off when running locally).
+No accounts (yet) and no cookies. Your settings (language, sound, your Pipo's look, your streak) stay in your own browser's storage and are never sent anywhere. The live site uses [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/) to count visits, pages, countries and devices; it's cookie-free and doesn't identify anyone (`src/app/analytics.ts`, off when running locally).
 
 **Today's leaderboard** (the 🏆 button in town) ranks countries, not people, by the stars their players earned today. The server keeps only daily totals per country in Cloudflare D1, using the country code Cloudflare attaches to each request; it never stores names, IP addresses or anything about a person. To keep it fair, each real answer from Muse Spark comes with a one-time receipt, and a finished lesson counts by handing that receipt in (`functions/api/leaderboard.js`). This device remembers which lessons it already counted today, in its own storage, so replays don't count twice.
+
+**The accounts waitlist** on the front page is the one place Pipodojo keeps something about a person, and only from adults. Parents, teachers and schools leave an email to hear when accounts open, and researchers to hear when the anonymous usage data opens. The server keeps the email, the role picked, the language and the signup day in Cloudflare D1, and nothing else: no IP address, no country (`functions/api/waitlist.js`). The form asks for a birth year in a neutral way and turns away anyone who might be under 18, in line with COPPA; the birth year is checked and never stored. To have an email removed, write to hello@pipodojo.com.
 
 **Donations** go through [Ko-fi](https://ko-fi.com/pipodojo). Tapping **☕ Support Pipodojo** opens Ko-fi's donation panel in a window over the page (`src/ui/Support.tsx`); nothing from Ko-fi loads until someone opens it, so players who never tap it get no Ko-fi code and no cookies.
 
@@ -89,7 +92,7 @@ No accounts and no cookies. Your settings (language, sound, your Pipo's look, yo
 
 Pipo's answers come live from Meta's **Muse Spark** model through the Meta Model API. Pipodojo uses the `muse-spark-1.2-contributor` tier everywhere, locally and deployed: it costs less, and in return Meta may use the prompts to improve its models. Players never type, so every prompt is built from Pipodojo's own preset pieces and nothing personal is sent. Pipo's role and answer format come from each lesson file; the stars are worked out by Pipodojo's own rules, never by a model.
 
-In later lessons Pipo **acts**, using Muse Spark tool calling: each lesson offers pretend app actions (send or draft a WhatsApp message; pay and order, or show the cart first). Muse Spark picks one and fills in the details, and Pipodojo shows the result on a floating phone you can drag around. When Pipo is waiting for your OK, tap Send or Pay on that phone: Pipo is told to go ahead and finishes the job with a second tool call. Nothing real is ever sent or bought.
+In later lessons Pipo **acts**, using Muse Spark tool calling: each lesson offers pretend app actions (send or draft a WhatsApp message; pay and order, or show the cart first). Muse Spark picks one and fills out the details, and Pipodojo shows the result on a floating phone you can drag around. When Pipo is waiting for your OK, tap Send or Pay on that phone: Pipo is told to go ahead and finishes the job with a second tool call. Nothing real is ever sent or bought.
 
 Tap **🔧 Under the hood** below the boxes to see the real calls: the message your pieces built, the app actions offered, what Muse Spark sent back (with the model name and timing), and the scoring step, which is Pipodojo's own rules.
 
@@ -97,7 +100,7 @@ Finishing a lesson keeps your **day streak** 🔥 going (saved on your device on
 
 Pipodojo works on phones and runs best on a computer; phones get a friendly note saying so.
 
-Before a path you **make your own Pipo** (head, body, colours). It is drawn in code, so it is instant and free. When you finish the path, Meta's **Muse Image** (`muse-image-1.0`) paints a postcard of what your Pipo did across the lessons, starring your Pipo, and you peel the gift open to find it. That is one image per finished path; if painting is slow or fails, a ready-made postcard shows instead. The image endpoint (`functions/api/image.js`) fixes the model, size and style, so it can only paint a Pipodojo postcard.
+Before a path you **make your own Pipo** (head, body, colors). It is drawn in code, so it is instant and free. When you finish the path, Meta's **Muse Image** (`muse-image-1.0`) paints a postcard of what your Pipo did across the lessons, starring your Pipo, and you peel the gift open to find it. That is one image per finished path; if painting is slow or fails, a ready-made postcard shows instead. The image endpoint (`functions/api/image.js`) fixes the model, size and style, so it can only paint a Pipodojo postcard.
 
 ## Support Pipodojo
 

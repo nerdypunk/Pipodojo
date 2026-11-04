@@ -418,7 +418,7 @@ function applyMusic() {
   if (!ctx || !musicBus || !unlocked || !musicCued) return;
   const want = settings.music && !document.hidden;
   // Only touch the volume when the music actually starts or stops: this runs again on every
-  // wake-up, setting change and tab switch, and cancelling a fade that's under way left it silent.
+  // wake-up, setting change and tab switch, and canceling a fade that's under way left it silent.
   if (want === (musicSource !== null || musicStarting)) return;
   const c = ctx;
   const bus = musicBus;

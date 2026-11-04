@@ -11,7 +11,7 @@ import { useTownReady } from "./ready.ts";
 import { DYNAMIC, Static } from "./Static.tsx";
 import { Blob, BRAND, CORAL, INK, LEAF, ORANGE, Person, type PersonStyle } from "./props.tsx";
 
-/** Lighter, yellower greens for some trees, so the forest isn't one flat colour. */
+/** Lighter, yellower greens for some trees, so the forest isn't one flat color. */
 const BLOSSOM = ["#a6d96a", "#b5de78", "#95cf62"];
 const FLOWER = ["#ffffff", "#ffd34d", "#ff7b6b", "#8fb8ff"];
 const WATER = "#7cc8ff";
@@ -36,7 +36,7 @@ export function IslandBase({ still }: { still: boolean }) {
     });
     // None in front of the waterfall.
     const kept = all.filter((r) => Math.abs(Math.atan2(Math.sin(r.a - FALL_ANGLE), Math.cos(r.a - FALL_ANGLE))) > 0.12);
-    // One mesh per rock colour (see merge.ts).
+    // One mesh per rock color (see merge.ts).
     return ROCK.map((color) => ({
       color,
       geometry: mergePlaced(
@@ -245,7 +245,7 @@ export function Flowers({ still }: { still: boolean }) {
   );
 }
 
-/** The stream runs straight out from the island's centre through the pond, so it meets the cliff square on. */
+/** The stream runs straight out from the island's center through the pond, so it meets the cliff square on. */
 const FALL_ANGLE = Math.atan2(POND.at[1], POND.at[0]);
 /** How far the water runs past the grass before it drops, and how far it falls. */
 const LIP = 0.16;
@@ -380,7 +380,7 @@ export function Plaza() {
   );
 }
 
-/** Two neighbours out for a stroll round the shrine. */
+/** Two neighbors out for a stroll round the shrine. */
 export function Strollers({ still }: { still: boolean }) {
   return (
     <>

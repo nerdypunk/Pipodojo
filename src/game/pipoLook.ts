@@ -1,4 +1,4 @@
-// The player's own Pipo: a head, a body and a colour scheme, all drawn in code (no API cost).
+// The player's own Pipo: a head, a body and a color scheme, all drawn in code (no API cost).
 // The look also feeds the end-of-path postcard prompt, so Muse Image draws *your* Pipo.
 
 export type PipoHead = "classic" | "dome" | "boxy";

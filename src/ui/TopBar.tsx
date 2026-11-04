@@ -1,4 +1,5 @@
 import { useLang } from "../i18n/index.tsx";
+import { HomeLink } from "./HomeLink.tsx";
 import { SoundButton } from "./SoundButton.tsx";
 
 interface Props {
@@ -18,7 +19,7 @@ export function TopBar({ progress, stars, onBack, lesson }: Props) {
   const { t } = useLang();
   return (
     <header className="glass flex items-center gap-3 rounded-2xl py-1.5 pr-4 pl-1.5 md:gap-4">
-      {/* A clear, labelled way back (players missed a bare arrow): "Back" on phones, "Back to paths" wider. */}
+      {/* A clear, labeled way back (players missed a bare arrow): "Back" on phones, "Back to paths" wider. */}
       <button
         type="button"
         onClick={onBack}
@@ -31,7 +32,7 @@ export function TopBar({ progress, stars, onBack, lesson }: Props) {
         <span className="sm:hidden">{t.lesson.back}</span>
         <span className="hidden sm:inline">{t.lesson.backToPaths}</span>
       </button>
-      <span className="hidden text-lg font-black tracking-tight text-brand-700 sm:inline">Pipodojo</span>
+      <HomeLink className="hidden text-lg font-black tracking-tight text-brand-700 sm:inline" />
       <span className="rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-extrabold whitespace-nowrap text-white">
         {t.lesson.lessonOf(lesson.number, lesson.total)}
       </span>

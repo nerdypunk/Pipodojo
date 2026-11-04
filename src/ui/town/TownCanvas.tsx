@@ -467,7 +467,7 @@ const SIDEWALK = 0.36;
 
 type Slab = { pos: [number, number, number]; size: [number, number, number] };
 
-/** Roads in warm grey, with rounded sidewalks along every edge and zebra crossings at the ring. */
+/** Roads in warm gray, with rounded sidewalks along every edge and zebra crossings at the ring. */
 function Roads() {
   const h = RING.half;
   const w = RING.width;
@@ -573,7 +573,7 @@ const BARRIER_SPOTS: { at: [number, number, number]; turn: number }[] = [1, -1].
 
 /**
  * A red and white striped barrier across the end of each road: two boards on two posts, with a
- * little amber lamp on each. All four are drawn as one mesh per colour.
+ * little amber lamp on each. All four are drawn as one mesh per color.
  */
 function Barriers() {
   const parts = useMemo(() => {
@@ -682,7 +682,7 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
     [observer],
   );
 
-  // Keep the tag on screen: on narrow phones a tag centred over a building near the edge would be
+  // Keep the tag on screen: on narrow phones a tag centered over a building near the edge would be
   // cut off, so slide it sideways just enough to stay TAG_MARGIN inside the edge.
   useFrame(({ camera, size }) => {
     const el = label.current;

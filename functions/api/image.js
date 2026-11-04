@@ -11,8 +11,8 @@ export const MAX_BODY_BYTES = 4 * 1024;
 export const UPSTREAM_TIMEOUT_MS = 45_000;
 export const STYLE =
   "A bright illustrated postcard in the look of a classic Saturday-morning adventure anime: clean bold line art, " +
-  "crisp cel shading and vivid, natural everyday colours (grass green, clear sky blue, warm wood, white, and " +
-  "Pipo's own colour). Not pastel, not pink or purple-tinted, no soft dreamy haze. Any people are friendly anime " +
+  "crisp cel shading and vivid, natural everyday colors (grass green, clear sky blue, warm wood, white, and " +
+  "Pipo's own color). Not pastel, not pink or purple-tinted, no soft dreamy haze. Any people are friendly anime " +
   "characters, drawn as the scene describes them, with natural, well-proportioned bodies: normal-sized heads, " +
   "shoulders, arms and legs that fit together, not chibi or stretched. Pipo the robot is cute with a cool, sleek design: a smooth " +
   "glossy rounded shell, a dark glass visor with glowing LED eyes, small arms and a confident pose, like a little " +

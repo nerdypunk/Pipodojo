@@ -31,19 +31,19 @@ export function ShareSheet({ open, info, painting, onClose }: Props) {
   // Draw the card when the sheet opens (and again once the postcard is ready).
   useEffect(() => {
     if (!open || painting) return;
-    let cancelled = false;
+    let canceled = false;
     let url = "";
     // The player's country goes on the card too; if it takes too long, the card goes without it.
     const code = Promise.race([fetchCountry(), new Promise<null>((done) => setTimeout(() => done(null), COUNTRY_WAIT_MS))]);
     void code
       .then((c) => drawShareCard({ ...info, country: c ? { code: c, name: countryName(c, lang) } : null, site: site(), words: t.card }))
       .then((blob) => {
-        if (cancelled) return;
+        if (canceled) return;
         url = URL.createObjectURL(blob);
         setCard({ blob, url });
       });
     return () => {
-      cancelled = true;
+      canceled = true;
       if (url) URL.revokeObjectURL(url);
     };
     // The info object is rebuilt on each render; its contents only change with these.

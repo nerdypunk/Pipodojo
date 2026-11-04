@@ -28,7 +28,7 @@ export interface CubePiece {
   quality: Piece["quality"];
   /** Good pieces: the cells this piece fills. Others: the shape it shows while floating. */
   cells: Cell[];
-  /** Index into the cube's soft colour list. */
+  /** Index into the cube's soft color list. */
   color: number;
 }
 

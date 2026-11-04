@@ -14,6 +14,10 @@ export const LIMITS = {
   // One per finished lesson, and the town reads the leaderboard when it opens.
   "/api/score": { limit: 30, windowMs: 10 * 60_000 },
   "/api/leaderboard": { limit: 60, windowMs: 10 * 60_000 },
+  // Signing up for the accounts waitlist: a few tries are plenty.
+  "/api/waitlist": { limit: 5, windowMs: 10 * 60_000 },
+  // Sending the waitlist digest by hand (needs the secret key too).
+  "/api/waitlist/digest": { limit: 5, windowMs: 10 * 60_000 },
 };
 /** Past this many tracked visitors, forget the ones whose window is over. */
 const MAX_TRACKED = 5000;
