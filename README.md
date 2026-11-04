@@ -4,7 +4,6 @@
 [![powered by Muse Spark](https://img.shields.io/badge/powered%20by-Muse%20Spark-FF8A3D)](#powered-by-muse-spark)
 [![Meta Global AI Developer Hackathon: Indie track](https://img.shields.io/badge/Meta%20Global%20AI%20Developer%20Hackathon-Indie%20track-4F6BED)](#powered-by-muse-spark)
 [![languages: English and Español](https://img.shields.io/badge/languages-English%20%C2%B7%20Espa%C3%B1ol-6D5DF6)](https://pipodojo.com)
-[![no sign-up, no cookies](https://img.shields.io/badge/privacy-no%20sign--up%2C%20no%20cookies-2EA44F)](#how-it-works)
 [![license: MIT](https://img.shields.io/badge/license-MIT-4F6BED)](LICENSE)
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
