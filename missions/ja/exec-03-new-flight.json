@@ -1,0 +1,244 @@
+{
+  "id": "exec-03-new-flight",
+  "lang": "ja",
+  "persona": "executive",
+  "path": "executive-flight",
+  "order": 3,
+  "title": "新しいフライトをカレンダーに追加する",
+  "icon": "🗓️",
+  "recap": "Pipoが新しいフライトをカレンダーに入れました。",
+  "funFact": "払い戻しの申請、ホテル代、新しいフライト。欠航になった旅も、これで解決です。面倒なことはエージェントに任せて、決めるのはあなたです。",
+  "postcard": "a sleek work calendar on a phone next to a plane window, showing {events}",
+  "situation": "新しいフライトが予約できました！仕事用カレンダーに追加しましょうか？",
+  "facts": [
+    "🛫 482便: 木曜日 午前7時15分",
+    "🚕 タクシーのお迎えは午前4時40分",
+    "🔔 リマインダーは前日の夜がいい",
+    "👀 追加する前に確認したい"
+  ],
+  "systemPrompt": "あなたはPipoです。忙しいエグゼクティブのための、親しみやすいパーソナルアシスタントです。その人の仕事用カレンダーに予定を追加できます。頼まれたとおりに行動します。予定を追加してと頼まれたら追加し、先に見たいと言われたら予定を並べてOKを待ちます。",
+  "tools": [
+    {
+      "name": "add_to_calendar",
+      "description": "予定を今すぐカレンダーに追加します。ユーザーが追加を望むときに使います。",
+      "app": "calendar",
+      "outcome": "done",
+      "store": "仕事用カレンダー",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "予定のリスト。それぞれ日本語の短い名前と日時（曜日と時刻）",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "曜日と時刻。例: 火曜日 午後5時"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "いつ知らせるか。例: 1時間前"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "リマインダー：{reminder}"
+        },
+        {
+          "emoji": "✅",
+          "text": "カレンダーに追加しました"
+        }
+      ]
+    },
+    {
+      "name": "show_events",
+      "description": "予定を並べて、追加せずにユーザーに見せ、先に確認してもらいます。ユーザーが追加する前に見たいときに使います。",
+      "app": "calendar",
+      "outcome": "waiting",
+      "store": "仕事用カレンダー",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "予定のリスト。それぞれ日本語の短い名前と日時（曜日と時刻）",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "曜日と時刻。例: 火曜日 午後5時"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "いつ知らせるか。例: 1時間前"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "リマインダー：{reminder}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "準備ができました。追加のOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "add_flight",
+          "label": "フライトと空港までの移動を追加して",
+          "text": "新しいフライトと空港までの移動を、2つの予定として仕事用カレンダーに追加してください。",
+          "quality": "good"
+        },
+        {
+          "id": "add_trip",
+          "label": "旅行の予定を入れて",
+          "text": "旅行の予定をカレンダーに入れてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "Pipoが知っておくべきことは？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "flight_time",
+          "label": "482便、木曜日の午前7時15分",
+          "text": "新しいフライトは482便で、木曜日の午前7時15分発です。",
+          "quality": "good"
+        },
+        {
+          "id": "ride",
+          "label": "タクシーのお迎えは午前4時40分",
+          "text": "空港へのタクシーは午前4時40分に迎えに来ます。",
+          "quality": "good"
+        },
+        {
+          "id": "remind",
+          "label": "前日の夜に知らせて",
+          "text": "前日の夜にリマインドしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "clear_week",
+          "label": "その週の会議を全部キャンセルして！",
+          "text": "その週の会議を全部キャンセルしてください！",
+          "quality": "weak",
+          "tip": "まだ必要な予定までPipoが消してしまうかもしれません。変わることだけを頼みましょう。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが追加する前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "追加する前に見せて",
+          "text": "追加する前に予定を見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "とにかく追加して",
+          "text": "とにかく追加してください。",
+          "quality": "weak",
+          "tip": "確認せずに追加すると、間違った時刻がカレンダーに入っていても気づけません。"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_time",
+      "when": "not_picked:flight_time",
+      "signals": [
+        "^(?![\\s\\S]*[7７七]\\s?([:：]|時)\\s?([1１][5５]|十五))"
+      ],
+      "hint": "Pipoにフライトの曜日と時刻を伝えていませんでした。",
+      "explain": "Pipoはフライトの出発時刻を知らなかったので、時刻を推測しました。"
+    },
+    {
+      "id": "no_ride",
+      "when": "not_picked:ride",
+      "signals": [
+        "^(?![\\s\\S]*[4４四]\\s?([:：]|時)\\s?([4４][0０]|四十))"
+      ],
+      "hint": "Pipoにタクシーが来る時刻を伝えていませんでした。",
+      "explain": "Pipoはタクシーが来る時刻を知らなかったので、空港までの移動が抜けているか、時刻が間違っています。"
+    },
+    {
+      "id": "no_reminder",
+      "when": "not_picked:remind",
+      "signals": [
+        "🔔(?![^\\n]*(前夜|前日|前の(晩|夜|日)|前晩))"
+      ],
+      "hint": "Pipoにリマインダーの好みを伝えていませんでした。",
+      "explain": "Pipoは前日の夜のリマインダーが好みだと知らなかったので、自分で決めました。"
+    },
+    {
+      "id": "added_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "((追加|登録)(済み|しました|完了|されました))(?![^\\n]*待)"
+      ],
+      "hint": "先に予定を見せてもらえば、間違った時刻がカレンダーに入る前に気づけます。",
+      "explain": "Pipoがすぐに追加したので、確認する機会がありませんでした。"
+    }
+  ],
+  "lesson": "出かける時刻も含めて、正確な時刻をPipoに伝えましょう。カレンダーに入る前に確認を。"
+}

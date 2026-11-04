@@ -3,7 +3,7 @@
 [![website: pipodojo.com](https://img.shields.io/badge/website-pipodojo.com-6D5DF6)](https://pipodojo.com)
 [![powered by Muse Spark](https://img.shields.io/badge/powered%20by-Muse%20Spark-FF8A3D)](#powered-by-muse-spark)
 [![Meta Global AI Developer Hackathon: Indie track](https://img.shields.io/badge/Meta%20Global%20AI%20Developer%20Hackathon-Indie%20track-4F6BED)](#powered-by-muse-spark)
-[![languages: English and Español](https://img.shields.io/badge/languages-English%20%C2%B7%20Espa%C3%B1ol-6D5DF6)](https://pipodojo.com)
+[![languages: English, Español and 日本語](https://img.shields.io/badge/languages-English%20%C2%B7%20Espa%C3%B1ol%20%C2%B7%20%E6%97%A5%E6%9C%AC%E8%AA%9E-6D5DF6)](https://pipodojo.com)
 [![license: MIT](https://img.shields.io/badge/license-MIT-4F6BED)](LICENSE)
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
@@ -15,7 +15,7 @@
 
 **Learn to use AI agents, one tap at a time.** Pipodojo is a free AI playground where anyone, with no technical background, learns to give clear instructions to a personal AI agent. Pipo, a little robot agent powered by Meta's Muse Spark, gets a real-life request. You build the instruction by tapping ready-made pieces (no typing), then see what Pipo does with it. Leave out something that matters and you'll see it in Pipo's answer.
 
-**Try it: [pipodojo.com](https://pipodojo.com)**, in English or Spanish, on a phone or a computer.
+**Try it: [pipodojo.com](https://pipodojo.com)**, in English, Spanish or Japanese, on a phone or a computer.
 
 Built solo for the Meta Global AI Developer Hackathon (Indie Developer track), Oct 27 to Nov 4, 2026, with Meta's **Muse Spark** (Pipo's answers and actions) and **Muse Image** (the postcards). See [Powered by Muse Spark](#powered-by-muse-spark).
 
@@ -64,17 +64,18 @@ Every sound effect is made in code with the browser's Web Audio API (`src/app/so
 
 ## Pipo's Lab
 
-New ways to play are tried out in a separate Lab, opened by adding `#lab` to the address (for example `http://localhost:5173/#lab`). It runs on the same engine, scoring and live Muse Spark calls as the lessons, in English and Spanish:
+New ways to play are tried out in a separate Lab, opened by adding `#lab` to the address (for example `http://localhost:5173/#lab`). It runs on the same engine, scoring and live Muse Spark calls as the lessons, in every language:
 
 - **Which prompt wins?:** two messages for the same task; guess which one gets Pipo's better answer, then both run live (`src/game/versus.ts`).
 
-## English and Spanish
+## English, Spanish and Japanese
 
-All of Pipodojo works in English or Latin American Spanish; the 🌐 button on the first screen and in town switches it, and a first visit follows the browser's main language (Spanish if it's Spanish, English otherwise).
+All of Pipodojo works in English, Latin American Spanish or Japanese; the 🌐 menu on the first screen and in town switches it, and a first visit follows the browser's main language (Spanish or Japanese if it's one of those, English otherwise).
 
-- Screen text lives in `src/i18n/en.ts` and `src/i18n/es.ts`. The Spanish file must match the English one entry for entry, or the build fails.
-- Each lesson in `/missions` has a Spanish twin in `/missions/es` with the same ids, pieces and scoring rules, only the words and the answer checks rewritten for Spanish. `tests/spanish.test.ts` keeps every twin in step, and a missing twin falls back to English.
-- Spanish lessons tell Pipo to answer in Spanish. Check one live with `npm run check:mission -- cafe-01-sale-post --lang es`.
+- Screen text lives in `src/i18n/en.ts`, `src/i18n/es.ts` and `src/i18n/ja.ts`. Each file must match the English one entry for entry, or the build fails.
+- Each lesson in `/missions` has a twin in `/missions/es` and `/missions/ja` with the same ids, pieces and scoring rules, only the words and the answer checks rewritten for that language. `tests/translations.test.ts` keeps every twin in step, and a missing twin falls back to English.
+- Translated lessons tell Pipo to answer in that language. Check one live with `npm run check:mission -- cafe-01-sale-post --lang ja` (or `--lang es`).
+- Japanese text uses the rounded [M PLUS Rounded 1c](https://fonts.google.com/specimen/M+PLUS+Rounded+1c) font. It loads only when the game is in Japanese, and only the pieces of it whose characters are on screen.
 
 ## Privacy
 
@@ -110,7 +111,7 @@ Pipodojo's town, lessons and Pipo were built during the hackathon. It also uses 
 - [smoothui](https://smoothui.dev) (Siri orb, dynamic island) and [React Bits](https://reactbits.dev) (StarBorder, PixelTransition and more), added with the shadcn CLI into `src/components`
 - [three.js](https://threejs.org), [React Three Fiber](https://github.com/pmndrs/react-three-fiber) and [drei](https://github.com/pmndrs/drei) (MIT) for the 3D town
 - [Paper Shaders](https://github.com/paper-design/shaders) (mesh gradient background, card glow), [swup](https://swup.js.org) overlay and slide themes (page transitions), [egjs Flicking](https://naver.github.io/egjs-flicking/) (path carousel), [Motion](https://motion.dev), [canvas-confetti](https://github.com/catdad/canvas-confetti)
-- [Nunito](https://fonts.google.com/specimen/Nunito) font via Fontsource (SIL Open Font License)
+- [Nunito](https://fonts.google.com/specimen/Nunito) and, for Japanese, [M PLUS Rounded 1c](https://fonts.google.com/specimen/M+PLUS+Rounded+1c) fonts via Fontsource (SIL Open Font License)
 - [country-flag-emoji-polyfill](https://github.com/talkjs/country-flag-emoji-polyfill) by TalkJS (MIT) for flags on Windows; its flag font uses [Twemoji](https://github.com/twitter/twemoji) art (CC-BY 4.0), served from this site
 
 Third-party code keeps its own license (React Bits components are under its MIT + Commons Clause terms).

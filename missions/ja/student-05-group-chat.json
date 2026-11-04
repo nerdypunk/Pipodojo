@@ -1,0 +1,223 @@
+{
+  "id": "student-05-group-chat",
+  "lang": "ja",
+  "persona": "student",
+  "path": "student-project",
+  "order": 2,
+  "title": "グループにメッセージする",
+  "icon": "💬",
+  "recap": "Pipoが「気候グループ」に計画を送りました。",
+  "funFact": "エージェントは、ていねいなメールも書けます。次は、Pipoが先生に締め切りの延長をお願いしますよ！",
+  "postcard": "four phones lighting up in a lecture hall with Pipo's message: {message}",
+  "situation": "計画ができました！グループチャットに送りましょうか？",
+  "facts": [
+    "💬 「気候グループ」のチャット",
+    "📋 プリヤは調査、トムは原稿、リーはスライド、あなたは発表メモ",
+    "🕕 水曜の午後6時に図書館で集合",
+    "👀 送る前に確認したい"
+  ],
+  "systemPrompt": "あなたはPipoです。大学生のスマホに入っている、親しみやすいパーソナルアシスタントです。その人の代わりにWhatsAppのメッセージを送れます。頼まれたとおりにします。送ってと頼まれたら送り、先に見せてと頼まれたら下書きを書いて、その人のOKを待ちます。",
+  "tools": [
+    {
+      "name": "send_whatsapp_message",
+      "description": "WhatsAppのメッセージを今すぐ送ります。相手が送ってほしいときに使います。",
+      "app": "whatsapp",
+      "chat": {
+        "group": true,
+        "earlier": {
+          "from": "プリヤ",
+          "text": "で、発表は誰が何をやる？🌍"
+        }
+      },
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メッセージを受け取る相手：連絡先、グループチャット、または全員の連絡先"
+          },
+          "message": {
+            "type": "string",
+            "description": "メッセージの本文。日本語で60文字以内"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "✅",
+          "text": "送信しました"
+        }
+      ]
+    },
+    {
+      "name": "draft_whatsapp_message",
+      "description": "WhatsAppのメッセージを書いて、送らずに相手に見せ、先に確認してもらいます。送る前に見たいときに使います。",
+      "app": "whatsapp",
+      "chat": {
+        "group": true,
+        "earlier": {
+          "from": "プリヤ",
+          "text": "で、発表は誰が何をやる？🌍"
+        }
+      },
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メッセージを受け取る相手：連絡先、グループチャット、または全員の連絡先"
+          },
+          "message": {
+            "type": "string",
+            "description": "メッセージの本文。日本語で60文字以内"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "下書きができました。送っていいか、あなたのOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "message_group",
+          "label": "計画を「気候グループ」のチャットに送って",
+          "text": "私たちの計画を、WhatsAppの「気候グループ」のチャットに送ってください。",
+          "quality": "good"
+        },
+        {
+          "id": "tell",
+          "label": "みんなに計画を伝えて",
+          "text": "みんなに計画を伝えてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "メッセージに何を書く？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "roles",
+          "label": "誰が何をするか",
+          "text": "誰が何をするかを書いてください。プリヤは調査、トムは原稿、リーはスライド、私は発表メモです。",
+          "quality": "good"
+        },
+        {
+          "id": "meet",
+          "label": "水曜の午後6時に図書館で集合",
+          "text": "水曜日の午後6時に図書館で集まると書いてください。",
+          "quality": "good"
+        },
+        {
+          "id": "thanks",
+          "label": "みんなにお礼を言って",
+          "text": "手伝ってくれるみんなにお礼を言ってください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "hype",
+          "label": "「やるぞ！！！」とだけ書いて",
+          "text": "「やるぞ！！！」とだけ書いて。",
+          "quality": "weak",
+          "tip": "盛り上がるのは楽しいけれど、次に何をすればいいか誰にもわかりません。メッセージには本当の計画を入れましょう。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが送る前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にメッセージを見せて",
+          "text": "送る前にメッセージを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "すぐに送って",
+          "text": "すぐに送ってください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:tell",
+      "signals": [
+        "📨(?![^\\n]*(気候|climate))"
+      ],
+      "hint": "「みんな」だけでは、どのチャットかわかりません。",
+      "explain": "Pipoはどのチャットか知らなかったので、「気候グループ」には届きませんでした。"
+    },
+    {
+      "id": "no_roles",
+      "when": "not_picked:roles",
+      "signals": [
+        "^(?![\\s\\S]*(プリヤ|priya))"
+      ],
+      "hint": "Pipoに、誰が何をするかを伝えていませんでした。",
+      "explain": "Pipoは役割分担を知らなかったので、メッセージに誰が何をするか書かれていません。"
+    },
+    {
+      "id": "no_meeting",
+      "when": "not_picked:meet",
+      "signals": [
+        "^(?![\\s\\S]*(水曜|[（(]水[)）]|水\\s?[0-9０-９午夜・、]|[・、]水|\\bwed))"
+      ],
+      "hint": "Pipoに、いつ集まるかを伝えていませんでした。",
+      "explain": "Pipoは水曜日のことを知らなかったので、誰もいつ集まればいいかわかりません。"
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(送信しました|送信済|送信完了|送りました|送っておきました|届けました)(?![^\\n]*待)"
+      ],
+      "hint": "先にメッセージを見せてもらえば、グループが読む前に直せます。",
+      "explain": "Pipoがすぐに送ったので、あなたは確認できませんでした。"
+    }
+  ],
+  "lesson": "メッセージには本当の中身を入れましょう。誰が何をするか、いつ集まるか。"
+}

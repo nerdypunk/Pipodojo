@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { play } from "../../app/sound.ts";
 import { useLang } from "../../i18n/index.tsx";
+import { LangSwitch } from "../LangSwitch.tsx";
 import { Pipo } from "../Pipo.tsx";
 import { SoundButton } from "../SoundButton.tsx";
 
@@ -19,7 +20,7 @@ interface Props {
 }
 
 export function PhoneTabBar({ streak, stars, pathsDone, onRanking }: Props) {
-  const { lang, setLang, t } = useLang();
+  const { t } = useLang();
   const [showMe, setShowMe] = useState(false);
   return (
     <>
@@ -52,18 +53,7 @@ export function PhoneTabBar({ streak, stars, pathsDone, onRanking }: Props) {
           <TrophyIcon />
           {t.town.tabRanking}
         </button>
-        <button
-          type="button"
-          aria-label={t.switchTo.label}
-          onClick={() => {
-            play("toggle");
-            setLang(lang === "en" ? "es" : "en");
-          }}
-          className={TAB}
-        >
-          <GlobeIcon />
-          <span lang={lang === "en" ? "es" : "en"}>{t.switchTo.name}</span>
-        </button>
+        <LangSwitch tab={<GlobeIcon />} className={TAB} />
         <SoundButton tab={t.town.tabSound} className={TAB} />
       </nav>
       {showMe && <MeSheet streak={streak} stars={stars} pathsDone={pathsDone} onClose={() => setShowMe(false)} />}

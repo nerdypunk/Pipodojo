@@ -1,0 +1,258 @@
+{
+  "id": "parent-03-groceries",
+  "lang": "ja",
+  "persona": "parent",
+  "path": "parent-barbecue",
+  "order": 3,
+  "title": "食料品を注文しよう",
+  "icon": "🛒",
+  "recap": "Pipoがカートに食べ物を入れて、配達を手配しました。",
+  "funFact": "計画、メッセージ、買い物まで、Pipoにまかせられましたね。パーソナルエージェントは、こうした用事を引き受けるためにあります。わかりやすい指示と、動く前のちょっとした確認で、びっくりすることはなくなります。",
+  "postcard": "a grocery delivery bag arriving at the door, overflowing with {items}",
+  "situation": "みんなを招待しました！土曜日の食べ物も買っておきましょうか？",
+  "facts": [
+    "📝 リスト：ハンバーガー、ベジバーガー、バンズ、コーン、サラダ、飲み物",
+    "🚚 土曜日の午後2時までに届くこと",
+    "💵 使えるのは最大$60",
+    "👀 支払う前にカートを見たい"
+  ],
+  "systemPrompt": "あなたはPipoです。スマホの中にいる、親しみやすいパーソナルアシスタントです。あなたはネットスーパーで買い物ができ、保存されたカードで支払えます。頼まれたとおりにします。買って、または注文してと頼まれたら、支払って注文します。先にカートを見たいと頼まれたら、カートに入れてOKを待ちます。",
+  "tools": [
+    {
+      "name": "pay_and_order",
+      "description": "今すぐ食料品を買います：保存されたカードで支払い、注文を確定します。ユーザーがまかせたいときに使います。",
+      "app": "shop",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "カートの中身すべて。それぞれドルでの値段つき",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "ドルでの合計"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "配達の曜日と時間。例：金曜日の午後6時"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛒",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "合計 ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "配達 {delivery}"
+        },
+        {
+          "emoji": "✅",
+          "text": "支払いと注文が完了しました"
+        }
+      ]
+    },
+    {
+      "name": "show_cart",
+      "description": "カートに商品を入れて、支払わずにユーザーに見せ、先に確認してもらいます。ユーザーが支払う前に承認したいときに使います。",
+      "app": "shop",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "カートの中身すべて。それぞれドルでの値段つき",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "ドルでの合計"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "配達の曜日と時間。例：金曜日の午後6時"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛒",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "合計 ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "配達 {delivery}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "カートの準備ができました。支払いのOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "order_list",
+          "label": "バーベキューのリストを全部注文して",
+          "text": "バーベキューの買い物リストにあるものを全部、配達で注文してください：6人分のハンバーガー、ベジバーガー、バンズ、コーン、サラダ、飲み物です。",
+          "quality": "good"
+        },
+        {
+          "id": "buy_stuff",
+          "label": "あれ、買っておいて",
+          "text": "あれ、買っておいてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "label": "Pipoが守ることは？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "deliver_by",
+          "label": "土曜の午後2時までに届けて",
+          "text": "土曜日の午後2時までに届くようにしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "budget",
+          "label": "使うのは$60まで",
+          "text": "使うのは合計$60までにしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "cheaper",
+          "label": "必要なら安いブランドに替えて",
+          "text": "必要なら、安いブランドに替えてかまいません。",
+          "quality": "neutral"
+        },
+        {
+          "id": "best",
+          "label": "全部いちばんいいものを！",
+          "text": "全部いちばんいいものにしてください！",
+          "quality": "weak",
+          "tip": "「全部いちばんいいもの」はすてきに聞こえますが、Pipoには「もっと使って」と伝わるだけで、いくらまで払えるかは伝わりません。"
+        }
+      ]
+    },
+    {
+      "id": "pay",
+      "label": "Pipoが支払う前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_cart",
+          "label": "カートを見せて、OKを待って",
+          "text": "支払う前にカートを見せて、私のOKを待ってください。",
+          "quality": "good"
+        },
+        {
+          "id": "pay_now",
+          "label": "見せなくていいから支払って",
+          "text": "先に見せなくていいので、そのまま支払ってください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:buy_stuff",
+      "signals": [
+        "🛒(?![^\\n]*(バーガー|パティ|バンズ|コーン|とうもろこし|トウモロコシ|burger|bun|corn))"
+      ],
+      "hint": "「あれ、買っておいて」では何を買うのかわからないので、Pipoは推測するしかありません。",
+      "explain": "Pipoは何を買うのか知らなかったので、カートにバーベキューの食べ物が入っていません。"
+    },
+    {
+      "id": "no_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "💳[^\\n]*\\$\\s?(6[1-9]|[7-9]\\d|\\d{3,})"
+      ],
+      "hint": "使っていい金額の上限を、Pipoに伝えていませんでした。",
+      "explain": "Pipoは上限を知らなかったので、カートが$60を超えています。"
+    },
+    {
+      "id": "no_delivery_time",
+      "when": "not_picked:deliver_by",
+      "signals": [
+        "🚚(?![^\\n]*(土曜|[（(]土[)）]|saturday))",
+        "🚚[^\\n]*(土曜|[（(]土[)）]|saturday)[^\\n]*(午後(?!\\s?([1１一]|12|１２|十二)\\s?時)|夕方|夜|(?<![\\d０-９])(1[4-9]|2[0-3]|１[４-９]|２[０-３])\\s?[:：時]|(?<![\\d０-９])([2-9]|1[01])(:\\d\\d)?\\s?(pm|p\\.m\\.))"
+      ],
+      "hint": "食べ物がいつまでに届けばいいか、Pipoに伝えていませんでした。",
+      "explain": "Pipoはいつ食べ物が必要か知らなかったので、バーベキューに間に合わない配達時間を選びました。"
+    },
+    {
+      "id": "paid_unchecked",
+      "when": "picked:pay_now",
+      "signals": [
+        "✅",
+        "(支払い済み|支払いました|購入しました|購入済み|注文しました|注文済み|注文が完了|支払いと注文が完了)(?![^\\n]*待)"
+      ],
+      "hint": "先にカートを見せてもらえば、お金を使う前にまちがいに気づけます。",
+      "explain": "Pipoはすぐに支払ったので、カートを確認できませんでした。"
+    }
+  ],
+  "lesson": "Pipoにお金を使ってもらうときは、上限を伝えて、支払う前に確認してもらいましょう。"
+}

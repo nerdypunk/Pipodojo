@@ -1,0 +1,271 @@
+{
+  "id": "exec-06-buy",
+  "lang": "ja",
+  "persona": "executive",
+  "path": "executive-marketplace",
+  "order": 3,
+  "title": "安全に買う",
+  "icon": "🛒",
+  "recap": "Pipoがマーケットプレイスで安全に支払って、緑のデスクチェアを手に入れました。",
+  "funFact": "比べて、連絡して、買う。マーケットプレイスでの掘り出し物も、安全に手に入りました。エージェントはあなたの代わりにお金を使えるので、ルールを決めて、最後のOKはあなたが出しましょう。",
+  "postcard": "a happy businessman carrying a green desk chair home, Pipo waving: {items}",
+  "situation": "アレックスが$35で譲ってくれるそうです！支払いましょうか？",
+  "facts": [
+    "🪑 アレックスの緑のデスクチェア",
+    "💵 合意した価格は$35",
+    "🔒 支払いはマーケットプレイスの決済だけで",
+    "👀 支払う前に確認したい"
+  ],
+  "systemPrompt": "あなたはPipoです。ある人のスマホに入っている、親しみやすいパーソナルアシスタントです。その人の代わりに、オンラインのマーケットプレイスで買い物ができます。頼まれたとおりに行動します。買ってと頼まれたら支払い、先にカートを見たいと言われたらカートに入れてOKを待ちます。",
+  "tools": [
+    {
+      "name": "pay_and_order",
+      "description": "今すぐ購入します：支払って注文を確定します。ユーザーが任せたいときに使います。",
+      "app": "shop",
+      "outcome": "done",
+      "store": "Marketplace",
+      "whenLabel": "受け取り",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "カートの中身すべて。それぞれ日本語の名前とドルでの価格",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "合計（ドル）"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "受け取りの曜日と時刻。例: 月曜日 午後6時"
+          },
+          "payment": {
+            "type": "string",
+            "description": "出品者へのお金の渡し方（日本語で）"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery",
+          "payment"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🪑",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "合計 ${total}"
+        },
+        {
+          "emoji": "🕙",
+          "text": "{delivery}"
+        },
+        {
+          "emoji": "✅",
+          "text": "{payment}で支払い済み"
+        }
+      ]
+    },
+    {
+      "name": "show_cart",
+      "description": "カートに入れて、支払わずにユーザーに見せ、先に確認してもらいます。ユーザーが支払う前に承認したいときに使います。",
+      "app": "shop",
+      "outcome": "waiting",
+      "store": "Marketplace",
+      "whenLabel": "受け取り",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "カートの中身すべて。それぞれ日本語の名前とドルでの価格",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "合計（ドル）"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "受け取りの曜日と時刻。例: 月曜日 午後6時"
+          },
+          "payment": {
+            "type": "string",
+            "description": "出品者へのお金の渡し方（日本語で）"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery",
+          "payment"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🪑",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "合計 ${total}"
+        },
+        {
+          "emoji": "🕙",
+          "text": "{delivery}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "{payment}で支払い予定、OKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "buy_chair",
+          "label": "アレックスの緑のデスクチェアを買って",
+          "text": "マーケットプレイスで、アレックスの緑のデスクチェアを買ってください。",
+          "quality": "good"
+        },
+        {
+          "id": "buy_any",
+          "label": "椅子を買って",
+          "text": "椅子を買ってください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "safe",
+      "label": "Pipoはどう支払う？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "checkout",
+          "label": "マーケットプレイスの決済だけで",
+          "text": "支払いはマーケットプレイス公式の決済だけでしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "cap",
+          "label": "合意した$35、1セントも多く払わない",
+          "text": "$35で合意したので、1セントも多く払わないでください。",
+          "quality": "good"
+        },
+        {
+          "id": "pickup",
+          "label": "土曜の午前10時に受け取り",
+          "text": "土曜日の午前10時に受け取りに行きます。",
+          "quality": "neutral"
+        },
+        {
+          "id": "direct",
+          "label": "アレックスに直接送金して、そのほうが早い！",
+          "text": "アレックスに直接お金を送ってください、そのほうが早いです！",
+          "quality": "weak",
+          "tip": "マーケットプレイスの外で送ったお金は、取り戻すのが大変です。公式の決済なら、何かあったときに助けてもらえます。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが支払う前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にカートを見せて",
+          "text": "カートを見せて、支払う前に私のOKを待ってください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "とにかく払って、いちいち聞かないで",
+          "text": "とにかく払ってください。いちいち聞かなくていいです。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "wrong_chair",
+      "when": "picked:buy_any",
+      "signals": [
+        "🪑(?![^\\n]*(緑|グリーン|みどり|green))"
+      ],
+      "hint": "「椅子」だけでは、どの椅子を買うと決めたのかわかりません。",
+      "explain": "Pipoはどの椅子か知らなかったので、アレックスの緑のデスクチェアではありません。"
+    },
+    {
+      "id": "no_cap",
+      "when": "not_picked:cap",
+      "signals": [
+        "💳(?![^\\n]*\\$\\s?35(\\.00?)?(?!\\d))"
+      ],
+      "hint": "Pipoに合意した価格を伝えていませんでした。",
+      "explain": "Pipoは$35で合意したことを知らなかったので、違う金額を支払いました。"
+    },
+    {
+      "id": "off_checkout",
+      "when": "not_picked:checkout",
+      "signals": [
+        "(✅|⏳)(?![^\\n]*(marketplace|checkout|マーケット|チェックアウト|アプリ内|プラットフォーム|公式))"
+      ],
+      "hint": "Pipoに、支払いはマーケットプレイスの決済だけでするよう伝えていませんでした。",
+      "explain": "Pipoはマーケットプレイスの中で払うべきだと知らなかったので、お金が別の方法で渡り、何かあっても助けてもらえません。"
+    },
+    {
+      "id": "paid_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(支払い?(済み|ました|完了)|払いました|購入(済み|しました|完了)|注文(済み|しました|完了))(?![^\\n]*待)"
+      ],
+      "hint": "先にカートを見せてもらえば、お金を使う前にミスに気づけます。",
+      "explain": "Pipoがすぐに支払ったので、注文を確認する機会がありませんでした。"
+    }
+  ],
+  "lesson": "Pipoが知らない人に支払うときは、合意した価格を伝え、お金はマーケットプレイスの決済の中で動かし、先に確認しましょう。"
+}

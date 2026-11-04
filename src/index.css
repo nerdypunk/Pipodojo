@@ -4,7 +4,7 @@
 
 @theme {
   /* The flags font only covers flag characters, so it changes nothing else (see main.tsx). */
-  --font-sans: "Twemoji Country Flags", "Nunito Variable", ui-rounded, system-ui, sans-serif;
+  --font-sans: "Twemoji Country Flags", "Nunito Variable", "M PLUS Rounded 1c", ui-rounded, "Hiragino Maru Gothic ProN", "Hiragino Sans", "Yu Gothic UI", "Meiryo", "Noto Sans JP", system-ui, sans-serif;
 
   /* Pipodojo palette: blue-violet brand for actions and your picks, amber for stars and misses. */
   --color-brand-50: #f3f2ff;
@@ -428,4 +428,10 @@ body {
     /* !important: the theme CSS loads after this file */
     transition: none !important;
   }
+}
+
+/* Japanese wraps between phrases, not mid-word, where the browser can (Chrome 119+). */
+:root:lang(ja) body {
+  line-break: strict;
+  word-break: auto-phrase;
 }

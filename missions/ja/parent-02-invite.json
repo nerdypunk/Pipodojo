@@ -1,0 +1,224 @@
+{
+  "id": "parent-02-invite",
+  "lang": "ja",
+  "persona": "parent",
+  "path": "parent-barbecue",
+  "order": 2,
+  "title": "友だちを招待しよう",
+  "icon": "💌",
+  "recap": "Pipoが「バーベキュー仲間」への招待メッセージを書きました。",
+  "funFact": "Pipoがあなたの代わりに友だちへメッセージを送りました。これがエージェントの時短です。エージェントは買い物や支払いもできるので、お金を使う前に確認してもらうのが賢いやり方です。次はPipoが食べ物を買いますよ！",
+  "postcard": "friends smiling at their phones as Pipo's party invitation pops up: {message}",
+  "situation": "バーベキューの計画、ばっちりですね！友だちに知らせましょうか？",
+  "facts": [
+    "👥 友だちのグループチャットは「バーベキュー仲間」",
+    "🕓 土曜日の午後4時",
+    "📍 あなたの家：オーク通り12番地",
+    "✋ 木曜日までに全員の返事がほしい"
+  ],
+  "systemPrompt": "あなたはPipoです。スマホの中にいる、親しみやすいパーソナルアシスタントです。あなたは相手の代わりにWhatsAppのメッセージを送れます。頼まれたとおりにします。送ってと頼まれたら送ります。先に見たいと頼まれたら、下書きを書いてOKを待ちます。",
+  "tools": [
+    {
+      "name": "send_whatsapp_message",
+      "description": "WhatsAppのメッセージをすぐに送ります。ユーザーが送ってほしいときに使います。",
+      "app": "whatsapp",
+      "chat": {
+        "group": true,
+        "earlier": {
+          "from": "サム",
+          "text": "今週の土曜、何か楽しいことしない？🍔"
+        }
+      },
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メッセージを受け取る相手：連絡先、グループチャット、またはすべての連絡先"
+          },
+          "message": {
+            "type": "string",
+            "description": "メッセージの本文（60文字以内）"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "✅",
+          "text": "送信しました"
+        }
+      ]
+    },
+    {
+      "name": "draft_whatsapp_message",
+      "description": "WhatsAppのメッセージを書いて、送らずにユーザーに見せ、先に確認してもらいます。ユーザーが送る前に見たいときに使います。",
+      "app": "whatsapp",
+      "chat": {
+        "group": true,
+        "earlier": {
+          "from": "サム",
+          "text": "今週の土曜、何か楽しいことしない？🍔"
+        }
+      },
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メッセージを受け取る相手：連絡先、グループチャット、またはすべての連絡先"
+          },
+          "message": {
+            "type": "string",
+            "description": "メッセージの本文（60文字以内）"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "下書きができました。送信のOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "invite_group",
+          "label": "「バーベキュー仲間」グループを招待して",
+          "text": "グループチャット「バーベキュー仲間」に招待を送ってください。",
+          "quality": "good"
+        },
+        {
+          "id": "tell_friends",
+          "label": "友だちに土曜のことを伝えて",
+          "text": "友だちに土曜日のことを伝えてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "メッセージに何を書く？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "time_place",
+          "label": "土曜の午後4時、うち（オーク通り12番地）で",
+          "text": "土曜日の午後4時に、うち（オーク通り12番地）でやります。",
+          "quality": "good"
+        },
+        {
+          "id": "rsvp",
+          "label": "木曜までに返事をもらって",
+          "text": "誰が来るかわかるように、木曜日までに返事をくださいと書いてください。",
+          "quality": "good"
+        },
+        {
+          "id": "drink",
+          "label": "みんなに飲み物を持ってきてもらって",
+          "text": "みんなに飲み物を持ってきてと頼んでください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "emojis",
+          "label": "絵文字たっぷりで超楽しく！！！",
+          "text": "絵文字たっぷりで、超楽しい感じにしてください！！！",
+          "quality": "weak",
+          "tip": "絵文字を増やすと招待はにぎやかになりますが、わかりやすくはなりません。友だちが知りたいのは、いつ、どこで、何をするかです。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが送る前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にメッセージを見せて",
+          "text": "送る前にメッセージを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "send_now",
+          "label": "すぐに送って",
+          "text": "すぐに送ってください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:tell_friends",
+      "signals": [
+        "📨(?![^\\n]*(バーベキュー仲間|BBQ仲間|ＢＢＱ仲間|barbecue crew))"
+      ],
+      "hint": "「友だちに伝えて」では、どの友だちかわからないので、Pipoは誰に送るか推測するしかありません。",
+      "explain": "Pipoはどの友だちか知らなかったので、送る相手を自分で選びました。"
+    },
+    {
+      "id": "no_time_place",
+      "when": "not_picked:time_place",
+      "signals": [
+        "💬(?![^\\n]*((?<![\\d０-９:：])([4４]|四)\\s?時|(?<![\\d０-９])(16|１６)\\s?[:：時]|(?<![\\d０-９])[4４]\\s?(pm|p\\.m\\.)|(?<![\\d０-９])[4４][:：]00))",
+        "💬(?![^\\n]*(オーク|oak))"
+      ],
+      "hint": "Pipoに時間と場所を伝えていませんでした。",
+      "explain": "Pipoは時間と場所を知らなかったので、招待に「いつ」と「どこで」が書かれていません。"
+    },
+    {
+      "id": "no_rsvp",
+      "when": "not_picked:rsvp",
+      "signals": [
+        "💬(?![^\\n]*(木曜|[（(]木[)）]|木まで))"
+      ],
+      "hint": "返事をもらうよう、Pipoに頼んでいませんでした。",
+      "explain": "木曜日までに返事をと誰にも頼んでいないので、誰が来るのかわかりません。"
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:send_now",
+      "signals": [
+        "✅",
+        "(送信しました|送信済み|送りました|配信しました)(?![^\\n]*待)"
+      ],
+      "hint": "先にメッセージを見せてもらえば、友だちが読む前に直せます。",
+      "explain": "Pipoはすぐに送ったので、先に確認できませんでした。"
+    }
+  ],
+  "lesson": "Pipoがあなたの代わりに話すときは、誰に何を伝えるかを言って、送る前に確認しましょう。"
+}

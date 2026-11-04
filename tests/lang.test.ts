@@ -1,5 +1,5 @@
 // A first visit picks the language from the browser's main language only: Spanish gets Spanish,
-// English or anything else gets English. A choice the player made is remembered and wins.
+// Japanese gets Japanese, English or anything else gets English. A choice the player made is remembered and wins.
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { initialLang } from "../src/i18n/index.tsx";
 
@@ -20,6 +20,9 @@ describe("first-visit language", () => {
     [["en-US", "es-HN"], "en"],
     [["en-GB"], "en"],
     [["pt-BR", "es"], "en"],
+    [["ja-JP"], "ja"],
+    [["ja", "en-US"], "ja"],
+    [["en-US", "ja"], "en"],
     [[], "en"],
   ])("%j opens in %s", (languages, lang) => {
     browser(languages);

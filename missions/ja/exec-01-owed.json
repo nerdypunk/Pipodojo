@@ -1,0 +1,290 @@
+{
+  "id": "exec-01-owed",
+  "lang": "ja",
+  "persona": "executive",
+  "path": "executive-flight",
+  "order": 1,
+  "title": "払い戻しを申請する",
+  "icon": "🧾",
+  "recap": "PipoがCloudhop Airの払い戻し申請フォームに、あなたの航空券のことを記入しました。",
+  "funFact": "エージェントは、あなたの代わりに会社へ連絡することもできます。次は、PipoがCloudhop Airにメールして、ホテル代を取り戻します！",
+  "postcard": "an airline refund request form with a big friendly stamp on it, next to a plane ticket: {fields}",
+  "situation": "大変！Cloudhop Airが金曜日のフライトを欠航にしました。払い戻しの申請フォーム、記入しておきましょうか？",
+  "facts": [
+    "🔖 予約番号: QX7R4K",
+    "💵 航空券は$420",
+    "💳 返金はバウチャーではなくカードへ",
+    "👀 提出前に確認したい"
+  ],
+  "systemPrompt": "あなたはPipoです。忙しいエグゼクティブのための、親しみやすいパーソナルアシスタントです。その人の代わりにオンラインフォームに記入できます。頼まれたとおりに行動します。フォームを提出してと頼まれたら提出し、先に確認したいと言われたら保存してOKを待ちます。",
+  "tools": [
+    {
+      "name": "submit_form",
+      "description": "フォームに記入して、今すぐ提出先に直接提出します。ユーザーが任せたいときに使います。",
+      "app": "form",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "フォームのタイトル。日本語で、例: 払い戻し申請"
+          },
+          "for": {
+            "type": "string",
+            "description": "フォームの提出先：会社、人、または部署"
+          },
+          "fields": {
+            "type": "array",
+            "description": "フォームに記入した各項目と、その内容（日本語で）",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "項目名"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "記入した内容"
+                }
+              },
+              "required": [
+                "label",
+                "value"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "請求する金額（ドル）"
+          }
+        },
+        "required": [
+          "title",
+          "for",
+          "fields",
+          "total"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📋",
+          "text": "{title}"
+        },
+        {
+          "emoji": "👤",
+          "text": "提出先：{for}"
+        },
+        {
+          "emoji": "🧾",
+          "text": "{fields}"
+        },
+        {
+          "emoji": "💵",
+          "text": "合計 ${total}"
+        },
+        {
+          "emoji": "✅",
+          "text": "提出しました"
+        }
+      ]
+    },
+    {
+      "name": "save_form_for_review",
+      "description": "フォームに記入して、提出せずに保存し、ユーザーに先に確認してもらいます。ユーザーが提出前に確認したいときに使います。",
+      "app": "form",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "フォームのタイトル。日本語で、例: 払い戻し申請"
+          },
+          "for": {
+            "type": "string",
+            "description": "フォームの提出先：会社、人、または部署"
+          },
+          "fields": {
+            "type": "array",
+            "description": "フォームに記入した各項目と、その内容（日本語で）",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "項目名"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "記入した内容"
+                }
+              },
+              "required": [
+                "label",
+                "value"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "請求する金額（ドル）"
+          }
+        },
+        "required": [
+          "title",
+          "for",
+          "fields",
+          "total"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📋",
+          "text": "{title}"
+        },
+        {
+          "emoji": "👤",
+          "text": "提出先：{for}"
+        },
+        {
+          "emoji": "🧾",
+          "text": "{fields}"
+        },
+        {
+          "emoji": "💵",
+          "text": "合計 ${total}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "保存しました。提出のOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "claim",
+          "label": "Cloudhop Airの払い戻し申請を記入して",
+          "text": "Cloudhop Airに金曜日のフライトを欠航にされました。オンラインの払い戻し申請フォームに記入してください。",
+          "quality": "good"
+        },
+        {
+          "id": "help_flight",
+          "label": "フライトのことを手伝って",
+          "text": "フライトのことを手伝ってください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "フォームに何を書く？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "booking",
+          "label": "予約番号 QX7R4K",
+          "text": "予約番号はQX7R4Kです。",
+          "quality": "good"
+        },
+        {
+          "id": "price",
+          "label": "航空券は$420でした",
+          "text": "航空券は$420でした。",
+          "quality": "good"
+        },
+        {
+          "id": "card",
+          "label": "バウチャーではなくカードに返金",
+          "text": "返金はバウチャーや旅行クレジットではなく、カードにしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "everything",
+          "label": "できるだけ多く取り返して！",
+          "text": "できるだけ多く取り返してください！",
+          "quality": "weak",
+          "tip": "「できるだけ多く」では、いくら返してもらうべきかが伝わりません。具体的な情報があれば、Pipoはフォームに何を書けばいいかわかります。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが提出する前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先に確認したいので保存して",
+          "text": "フォームを保存して、提出する前に確認させてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "すぐに提出して",
+          "text": "すぐに提出してください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:help_flight",
+      "signals": [
+        "👤(?![^\\n]*(cloudhop|クラウドホップ))",
+        "^(?![\\s\\S]*📋)"
+      ],
+      "hint": "「フライト」だけでは、どの航空会社に何をしてほしいのかわかりません。",
+      "explain": "PipoはCloudhop Airの払い戻し申請のことだと知らなかったので、申請が返金すべき航空会社に届きません。"
+    },
+    {
+      "id": "no_booking",
+      "when": "not_picked:booking",
+      "signals": [
+        "^(?![\\s\\S]*(QX7R4K|ＱＸ７Ｒ４Ｋ))"
+      ],
+      "hint": "Pipoに予約番号を伝えていませんでした。",
+      "explain": "Pipoは予約番号を知らなかったので、航空会社があなたの航空券を見つけられません。"
+    },
+    {
+      "id": "no_price",
+      "when": "not_picked:price",
+      "signals": [
+        "^(?![\\s\\S]*(420|４２０))"
+      ],
+      "hint": "Pipoに航空券の値段を伝えていませんでした。",
+      "explain": "Pipoは航空券が$420だと知らなかったので、フォームで正しい金額を請求できていません。"
+    },
+    {
+      "id": "voucher",
+      "when": "not_picked:card",
+      "signals": [
+        "^(?![\\s\\S]*(カード|card))",
+        "(バウチャー|クーポン|voucher|旅行券|商品券|(旅行|トラベル|フライト|航空)?クレジット(?!カード)|ポイント)(?![^\\n]{0,8}(ではなく|じゃなく|でなく|不可|不要|なし|以外|お断り|は(希望|受け付け|受け取り|求め)(し|ませ)))"
+      ],
+      "hint": "Pipoに返金の受け取り方を伝えていませんでした。",
+      "explain": "Pipoはカードへの返金を希望していると知らなかったので、フォームにそれが書かれず、航空会社からバウチャーが届くかもしれません。"
+    },
+    {
+      "id": "submitted_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(提出(済み|しました|完了|されました)|送信(済み|しました|完了|されました))(?![^\\n]*待)"
+      ],
+      "hint": "申請は提出前に確認すれば、ミスをかんたんに直せます。",
+      "explain": "Pipoがすぐに提出したので、確認する機会がありませんでした。"
+    }
+  ],
+  "lesson": "申請フォームでは、予約番号・金額・返金の受け取り方をPipoに伝えて、提出前に確認しましょう。"
+}

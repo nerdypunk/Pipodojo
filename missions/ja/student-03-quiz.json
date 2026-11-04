@@ -1,0 +1,95 @@
+{
+  "id": "student-03-quiz",
+  "lang": "ja",
+  "persona": "student",
+  "path": "student-exams",
+  "order": 3,
+  "title": "クイズを出して",
+  "icon": "❓",
+  "recap": "Pipoが植物細胞のクイズを出しました。",
+  "funFact": "計画、カレンダー、クイズ。これで試験週間の準備はばっちり。エージェントはコーチになれますが、学ぶのはあなた自身です。",
+  "postcard": "a student cheering after a biology exam while Pipo throws confetti: {answer}",
+  "situation": "最初は生物です！クイズを出しましょうか？",
+  "facts": [
+    "🌱 試験の範囲：植物細胞",
+    "🍃 特に葉緑体と細胞壁",
+    "❓ 問題は3問だけ",
+    "🙈 答えは自分で考えてから"
+  ],
+  "systemPrompt": "あなたはPipoです。大学生のスマホに入っている、親しみやすいパーソナルアシスタントです。頼まれたことを手伝ってください。クイズを出すときは、1行に1問ずつ書いてください。",
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "quiz_cells",
+          "label": "生物の細胞についてクイズを出して",
+          "text": "生物の試験に向けて、細胞についてクイズを出してください。",
+          "quality": "good"
+        },
+        {
+          "id": "quiz",
+          "label": "クイズを出して",
+          "text": "クイズを出してください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "label": "クイズのやり方は？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "plant",
+          "label": "植物細胞：葉緑体と細胞壁",
+          "text": "試験の範囲は植物細胞で、特に葉緑体と細胞壁です。",
+          "quality": "good"
+        },
+        {
+          "id": "three",
+          "label": "3問だけ",
+          "text": "問題は3問だけにしてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "no_answers",
+          "label": "答えはまだ見せないで",
+          "text": "答えはまだ見せないでください。先に自分で考えたいです。",
+          "quality": "neutral"
+        },
+        {
+          "id": "easy",
+          "label": "気分が上がるように超かんたんにして",
+          "text": "気分が上がるように、超かんたんな問題にしてね。",
+          "quality": "weak",
+          "tip": "かんたんな問題は気分がいいけれど、まだ覚えていないところが見えてきません。"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:quiz",
+      "signals": [
+        "^(?![\\s\\S]*(細胞|ミトコンドリア|オルガネラ|リボソーム|cell|nucleus|membrane|mitochond|organelle|ribosome))"
+      ],
+      "hint": "「クイズを出して」だけでは、何についてのクイズかわかりません。",
+      "explain": "Pipoはテーマを知らなかったので、細胞についてのクイズになっていません。"
+    },
+    {
+      "id": "no_focus",
+      "when": "not_picked:plant",
+      "signals": [
+        "^(?![\\s\\S]*(葉緑体|クロロプラスト|細胞壁|植物|chloroplast|cell wall|plant))"
+      ],
+      "hint": "Pipoに、試験の範囲を伝えていませんでした。",
+      "explain": "Pipoは試験が植物細胞についてだと知らなかったので、ほかのことを出題しました。"
+    }
+  ],
+  "lesson": "テーマと練習のしかたをPipoに伝えれば、クイズが本当に役に立ちます。"
+}

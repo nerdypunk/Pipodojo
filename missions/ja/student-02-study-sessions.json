@@ -1,0 +1,244 @@
+{
+  "id": "student-02-study-sessions",
+  "lang": "ja",
+  "persona": "student",
+  "path": "student-exams",
+  "order": 2,
+  "title": "勉強の予定を入れる",
+  "icon": "📅",
+  "recap": "Pipoが勉強の予定をカレンダーに入れました。",
+  "funFact": "エージェントは問題を出してくれることもあります。これは最高の勉強法のひとつです。次は、Pipoがクイズを出しますよ！",
+  "postcard": "a calendar full of study sessions: {events}",
+  "situation": "勉強の予定、ちゃんと実行できるようにカレンダーに入れましょうか？",
+  "facts": [
+    "🧬 生物：金曜と日曜、午後2時〜4時",
+    "📜 歴史：火曜、午後6時〜8時",
+    "📍 キャンパスの図書館で",
+    "🔔 30分前にリマインダー"
+  ],
+  "systemPrompt": "あなたはPipoです。大学生のスマホに入っている、親しみやすいパーソナルアシスタントです。その人のカレンダーに予定を追加できます。頼まれたとおりにします。予定を追加してと頼まれたら追加し、先に見せてと頼まれたら予定を並べて、その人のOKを待ちます。",
+  "tools": [
+    {
+      "name": "add_to_calendar",
+      "description": "予定を今すぐカレンダーに追加します。相手が追加してほしいときに使います。",
+      "app": "calendar",
+      "outcome": "done",
+      "store": "大学のカレンダー",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "予定の一覧。それぞれに日本語の短い名前と、いつあるか（曜日と時刻）を入れます",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "曜日と時刻を日本語で。例：火曜日 午後5時"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "いつ知らせるかを日本語で。例：1時間前"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "リマインダー：{reminder}"
+        },
+        {
+          "emoji": "✅",
+          "text": "カレンダーに追加しました"
+        }
+      ]
+    },
+    {
+      "name": "show_events",
+      "description": "予定を追加せずに並べて相手に見せ、先に確認してもらいます。カレンダーに入れる前に見たいときに使います。",
+      "app": "calendar",
+      "outcome": "waiting",
+      "store": "大学のカレンダー",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "予定の一覧。それぞれに日本語の短い名前と、いつあるか（曜日と時刻）を入れます",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "曜日と時刻を日本語で。例：火曜日 午後5時"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "いつ知らせるかを日本語で。例：1時間前"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "リマインダー：{reminder}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "準備OK。追加していいか、あなたのOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "book_sessions",
+          "label": "勉強の予定をカレンダーに追加して",
+          "text": "勉強の予定をカレンダーに追加してください。1回の勉強につき1つの予定でお願いします。",
+          "quality": "good"
+        },
+        {
+          "id": "add_study",
+          "label": "カレンダーに勉強を入れて",
+          "text": "カレンダーに勉強を入れてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "Pipoが知っておくことは？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "times",
+          "label": "生物は金・日の午後2〜4時、歴史は火の午後6〜8時",
+          "text": "生物は金曜日と日曜日の午後2時から4時、歴史は火曜日の午後6時から8時です。",
+          "quality": "good"
+        },
+        {
+          "id": "library",
+          "label": "どれにも「図書館」と入れて",
+          "text": "そこで勉強するので、どの予定の名前にも「図書館」と入れてください。",
+          "quality": "good"
+        },
+        {
+          "id": "remind",
+          "label": "30分前にリマインドして",
+          "text": "どの予定も30分前にリマインドしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "everyday",
+          "label": "毎日、一日中勉強！",
+          "text": "毎日、一日中勉強を入れてね！",
+          "quality": "weak",
+          "tip": "勉強の予定でいっぱいのカレンダーは、結局見なくなります。本当に守れる数回の予定のほうがうまくいきます。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが追加する前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "追加する前に見せて",
+          "text": "追加する前に、予定を見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "そのまま追加して",
+          "text": "そのまま追加してください。",
+          "quality": "weak",
+          "tip": "確認せずに追加すると、まちがった時間がカレンダーに入ったまま気づかないかもしれません。"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_times",
+      "when": "not_picked:times",
+      "signals": [
+        "📅(?![^\\n]*(火|tue))"
+      ],
+      "hint": "Pipoに、曜日と時間を伝えていませんでした。",
+      "explain": "Pipoはあなたの時間を知らなかったので、予想で決めました。"
+    },
+    {
+      "id": "no_place",
+      "when": "not_picked:library",
+      "signals": [
+        "📅(?![^\\n]*(図書館|ライブラリ|librar))"
+      ],
+      "hint": "Pipoに、どこで勉強するかを伝えていませんでした。",
+      "explain": "Pipoは図書館で勉強することを知らなかったので、予定に場所が書かれていません。"
+    },
+    {
+      "id": "no_reminder",
+      "when": "not_picked:remind",
+      "signals": [
+        "🔔(?![^\\n]*((?<![\\d０-９])(30|３０)(?![\\d０-９])|三十分))"
+      ],
+      "hint": "Pipoに、いつ知らせてほしいかを伝えていませんでした。",
+      "explain": "Pipoは30分前に知らせてほしいことを知らなかったので、自分でタイミングを決めました。"
+    },
+    {
+      "id": "added_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(追加しました|追加済|追加完了|登録しました|登録済|登録完了|入れました)(?![^\\n]*待)"
+      ],
+      "hint": "先に予定を見せてもらえば、まちがった時間に気づけます。",
+      "explain": "Pipoがすぐに追加したので、あなたは確認できませんでした。"
+    }
+  ],
+  "lesson": "正確な曜日・時間・場所を伝えれば、勉強の計画が本当に実行できる予定になります。"
+}

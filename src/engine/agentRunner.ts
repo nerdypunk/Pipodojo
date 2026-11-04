@@ -44,6 +44,19 @@ export const PHRASES = {
     approve: "Se ve bien, adelante, hazlo ahora.",
     waiting: "Está listo y espero tu OK:",
   },
+  ja: {
+    answerStyle:
+      "チャットではなく、ゲームの小さなカードのように答えてください。短い行を3行か4行だけ書き、ほかには何も書かないでください。" +
+      "各行は絵文字1つで始め、全角25文字以内にしてください。前置き、締めの言葉、質問、マークダウンはなしです。" +
+      "必ず自然な日本語で書いてください。",
+    toolStyle:
+      "あなたはツールを使って行動します。相手に見えるのはツールの結果だけで、テキストの返事は見えません。" +
+      "ツールをちょうど1つ呼び出してタスクを実行し、すべての項目を日本語で埋めてください。" +
+      "質問はしないでください。言われていないことは自分で決めてください。",
+    nudge: "今すぐツールを1つ呼び出して実行してください。",
+    approve: "いいですね、そのまま進めてください。",
+    waiting: "準備ができました。OKを待っています：",
+  },
 } as const satisfies Record<Lang, Record<string, string>>;
 
 export const phrasesFor = (mission: Mission) => PHRASES[mission.lang ?? "en"];

@@ -1,6 +1,7 @@
 // @ts-nocheck -- third-party React Bits component (added with the shadcn CLI); not held to our strict settings.
 'use client';
 
+import { wrapLines } from '../lib/utils.ts';
 import {
   Children,
   isValidElement,
@@ -872,19 +873,8 @@ const drawText = (
     ctx.fillText(fit(text), left, top + lineHeight / 2);
     return;
   }
-  let line = '';
-  let row = 0;
-  text.split(/\s+/).forEach(word => {
-    const next = line ? `${line} ${word}` : word;
-    if (line && ctx.measureText(next).width > room) {
-      ctx.fillText(line, left, top + lineHeight * (row + 0.5));
-      row += 1;
-      line = word;
-    } else {
-      line = next;
-    }
-  });
-  if (line) ctx.fillText(line, left, top + lineHeight * (row + 0.5));
+  // Breaks at spaces, and between characters in Japanese.
+  wrapLines(text, room, s => ctx.measureText(s).width).forEach((line, row) => ctx.fillText(line, left, top + lineHeight * (row + 0.5)));
 };
 
 const rasterize = (node: HTMLElement, dpr: number, skipImages: boolean) => {

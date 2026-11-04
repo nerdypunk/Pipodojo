@@ -23,7 +23,7 @@ interface Props {
 export function PipoBuilder({ look, onChange, onDone, first }: Props) {
   const still = useReducedMotion();
   const { lang, t } = useLang();
-  const label = (option: { label: string; es: string }) => (lang === "es" ? option.es : option.label);
+  const label = (option: { label: string; es: string; ja: string }) => (lang === "en" ? option.label : option[lang]);
   const go = (
     <Button className="flex-1" onClick={onDone}>
       {first ? t.builder.go : t.builder.back}

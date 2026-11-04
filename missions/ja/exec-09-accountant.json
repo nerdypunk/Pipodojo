@@ -1,0 +1,227 @@
+{
+  "id": "exec-09-accountant",
+  "lang": "ja",
+  "persona": "executive",
+  "path": "executive-taxes",
+  "order": 3,
+  "title": "会計士にメールする",
+  "icon": "📞",
+  "recap": "Pipoがダナにメールして、税金について話す電話の約束をお願いしました。",
+  "funFact": "メッセージ、フォーム、メール。税金の時期もこれでばっちりです。エージェントは書類仕事が得意ですが、あなたの名前で出すものを決めるのはあなたです。",
+  "postcard": "a friendly video call between a businessman and his accountant over tidy papers: {subject}",
+  "situation": "書類がそろいました！ダナにメールして、電話の約束をしましょうか？",
+  "facts": [
+    "📧 ダナ・レイエス、dana@mail.com",
+    "🗓️ 火曜日か木曜日の午後2時以降なら空いている",
+    "📋 経費フォームはいつでも見てもらえる",
+    "👀 送る前に読みたい"
+  ],
+  "systemPrompt": "あなたはPipoです。ある人のスマホに入っている、親しみやすいパーソナルアシスタントです。その人の代わりにメールを送れます。頼まれたとおりに行動します。送ってと頼まれたら送り、先に見たいと言われたら下書きを書いてOKを待ちます。",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "メールをすぐに送信します。ユーザーが送信を望むときに使います。",
+      "app": "email",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メールの宛先：人、メールアドレス、またはメーリングリスト"
+          },
+          "subject": {
+            "type": "string",
+            "description": "件名。日本語で20文字以内"
+          },
+          "body": {
+            "type": "string",
+            "description": "メール本文。日本語で90文字以内"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "送信しました"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "メールを書いて、送信せずにユーザーに見せ、先に確認してもらいます。ユーザーが送る前に読みたいときに使います。",
+      "app": "email",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メールの宛先：人、メールアドレス、またはメーリングリスト"
+          },
+          "subject": {
+            "type": "string",
+            "description": "件名。日本語で20文字以内"
+          },
+          "body": {
+            "type": "string",
+            "description": "メール本文。日本語で90文字以内"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "下書きができました。送信のOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_dana",
+          "label": "ダナにメールして電話の約束を",
+          "text": "会計士のダナ・レイエス（dana@mail.com）に、税金について話す電話の約束をするメールを送ってください。",
+          "quality": "good"
+        },
+        {
+          "id": "email_accountant",
+          "label": "会計士にメールして",
+          "text": "電話のことで会計士にメールしてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "メールに何を書く？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "times",
+          "label": "火曜か木曜の午後2時以降が空いてる",
+          "text": "火曜日か木曜日の午後2時以降なら空いていると書いてください。",
+          "quality": "good"
+        },
+        {
+          "id": "form_ready",
+          "label": "経費フォームができている",
+          "text": "経費フォームは記入が終わっていて、いつでも見てもらえると書いてください。",
+          "quality": "good"
+        },
+        {
+          "id": "half_hour",
+          "label": "30分あれば十分",
+          "text": "30分あれば十分だと書いてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "asap",
+          "label": "大至急電話してってダナに言って！！！",
+          "text": "大至急電話してってダナに言ってください！！！",
+          "quality": "weak",
+          "tip": "急かすと偉そうに聞こえます。都合のいい時間を伝えるほうが、早くOKがもらえます。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが送る前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にメールを見せて",
+          "text": "送る前にメールを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "今すぐ送って",
+          "text": "今すぐ送ってください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:email_accountant",
+      "signals": [
+        "📧(?![^\\n]*(dana|reyes|ダナ|レイエス))"
+      ],
+      "hint": "「会計士」だけでは、それが誰なのかPipoにはわかりません。",
+      "explain": "Pipoは会計士の名前もメールアドレスも知らなかったので、ダナ宛てになっていません。"
+    },
+    {
+      "id": "no_times",
+      "when": "not_picked:times",
+      "signals": [
+        "^(?![\\s\\S]*(火曜|木曜|[（(][火木][)）]|tue|thu))"
+      ],
+      "hint": "Pipoに空いている時間を伝えていませんでした。",
+      "explain": "Pipoはあなたの空き時間を知らなかったので、ダナが聞き返さなければなりません。"
+    },
+    {
+      "id": "no_form",
+      "when": "not_picked:form_ready",
+      "signals": [
+        "^(?![\\s\\S]*(経費|expense))"
+      ],
+      "hint": "Pipoに経費フォームができていることを伝えていませんでした。",
+      "explain": "Pipoは経費フォームができていることを知らなかったので、メールで触れていません。"
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(送信(済み|しました|完了|されました)|配信済み)(?![^\\n]*待)"
+      ],
+      "hint": "先にメールを読めば、ダナが見る前に直せます。",
+      "explain": "Pipoがすぐに送ったので、読む機会がありませんでした。"
+    }
+  ],
+  "lesson": "電話の約束をするいいメールには、誰宛てか、いつ空いているか、何の話かが書いてあります。送る前に読みましょう。"
+}

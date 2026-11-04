@@ -1,0 +1,262 @@
+{
+  "id": "parent-08-tickets",
+  "lang": "ja",
+  "persona": "parent",
+  "path": "parent-daytrip",
+  "order": 2,
+  "title": "チケットを予約しよう",
+  "icon": "🎟️",
+  "recap": "Pipoが日曜日の科学館を予約しました。",
+  "funFact": "エージェントは、まわりの人への連絡も手伝えます。次は、Pipoがおばあちゃんに予定を伝えますよ！",
+  "postcard": "the family holding museum tickets: {items}",
+  "situation": "日曜日は科学館がぴったりですね。チケットを取りましょうか？",
+  "facts": [
+    "🎟️ 大人2人と子ども2人",
+    "🕙 午前11時30分の入場がいい",
+    "💵 最大$60",
+    "👀 支払う前に確認したい"
+  ],
+  "systemPrompt": "あなたはPipoです。スマホの中にいる、親しみやすいパーソナルアシスタントです。あなたはネットでチケットを買い、保存されたカードで支払えます。頼まれたとおりにします。買ってと頼まれたら支払います。先にカゴを見たいと頼まれたら、カゴに入れてOKを待ちます。",
+  "tools": [
+    {
+      "name": "pay_and_order",
+      "description": "今すぐチケットを買います：保存されたカードで支払い、予約します。ユーザーがまかせたいときに使います。",
+      "app": "shop",
+      "outcome": "done",
+      "store": "TicketHub",
+      "whenLabel": "来館",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "カゴの中身すべて。それぞれドルでの値段つき",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "ドルでの合計"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "来館する曜日と入場時間。例：日曜日の午後2時"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🎟️",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "合計 ${total}"
+        },
+        {
+          "emoji": "🕙",
+          "text": "来館 {delivery}"
+        },
+        {
+          "emoji": "✅",
+          "text": "支払いと予約が完了しました"
+        }
+      ]
+    },
+    {
+      "name": "show_basket",
+      "description": "チケットをカゴに入れて、支払わずにユーザーに見せ、先に確認してもらいます。ユーザーが支払う前に承認したいときに使います。",
+      "app": "shop",
+      "outcome": "waiting",
+      "store": "TicketHub",
+      "whenLabel": "来館",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "カゴの中身すべて。それぞれドルでの値段つき",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "ドルでの合計"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "来館する曜日と入場時間。例：日曜日の午後2時"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🎟️",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "合計 ${total}"
+        },
+        {
+          "emoji": "🕙",
+          "text": "来館 {delivery}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "チケットを確保しました。支払いのOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "book_family",
+          "label": "大人2人と子ども2人で科学館を予約して",
+          "text": "日曜日の科学館のチケットを、大人2人と子ども2人で予約してください。",
+          "quality": "good"
+        },
+        {
+          "id": "get_tickets",
+          "label": "チケットを取っておいて",
+          "text": "科学館のチケットを取っておいてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "label": "Pipoが守ることは？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "entry_time",
+          "label": "午前11時30分の入場",
+          "text": "午前11時30分の入場がいいです。",
+          "quality": "good"
+        },
+        {
+          "id": "budget",
+          "label": "使うのは$60まで",
+          "text": "使うのは合計$60までにしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "kids_tickets",
+          "label": "子どもは子ども料金で",
+          "text": "子どもには安い子ども料金のチケットを使ってください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "extras",
+          "label": "オプションは全部つけて、ごほうびだし！",
+          "text": "オプションは全部つけてください。たまのごほうびです！",
+          "quality": "weak",
+          "tip": "オプションはすぐに高くなります。上限がないと、Pipoには止める理由がありません。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが支払う前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にカゴを見せて",
+          "text": "支払う前にカゴを見せて、私のOKを待ってください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "いちいち聞かずに支払って",
+          "text": "いちいち聞かなくていいので、支払ってください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "wrong_people",
+      "when": "picked:get_tickets",
+      "signals": [
+        "🎟️(?![^\\n]*(子ども|子供|こども|小人|キッズ|児童|小学生|ジュニア|kid|child))",
+        "🎟️(?![^\\n]*(子ども|子供|こども|小人|キッズ|児童|小学生|ジュニア|kid|child)[^\\n]*(子ども|子供|こども|小人|キッズ|児童|小学生|ジュニア|kid|child))(?![^\\n]*(子ども|子供|こども|小人|キッズ|児童|小学生|ジュニア|kid|child)[^\\n,、]*([2２二]\\s?(枚|名|人)|[×xX✕]\\s?[2２]))"
+      ],
+      "hint": "「チケットを取っておいて」では、誰が行くのかわかりません。",
+      "explain": "Pipoは誰が行くのか知らなかったので、家族に合わないチケットになりました。"
+    },
+    {
+      "id": "no_time",
+      "when": "not_picked:entry_time",
+      "signals": [
+        "🕙(?![^\\n]*([1１][1１][:：][3３][0０]|[1１][1１]時[3３][0０]分|[1１][1１]時半|十一時半))"
+      ],
+      "hint": "何時の入場がいいか、Pipoに伝えていませんでした。",
+      "explain": "Pipoは午前11時30分がいいと知らなかったので、別の時間を選びました。"
+    },
+    {
+      "id": "no_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "💳[^\\n]*\\$\\s?(6[1-9]|[7-9]\\d|\\d{3,})"
+      ],
+      "hint": "使っていい金額の上限を、Pipoに伝えていませんでした。",
+      "explain": "Pipoは上限を知らなかったので、チケット代が$60を超えています。"
+    },
+    {
+      "id": "paid_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(支払い済み|支払いました|購入しました|購入済み|予約しました|予約済み|予約が完了|支払いと予約が完了)(?![^\\n]*待)"
+      ],
+      "hint": "先にカゴを見せてもらえば、お金を使う前にまちがいに気づけます。",
+      "explain": "Pipoはすぐに支払ったので、チケットを確認できませんでした。"
+    }
+  ],
+  "lesson": "Pipoにお金を使ってもらうときは、くわしい内容と上限を伝えて、先に確認してもらいましょう。"
+}

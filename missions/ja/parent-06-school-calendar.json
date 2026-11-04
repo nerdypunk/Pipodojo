@@ -1,0 +1,238 @@
+{
+  "id": "parent-06-school-calendar",
+  "lang": "ja",
+  "persona": "parent",
+  "path": "parent-school",
+  "order": 3,
+  "title": "学校の予定をカレンダーに入れよう",
+  "icon": "📅",
+  "recap": "Pipoが学校の1週間の予定を家族のカレンダーに入れました。",
+  "funFact": "お弁当、先生への返事、カレンダー。学校の1週間がまるごと片づきました。エージェントは、たまっていく小さな用事が得意です。そして決めるのはあなたです。",
+  "postcard": "a big friendly family calendar on the fridge, filled with {events}",
+  "situation": "学校のおたよりが日付でいっぱい！家族のカレンダーに入れておきましょうか？",
+  "facts": [
+    "🚌 博物館の校外学習：金曜日、バスは午前8時30分発",
+    "🧁 お菓子バザー：木曜日の午後3時",
+    "👩‍🏫 保護者会：火曜日の午後5時",
+    "🔔 リマインドは前の晩がいい"
+  ],
+  "systemPrompt": "あなたはPipoです。スマホの中にいる、親しみやすいパーソナルアシスタントです。あなたは家族のカレンダーに予定を追加できます。頼まれたとおりにします。予定を追加してと頼まれたら追加します。先に見たいと頼まれたら、予定を並べてOKを待ちます。",
+  "tools": [
+    {
+      "name": "add_to_calendar",
+      "description": "今すぐカレンダーに予定を追加します。ユーザーが追加してほしいときに使います。",
+      "app": "calendar",
+      "outcome": "done",
+      "store": "家族のカレンダー",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "予定のリスト。それぞれ短い名前と、いつあるか（曜日と時刻）つき",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "曜日と時刻。例：火曜日の午後5時"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "リマインドのタイミング。例：1時間前"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "リマインド：{reminder}"
+        },
+        {
+          "emoji": "✅",
+          "text": "カレンダーに追加しました"
+        }
+      ]
+    },
+    {
+      "name": "show_events",
+      "description": "予定を並べて、追加せずにユーザーに見せ、先に確認してもらいます。ユーザーが追加する前に見たいときに使います。",
+      "app": "calendar",
+      "outcome": "waiting",
+      "store": "家族のカレンダー",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "予定のリスト。それぞれ短い名前と、いつあるか（曜日と時刻）つき",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "曜日と時刻。例：火曜日の午後5時"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "リマインドのタイミング。例：1時間前"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "リマインド：{reminder}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "準備ができました。追加のOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "add_all",
+          "label": "校外学習、バザー、保護者会を追加して",
+          "text": "学校のこの予定を家族のカレンダーに追加してください：博物館の校外学習、お菓子バザー、保護者会です。",
+          "quality": "good"
+        },
+        {
+          "id": "add_stuff",
+          "label": "学校のあれこれをカレンダーに入れて",
+          "text": "学校のあれこれをカレンダーに入れてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "Pipoが知っておくべきことは？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "times",
+          "label": "校外学習は金8:30、バザーは木15時、保護者会は火17時",
+          "text": "博物館の校外学習は金曜日で、バスは午前8時30分に出発します。お菓子バザーは木曜日の午後3時です。保護者会は火曜日の午後5時です。",
+          "quality": "good"
+        },
+        {
+          "id": "remind",
+          "label": "前の晩にリマインドして",
+          "text": "それぞれ前の晩にリマインドしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "colours",
+          "label": "カラフルにして！",
+          "text": "カラフルにしてください！",
+          "quality": "weak",
+          "tip": "色はすてきですが、カレンダーを正しくするには、Pipoには日付と時刻が必要です。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが追加する前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "追加する前に見せて",
+          "text": "追加する前に予定を見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "そのまま追加して",
+          "text": "そのまま追加してください。",
+          "quality": "weak",
+          "tip": "見ないで追加すると、まちがった時刻に気づかないまま、カレンダーに残ってしまうかもしれません。"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:add_stuff",
+      "signals": [
+        "📅(?![^\\n]*(博物館|校外学習|遠足|見学|museum|trip))"
+      ],
+      "hint": "「学校のあれこれ」では、どの予定かわからないので、Pipoは推測するしかありません。",
+      "explain": "Pipoはどの予定か知らなかったので、校外学習が抜けています。"
+    },
+    {
+      "id": "no_times",
+      "when": "not_picked:times",
+      "signals": [
+        "📅(?![^\\n]*([8８][:：][3３][0０]|[8８]時[3３][0０]分|[8８]時半|八時半))"
+      ],
+      "hint": "Pipoに日付と時刻を伝えていませんでした。",
+      "explain": "Pipoは時刻を知らなかったので、推測で入れました（バスは8時30分に出発なのに！）。"
+    },
+    {
+      "id": "no_reminder",
+      "when": "not_picked:remind",
+      "signals": [
+        "🔔(?![^\\n]*(前の(晩|夜|日)|前夜|前日))"
+      ],
+      "hint": "リマインドがいつほしいか、Pipoに伝えていませんでした。",
+      "explain": "Pipoは前の晩にリマインドがほしいことを知らなかったので、自分でタイミングを決めました。"
+    },
+    {
+      "id": "added_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(追加しました|追加済み|登録しました|登録済み)(?![^\\n]*待)"
+      ],
+      "hint": "先に予定を見せてもらえば、カレンダーに入る前にまちがった日付に気づけます。",
+      "explain": "Pipoはすぐに追加したので、確認できませんでした。"
+    }
+  ],
+  "lesson": "Pipoには正確な日付と時刻を伝えましょう。あなたの頭の中にあるおたよりは、Pipoには読めません。"
+}

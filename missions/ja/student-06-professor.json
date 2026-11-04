@@ -1,0 +1,229 @@
+{
+  "id": "student-06-professor",
+  "lang": "ja",
+  "persona": "student",
+  "path": "student-project",
+  "order": 3,
+  "title": "教授にメールする",
+  "icon": "✉️",
+  "recap": "Pipoがオカフォー先生に新しい日程をお願いしました。",
+  "funFact": "作業の分担、メッセージ、そして助けを求めること。これがエージェントとのチームワークです。文章はPipoが書き、礼儀正しく決めるのはあなたです。",
+  "postcard": "Professor Okafor smiling at an email: {subject}",
+  "situation": "たいへん、トムが体調をくずしました。発表のことで、オカフォー先生にメールしましょうか？",
+  "facts": [
+    "👩‍🏫 オカフォー先生",
+    "🤒 トムは今週、体調不良",
+    "📅 金曜ではなく月曜に発表したい",
+    "👀 送る前に読みたい"
+  ],
+  "systemPrompt": "あなたはPipoです。大学生のスマホに入っている、親しみやすいパーソナルアシスタントです。その人の代わりにメールを送れます。頼まれたとおりにします。送ってと頼まれたら送り、先に見せてと頼まれたら下書きを書いて、その人のOKを待ちます。",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "メールを今すぐ送ります。相手が送ってほしいときに使います。",
+      "app": "email",
+      "outcome": "done",
+      "store": "大学メール",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メールを受け取る相手：人、メールアドレス、またはメーリングリスト"
+          },
+          "subject": {
+            "type": "string",
+            "description": "件名。日本語で20文字以内"
+          },
+          "body": {
+            "type": "string",
+            "description": "メールの本文。日本語で100文字以内"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "送信しました"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "メールを書いて、送らずに相手に見せ、先に確認してもらいます。送る前に読みたいときに使います。",
+      "app": "email",
+      "outcome": "waiting",
+      "store": "大学メール",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メールを受け取る相手：人、メールアドレス、またはメーリングリスト"
+          },
+          "subject": {
+            "type": "string",
+            "description": "件名。日本語で20文字以内"
+          },
+          "body": {
+            "type": "string",
+            "description": "メールの本文。日本語で100文字以内"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "下書きができました。送っていいか、あなたのOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_prof",
+          "label": "発表のことでオカフォー先生にメールして",
+          "text": "私たちの気候変動の発表について、オカフォー先生にメールしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "email_teacher",
+          "label": "先生にメールして",
+          "text": "発表のことで先生にメールしてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "メールに何を書く？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "reason",
+          "label": "トムが今週、体調不良",
+          "text": "トムが今週、体調をくずしていると説明してください。",
+          "quality": "good"
+        },
+        {
+          "id": "new_date",
+          "label": "月曜に発表できないか聞いて",
+          "text": "金曜日ではなく月曜日に発表できないか聞いてください。",
+          "quality": "good"
+        },
+        {
+          "id": "polite",
+          "label": "お礼を言って",
+          "text": "いつも助けてくれることにお礼を言ってください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "demand",
+          "label": "もっと時間が必要、とだけ伝えて",
+          "text": "とにかく、もっと時間が必要だと伝えて。",
+          "quality": "weak",
+          "tip": "一方的な要求は、先生にはまず通りません。理由と新しい日付を添えたていねいなお願いなら、たいてい通ります。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが送る前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にメールを見せて",
+          "text": "送る前にメールを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "今すぐ送って",
+          "text": "今すぐ送ってください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:email_teacher",
+      "signals": [
+        "📧(?![^\\n]*(オカフォー|okafor))"
+      ],
+      "hint": "「先生」だけでは、誰に送ればいいかわかりません。",
+      "explain": "Pipoは誰にメールすればいいか知らなかったので、オカフォー先生宛てになっていません。"
+    },
+    {
+      "id": "no_reason",
+      "when": "not_picked:reason",
+      "signals": [
+        "^(?![\\s\\S]*(病|体調|具合|風邪|かぜ|発熱|熱が|熱で|寝込|療養|sick|\\bill\\b|unwell))"
+      ],
+      "hint": "Pipoに、なぜ時間が必要なのかを伝えていませんでした。",
+      "explain": "Pipoはトムの体調不良を知らなかったので、メールに理由が書かれていません。"
+    },
+    {
+      "id": "no_date",
+      "when": "not_picked:new_date",
+      "signals": [
+        "^(?![\\s\\S]*(月曜|[（(]月[)）]|\\bmon))"
+      ],
+      "hint": "Pipoに、希望する新しい日を伝えていませんでした。",
+      "explain": "Pipoは月曜日がいいことを知らなかったので、先生が日にちを考えなければなりません。"
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(送信しました|送信済|送信完了|送りました|送っておきました|届けました)(?![^\\n]*待)"
+      ],
+      "hint": "先にメールを見せてもらえば、先生が読む前に言葉づかいを確認できます。",
+      "explain": "Pipoがすぐに送ったので、あなたは確認できませんでした。"
+    }
+  ],
+  "lesson": "いいお願いには、理由とはっきりした新しい日付があります。送る前に言葉づかいを確認しましょう。"
+}

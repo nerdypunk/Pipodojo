@@ -1,0 +1,229 @@
+{
+  "id": "parent-05-field-trip",
+  "lang": "ja",
+  "persona": "parent",
+  "path": "parent-school",
+  "order": 2,
+  "title": "校外学習の返事をしよう",
+  "icon": "✉️",
+  "recap": "Pipoが博物館の校外学習について、リベラ先生に返事をしました。",
+  "funFact": "エージェントはカレンダーの管理もできます。次は、Pipoが学校の1週間の予定をまとめて家族のカレンダーに入れますよ！",
+  "postcard": "Pipo's email flying to Leo's teacher, Ms. Rivera: {subject}",
+  "situation": "レオの担任のリベラ先生から、金曜日の博物館への校外学習についてメールが来ました。返事をしましょうか？",
+  "facts": [
+    "👩‍🏫 レオの担任、リベラ先生から",
+    "✅ レオは校外学習に参加できる",
+    "🙅 あなたは付き添いができない（仕事）",
+    "👀 送る前に読みたい"
+  ],
+  "systemPrompt": "あなたはPipoです。スマホの中にいる、親しみやすいパーソナルアシスタントです。あなたは相手の代わりにメールを送れます。頼まれたとおりにします。送ってと頼まれたら送ります。先に見たいと頼まれたら、下書きを書いてOKを待ちます。",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "メールをすぐに送ります。ユーザーが送ってほしいときに使います。",
+      "app": "email",
+      "outcome": "done",
+      "store": "メール",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メールを受け取る相手：人、メールアドレス、またはメーリングリスト"
+          },
+          "subject": {
+            "type": "string",
+            "description": "件名（20文字以内）"
+          },
+          "body": {
+            "type": "string",
+            "description": "メールの本文（100文字以内）"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "送信しました"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "メールを書いて、送らずにユーザーに見せ、先に確認してもらいます。ユーザーが送る前に読みたいときに使います。",
+      "app": "email",
+      "outcome": "waiting",
+      "store": "メール",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メールを受け取る相手：人、メールアドレス、またはメーリングリスト"
+          },
+          "subject": {
+            "type": "string",
+            "description": "件名（20文字以内）"
+          },
+          "body": {
+            "type": "string",
+            "description": "メールの本文（100文字以内）"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "下書きができました。送信のOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "reply_teacher",
+          "label": "リベラ先生の校外学習のメールに返事して",
+          "text": "金曜日の博物館の校外学習について、リベラ先生のメールに返事をしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "email_school",
+          "label": "学校にメールして",
+          "text": "校外学習のことで、学校にメールしてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "メールに何を書く？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "yes_trip",
+          "label": "レオは参加できます",
+          "text": "レオが校外学習に参加することを許可します、と書いてください。",
+          "quality": "good"
+        },
+        {
+          "id": "no_chaperone",
+          "label": "仕事なので付き添いはできない",
+          "text": "その日は仕事なので付き添いはできません、と書いてください。",
+          "quality": "good"
+        },
+        {
+          "id": "lunch",
+          "label": "お弁当を持たせます",
+          "text": "お弁当を持たせます、と書いてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "official",
+          "label": "すごく正式な感じにして",
+          "text": "すごく正式で、重要な感じにしてください。",
+          "quality": "weak",
+          "tip": "かたい言葉を使うとメールは長くなるだけで、わかりやすくはなりません。リベラ先生が知りたいのは2つ：レオが行けるか、あなたが手伝えるかです。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが送る前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にメールを見せて",
+          "text": "送る前にメールを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "そのまま送って",
+          "text": "そのまま送ってください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:email_school",
+      "signals": [
+        "📧(?![^\\n]*(リベラ|rivera))"
+      ],
+      "hint": "「学校にメールして」では、誰に送ればいいのかわかりません。",
+      "explain": "Pipoは誰に書けばいいか知らなかったので、メールはリベラ先生ではなく学校の事務室に届きました。"
+    },
+    {
+      "id": "no_permission",
+      "when": "not_picked:yes_trip",
+      "signals": [
+        "^(?![\\s\\S]*(参加(でき|させ|し|いたし)ます|参加させて(ください|いただきます)|参加を(許可|承諾|了承)|参加に同意|参加OK|参加可能|行けます|行かせます|行かせて(ください|いただきます)|許可(します|いたします)|同意(します|いたします)|承諾(します|いたします)|喜んで))"
+      ],
+      "hint": "レオが参加できることを、Pipoに伝えていませんでした。",
+      "explain": "Pipoはあなたの答えを知らなかったので、メールにはレオが参加できると書かれていません。"
+    },
+    {
+      "id": "no_chaperone",
+      "when": "not_picked:no_chaperone",
+      "signals": [
+        "^(?![\\s\\S]*((付き添|付添|引率|同行|同伴|ボランティア|手伝|お手伝|参加)[^\\n]{0,20}(でき(ません|ず|ない|かね)|難し|かね|不可|無理)|都合が(つき|合い|つか)|(行け|伺え|参加でき)ません))"
+      ],
+      "hint": "付き添いができないことを、Pipoに伝えていませんでした。",
+      "explain": "Pipoはあなたが仕事だと知らなかったので、リベラ先生はまだ、あなたが手伝えるかどうかわかりません。"
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(送信しました|送信済み|送りました)(?![^\\n]*待)"
+      ],
+      "hint": "先にメールを見せてもらえば、リベラ先生が読む前に直せます。",
+      "explain": "Pipoはすぐに送ったので、確認できませんでした。"
+    }
+  ],
+  "lesson": "誰あてかと、相手に必要な答えをすべて、はっきり伝えましょう。送る前の確認も忘れずに。"
+}

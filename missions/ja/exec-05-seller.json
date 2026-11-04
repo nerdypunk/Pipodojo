@@ -1,0 +1,223 @@
+{
+  "id": "exec-05-seller",
+  "lang": "ja",
+  "persona": "executive",
+  "path": "executive-marketplace",
+  "order": 2,
+  "title": "出品者にメッセージする",
+  "icon": "💬",
+  "recap": "Pipoが緑のデスクチェアについてアレックスに質問しました。",
+  "funFact": "エージェントは買い物もできます。だからこそ、お金にははっきりしたルールを。次は、Pipoが椅子を安全に買います！",
+  "postcard": "a phone in a busy office lighting up with Pipo's message to the seller of a green desk chair: {message}",
+  "situation": "緑のデスクチェア、よさそうですね！出品者にメッセージしましょうか？",
+  "facts": [
+    "🪑 アレックスが緑のデスクチェアを$35で出品中",
+    "🔎 傷や破損はある？",
+    "🕙 土曜日の午前10時に受け取りに行ける",
+    "👀 送る前に確認したい"
+  ],
+  "systemPrompt": "あなたはPipoです。ある人のスマホに入っている、親しみやすいパーソナルアシスタントです。その人の代わりにWhatsAppメッセージを送れます。頼まれたとおりに行動します。送ってと頼まれたら送り、先に見たいと言われたら下書きを書いてOKを待ちます。",
+  "tools": [
+    {
+      "name": "send_whatsapp_message",
+      "description": "WhatsAppメッセージをすぐに送信します。ユーザーが送信を望むときに使います。",
+      "app": "whatsapp",
+      "chat": {
+        "group": false,
+        "earlier": {
+          "from": "アレックス",
+          "text": "こんにちは！はい、緑のデスクチェアはまだありますよ🙂"
+        }
+      },
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メッセージの宛先：連絡先またはグループチャット"
+          },
+          "message": {
+            "type": "string",
+            "description": "メッセージ本文。日本語で60文字以内"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "✅",
+          "text": "送信しました"
+        }
+      ]
+    },
+    {
+      "name": "draft_whatsapp_message",
+      "description": "WhatsAppメッセージを書いて、送信せずにユーザーに見せ、先に確認してもらいます。ユーザーが送る前に見たいときに使います。",
+      "app": "whatsapp",
+      "chat": {
+        "group": false,
+        "earlier": {
+          "from": "アレックス",
+          "text": "こんにちは！はい、緑のデスクチェアはまだありますよ🙂"
+        }
+      },
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メッセージの宛先：連絡先またはグループチャット"
+          },
+          "message": {
+            "type": "string",
+            "description": "メッセージ本文。日本語で60文字以内"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "下書きができました。送信のOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "message_alex",
+          "label": "緑のデスクチェアのことでアレックスに連絡して",
+          "text": "出品者のアレックスに、$35で出品されている緑のデスクチェアについてメッセージを送ってください。",
+          "quality": "good"
+        },
+        {
+          "id": "message_seller",
+          "label": "出品者に連絡して",
+          "text": "椅子のことで出品者にメッセージを送ってください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "メッセージに何を書く？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "condition",
+          "label": "傷や破損がないか聞いて",
+          "text": "椅子に傷や破損がないか聞いてください。",
+          "quality": "good"
+        },
+        {
+          "id": "pickup",
+          "label": "土曜の午前10時に受け取れる",
+          "text": "土曜日の午前10時に受け取りに行けると伝えてください。",
+          "quality": "good"
+        },
+        {
+          "id": "photo",
+          "label": "背もたれの写真をお願いして",
+          "text": "椅子の背もたれの写真をもう1枚お願いしてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "lowball",
+          "label": "$10で、いやならいいよって！",
+          "text": "$10でどう？いやならいいよ、と言ってください！",
+          "quality": "weak",
+          "tip": "安すぎる提案だと、話が始まる前に終わってしまうことも。感じのいい、はっきりしたメッセージのほうが早くOKがもらえます。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが送る前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にメッセージを見せて",
+          "text": "送る前にメッセージを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "すぐに送って",
+          "text": "すぐに送ってください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:message_seller",
+      "signals": [
+        "📨(?![^\\n]*(alex|アレックス))"
+      ],
+      "hint": "「出品者」だけでは、誰が売っているのか、どの椅子なのかわかりません。",
+      "explain": "Pipoは誰が売っているのか知らなかったので、メッセージがアレックス宛てになっていません。"
+    },
+    {
+      "id": "no_condition",
+      "when": "not_picked:condition",
+      "signals": [
+        "^(?![\\s\\S]*(傷|キズ|きず|ダメージ|損傷|破損|汚れ|よごれ|シミ|染み|破れ|やぶれ|壊れ|こわれ|不具合|欠陥|問題|状態|コンディション|使用感|擦れ|スレ|へこみ|凹み|ほつれ|故障|劣化))"
+      ],
+      "hint": "Pipoに、椅子の状態を聞くよう伝えていませんでした。",
+      "explain": "Pipoは聞くべきだと知らなかったので、椅子に傷があるかどうか、まだわかりません。"
+    },
+    {
+      "id": "no_pickup",
+      "when": "not_picked:pickup",
+      "signals": [
+        "^(?![\\s\\S]*(土曜|[（(]土[)）]|sat))"
+      ],
+      "hint": "Pipoに、いつ受け取れるかを伝えていませんでした。",
+      "explain": "Pipoは土曜日のことを知らなかったので、アレックスはあなたがいつ来るのかわかりません。"
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(送信(済み|しました|完了|されました)|配信済み)(?![^\\n]*待)"
+      ],
+      "hint": "先にメッセージを見せてもらえば、アレックスが読む前に直せます。",
+      "explain": "Pipoがすぐに送ったので、確認する機会がありませんでした。"
+    }
+  ],
+  "lesson": "誰宛てかをはっきり伝えて、知りたいことを聞きましょう。そして送る前に確認を。"
+}

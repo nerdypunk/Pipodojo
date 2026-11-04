@@ -1,0 +1,229 @@
+{
+  "id": "student-08-job-email",
+  "lang": "ja",
+  "persona": "student",
+  "path": "student-job",
+  "order": 2,
+  "title": "仕事の応募メールを送る",
+  "icon": "📧",
+  "recap": "PipoがBloom Caféに仕事の応募メールを送りました。",
+  "funFact": "エージェントは練習相手にもなれます。次は、Pipoが面接の準備を手伝いますよ！",
+  "postcard": "Bloom Café's owner reading a job email with a smile: {subject}",
+  "situation": "履歴書ができました。Bloom Caféにメールしましょうか？",
+  "facts": [
+    "📧 hiring@bloomcafe.com",
+    "📎 履歴書を添付済み",
+    "📅 週末と火曜の夜が空いている",
+    "👀 送る前に読みたい"
+  ],
+  "systemPrompt": "あなたはPipoです。大学生のスマホに入っている、親しみやすいパーソナルアシスタントです。その人の代わりにメールを送れます。頼まれたとおりにします。送ってと頼まれたら送り、先に見せてと頼まれたら下書きを書いて、その人のOKを待ちます。",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "メールを今すぐ送ります。相手が送ってほしいときに使います。",
+      "app": "email",
+      "outcome": "done",
+      "store": "メール",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メールを受け取る相手：人、メールアドレス、またはメーリングリスト"
+          },
+          "subject": {
+            "type": "string",
+            "description": "件名。日本語で20文字以内"
+          },
+          "body": {
+            "type": "string",
+            "description": "メールの本文。日本語で100文字以内"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "送信しました"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "メールを書いて、送らずに相手に見せ、先に確認してもらいます。送る前に読みたいときに使います。",
+      "app": "email",
+      "outcome": "waiting",
+      "store": "メール",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メールを受け取る相手：人、メールアドレス、またはメーリングリスト"
+          },
+          "subject": {
+            "type": "string",
+            "description": "件名。日本語で20文字以内"
+          },
+          "body": {
+            "type": "string",
+            "description": "メールの本文。日本語で100文字以内"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "下書きができました。送っていいか、あなたのOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_bloom",
+          "label": "バリスタの仕事のことでBloom Caféにメールして",
+          "text": "バリスタの仕事に応募するため、Bloom Café（hiring@bloomcafe.com）にメールしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "email_job",
+          "label": "仕事のことでメールして",
+          "text": "仕事のことでメールしてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "メールに何を書く？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "cv_attached",
+          "label": "履歴書を添付しています",
+          "text": "履歴書を添付していると書いてください。",
+          "quality": "good"
+        },
+        {
+          "id": "availability",
+          "label": "週末と火曜の夜が空いている",
+          "text": "週末と火曜日の夜が空いていると書いてください。",
+          "quality": "good"
+        },
+        {
+          "id": "why",
+          "label": "お店のコーヒーが大好き",
+          "text": "お店のコーヒーと、あたたかい雰囲気が大好きだと書いてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "casual",
+          "label": "チャットみたいに「バイト募集してる？」",
+          "text": "チャットみたいに書いて。「ねえ、バイト募集してる？」",
+          "quality": "weak",
+          "tip": "応募メールは第一印象です。くだけた感じより、わかりやすく親しみやすいほうがいいですよ。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが送る前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にメールを見せて",
+          "text": "送る前にメールを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "今すぐ送って",
+          "text": "今すぐ送ってください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:email_job",
+      "signals": [
+        "📧(?![^\\n]*(bloom|ブルーム))"
+      ],
+      "hint": "「仕事のこと」だけでは、どの仕事で誰に送ればいいかわかりません。",
+      "explain": "Pipoはどこに送ればいいか知らなかったので、Bloom Caféには届きません。"
+    },
+    {
+      "id": "no_cv",
+      "when": "not_picked:cv_attached",
+      "signals": [
+        "^(?![\\s\\S]*(履歴書|職務経歴|レジュメ|レジメ|\\bcv\\b|r[ée]sum[ée]))"
+      ],
+      "hint": "Pipoに、履歴書を添付していることを伝えていませんでした。",
+      "explain": "Pipoが履歴書のことを書かなかったので、相手は開かないかもしれません。"
+    },
+    {
+      "id": "no_availability",
+      "when": "not_picked:availability",
+      "signals": [
+        "^(?![\\s\\S]*(週末|土日|土曜|日曜|火曜|[（(]火[)）]|weekend|\\btue))"
+      ],
+      "hint": "Pipoに、いつ働けるかを伝えていませんでした。",
+      "explain": "Pipoはあなたの空いている時間を知らなかったので、カフェが聞き返さなければなりません。"
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(送信しました|送信済|送信完了|送りました|送っておきました|届けました)(?![^\\n]*待)"
+      ],
+      "hint": "先にメールを見せてもらえば、第一印象を確認できます。",
+      "explain": "Pipoがすぐに送ったので、あなたは確認できませんでした。"
+    }
+  ],
+  "lesson": "誰に送るのか、相手が知りたいことは何かを伝えましょう。送る前に第一印象を確認しましょう。"
+}

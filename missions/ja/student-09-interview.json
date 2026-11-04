@@ -1,0 +1,95 @@
+{
+  "id": "student-09-interview",
+  "lang": "ja",
+  "persona": "student",
+  "path": "student-job",
+  "order": 3,
+  "title": "面接の練習をする",
+  "icon": "🎤",
+  "recap": "Pipoが面接の練習を手伝いました。",
+  "funFact": "履歴書、メール、面接の練習。これで初めての仕事の準備はばっちりです。エージェントは準備を手伝うだけ。仕事をつかむのはあなたです。",
+  "postcard": "a student shaking hands with Bloom Café's owner, Pipo cheering: {answer}",
+  "situation": "Bloom Caféが会いたいそうです！面接の練習をしましょうか？",
+  "facts": [
+    "☕ Bloom Caféのバリスタ面接",
+    "🥐 ペストリーとオーツミルクラテで有名",
+    "💡 質問ごとに短いアドバイス",
+    "🗣️ 答えは自分の言葉で"
+  ],
+  "systemPrompt": "あなたはPipoです。大学生のスマホに入っている、親しみやすいパーソナルアシスタントです。頼まれたことを手伝ってください。練習を手伝うときは、1行に1つの質問を書いてください。",
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "practise",
+          "label": "Bloom Caféのバリスタ面接の練習を手伝って",
+          "text": "Bloom Caféのバリスタの面接に向けて、練習を手伝ってください。",
+          "quality": "good"
+        },
+        {
+          "id": "interview",
+          "label": "面接を手伝って",
+          "text": "面接を手伝ってください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "label": "Pipoの手伝い方は？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "known_for",
+          "label": "ペストリーとオーツミルクラテで有名",
+          "text": "Bloom Caféはペストリーとオーツミルクラテで有名なので、それについても質問してください。",
+          "quality": "good"
+        },
+        {
+          "id": "tips",
+          "label": "それぞれに短いアドバイスを",
+          "text": "質問ごとに、模範解答ではなく短いアドバイスを付けてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "three",
+          "label": "よく聞かれそうな質問を3つ",
+          "text": "よく聞かれそうな質問を3つ出してください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "answers",
+          "label": "暗記できるように答えを書いて",
+          "text": "暗記できるように、私の答えを書いて。",
+          "quality": "weak",
+          "tip": "暗記した答えは、ロボットみたいに聞こえます。アドバイスがあれば、自分の言葉で答えられます。"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:interview",
+      "signals": [
+        "^(?![\\s\\S]*(バリスタ|コーヒー|珈琲|カフェ|お客|接客|顧客|ドリンク|飲み物|ラテ|barista|coffee|caf|customer|drink))"
+      ],
+      "hint": "「面接」だけでは、何の仕事の面接かわかりません。",
+      "explain": "Pipoは仕事の内容を知らなかったので、バリスタについての質問になっていません。"
+    },
+    {
+      "id": "no_research",
+      "when": "not_picked:known_for",
+      "signals": [
+        "^(?![\\s\\S]*(ペストリー|ペイストリー|焼き菓子|菓子|(?<![ァ-ヺー])パン|クロワッサン|スイーツ|オー[ツト]|pastr|oat))"
+      ],
+      "hint": "Pipoに、Bloom Caféが何で有名かを伝えていませんでした。",
+      "explain": "Pipoはペストリーとオーツミルクラテのことを知らなかったので、ありきたりな練習になりました。"
+    }
+  ],
+  "lesson": "Pipoには台本ではなく、練習とアドバイスを頼みましょう。面接では自分の言葉が一番です。"
+}

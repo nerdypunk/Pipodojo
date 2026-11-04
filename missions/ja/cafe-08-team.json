@@ -1,0 +1,223 @@
+{
+  "id": "cafe-08-team",
+  "lang": "ja",
+  "persona": "business",
+  "path": "business-staff",
+  "order": 2,
+  "title": "チームにメッセージする",
+  "icon": "💬",
+  "recap": "Pipoがシフト表をチームのチャットに送りました。",
+  "funFact": "エージェントは、共有カレンダーの管理もできます。次は、Pipoがチームのみんなが見られる場所にシフトを入れます。",
+  "postcard": "phones buzzing in the Bloom Café kitchen with Pipo's message: {message}",
+  "situation": "シフト表ができました！チームのチャットに送りましょうか？",
+  "facts": [
+    "💬 WhatsAppの「カフェチーム」グループ",
+    "📅 木：午前ベン・午後アナ · 金：午前クロエ・午後アナ · 土：3人全員",
+    "🙋 水曜日までに確認の返事をもらう",
+    "👀 送る前に確認したい"
+  ],
+  "systemPrompt": "あなたはPipoです。小さな地元のカフェ「Bloom Café」のオーナーを手伝う、親しみやすいアシスタントです。オーナーの代わりにWhatsAppのメッセージを送れます。頼まれたとおりにしてください。送ってと頼まれたら送ります。先に見せてと頼まれたら、下書きを書いてオーナーのOKを待ちます。",
+  "tools": [
+    {
+      "name": "send_whatsapp_message",
+      "description": "WhatsAppのメッセージをすぐに送信します。ユーザーが送ってほしいときに使います。",
+      "app": "whatsapp",
+      "chat": {
+        "group": true,
+        "earlier": {
+          "from": "アナ",
+          "text": "来週のシフト表、もう出てますか？☕"
+        }
+      },
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メッセージを受け取る相手：連絡先、グループチャット、または連絡先の全員"
+          },
+          "message": {
+            "type": "string",
+            "description": "メッセージの本文（60文字以内）"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "✅",
+          "text": "送信しました"
+        }
+      ]
+    },
+    {
+      "name": "draft_whatsapp_message",
+      "description": "WhatsAppのメッセージを書いて、送信せずにユーザーに見せ、先に確認してもらいます。ユーザーが送る前に見たいときに使います。",
+      "app": "whatsapp",
+      "chat": {
+        "group": true,
+        "earlier": {
+          "from": "アナ",
+          "text": "来週のシフト表、もう出てますか？☕"
+        }
+      },
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メッセージを受け取る相手：連絡先、グループチャット、または連絡先の全員"
+          },
+          "message": {
+            "type": "string",
+            "description": "メッセージの本文（60文字以内）"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "下書きができました。送信のOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "message_team",
+          "label": "シフト表を「カフェチーム」グループに送って",
+          "text": "今週のシフト表を、WhatsAppの「カフェチーム」グループに送ってください。",
+          "quality": "good"
+        },
+        {
+          "id": "tell_staff",
+          "label": "スタッフに伝えて",
+          "text": "シフト表のことを、スタッフに伝えてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "メッセージに何を書く？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "rota",
+          "label": "木 ベン/アナ · 金 クロエ/アナ · 土 全員",
+          "text": "シフトは、木曜日は午前ベン、午後アナ。金曜日は午前クロエ、午後アナ。土曜日は3人全員です。",
+          "quality": "good"
+        },
+        {
+          "id": "confirm",
+          "label": "水曜日までに返事をもらって",
+          "text": "水曜日までに確認の返事をくれるよう、みんなに頼んでください。",
+          "quality": "good"
+        },
+        {
+          "id": "thanks",
+          "label": "いい1週間だったとお礼を",
+          "text": "すてきな1週間をありがとう、とお礼を伝えてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "rota_up",
+          "label": "シフト表が出たとだけ伝えて",
+          "text": "シフト表が出たよ、とだけ伝えてください。",
+          "quality": "weak",
+          "tip": "「シフト表が出たよ」だけだと、みんな探しに行くことになります。実際のシフトをメッセージに書きましょう。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが送る前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にメッセージを見せて",
+          "text": "送る前にメッセージを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "すぐに送って",
+          "text": "すぐに送ってください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:tell_staff",
+      "signals": [
+        "📨(?![^\n]*(カフェs?チーム|caf[eé]s?team))"
+      ],
+      "hint": "「スタッフ」では、どこに送ればいいのかわかりません。",
+      "explain": "Pipoはどのチャットか知らなかったので、「カフェチーム」グループに届きませんでした。"
+    },
+    {
+      "id": "no_rota",
+      "when": "not_picked:rota",
+      "signals": [
+        "^(?![sS]*(木曜|木[：:s/／・（(]|[（(]木[)）]|thu))"
+      ],
+      "hint": "Pipoに、シフト表の中身を伝えていませんでした。",
+      "explain": "Pipoはシフト表を知らなかったので、メッセージに誰がいつ入るか書かれていません。"
+    },
+    {
+      "id": "no_confirm",
+      "when": "not_picked:confirm",
+      "signals": [
+        "^(?![sS]*(水曜|水[：:s/／・（(]|[（(]水[)）]|wed))"
+      ],
+      "hint": "Pipoに、確認の返事をもらうよう頼んでいませんでした。",
+      "explain": "Pipoは水曜日までに返事が必要だと知らなかったので、誰にも確認を頼んでいません。"
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(送信しました|送信済|送信完了|送りました|お送りしました)(?![^\\n]*待)"
+      ],
+      "hint": "先にメッセージを見せてもらえば、チームが読む前に直せます。",
+      "explain": "Pipoがすぐに送ったので、確認するチャンスがありませんでした。"
+    }
+  ],
+  "lesson": "メッセージには実際の内容を入れて、返してほしいことを頼みましょう。送る前に確認も忘れずに。"
+}

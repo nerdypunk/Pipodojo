@@ -18,8 +18,8 @@ const regexSource = z.string().min(1).refine((source) => {
 
 export const PersonaSchema = z.enum(["business", "student", "parent", "kid", "executive"]);
 
-/** The game's languages. English lessons live in /missions, Spanish ones in /missions/es. */
-export const LangSchema = z.enum(["en", "es"]);
+/** The game's languages. English lessons live in /missions, the others in /missions/<lang> (es, ja). */
+export const LangSchema = z.enum(["en", "es", "ja"]);
 
 /** One tappable prompt piece: `label` is the tile, `text` is the words it adds to the prompt. */
 export const PieceSchema = z.strictObject({

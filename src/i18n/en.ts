@@ -1,12 +1,12 @@
-// Every word the game's own screens say, in English. es.ts must match this shape exactly (the
+// Every word the game's own screens say, in English. es.ts and ja.ts must match this shape exactly (the
 // type checker refuses a missing or extra entry), so no screen can be left half translated.
-// Lesson text lives in the lesson files instead (/missions and /missions/es).
+// Lesson text lives in the lesson files instead (/missions, /missions/es and /missions/ja).
 
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 
 export const en = {
-  /** The other language, for the switch button. */
-  switchTo: { short: "ES", label: "Cambiar a español", name: "Español" },
+  /** The language menu (each language is listed in its own words). */
+  langMenu: { label: "Language" },
 
   lab: {
     kicker: "🧪 Testing area",
@@ -43,6 +43,8 @@ export const en = {
     openSourceA: "An",
     openSourceLink: "open source project",
     openSourceBy: "by",
+    /** Whether the maker's name comes before "open source project" (true in Japanese). */
+    openSourceAuthorFirst: false as boolean,
     close: "Close",
     tryAgain: "Try again",
     continue: "Continue",
@@ -219,6 +221,8 @@ export const en = {
     nothing: "(nothing)",
     noAnswer: "No answer this time",
     finishedHere: ", so it was finished on this device.",
+    /** Ends a sentence ("." or "。"). */
+    stop: ".",
   },
 
   device: {

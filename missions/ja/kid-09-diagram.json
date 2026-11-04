@@ -1,0 +1,233 @@
+{
+  "id": "kid-09-diagram",
+  "lang": "ja",
+  "persona": "kid",
+  "path": "kid-homework",
+  "order": 3,
+  "title": "図をかこう",
+  "icon": "💧",
+  "recap": "Pipo Codeがポスター用に水のじゅんかんの図をかきました。",
+  "funFact": "学んで、グラフにして、図にする。宿題が終わって、考えたのはあなたです。あなたがボスでいれば、コーディングエージェントは最高の助っ人です。",
+  "postcard": "a bright science poster of the water cycle with clouds, rain and a river: {steps}",
+  "situation": "理科のポスターに図が必要ですね！水のじゅんかんの図をかきましょうか？",
+  "facts": [
+    "💧 理科の「水のじゅんかん」ポスター",
+    "🪜 授業で習った5つのステップ（蒸散もふくむ）",
+    "✏️ 各ステップに短いラベル",
+    "👀 ポスターにのせる前に確認"
+  ],
+  "systemPrompt": "あなたはPipo Codeです。10歳の子のノートパソコンにいる、やさしいコーディングの手伝い役です。ツールを使って、その子の宿題の図を作ります。頼まれたとおりにします。ポスターに追加してと頼まれたら追加します。先に見たいと頼まれたら、準備してOKを待ちます。",
+  "tools": [
+    {
+      "name": "add_to_poster",
+      "description": "図をかいて、すぐにポスターに追加します。今すぐ追加したいときに使います。",
+      "app": "chart",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "図のタイトル"
+          },
+          "steps": {
+            "type": "array",
+            "description": "ステップを順番に（それぞれ短い名前と短いメモつき）",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string",
+                  "description": "短いラベル（10文字くらいまで）"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "steps"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🔄",
+          "text": "{title}"
+        },
+        {
+          "emoji": "🪜",
+          "text": "{steps}"
+        },
+        {
+          "emoji": "✅",
+          "text": "ポスターに追加しました"
+        }
+      ]
+    },
+    {
+      "name": "show_diagram",
+      "description": "図をかいて、ポスターには追加せずに見せるので、先に確認できます。先に見たいときに使います。",
+      "app": "chart",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "図のタイトル"
+          },
+          "steps": {
+            "type": "array",
+            "description": "ステップを順番に（それぞれ短い名前と短いメモつき）",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string",
+                  "description": "短いラベル（10文字くらいまで）"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "steps"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🔄",
+          "text": "{title}"
+        },
+        {
+          "emoji": "🪜",
+          "text": "{steps}"
+        },
+        {
+          "emoji": "👀",
+          "text": "図の準備ができました、OKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipo Codeに何をしてほしいですか？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "diagram",
+          "label": "ポスター用に水のじゅんかんの図をかいて",
+          "text": "理科のポスター用に、水のじゅんかんの図をかいてください。",
+          "quality": "good"
+        },
+        {
+          "id": "poster",
+          "label": "理科のポスターを作って",
+          "text": "理科のポスターを作ってください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "Pipo Codeは何を知っておく必要がありますか？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "four_steps",
+          "label": "習った5つのステップ（蒸散もふくむ）",
+          "text": "授業で習った5つのステップを、順番どおりに使ってください：蒸発、蒸散（植物から出る水）、凝結（雲ができる）、降水（雨や雪）、川や海に集まる。",
+          "quality": "good"
+        },
+        {
+          "id": "labels",
+          "label": "各ステップに短いラベル",
+          "text": "各ステップに、短くてかんたんなラベルをつけてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "extra",
+          "label": "かしこく見えるようにステップをあと10個追加",
+          "text": "かしこく見えるように、ステップをあと10個追加してください。",
+          "quality": "weak",
+          "tip": "ステップを増やしても、かしこくはならず、読みにくくなるだけです。先生が見たいのは、授業で習った5つです。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "ポスターにのせる前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "追加する前に見せて",
+          "text": "ポスターに追加する前に、図を見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "すぐに追加して",
+          "text": "すぐにポスターに追加してください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "wrong_steps",
+      "when": "not_picked:four_steps",
+      "signals": [
+        "🪜(?![^\\n]*(蒸散|じょうさん|植物から|葉から|葉っぱから|transpiration))"
+      ],
+      "hint": "Pipo Codeに、授業で習ったステップを伝えていませんでした。",
+      "explain": "Pipo Codeは授業の5つのステップを知らなかったので、蒸散がぬけています。"
+    },
+    {
+      "id": "too_many",
+      "when": "picked:extra",
+      "signals": [
+        "🪜([^\\n]*,){6}"
+      ],
+      "hint": "ステップが多すぎると、図が読みにくくなります。",
+      "explain": "Pipo Codeが余分なステップをつめこんだので、図がわかりにくくなりました。"
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:poster",
+      "signals": [
+        "🔄(?![^\\n]*(水|みず|water))"
+      ],
+      "hint": "「理科のポスターを作って」だけでは、何のポスターかわかりません。",
+      "explain": "Pipo Codeは水のじゅんかんだと知らなかったので、別のものをかきました。"
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(追加しました|のせました|貼りました|はりました|追加済)(?![^\\n]*待)"
+      ],
+      "hint": "先に図を確認すれば、ポスターにのせる前に直せます。",
+      "explain": "Pipo Codeがすぐに追加したので、確認できませんでした。"
+    }
+  ],
+  "lesson": "何を見せるかPipo Codeにはっきり伝えて、ポスターにのせる前に確認しよう。"
+}

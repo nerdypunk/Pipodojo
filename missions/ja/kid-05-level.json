@@ -1,0 +1,261 @@
+{
+  "id": "kid-05-level",
+  "lang": "ja",
+  "persona": "kid",
+  "path": "kid-game",
+  "order": 2,
+  "title": "最初のステージを作ろう",
+  "icon": "🧱",
+  "recap": "Pipo CodeがCandy Climbのステージ1を作りました。",
+  "funFact": "ショップのあるゲームはたくさんあります。いいショップは公平で、子どもに本物のお金を求めません。次は、Pipo Codeがショップを追加します！",
+  "postcard": "a blocky candy level with lollipop platforms and checkpoint flags: {obstacles}",
+  "situation": "Candy Climb、ステージ1！BlockStudioで作りましょうか？",
+  "facts": [
+    "🧱 ステージ1には障害物が6つ",
+    "🚩 障害物2つごとにチェックポイント（全部で3つ）",
+    "🐢 最初はかんたんに：ステージ1は動くものなし",
+    "🧪 公開する前にテストプレイ"
+  ],
+  "systemPrompt": "あなたはPipo Codeです。10歳の子のノートパソコンにいる、やさしいコーディングの手伝い役です。ツールを使って、その子のゲームを作ります。頼まれたとおりにします。公開してと頼まれたら公開します。先にテストプレイしたいと頼まれたら、準備してOKを待ちます。",
+  "tools": [
+    {
+      "name": "publish_level",
+      "description": "BlockStudioでステージを作って、すぐにみんなに公開します。今すぐ公開したいときに使います。",
+      "app": "game",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "ゲームとステージの名前"
+          },
+          "theme": {
+            "type": "string",
+            "description": "ステージの見た目（短い言葉で）"
+          },
+          "obstacles": {
+            "type": "array",
+            "description": "障害物を順番に（それぞれ短い言葉で）",
+            "items": {
+              "type": "string"
+            }
+          },
+          "checkpoints": {
+            "type": "integer",
+            "description": "ステージにあるチェックポイントの数"
+          },
+          "goal": {
+            "type": "string",
+            "description": "クリアするためにたどり着く場所"
+          }
+        },
+        "required": [
+          "name",
+          "theme",
+          "obstacles",
+          "checkpoints",
+          "goal"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🎮",
+          "text": "{name}"
+        },
+        {
+          "emoji": "🧱",
+          "text": "{obstacles}"
+        },
+        {
+          "emoji": "🚩",
+          "text": "チェックポイント：{checkpoints}"
+        },
+        {
+          "emoji": "🏁",
+          "text": "ゴール：{goal}"
+        },
+        {
+          "emoji": "✅",
+          "text": "BlockStudioに公開しました"
+        }
+      ]
+    },
+    {
+      "name": "playtest_level",
+      "description": "BlockStudioでステージを作りますが、公開はせずにテストプレイできるようにします。先に試したいときに使います。",
+      "app": "game",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "ゲームとステージの名前"
+          },
+          "theme": {
+            "type": "string",
+            "description": "ステージの見た目（短い言葉で）"
+          },
+          "obstacles": {
+            "type": "array",
+            "description": "障害物を順番に（それぞれ短い言葉で）",
+            "items": {
+              "type": "string"
+            }
+          },
+          "checkpoints": {
+            "type": "integer",
+            "description": "ステージにあるチェックポイントの数"
+          },
+          "goal": {
+            "type": "string",
+            "description": "クリアするためにたどり着く場所"
+          }
+        },
+        "required": [
+          "name",
+          "theme",
+          "obstacles",
+          "checkpoints",
+          "goal"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🎮",
+          "text": "{name}"
+        },
+        {
+          "emoji": "🧱",
+          "text": "{obstacles}"
+        },
+        {
+          "emoji": "🚩",
+          "text": "チェックポイント：{checkpoints}"
+        },
+        {
+          "emoji": "🏁",
+          "text": "ゴール：{goal}"
+        },
+        {
+          "emoji": "🧪",
+          "text": "テストプレイの準備ができました、OKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipo Codeに何をしてほしいですか？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "build_level",
+          "label": "Candy Climbのステージ1を作って",
+          "text": "BlockStudioでCandy Climbのステージ1を作ってください。障害物が6つある、おかしの障害物コースです。",
+          "quality": "good"
+        },
+        {
+          "id": "build",
+          "label": "わたしのゲームを作って",
+          "text": "わたしのゲームを作ってください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "label": "ステージはどんなルールにしますか？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "checkpoints",
+          "label": "チェックポイント3つ、障害物2つごと",
+          "text": "障害物2つごとにチェックポイントを置いて、全部で3つにしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "easy",
+          "label": "最初はかんたんに：動くものなし",
+          "text": "最初はかんたんにしてください。ステージ1は足場を広くして、動いたり回ったりするものはなしです。",
+          "quality": "good"
+        },
+        {
+          "id": "jump",
+          "label": "ジャンプ台を入れて",
+          "text": "どこかにジャンプ台を入れてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "lava",
+          "label": "マグマだらけにして！",
+          "text": "マグマだらけにしてください！",
+          "quality": "weak",
+          "tip": "ステージ1からマグマだらけだと、みんなやめてしまいます。かんたんに始めて、だんだんむずかしくしましょう。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "公開する前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にテストプレイさせて",
+          "text": "公開する前に、テストプレイさせてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "すぐに公開して",
+          "text": "すぐに公開してください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_checkpoints",
+      "when": "not_picked:checkpoints",
+      "signals": [
+        "🚩 チェックポイント：(?![3３](?![\\d０-９]))"
+      ],
+      "hint": "Pipo Codeに、チェックポイントをどこに置くか伝えていませんでした。",
+      "explain": "Pipo Codeはチェックポイントのルールを知らなかったので、ミスするとずっと前までもどされます。"
+    },
+    {
+      "id": "too_hard",
+      "when": "not_picked:easy",
+      "signals": [
+        "🧱[^\\n]*(動く|うごく|動き|うごき|回る|まわる|回転|かいてん|ぐるぐる|揺れ|ゆれ|スイング|振り子|ふりこ|スライド|すべる|滑る|コンベア|よける|避け|移動|崩れ|くずれ|転が|ころが|ローリング|マグマ|溶岩|ようがん|トゲ|とげ|棘|針|即死|lava|spike)"
+      ],
+      "hint": "Pipo Codeに、最初はかんたんにと伝えていませんでした。",
+      "explain": "Pipo Codeはステージ1をかんたんにすると知らなかったので、もうむずかしい動く障害物があります。"
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:build",
+      "signals": [
+        "🎮(?![^\\n]*(candy|キャンディ|キャンデー))"
+      ],
+      "hint": "「ゲームを作って」だけでは、どのゲームのどのステージかわかりません。",
+      "explain": "Pipo CodeはCandy Climbのことだと知らなかったので、別のものを作りました。"
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(公開しました|公開済|公開完了)(?![^\\n]*待)"
+      ],
+      "hint": "先にテストプレイすれば、つまらないところやクリアできないところが見つかります。",
+      "explain": "Pipo Codeがすぐに公開したので、テストプレイできませんでした。"
+    }
+  ],
+  "lesson": "チェックポイントやむずかしさのルールが、ゲームを楽しくします。公開する前にテストプレイしよう。"
+}

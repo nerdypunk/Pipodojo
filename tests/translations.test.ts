@@ -1,5 +1,5 @@
-// Spanish lessons are full twins of the English ones: same ids, structure, scoring rules and
-// tools, only the words differ. These tests keep the two in step so a translation can't break
+// Spanish and Japanese lessons are full twins of the English ones: same ids, structure, scoring
+// rules and tools, only the words differ. These tests keep the two in step so a translation can't break
 // a lesson (a missing piece, a flaw pointing nowhere, a tool with different fields).
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
@@ -8,18 +8,16 @@ import { loadMissions } from "../src/engine/missionLoader.ts";
 import type { Mission } from "../src/engine/types.ts";
 import { MISSIONS_DIR, readMissionFiles } from "./helpers.ts";
 
-const ES_DIR = join(MISSIONS_DIR, "es");
-
-function readSpanishFiles(): Record<string, unknown> {
+function readTranslatedFiles(lang: string): Record<string, unknown> {
+  const dir = join(MISSIONS_DIR, lang);
   const files: Record<string, unknown> = {};
-  for (const name of readdirSync(ES_DIR).filter((n) => n.endsWith(".json"))) {
-    files[name] = JSON.parse(readFileSync(join(ES_DIR, name), "utf8"));
+  for (const name of readdirSync(dir).filter((n) => n.endsWith(".json"))) {
+    files[name] = JSON.parse(readFileSync(join(dir, name), "utf8"));
   }
   return files;
 }
 
 const english = new Map(loadMissions(readMissionFiles()).map((m) => [m.id, m]));
-const spanish = loadMissions(readSpanishFiles());
 
 /** "{name} at {when}" → ["name", "when"]: the argument slots a template fills in. */
 const fields = (template: string | undefined) => [...(template ?? "").matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
@@ -55,16 +53,18 @@ function shape(m: Mission) {
   };
 }
 
-describe("Spanish lessons", () => {
-  it.each(spanish.map((m) => [m.id, m] as const))("%s is marked Spanish and matches its English twin", (id, es) => {
-    expect(es.lang).toBe("es");
+describe.each(["es", "ja"] as const)("%s lessons", (lang) => {
+  const translated = loadMissions(readTranslatedFiles(lang));
+
+  it.each(translated.map((m) => [m.id, m] as const))(`%s is marked ${lang} and matches its English twin`, (id, twin) => {
+    expect(twin.lang).toBe(lang);
     const en = english.get(id);
     expect(en, `no English lesson "${id}"`).toBeDefined();
-    expect(shape(es)).toEqual(shape(en!));
+    expect(shape(twin)).toEqual(shape(en!));
   });
 
-  it("every English lesson has a Spanish twin", () => {
-    const missing = [...english.keys()].filter((id) => !spanish.some((m) => m.id === id));
+  it("every English lesson has a twin", () => {
+    const missing = [...english.keys()].filter((id) => !translated.some((m) => m.id === id));
     expect(missing).toEqual([]);
   });
 });

@@ -1,0 +1,124 @@
+{
+  "id": "cafe-01-sale-post",
+  "lang": "ja",
+  "persona": "business",
+  "path": "business-sale",
+  "order": 1,
+  "title": "セールの投稿を書く",
+  "icon": "📸",
+  "recap": "Pipoが週末セールの投稿を書きました。",
+  "funFact": "エージェントは、お客さんへのメールも代わりに送れます。次は、Pipoが常連さんにセールのお知らせをします！",
+  "postcard": "a sign outside Bloom Café announcing the sale: {answer}",
+  "situation": "大事な週末がやってきます！ペストリーセールの投稿、書きましょうか？",
+  "facts": [
+    "🥐 ペストリーが全品半額",
+    "📅 土曜日と日曜日、午前8時〜11時",
+    "📍 Bloom Café、メイン通り4番地",
+    "📸 お店のInstagram用"
+  ],
+  "systemPrompt": "あなたはPipoです。小さな地元のカフェ「Bloom Café」のオーナーを手伝う、親しみやすいアシスタントです。頼まれたことを手伝ってください。SNSの投稿を書くときは、投稿そのものを1行ずつ書いてください。",
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "write_post",
+          "label": "ペストリーセールのInstagram投稿を書いて",
+          "text": "Bloom Caféの週末ペストリーセールのInstagram投稿を書いてください。",
+          "quality": "good"
+        },
+        {
+          "id": "post_something",
+          "label": "カフェについての投稿を書いて",
+          "text": "カフェについての投稿を書いてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "Pipoが知っておくことは？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "discount",
+          "label": "ペストリーが全品半額",
+          "text": "ペストリーは全品半額です。",
+          "quality": "good"
+        },
+        {
+          "id": "when",
+          "label": "土曜日と日曜日、午前8時〜11時",
+          "text": "土曜日と日曜日の午前8時から11時までです。",
+          "quality": "good"
+        },
+        {
+          "id": "hashtags",
+          "label": "ハッシュタグを2つ付けて",
+          "text": "最後にハッシュタグを2つ付けてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "best_ever",
+          "label": "世界一のセールだと書いて！",
+          "text": "世界一のセールだって書いてね！",
+          "quality": "weak",
+          "tip": "大げさな言葉では、お店に来る理由が伝わりません。伝わるのは、お得な内容と時間です。"
+        }
+      ]
+    },
+    {
+      "id": "tone",
+      "label": "どんな雰囲気にする？",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "friendly",
+          "label": "あたたかく、親しみやすく、短く",
+          "text": "あたたかく、親しみやすく、短くしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "pushy",
+          "label": "押しを強く：今すぐ買って！",
+          "text": "押しを強くしてください：今すぐ買って！",
+          "quality": "weak",
+          "tip": "押しの強い投稿は、人を遠ざけてしまいます。地元のカフェには、親しみやすくわかりやすい投稿のほうが合います。"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_discount",
+      "when": "not_picked:discount",
+      "signals": [
+        "^(?![\\s\\S]*(半額|半値|半分の?価格|[5５][0０]\\s?([%％]|パーセント)|[5５]割|五割))"
+      ],
+      "hint": "Pipoに、どんなお得があるのかを伝えていませんでした。",
+      "explain": "Pipoはセールの内容を知らなかったので、投稿に何が安くなるのか書かれていません。"
+    },
+    {
+      "id": "no_time",
+      "when": "not_picked:when",
+      "signals": [
+        "^(?![\\s\\S]*((?<![\\d０-９])[8８](?![\\d０-９])|八時))"
+      ],
+      "hint": "Pipoに、セールがいつなのかを伝えていませんでした。",
+      "explain": "Pipoは時間を知らなかったので、投稿にいつ来ればいいのか書かれていません。"
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:post_something",
+      "signals": [
+        "^(?![\\s\\S]*(bloom|ブルーム))"
+      ],
+      "hint": "「カフェについての投稿」では、どのカフェの、何のための投稿なのかがわかりません。",
+      "explain": "PipoはBloom CaféのInstagram投稿だと知らなかったので、投稿にカフェの名前が出てきません。"
+    }
+  ],
+  "lesson": "お客さんに必要な情報（何を、いつ、どこで）をPipoに伝えましょう。"
+}

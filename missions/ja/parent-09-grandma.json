@@ -1,0 +1,223 @@
+{
+  "id": "parent-09-grandma",
+  "lang": "ja",
+  "persona": "parent",
+  "path": "parent-daytrip",
+  "order": 3,
+  "title": "おばあちゃんに予定を伝えよう",
+  "icon": "👵",
+  "recap": "Pipoがロサおばあちゃんに日曜日の予定を伝えました。",
+  "funFact": "選んで、予約して、メッセージを送る。日帰りのおでかけが、まるごと片づきました。エージェントは計画が得意です。そして、お金とメッセージのことを決めるのはあなたです。",
+  "postcard": "Grandma Rosa waving with an umbrella as the family car arrives: {message}",
+  "situation": "ロサおばあちゃんも日曜日に来たいそうです！予定を送りましょうか？",
+  "facts": [
+    "👵 ロサおばあちゃんも一緒に来る",
+    "🚗 午前10時45分に迎えに行く",
+    "🏛️ 科学館、午前11時30分に入場",
+    "☔ 雨なので傘が必要"
+  ],
+  "systemPrompt": "あなたはPipoです。スマホの中にいる、親しみやすいパーソナルアシスタントです。あなたは相手の代わりにWhatsAppのメッセージを送れます。頼まれたとおりにします。送ってと頼まれたら送ります。先に見たいと頼まれたら、下書きを書いてOKを待ちます。",
+  "tools": [
+    {
+      "name": "send_whatsapp_message",
+      "description": "WhatsAppのメッセージをすぐに送ります。ユーザーが送ってほしいときに使います。",
+      "app": "whatsapp",
+      "chat": {
+        "group": false,
+        "earlier": {
+          "from": "ロサおばあちゃん",
+          "text": "日曜日、ぜひ一緒に行きたいわ！🌸"
+        }
+      },
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メッセージを受け取る相手：連絡先、グループチャット、またはすべての連絡先"
+          },
+          "message": {
+            "type": "string",
+            "description": "メッセージの本文（70文字以内）"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "✅",
+          "text": "送信しました"
+        }
+      ]
+    },
+    {
+      "name": "draft_whatsapp_message",
+      "description": "WhatsAppのメッセージを書いて、送らずにユーザーに見せ、先に確認してもらいます。ユーザーが送る前に見たいときに使います。",
+      "app": "whatsapp",
+      "chat": {
+        "group": false,
+        "earlier": {
+          "from": "ロサおばあちゃん",
+          "text": "日曜日、ぜひ一緒に行きたいわ！🌸"
+        }
+      },
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メッセージを受け取る相手：連絡先、グループチャット、またはすべての連絡先"
+          },
+          "message": {
+            "type": "string",
+            "description": "メッセージの本文（70文字以内）"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "下書きができました。送信のOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "message_grandma",
+          "label": "ロサおばあちゃんに予定をメッセージして",
+          "text": "ロサおばあちゃんに、日曜日の予定をWhatsAppで送ってください。",
+          "quality": "good"
+        },
+        {
+          "id": "tell_family",
+          "label": "家族に日曜のことを伝えて",
+          "text": "家族に日曜日のことを伝えてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "メッセージに何を書く？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "pickup",
+          "label": "午前10時45分に迎えに行く",
+          "text": "午前10時45分に迎えに行く、と書いてください。",
+          "quality": "good"
+        },
+        {
+          "id": "where",
+          "label": "科学館、午前11時30分に入場",
+          "text": "午前11時30分の入場で科学館に行く、と書いてください。",
+          "quality": "good"
+        },
+        {
+          "id": "umbrella",
+          "label": "傘を持ってきてね",
+          "text": "傘を持ってくるように書いてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "caps",
+          "label": "見逃さないように「！！！」だらけで！！！",
+          "text": "見逃さないように、「！！！」をたくさんつけて書いてください！！！",
+          "quality": "weak",
+          "tip": "「！」だらけだと、どなっているように感じます。時間の入った短いメッセージのほうが、おばあちゃんには読みやすいです。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが送る前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にメッセージを見せて",
+          "text": "送る前にメッセージを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "すぐに送って",
+          "text": "すぐに送ってください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:tell_family",
+      "signals": [
+        "📨(?![^\\n]*(おばあ|祖母|ロサ|rosa|grandma))"
+      ],
+      "hint": "「家族に伝えて」では、誰に送ればいいのかわかりません。",
+      "explain": "Pipoは誰に送ればいいか知らなかったので、おばあちゃんではなく家族全員に送りました。"
+    },
+    {
+      "id": "no_pickup",
+      "when": "not_picked:pickup",
+      "signals": [
+        "^(?![\\s\\S]*([1１][0０][:：][4４][5５]|[1１][0０]時[4４][5５]分|十時四十五分|11時15分前|１１時１５分前))"
+      ],
+      "hint": "迎えに行く時間を、Pipoに伝えていませんでした。",
+      "explain": "Pipoは迎えの時間を知らなかったので、おばあちゃんはいつ準備すればいいかわかりません。"
+    },
+    {
+      "id": "no_place",
+      "when": "not_picked:where",
+      "signals": [
+        "^(?![\\s\\S]*(科学館|博物館|ミュージアム|museum))"
+      ],
+      "hint": "どこに行くのか、Pipoに伝えていませんでした。",
+      "explain": "Pipoは行き先を知らなかったので、メッセージに書かれていません。"
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(送信しました|送信済み|送りました)(?![^\\n]*待)"
+      ],
+      "hint": "先にメッセージを見せてもらえば、おばあちゃんが読む前に直せます。",
+      "explain": "Pipoはすぐに送ったので、確認できませんでした。"
+    }
+  ],
+  "lesson": "いいメッセージには「誰が・いつ・どこで」が入っています。Pipoが送る前に確認しましょう。"
+}

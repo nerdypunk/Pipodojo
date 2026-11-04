@@ -81,7 +81,7 @@ function SiteView({ action, flags }: Props) {
   const a = action.args;
   const live = action.outcome === "done";
   const { t } = useLang();
-  const art = /h[aá]mster|nugget/i.test(`${text(a.title)} ${text(a.intro)}`) ? "🐹" : "✨";
+  const art = /h[aá]mster|nugget|ハムスター|ナゲット/i.test(`${text(a.title)} ${text(a.intro)}`) ? "🐹" : "✨";
   const slug = text(a.title).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "my-site";
   return (
     <div className="flex h-full flex-col">

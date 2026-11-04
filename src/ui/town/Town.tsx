@@ -263,16 +263,29 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
             <span className="w-4 text-center" aria-hidden="true">
               💻
             </span>
-            <span>
-            {t.common.openSourceA}{" "}
-            <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="text-brand-700 underline underline-offset-2 hover:text-brand-900">
-              {t.common.openSourceLink}
-            </a>{" "}
-            {t.common.openSourceBy}{" "}
-            <a href={SITE_URL} target="_blank" rel="noopener noreferrer" className="text-brand-700 underline underline-offset-2 hover:text-brand-900">
-              nerdypunk.dev
-            </a>
-            </span>
+            {t.common.openSourceAuthorFirst ? (
+              // Japanese puts the maker first: 「nerdypunk.devによるオープンソースのプロジェクト」, with no spaces.
+              <span>
+                <a href={SITE_URL} target="_blank" rel="noopener noreferrer" className="text-brand-700 underline underline-offset-2 hover:text-brand-900">
+                  nerdypunk.dev
+                </a>
+                {t.common.openSourceBy}
+                <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="text-brand-700 underline underline-offset-2 hover:text-brand-900">
+                  {t.common.openSourceLink}
+                </a>
+              </span>
+            ) : (
+              <span>
+                {t.common.openSourceA}{" "}
+                <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="text-brand-700 underline underline-offset-2 hover:text-brand-900">
+                  {t.common.openSourceLink}
+                </a>{" "}
+                {t.common.openSourceBy}{" "}
+                <a href={SITE_URL} target="_blank" rel="noopener noreferrer" className="text-brand-700 underline underline-offset-2 hover:text-brand-900">
+                  nerdypunk.dev
+                </a>
+              </span>
+            )}
           </p>
           <span className="hidden text-brand-300 sm:inline" aria-hidden="true">
             ·

@@ -1,0 +1,104 @@
+{
+  "id": "student-04-split-tasks",
+  "lang": "ja",
+  "persona": "student",
+  "path": "student-project",
+  "order": 1,
+  "title": "作業を分担する",
+  "icon": "🧩",
+  "recap": "Pipoが気候のプロジェクトを4人で分担しました。",
+  "funFact": "エージェントは、あなたの代わりにグループへメッセージも送れます。次は、Pipoが計画をグループチャットに送りますよ！",
+  "postcard": "four students high-fiving around a laptop with a climate change presentation: {answer}",
+  "situation": "大きなグループ課題ですね！作業を分担しましょうか？",
+  "facts": [
+    "👥 あなた、プリヤ、トム、リーの4人",
+    "🌍 気候変動についての発表",
+    "📅 締め切りは金曜の午前9時",
+    "🎨 リーはデザインが得意"
+  ],
+  "systemPrompt": "あなたはPipoです。大学生のスマホに入っている、親しみやすいパーソナルアシスタントです。頼まれたことを手伝ってください。作業を分担するときは、1人につき1行、その人の名前から書き始めてください。",
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "split",
+          "label": "気候のプロジェクトを4人で分担して",
+          "text": "気候変動についての発表を、私、プリヤ、トム、リーの4人で分担してください。",
+          "quality": "good"
+        },
+        {
+          "id": "divide",
+          "label": "作業を分けて",
+          "text": "作業を分けてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "Pipoが知っておくことは？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "deadline",
+          "label": "締め切りは金曜の午前9時",
+          "text": "締め切りは金曜日の午前9時です。",
+          "quality": "good"
+        },
+        {
+          "id": "design",
+          "label": "リーはデザインが得意",
+          "text": "リーはデザインが得意なので、スライドはリーにお願いしたいです。",
+          "quality": "good"
+        },
+        {
+          "id": "fair",
+          "label": "公平にして",
+          "text": "公平に分けてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "easiest",
+          "label": "私には一番楽なところを！",
+          "text": "私には一番楽なところをちょうだい！",
+          "quality": "weak",
+          "tip": "一番楽なところを取っても、いい計画にはなりません。それに、グループのみんなは気づきます。"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:divide",
+      "signals": [
+        "^(?![\\s\\S]*(プリヤ|priya))"
+      ],
+      "hint": "「作業を分けて」だけでは、グループのメンバーも何の課題かもわかりません。",
+      "explain": "Pipoはあなたのグループを知らなかったので、想像で計画を作りました。"
+    },
+    {
+      "id": "no_deadline",
+      "when": "not_picked:deadline",
+      "signals": [
+        "^(?![\\s\\S]*(金曜|[（(]金[)）]|金\\s?[0-9０-９午朝・、]|[・、]金|\\bfri))"
+      ],
+      "hint": "Pipoに、締め切りを伝えていませんでした。",
+      "explain": "Pipoは締め切りが金曜日だと知らなかったので、計画に日付がありません。"
+    },
+    {
+      "id": "lee_design",
+      "when": "not_picked:design",
+      "signals": [
+        "(^|\\n)(?=[^\\n]*((?<![ァ-ヺー])リー(?![ァ-ヺ])|\\blee\\b))(?![^\\n]*(スライド|デザイン|ビジュアル|見た目|レイアウト|図(?!書)|イラスト|パワポ|パワーポイント|slide|design|visual))"
+      ],
+      "hint": "Pipoに、リーの得意なことを伝えていませんでした。",
+      "explain": "Pipoはリーがデザインを得意だと知らなかったので、リーに別の仕事が割り当てられました。"
+    }
+  ],
+  "lesson": "チームのメンバー、それぞれの得意なこと、締め切りをPipoに伝えましょう。"
+}

@@ -166,7 +166,7 @@ function CallBody({ mission, call, t }: { mission: Mission; call: CallRecord; t:
         <Quote>{call.reply.content ?? t.hood.nothing}</Quote>
       ) : (
         <p className="font-semibold text-gray-500">
-          {t.hood.noAnswer}{mission.tools?.length ? t.hood.finishedHere : "."}
+          {t.hood.noAnswer}{mission.tools?.length ? t.hood.finishedHere : t.hood.stop}
         </p>
       )}
     </div>

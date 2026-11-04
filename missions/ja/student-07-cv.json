@@ -1,0 +1,104 @@
+{
+  "id": "student-07-cv",
+  "lang": "ja",
+  "persona": "student",
+  "path": "student-job",
+  "order": 1,
+  "title": "履歴書をみがく",
+  "icon": "📄",
+  "recap": "Pipoが履歴書のアピールポイントを書きました。",
+  "funFact": "エージェントは、仕事の応募メールも書けます。次は、PipoがBloom Caféにメールしますよ！",
+  "postcard": "a student proudly holding a neat résumé outside Bloom Café: {answer}",
+  "situation": "Bloom Caféがバリスタを募集しています！履歴書をみがきましょうか？",
+  "facts": [
+    "☕ Bloom Caféのバリスタの仕事",
+    "🥫 フードバンクで1年間ボランティア",
+    "🗣️ 英語とスペイン語が話せる",
+    "📅 週末は空いている"
+  ],
+  "systemPrompt": "あなたはPipoです。大学生のスマホに入っている、親しみやすいパーソナルアシスタントです。頼まれたことを手伝ってください。履歴書のアピールポイントを書くときは、その人についての短い箇条書きの行にしてください。",
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "cv",
+          "label": "Bloom Caféのバリスタ向けに履歴書のアピールポイントを",
+          "text": "Bloom Caféのバリスタの仕事に向けて、履歴書のアピールポイントを書いてください。",
+          "quality": "good"
+        },
+        {
+          "id": "cv_better",
+          "label": "履歴書をよくして",
+          "text": "私の履歴書をよくしてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "Pipoが知っておくことは？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "volunteer",
+          "label": "フードバンクで1年間ボランティア",
+          "text": "フードバンクで1年間ボランティアをしていました。",
+          "quality": "good"
+        },
+        {
+          "id": "spanish",
+          "label": "英語とスペイン語が話せる",
+          "text": "英語とスペイン語が話せます。",
+          "quality": "good"
+        },
+        {
+          "id": "weekends",
+          "label": "週末は空いている",
+          "text": "週末は空いています。",
+          "quality": "neutral"
+        },
+        {
+          "id": "exaggerate",
+          "label": "世界レベルのバリスタだと書いて！",
+          "text": "世界レベルのバリスタだって書いてね！",
+          "quality": "weak",
+          "tip": "作ったスキルは面接でばれてしまいます。本当の経験を上手に伝えれば、それで十分です。"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_volunteer",
+      "when": "not_picked:volunteer",
+      "signals": [
+        "^(?![\\s\\S]*(フードバンク|食料銀行|ボランティア|food bank|volunteer))"
+      ],
+      "hint": "Pipoに、ボランティアのことを伝えていませんでした。",
+      "explain": "Pipoはフードバンクのことを知らなかったので、あなたの一番の経験が入っていません。"
+    },
+    {
+      "id": "no_spanish",
+      "when": "not_picked:spanish",
+      "signals": [
+        "^(?![\\s\\S]*(スペイン|spanish))"
+      ],
+      "hint": "Pipoに、スペイン語が話せることを伝えていませんでした。",
+      "explain": "Pipoはあなたがスペイン語を話せることを知らなかったので、履歴書に入っていません。"
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:cv_better",
+      "signals": [
+        "^(?![\\s\\S]*(バリスタ|コーヒー|珈琲|カフェ|barista|coffee|caf))"
+      ],
+      "hint": "「履歴書をよくして」だけでは、どの仕事に応募するのかわかりません。",
+      "explain": "Pipoは仕事の内容を知らなかったので、履歴書がバリスタ向けになっていません。"
+    }
+  ],
+  "lesson": "仕事の内容と、あなたの本当の経験をPipoに伝えましょう。すごそうに見せるより、正直で具体的なほうが伝わります。"
+}

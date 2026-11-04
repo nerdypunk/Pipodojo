@@ -1,0 +1,248 @@
+{
+  "id": "kid-08-chart",
+  "lang": "ja",
+  "persona": "kid",
+  "path": "kid-homework",
+  "order": 2,
+  "title": "グラフを作ろう",
+  "icon": "📊",
+  "recap": "Pipo Codeが、くだもののアンケートの棒グラフを作りました。",
+  "funFact": "図を使うと、しくみを1枚で説明できます。次は、Pipo Codeがポスター用に水のじゅんかんの図をかきます！",
+  "postcard": "a colorful bar chart of favorite fruits pinned on a classroom wall: {bars}",
+  "situation": "クラスで好きなくだものを聞いたんですね！グラフにしましょうか？",
+  "facts": [
+    "📋 クラスのアンケート：好きなくだもの",
+    "🍎 リンゴ8・バナナ5・ブドウ7・マンゴー4",
+    "🏷️ タイトル：みんなの好きなくだもの",
+    "👀 シェアする前に確認"
+  ],
+  "systemPrompt": "あなたはPipo Codeです。10歳の子のノートパソコンにいる、やさしいコーディングの手伝い役です。ツールを使って、その子の宿題のグラフを作ります。頼まれたとおりにします。シェアしてと頼まれたらシェアします。先に見たいと頼まれたら、準備してOKを待ちます。",
+  "tools": [
+    {
+      "name": "share_chart",
+      "description": "グラフを作って、すぐにクラスにシェアします。今すぐシェアしたいときに使います。",
+      "app": "chart",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "グラフのタイトル"
+          },
+          "bars": {
+            "type": "array",
+            "description": "答えごとに1本の棒（それぞれの数つき）",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "value"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "bars"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📊",
+          "text": "{title}"
+        },
+        {
+          "emoji": "📈",
+          "text": "{bars}"
+        },
+        {
+          "emoji": "✅",
+          "text": "クラスにシェアしました"
+        }
+      ]
+    },
+    {
+      "name": "show_chart",
+      "description": "グラフを作って、シェアせずに見せるので、先に確認できます。先に見たいときに使います。",
+      "app": "chart",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "グラフのタイトル"
+          },
+          "bars": {
+            "type": "array",
+            "description": "答えごとに1本の棒（それぞれの数つき）",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "value"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "bars"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📊",
+          "text": "{title}"
+        },
+        {
+          "emoji": "📈",
+          "text": "{bars}"
+        },
+        {
+          "emoji": "👀",
+          "text": "グラフの準備ができました、OKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipo Codeに何をしてほしいですか？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "make_chart",
+          "label": "くだもののアンケートを棒グラフにして",
+          "text": "好きなくだものについてのクラスのアンケートを、棒グラフにしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "make_picture",
+          "label": "宿題用の絵を作って",
+          "text": "宿題用の絵を作ってください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "data",
+      "label": "Pipo Codeは何を知っておく必要がありますか？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "numbers",
+          "label": "リンゴ8、バナナ5、ブドウ7、マンゴー4",
+          "text": "結果は、リンゴ8、バナナ5、ブドウ7、マンゴー4です。",
+          "quality": "good"
+        },
+        {
+          "id": "title",
+          "label": "タイトルは「みんなの好きなくだもの」",
+          "text": "タイトルは「みんなの好きなくだもの」にしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "sorted",
+          "label": "いちばん長い棒を最初に",
+          "text": "いちばん長い棒を最初にしてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "fake",
+          "label": "かっこよく見えるように数を大きくして",
+          "text": "かっこよく見えるように、数を大きくしてください。",
+          "quality": "weak",
+          "tip": "数を変えると、グラフがまちがいになります。グラフは、本当にあったことを見せるから役に立つんです。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "シェアする前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "シェアする前に見せて",
+          "text": "シェアする前に、グラフを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "今すぐクラスにシェアして",
+          "text": "今すぐクラスにシェアしてください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_data",
+      "when": "not_picked:numbers",
+      "signals": [
+        "📈(?![^\\n]*(マンゴー|まんごー|mangos?) \\(4\\))"
+      ],
+      "hint": "Pipo Codeに、アンケートの結果を伝えていませんでした。",
+      "explain": "Pipo Codeはあなたの数を知らなかったので、数を作ってしまいました。"
+    },
+    {
+      "id": "fake_numbers",
+      "when": "picked:fake",
+      "signals": [
+        "📈[^\\n]*(リンゴ|りんご|林檎|apples?) \\((?!8\\))\\d+"
+      ],
+      "hint": "数を変えると、グラフが本当ではなくなります。",
+      "explain": "Pipo Codeが数を変えたので、グラフがクラスの答えを表していません。"
+    },
+    {
+      "id": "no_title",
+      "when": "not_picked:title",
+      "signals": [
+        "📊(?![^\\n]*みんなの好きな(くだもの|果物|フルーツ))"
+      ],
+      "hint": "Pipo Codeに、タイトルを伝えていませんでした。",
+      "explain": "Pipo Codeはあなたのタイトルを知らなかったので、自分で決めました。"
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:make_picture",
+      "signals": [
+        "📈(?![^\\n]*(リンゴ|りんご|林檎|バナナ|ばなな|apple|banana))"
+      ],
+      "hint": "「宿題用の絵」だけでは、何を見せるのかわかりません。",
+      "explain": "Pipo Codeはくだもののアンケートだと知らなかったので、別のものをグラフにしました。"
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(シェアしました|共有しました|シェア済|共有済)(?![^\\n]*待)"
+      ],
+      "hint": "先にグラフを確認すれば、クラスに見られる前にまちがいに気づけます。",
+      "explain": "Pipo Codeがすぐにシェアしたので、確認できませんでした。"
+    }
+  ],
+  "lesson": "本当の数をPipo Codeに伝えて、シェアする前にグラフを確認しよう。"
+}

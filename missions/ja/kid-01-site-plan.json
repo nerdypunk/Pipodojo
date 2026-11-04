@@ -1,0 +1,104 @@
+{
+  "id": "kid-01-site-plan",
+  "lang": "ja",
+  "persona": "kid",
+  "path": "kid-site",
+  "order": 1,
+  "title": "ウェブサイトを計画しよう",
+  "icon": "🗺️",
+  "recap": "Pipo Codeがナゲットのウェブサイトを計画しました。",
+  "funFact": "Pipo Codeのようなコーディングエージェントは、代わりにコードを書いてくれます。でも、デザインを決めるのはあなたです。次は、Pipo Codeがホームページを作ります！",
+  "postcard": "Kai and Pipo at a laptop showing a cheerful website about Nugget the hamster: {answer}",
+  "situation": "こんにちは、カイ！ウェブサイトを作ってみませんか？いっしょに計画しましょう。",
+  "facts": [
+    "🐹 テーマはハムスターのナゲット",
+    "🌻 ナゲットは2歳、ひまわりの種が大好き",
+    "📄 3ページ：ホーム、写真、豆知識",
+    "🙈 ネットでは「カイ」だけ"
+  ],
+  "systemPrompt": "あなたはPipo Codeです。10歳の子のノートパソコンにいる、やさしいコーディングの手伝い役です。頼まれたことを、かんたんな言葉で手伝ってください。ウェブサイトを計画するときは、1ページにつき1行書いてください。",
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipo Codeに何をしてほしいですか？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "plan_site",
+          "label": "ハムスターのナゲットのサイトを計画して",
+          "text": "ハムスターのナゲットについてのウェブサイトを計画してください。",
+          "quality": "good"
+        },
+        {
+          "id": "make_site",
+          "label": "ウェブサイトを作って",
+          "text": "ウェブサイトを作ってください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "Pipo Codeは何を知っておく必要がありますか？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "pages",
+          "label": "3ページ：ホーム、写真、豆知識",
+          "text": "ページは3つで、ホーム、写真、豆知識です。",
+          "quality": "good"
+        },
+        {
+          "id": "facts",
+          "label": "ナゲットは2歳でひまわりの種が大好き",
+          "text": "ナゲットは2歳で、ひまわりの種が大好きです。",
+          "quality": "good"
+        },
+        {
+          "id": "first_name",
+          "label": "下の名前「カイ」だけ使って",
+          "text": "名前は、下の名前の「カイ」だけ使ってください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "coolest",
+          "label": "宇宙一かっこいいサイトにして！",
+          "text": "宇宙一かっこいいサイトにしてください！",
+          "quality": "weak",
+          "tip": "「かっこいいサイト」だけでは、Pipo Codeは何を作ればいいかわかりません。ページと情報なら伝わります。"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:make_site",
+      "signals": [
+        "^(?![\\s\\S]*(nugget|ナゲット|ハムスター|hamster))"
+      ],
+      "hint": "「ウェブサイトを作って」だけでは、何のサイトかわかりません。",
+      "explain": "Pipo Codeはナゲットのサイトだと知らなかったので、別のサイトを計画しました。"
+    },
+    {
+      "id": "no_pages",
+      "when": "not_picked:pages",
+      "signals": [
+        "^(?![\\s\\S]*(豆知識|まめちしき|トリビア|雑学|おもしろ(情報|ネタ|知識|じょうほう|ちしき|話|こと|ポイント|ファクト)|ファンファクト|fun ?fact))"
+      ],
+      "hint": "Pipo Codeに、どんなページがほしいか伝えていませんでした。",
+      "explain": "Pipo Codeはあなたのページを知らなかったので、自分で決めました。"
+    },
+    {
+      "id": "no_facts",
+      "when": "not_picked:facts",
+      "signals": [
+        "^(?![\\s\\S]*(ひまわり|ヒマワリ|向日葵|sunflower))"
+      ],
+      "hint": "Pipo Codeに、ナゲットのことを何も伝えていませんでした。",
+      "explain": "Pipo Codeはナゲットのことを知らなかったので、サイトにナゲットらしさがありません。"
+    }
+  ],
+  "lesson": "Pipo Codeは、あなたが説明したものを作ります。ページと情報を伝えましょう。"
+}

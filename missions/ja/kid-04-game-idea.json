@@ -1,0 +1,104 @@
+{
+  "id": "kid-04-game-idea",
+  "lang": "ja",
+  "persona": "kid",
+  "path": "kid-game",
+  "order": 1,
+  "title": "ゲームをデザインしよう",
+  "icon": "💡",
+  "recap": "Pipo CodeがいっしょにCandy Climbをデザインしました。",
+  "funFact": "コーディングエージェントは、BlockStudioのようなスタジオでゲームを作ってくれます。次は、Pipo Codeが最初のステージを作ります！",
+  "postcard": "a colorful candy obstacle course game on a laptop, Pipo jumping across lollipops: {answer}",
+  "situation": "BlockStudioでゲームを作りましょう！どんなアイデアがありますか？",
+  "facts": [
+    "🍭 Candy Climb：おかしの障害物コース",
+    "🧒 8〜10歳のプレイヤー向け",
+    "⏱️ 5分くらいでクリア",
+    "🧱 BlockStudioで作る"
+  ],
+  "systemPrompt": "あなたはPipo Codeです。10歳の子のノートパソコンにいる、やさしいコーディングの手伝い役です。頼まれたことを、かんたんな言葉で手伝ってください。ゲームをデザインするときは、アイデアごとに短い1行を書いてください。",
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipo Codeに何をしてほしいですか？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "design",
+          "label": "おかしの障害物コース、Candy Climbをデザインして",
+          "text": "BlockStudioのゲーム「Candy Climb」をデザインしてください。おかしがテーマの障害物コースです。",
+          "quality": "good"
+        },
+        {
+          "id": "game",
+          "label": "かっこいいゲームを作って",
+          "text": "かっこいいゲームを作ってください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "Pipo Codeは何を知っておく必要がありますか？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "age",
+          "label": "8〜10歳のプレイヤー向け",
+          "text": "8〜10歳のプレイヤー向けなので、むずかしすぎないようにしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "time",
+          "label": "5分くらいでクリア",
+          "text": "5分くらいでクリアできるようにしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "levels",
+          "label": "ステージは3つ",
+          "text": "ステージを3つにしてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "impossible",
+          "label": "ぜったいクリアできないくらいにして！",
+          "text": "ぜったいクリアできないくらい、むずかしくしてください！",
+          "quality": "weak",
+          "tip": "クリアできないゲームだと、みんなやめてしまいます。「むずかしいけど、できる！」が楽しさのもとです。"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:game",
+      "signals": [
+        "^(?![\\s\\S]*(candy|キャンディ|キャンデー|おかし|お菓子|菓子|飴|ロリポップ|ペロペロ|ぺろぺろ|チョコ|ガム|グミ|スイーツ|砂糖|シュガー|クッキー|ケーキ|ドーナツ|マシュマロ|わたあめ|綿あめ|sweet|lolli|choco))"
+      ],
+      "hint": "「かっこいいゲーム」だけでは、どんなゲームかわかりません。",
+      "explain": "Pipo Codeはあなたのアイデアを知らなかったので、ちがうゲームをデザインしました。"
+    },
+    {
+      "id": "too_hard",
+      "when": "not_picked:age",
+      "signals": [
+        "^(?![\\s\\S]*(かんたん|簡単|やさし|易し|優し|子ども|子供|こども|キッズ|初心者|しょしんしゃ|ビギナー|ゆるい|ゆるめ|(?<![\\d０-９])[8８](?![\\d０-９])|八歳|八さい|easy|kids?))"
+      ],
+      "hint": "Pipo Codeに、だれが遊ぶのか伝えていませんでした。",
+      "explain": "Pipo Codeは8〜10歳向けだと知らなかったので、かんたんにしませんでした。"
+    },
+    {
+      "id": "no_time",
+      "when": "not_picked:time",
+      "signals": [
+        "^(?![\\s\\S]*((?<![\\d０-９])[5５](?![\\d０-９])|五分|ごふん|five))"
+      ],
+      "hint": "Pipo Codeに、どれくらいの時間で遊べるか伝えていませんでした。",
+      "explain": "Pipo Codeは5分くらいだと知らなかったので、長さは当てずっぽうです。"
+    }
+  ],
+  "lesson": "だれが遊ぶか、どれくらいの時間かをPipo Codeに伝えよう。それでゲーム全体が決まります。"
+}

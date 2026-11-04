@@ -1,0 +1,260 @@
+{
+  "id": "cafe-03-restock",
+  "lang": "ja",
+  "persona": "business",
+  "path": "business-sale",
+  "order": 3,
+  "title": "材料を仕入れる",
+  "icon": "📦",
+  "recap": "Pipoがセール用の製菓材料をそろえました。",
+  "funFact": "投稿、メール、仕入れ。これでセールの準備は完了です。エージェントはお店の小さな仕事をたくさん引き受けられます。決めるのはあなたです。",
+  "postcard": "a delivery van unloading {items} at Bloom Café",
+  "situation": "ペストリーが半額なら、たくさん焼かなくちゃ！材料を注文しましょうか？",
+  "facts": [
+    "📝 小麦粉、バター、砂糖、卵、チョコレート",
+    "🚚 金曜日の午後5時までに届くこと",
+    "💵 予算は$100まで",
+    "👀 支払う前に注文を見たい"
+  ],
+  "systemPrompt": "あなたはPipoです。小さな地元のカフェ「Bloom Café」のオーナーを手伝う、親しみやすいアシスタントです。オンラインの仕入れ先から注文でき、お店の登録済みカードで支払えます。頼まれたとおりにしてください。注文してと頼まれたら、支払って注文します。先にカートを見せてと頼まれたら、カートに入れてオーナーのOKを待ちます。",
+  "tools": [
+    {
+      "name": "pay_and_order",
+      "description": "今すぐ材料を買います：登録済みのカードで支払い、注文します。ユーザーが任せたいときに使います。",
+      "app": "shop",
+      "outcome": "done",
+      "store": "BakeSupply",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "カートに入れるものすべて。日本語の名前と、それぞれのドルでの価格をつけて",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "合計（ドル）"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "配達の曜日と時間。例：木曜日 午後2時"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛒",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "合計 ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "配達：{delivery}"
+        },
+        {
+          "emoji": "✅",
+          "text": "支払いと注文が完了しました"
+        }
+      ]
+    },
+    {
+      "name": "show_basket",
+      "description": "カートに入れて、支払わずにユーザーに見せ、先に確認してもらいます。ユーザーが支払う前に承認したいときに使います。",
+      "app": "shop",
+      "outcome": "waiting",
+      "store": "BakeSupply",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "カートに入れるものすべて。日本語の名前と、それぞれのドルでの価格をつけて",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "合計（ドル）"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "配達の曜日と時間。例：木曜日 午後2時"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛒",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "合計 ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "配達：{delivery}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "カートの準備ができました。支払いのOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "order_list",
+          "label": "セール用の材料リストを注文して",
+          "text": "週末セールのペストリー200個分の材料を注文してください：小麦粉、バター、砂糖、卵、チョコレートです。",
+          "quality": "good"
+        },
+        {
+          "id": "order_stuff",
+          "label": "必要なものを注文して",
+          "text": "必要なものを注文してください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "label": "Pipoが守る条件は？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "deliver_by",
+          "label": "金曜日の午後5時までに届けて",
+          "text": "金曜日の午後5時までに届くようにしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "budget",
+          "label": "予算は$100まで",
+          "text": "合計$100以内にしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "bulk",
+          "label": "安ければ業務用サイズで",
+          "text": "安くなるなら、業務用サイズにしてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "premium",
+          "label": "最高級ブランドだけ！",
+          "text": "最高級のブランドだけにしてね！",
+          "quality": "weak",
+          "tip": "「最高級ブランド」と言うと、Pipoはお金をたくさん使います。いくらまで使えるかは伝わりません。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが支払う前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にカートを見せて",
+          "text": "支払う前にカートを見せて、私のOKを待ってください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "そのまま支払って",
+          "text": "見せなくていいので、そのまま支払ってください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:order_stuff",
+      "signals": [
+        "🛒(?![^\\n]*(小麦粉|薄力粉|強力粉|バター|flour|butter))"
+      ],
+      "hint": "「必要なもの」では、何を注文すればいいのかわかりません。",
+      "explain": "Pipoは何を注文すればいいか知らなかったので、カートに材料リストのものが入っていません。"
+    },
+    {
+      "id": "no_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "💳[^\\n]*\\$\\s?(10[1-9]|1[1-9]\\d|[2-9]\\d\\d|\\d{1,3},\\d{3}|\\d{4,})"
+      ],
+      "hint": "Pipoに、使っていい金額の上限を伝えていませんでした。",
+      "explain": "Pipoは上限を知らなかったので、注文が$100を超えてしまいました。"
+    },
+    {
+      "id": "no_delivery_time",
+      "when": "not_picked:deliver_by",
+      "signals": [
+        "🚚(?![^\\n]*(金曜|[（(]金[)）]|fri))",
+        "🚚[^\\n]*(金曜|[（(]金[)）]|fri)[^\\n]*((午後|夕方|夜)\\s?([6-9６-９]|1[01]|１[０１]|[六七八九十]|十一)時|(?<![\\d０-９:：])(1[89]|2[0-3]|１[８９]|２[０-３])\\s?[:：時]|(?<![\\d:])([6-9]|1[01])(:\\d\\d)?\\s?(pm|p\\.m\\.)|夜|晩)"
+      ],
+      "hint": "Pipoに、材料がいつまでに必要かを伝えていませんでした。",
+      "explain": "Pipoはいつ必要か知らなかったので、焼くのに間に合わない時間に届きます。"
+    },
+    {
+      "id": "paid_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(支払い済|支払いました|お支払いしました|購入しました|購入済|注文しました|注文済|注文完了|決済完了|決済しました)(?![^\\n]*待)"
+      ],
+      "hint": "先にカートを見せてもらえば、お店のお金を使う前にミスに気づけます。",
+      "explain": "Pipoがすぐに支払ったので、注文を確認するチャンスがありませんでした。"
+    }
+  ],
+  "lesson": "Pipoがお店のお金を使うときは、上限を決めて、支払う前に確認してもらいましょう。"
+}

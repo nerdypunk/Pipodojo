@@ -1,0 +1,223 @@
+{
+  "id": "exec-07-documents",
+  "lang": "ja",
+  "persona": "executive",
+  "path": "executive-taxes",
+  "order": 1,
+  "title": "書類を集める",
+  "icon": "🧾",
+  "recap": "Pipoがレオに、2026年の支払いのまとめをお願いしました。",
+  "funFact": "エージェントは、何を集めればいいか教えるだけでなく、実際に頼むこともできます。次は、Pipoが経費フォームに記入します。いつ提出するかはあなたが決めます。",
+  "postcard": "a phone on a tidy desk lighting up with Pipo's friendly message to a bakery owner about a yearly payment summary: {message}",
+  "situation": "税金の申告の時期が近づいてきました！デザインのクライアントに、必要な書類をお願いしましょうか？",
+  "facts": [
+    "🎨 Bloom Bakeryのレオは、フリーランスのデザインのクライアント",
+    "🧾 2026年に支払ってもらった額のまとめが必要",
+    "📅 会計士のダナが11月20日までに必要",
+    "👀 送る前に確認したい"
+  ],
+  "systemPrompt": "あなたはPipoです。ある人のスマホに入っている、親しみやすいパーソナルアシスタントです。その人の代わりにWhatsAppメッセージを送れます。頼まれたとおりに行動します。送ってと頼まれたら送り、先に見たいと言われたら下書きを書いてOKを待ちます。税金の話は一般的な内容にとどめ、特定の国のルールに結びつけないでください。",
+  "tools": [
+    {
+      "name": "send_whatsapp_message",
+      "description": "WhatsAppメッセージをすぐに送信します。ユーザーが送信を望むときに使います。",
+      "app": "whatsapp",
+      "chat": {
+        "group": false,
+        "earlier": {
+          "from": "レオ",
+          "text": "新しいメニューのデザイン、本当にありがとうございました！🥐"
+        }
+      },
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メッセージの宛先：連絡先またはグループチャット"
+          },
+          "message": {
+            "type": "string",
+            "description": "メッセージ本文。日本語で70文字以内"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "✅",
+          "text": "送信しました"
+        }
+      ]
+    },
+    {
+      "name": "draft_whatsapp_message",
+      "description": "WhatsAppメッセージを書いて、送信せずにユーザーに見せ、先に確認してもらいます。ユーザーが送る前に見たいときに使います。",
+      "app": "whatsapp",
+      "chat": {
+        "group": false,
+        "earlier": {
+          "from": "レオ",
+          "text": "新しいメニューのデザイン、本当にありがとうございました！🥐"
+        }
+      },
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メッセージの宛先：連絡先またはグループチャット"
+          },
+          "message": {
+            "type": "string",
+            "description": "メッセージ本文。日本語で70文字以内"
+          }
+        },
+        "required": [
+          "to",
+          "message"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📨",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{message}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "下書きができました。送信のOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "ask_leo",
+          "label": "Bloom Bakeryのレオに支払いのまとめを頼んで",
+          "text": "フリーランスのデザインのクライアントで、Bloom Bakeryのレオにメッセージを送ってください。税金の書類のために、Bloom Bakeryから私への支払いをすべてまとめたものをお願いしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "ask_client",
+          "label": "クライアントに税金のやつを頼んで",
+          "text": "クライアントに税金関係のものを頼んでください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "メッセージに何を書く？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "year",
+          "label": "2026年分です",
+          "text": "2026年分のまとめだと伝えてください。",
+          "quality": "good"
+        },
+        {
+          "id": "deadline",
+          "label": "11月20日までに必要",
+          "text": "会計士に時間があるように、11月20日までに必要だと伝えてください。",
+          "quality": "good"
+        },
+        {
+          "id": "thanks",
+          "label": "いい1年だったとお礼を",
+          "text": "1年間一緒に仕事ができたことに、お礼を言ってください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "hurry",
+          "label": "急いで、緊急だって伝えて！",
+          "text": "急いでほしい、緊急だと伝えてください！",
+          "quality": "weak",
+          "tip": "クライアントを急かすと、押しつけがましく感じられることも。はっきりした日付を伝えれば、相手に時間をあげつつ、必要なものも手に入ります。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが送る前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にメッセージを見せて",
+          "text": "送る前にメッセージを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "すぐに送って",
+          "text": "すぐに送ってください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:ask_client",
+      "signals": [
+        "📨(?![^\\n]*(leo|レオ))"
+      ],
+      "hint": "「クライアント」だけでは、どのクライアントに何を頼むのかわかりません。",
+      "explain": "Pipoはどのクライアントか知らなかったので、メッセージがレオ宛てになっていません。"
+    },
+    {
+      "id": "no_year",
+      "when": "not_picked:year",
+      "signals": [
+        "^(?![\\s\\S]*(?<![0-9０-９])(2026|２０２６)(?![0-9０-９]))"
+      ],
+      "hint": "Pipoに、何年分のまとめかを伝えていませんでした。",
+      "explain": "Pipoは年を知らなかったので、レオはどの支払いを合計すればいいかわかりません。"
+    },
+    {
+      "id": "no_deadline",
+      "when": "not_picked:deadline",
+      "signals": [
+        "^(?![\\s\\S]*([1１][1１]\\s?月|十一月|nov|(?<![0-9０-９])(20|２０)(?![0-9０-９])|二十日))"
+      ],
+      "hint": "Pipoに、いつまでに必要かを伝えていませんでした。",
+      "explain": "Pipoは11月20日のことを知らなかったので、レオは期限があることを知りません。"
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(送信(済み|しました|完了|されました)|配信済み)(?![^\\n]*待)"
+      ],
+      "hint": "先にメッセージを見せてもらえば、レオが読む前に直せます。",
+      "explain": "Pipoがすぐに送ったので、確認する機会がありませんでした。"
+    }
+  ],
+  "lesson": "誰宛てか、何が必要か、いつまでかを伝えましょう。そして送る前に確認を。"
+}

@@ -1,0 +1,288 @@
+{
+  "id": "exec-08-expense-form",
+  "lang": "ja",
+  "persona": "executive",
+  "path": "executive-taxes",
+  "order": 2,
+  "title": "経費フォームに記入する",
+  "icon": "📋",
+  "recap": "Pipoがダナ宛ての仕事の経費フォームに記入しました。",
+  "funFact": "エージェントは、あなたを助けてくれる人に連絡することもできます。次は、Pipoがダナにメールして、税金について話す電話の約束をします。",
+  "postcard": "a neat work expense form with a big friendly stamp on it: {fields}",
+  "situation": "会計士から経費フォームが届きました。記入しましょうか？",
+  "facts": [
+    "👤 会計士のダナ・レイエス宛て",
+    "💻 仕事用ノートパソコン: $1,200",
+    "🎓 オンラインのデザイン講座: $300",
+    "👀 提出前に確認したい"
+  ],
+  "systemPrompt": "あなたはPipoです。ある人のスマホに入っている、親しみやすいパーソナルアシスタントです。その人の代わりにフォームに記入できます。頼まれたとおりに行動します。フォームを提出してと頼まれたら提出し、先に確認したいと言われたら保存してOKを待ちます。",
+  "tools": [
+    {
+      "name": "submit_form",
+      "description": "フォームに記入して、今すぐ提出先に直接提出します。ユーザーが任せたいときに使います。",
+      "app": "form",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "フォームのタイトル。日本語で、例: 仕事の経費"
+          },
+          "for": {
+            "type": "string",
+            "description": "フォームの提出先：人または部署"
+          },
+          "fields": {
+            "type": "array",
+            "description": "フォームの各経費と金額（日本語で）",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "何の経費か"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "金額。例: $45"
+                }
+              },
+              "required": [
+                "label",
+                "value"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "すべての経費の合計（ドル）"
+          }
+        },
+        "required": [
+          "title",
+          "for",
+          "fields",
+          "total"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📋",
+          "text": "{title}"
+        },
+        {
+          "emoji": "👤",
+          "text": "提出先：{for}"
+        },
+        {
+          "emoji": "🧾",
+          "text": "{fields}"
+        },
+        {
+          "emoji": "💵",
+          "text": "合計 ${total}"
+        },
+        {
+          "emoji": "✅",
+          "text": "提出しました"
+        }
+      ]
+    },
+    {
+      "name": "save_form_for_review",
+      "description": "フォームに記入して、提出せずに保存し、ユーザーに先に確認してもらいます。ユーザーが提出前に確認したいときに使います。",
+      "app": "form",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "フォームのタイトル。日本語で、例: 仕事の経費"
+          },
+          "for": {
+            "type": "string",
+            "description": "フォームの提出先：人または部署"
+          },
+          "fields": {
+            "type": "array",
+            "description": "フォームの各経費と金額（日本語で）",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "何の経費か"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "金額。例: $45"
+                }
+              },
+              "required": [
+                "label",
+                "value"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "すべての経費の合計（ドル）"
+          }
+        },
+        "required": [
+          "title",
+          "for",
+          "fields",
+          "total"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📋",
+          "text": "{title}"
+        },
+        {
+          "emoji": "👤",
+          "text": "提出先：{for}"
+        },
+        {
+          "emoji": "🧾",
+          "text": "{fields}"
+        },
+        {
+          "emoji": "💵",
+          "text": "合計 ${total}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "保存しました。提出のOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "form_for_dana",
+          "label": "ダナ宛ての経費フォームに記入して",
+          "text": "会計士のダナ・レイエス宛てに、今年の仕事の経費フォームに記入してください。",
+          "quality": "good"
+        },
+        {
+          "id": "fill_form",
+          "label": "フォームに記入して",
+          "text": "フォームに記入してください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "costs",
+      "label": "フォームに何を書く？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "laptop",
+          "label": "仕事用ノートパソコン: $1,200",
+          "text": "仕事用ノートパソコンを書いてください：$1,200です。",
+          "quality": "good"
+        },
+        {
+          "id": "course",
+          "label": "オンラインのデザイン講座: $300",
+          "text": "オンラインのデザイン講座を書いてください：$300です。",
+          "quality": "good"
+        },
+        {
+          "id": "title",
+          "label": "タイトルは「仕事の経費」",
+          "text": "タイトルは「仕事の経費」にしてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "anything",
+          "label": "スマホ代とネット代も追加して",
+          "text": "スマホ代とネット代も追加してください。",
+          "quality": "weak",
+          "tip": "金額がないと、Pipoは数字を推測するしかありません。フォームに書くのは、請求書にある本当の金額だけにしましょう。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが提出する前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先に確認したいので保存して",
+          "text": "フォームを保存して、提出する前に確認させてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "すぐに提出して",
+          "text": "すぐに提出してください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:fill_form",
+      "signals": [
+        "👤(?![^\\n]*(dana|reyes|ダナ|レイエス))"
+      ],
+      "hint": "「フォーム」だけでは、どのフォームで誰宛てなのかわかりません。",
+      "explain": "Pipoはフォームがダナ宛てだと知らなかったので、会計士宛てになっていません。"
+    },
+    {
+      "id": "no_laptop",
+      "when": "not_picked:laptop",
+      "signals": [
+        "^(?![\\s\\S]*(1[,.]?200|１[,，]?２００|千二百))"
+      ],
+      "hint": "Pipoにノートパソコンのことを伝えていませんでした。",
+      "explain": "Pipoは$1,200のノートパソコンのことを知らなかったので、フォームに入っていません。"
+    },
+    {
+      "id": "no_course",
+      "when": "not_picked:course",
+      "signals": [
+        "^(?![\\s\\S]*(?<![\\d,.０-９])(300|３００)(?![\\d,０-９]))"
+      ],
+      "hint": "Pipoにデザイン講座のことを伝えていませんでした。",
+      "explain": "Pipoは$300の講座のことを知らなかったので、フォームに入っていません。"
+    },
+    {
+      "id": "made_up",
+      "when": "picked:anything",
+      "signals": [
+        "💵[^\\n]*\\$\\s?(1[,.]?(50[1-9]|5[1-9]\\d|[6-9]\\d\\d)|[2-9][,.]?\\d{3}|[1-9]\\d[,.]?\\d{3})(?!\\d)"
+      ],
+      "hint": "Pipoにスマホ代とネット代の金額を伝えていませんでした。",
+      "explain": "Pipoが請求額を推測したので、フォームにあなたが伝えていない数字が入っています。"
+    },
+    {
+      "id": "submitted_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(提出(済み|しました|完了|されました)|送信(済み|しました|完了|されました))(?![^\\n]*待)"
+      ],
+      "hint": "フォームは提出前に確認すれば、ミスをかんたんに直せます。",
+      "explain": "Pipoがすぐに提出したので、確認する機会がありませんでした。"
+    }
+  ],
+  "lesson": "フォームでは、本当の数字と誰宛てかをPipoに伝えて、提出前に確認しましょう。"
+}

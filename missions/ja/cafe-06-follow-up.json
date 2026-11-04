@@ -1,0 +1,253 @@
+{
+  "id": "cafe-06-follow-up",
+  "lang": "ja",
+  "persona": "business",
+  "path": "business-review",
+  "order": 3,
+  "title": "来週フォローする",
+  "icon": "🔔",
+  "recap": "Pipoが、ジョーダンさんの次の来店に向けてフォローの予定を入れました。",
+  "funFact": "悪いレビューが、常連さんに変わりました。エージェントは人を大切にするお手伝いができます。何を言って、何にお金を使うかは、あなたが決めます。",
+  "postcard": "the café owner greeting Jordan at the door with a hot oat latte, the calendar showing {events}",
+  "situation": "ジョーダンさんを、ちゃんとお迎えしたいですよね？次に来るときのリマインダーを入れられますよ。",
+  "facts": [
+    "📅 ジョーダンさんは毎週火曜日に来る",
+    "🕗 だいたい午前8時ごろ",
+    "☕ ジョーダンさんの注文：オーツラテ、熱め",
+    "🔔 15分前にリマインダー"
+  ],
+  "systemPrompt": "あなたはPipoです。小さな地元のカフェ「Bloom Café」のオーナーを手伝う、親しみやすいアシスタントです。カフェのカレンダーに予定を追加できます。頼まれたとおりにしてください。予定を追加してと頼まれたら追加します。先に見せてと頼まれたら、予定を並べてオーナーのOKを待ちます。",
+  "tools": [
+    {
+      "name": "add_to_calendar",
+      "description": "今すぐ予定をカレンダーに追加します。ユーザーが追加してほしいときに使います。",
+      "app": "calendar",
+      "outcome": "done",
+      "store": "カフェのカレンダー",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "予定の一覧。それぞれに短い名前と、いつか（曜日と時間）をつけて",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "曜日と時間。例：火曜日 午後5時"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "いつ知らせるか。例：1時間前"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "リマインダー：{reminder}"
+        },
+        {
+          "emoji": "✅",
+          "text": "カレンダーに追加しました"
+        }
+      ]
+    },
+    {
+      "name": "show_events",
+      "description": "予定を並べて、追加せずにユーザーに見せ、先に確認してもらいます。ユーザーがカレンダーに入れる前に見たいときに使います。",
+      "app": "calendar",
+      "outcome": "waiting",
+      "store": "カフェのカレンダー",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "予定の一覧。それぞれに短い名前と、いつか（曜日と時間）をつけて",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "曜日と時間。例：火曜日 午後5時"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "いつ知らせるか。例：1時間前"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "リマインダー：{reminder}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "準備ができました。追加のOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "plan_follow_up",
+          "label": "ジョーダンさんの次の来店に予定を入れて",
+          "text": "ジョーダンさんが次に来たときにちゃんとお迎えできるよう、カフェのカレンダーに予定を追加してください。",
+          "quality": "good"
+        },
+        {
+          "id": "remember",
+          "label": "ジョーダンさんの件、覚えといて",
+          "text": "ジョーダンさんの件、覚えといてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "Pipoが知っておくことは？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "tuesday",
+          "label": "来週の火曜日、午前8時",
+          "text": "ジョーダンさんは毎週火曜日の午前8時ごろに来るので、来週の火曜日の午前8時にしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "order",
+          "label": "メモ：オーツラテ、熱め",
+          "text": "予定の名前に、ジョーダンさんの注文をメモしてください：オーツラテ、熱めです。",
+          "quality": "good"
+        },
+        {
+          "id": "remind",
+          "label": "15分前に知らせて",
+          "text": "15分前に知らせてください。",
+          "quality": "good"
+        },
+        {
+          "id": "party",
+          "label": "サプライズパーティーを開こう！",
+          "text": "ジョーダンさんにサプライズパーティーを開いてあげて！",
+          "quality": "weak",
+          "tip": "冷めたコーヒー1杯にパーティーは大げさです。小さくて心のこもったことこそ、お客さんに大切にされていると感じてもらえます。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが追加する前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "追加する前に見せて",
+          "text": "追加する前に予定を見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "そのまま追加して",
+          "text": "そのまま追加してください。",
+          "quality": "weak",
+          "tip": "確認せずに追加すると、間違った日がカレンダーに入ったまま、気づかないかもしれません。"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:remember",
+      "signals": [
+        "📅(?![^\n]*(jordan|ジョーダン))"
+      ],
+      "hint": "「ジョーダンさんの件」では、何を覚えておけばいいのかわかりません。",
+      "explain": "Pipoは何の予定か知らなかったので、意味の通らない予定になりました。"
+    },
+    {
+      "id": "no_time",
+      "when": "not_picked:tuesday",
+      "signals": [
+        "📅(?![^\n]*(火曜|[（(]火[)）]|火s|tue))"
+      ],
+      "hint": "Pipoに、ジョーダンさんがいつ来るかを伝えていませんでした。",
+      "explain": "Pipoはジョーダンさんが火曜日に来ることを知らなかったので、別の日を選びました。"
+    },
+    {
+      "id": "no_order",
+      "when": "not_picked:order",
+      "signals": [
+        "^(?![sS]*(オーツ|オート|oat))"
+      ],
+      "hint": "Pipoに、ジョーダンさんの注文を伝えていませんでした。",
+      "explain": "Pipoはジョーダンさんの注文を知らなかったので、予定に心づかいが足りません。"
+    },
+    {
+      "id": "no_reminder",
+      "when": "not_picked:remind",
+      "signals": [
+        "🔔(?![^\n]*((?<![d０-９])(15|１５)(?![d０-９])|十五))"
+      ],
+      "hint": "Pipoに、いつ知らせてほしいかを伝えていませんでした。",
+      "explain": "Pipoは15分前に知らせてほしいことを知らなかったので、自分でタイミングを決めました。"
+    },
+    {
+      "id": "added_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(追加しました|追加済|追加完了|登録しました|登録済|登録完了|入れました)(?![^\n]*待)"
+      ],
+      "hint": "先に予定を見せてもらえば、日にちの間違いに気づけます。",
+      "explain": "Pipoがすぐに追加したので、確認するチャンスがありませんでした。"
+    }
+  ],
+  "lesson": "正確な曜日、時間、内容を伝えれば、「覚えといて」がPipoの動ける計画に変わります。"
+}

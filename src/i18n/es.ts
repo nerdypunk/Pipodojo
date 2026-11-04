@@ -5,7 +5,7 @@ import type { Strings } from "./en.ts";
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 
 export const es: Strings = {
-  switchTo: { short: "EN", label: "Switch to English", name: "English" },
+  langMenu: { label: "Idioma" },
 
   lab: {
     kicker: "🧪 Zona de pruebas",
@@ -42,6 +42,7 @@ export const es: Strings = {
     openSourceA: "Un",
     openSourceLink: "proyecto de código abierto",
     openSourceBy: "de",
+    openSourceAuthorFirst: false,
     close: "Cerrar",
     tryAgain: "Intentar de nuevo",
     continue: "Continuar",
@@ -216,6 +217,7 @@ export const es: Strings = {
     nothing: "(nada)",
     noAnswer: "Esta vez no hubo respuesta",
     finishedHere: ", así que se terminó en este dispositivo.",
+    stop: ".",
   },
 
   device: {

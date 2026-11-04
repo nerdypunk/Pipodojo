@@ -16,6 +16,7 @@ import { PromptChoice } from "../ui/PromptChoice.tsx";
 import { preloadTown, Town } from "../ui/town/Town.tsx";
 import { Lab } from "../ui/lab/Lab.tsx";
 import { initialLang, LangContext, saveLang, type Lang } from "../i18n/index.tsx";
+import { loadJapaneseFont } from "./japaneseFont.ts";
 import { reportLesson } from "./leaderboard.ts";
 import { missionsIn } from "./missions.ts";
 import { paintPostcard, type Postcard } from "./postcard.ts";
@@ -88,7 +89,7 @@ export function App() {
   const [streak, setStreak] = useState<Streak | null>(loadStreak);
   const streakDays = currentDays(streak, dayKey(new Date()));
   const { direction, go, cover, uncover } = usePageTransition();
-  // English or Spanish: remembered on this device, first guessed from the browser.
+  // English, Spanish or Japanese: remembered on this device, first guessed from the browser.
   const [lang, setLangState] = useState<Lang>(initialLang);
   const setLang = (next: Lang) => {
     saveLang(next);
@@ -96,6 +97,7 @@ export function App() {
   };
   useEffect(() => {
     document.documentElement.lang = lang;
+    if (lang === "ja") void loadJapaneseFont();
   }, [lang]);
   const missions = missionsIn(lang);
 

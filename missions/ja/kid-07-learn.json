@@ -1,0 +1,104 @@
+{
+  "id": "kid-07-learn",
+  "lang": "ja",
+  "persona": "kid",
+  "path": "kid-homework",
+  "order": 1,
+  "title": "写さないで、学ぼう",
+  "icon": "🍊",
+  "recap": "Pipo Codeがオレンジと電気スタンドで季節を説明しました。",
+  "funFact": "コーディングエージェントは、データを図やグラフにできます。次は、Pipo Codeがクラスのアンケートをグラフにします！",
+  "postcard": "an orange circling a glowing lamp on a desk, Pipo pointing and Kai smiling: {answer}",
+  "situation": "宿題の時間です！何をやっていますか？",
+  "facts": [
+    "📚 宿題：どうして季節があるの？",
+    "🧒 あなたは10歳",
+    "🍊 オレンジと電気スタンドのたとえが好き",
+    "✍️ 答えは自分で書く"
+  ],
+  "systemPrompt": "あなたはPipo Codeです。10歳の子のノートパソコンにいる、やさしいコーディングの手伝い役です。頼まれたことを、かんたんな言葉で手伝ってください。何かを説明するときは、短いステップで説明してください。",
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipo Codeに何をしてほしいですか？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "explain",
+          "label": "どうして季節があるのか説明して",
+          "text": "どうして季節があるのか説明してください。答えは自分で書きます。",
+          "quality": "good"
+        },
+        {
+          "id": "do_it",
+          "label": "宿題の答えを書いて",
+          "text": "宿題の答えを代わりに書いてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "Pipo Codeは何を知っておく必要がありますか？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "age",
+          "label": "10歳だから、かんたんな言葉で",
+          "text": "10歳なので、かんたんな言葉を使ってください。",
+          "quality": "good"
+        },
+        {
+          "id": "example",
+          "label": "オレンジと電気スタンドを使って",
+          "text": "オレンジと電気スタンドを使って説明してください。",
+          "quality": "good"
+        },
+        {
+          "id": "question",
+          "label": "最後に質問を1つして",
+          "text": "わかったか確かめたいので、最後に質問を1つしてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "big_words",
+          "label": "先生がおどろくような、むずかしい理科の言葉を使って",
+          "text": "先生がおどろくように、むずかしい理科の言葉を使ってください。",
+          "quality": "weak",
+          "tip": "自分でわからない言葉では、先生はおどろきません。自分で説明できるかんたんな言葉のほうが伝わります。"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_example",
+      "when": "not_picked:example",
+      "signals": [
+        "^(?![\\s\\S]*(オレンジ|みかん|ミカン|電気スタンド|スタンド|ランプ|ライト|電灯|電球|懐中電灯|orange|lamp))"
+      ],
+      "hint": "Pipo Codeに、どんなたとえが好きか伝えていませんでした。",
+      "explain": "Pipo Codeはオレンジと電気スタンドが好きだと知らなかったので、思いうかべにくいたとえになりました。"
+    },
+    {
+      "id": "hard_words",
+      "when": "not_picked:age",
+      "signals": [
+        "(自転軸|公転面|公転軌道|黄道|傾斜角|赤道傾斜|夏至|冬至|春分|秋分|至点|分点|近日点|遠日点|日射量|日照角|南中高度|太陽高度|入射角|半球|axial|obliquity|solstice|equinox|perihelion|aphelion|insolation|hemisphere)"
+      ],
+      "hint": "Pipo Codeに、何歳か伝えていませんでした。",
+      "explain": "Pipo Codeはあなたが10歳だと知らなかったので、むずかしい理科の言葉を使いました。"
+    },
+    {
+      "id": "copied",
+      "when": "picked:do_it",
+      "signals": [
+        "(季節が(ある|できる|うまれる|生まれる|変わる|かわる|起こる|おこる|起きる|おきる)の?は|季節は[^\\n]*(によって|が原因|のせい|から(です|だ|。|$))|(から|ので|ため)、?(四季|季節)が(でき|生まれ|うまれ|あり|変わ|かわ|起こ|おこ|起き|おき|生じ)|we have seasons because)"
+      ],
+      "hint": "Pipo Codeに答えを書いてもらうと、自分で学べません。",
+      "explain": "Pipo Codeが写すための答えを書いたので、あなたは自分で考えませんでした。"
+    }
+  ],
+  "lesson": "Pipo Codeは写すためではなく、わかるために使おう。かんたんな言葉と、好きなたとえをお願いしよう。"
+}

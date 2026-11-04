@@ -2,6 +2,7 @@
 // Big brag headline, what your agent did, the Muse Image postcard, your streak, stars, badge and country.
 // Everything is drawn here in the browser, so it costs nothing and works offline.
 import { flagOf } from "../game/countries.ts";
+import { wrapLines } from "../lib/utils.ts";
 import type { Strings } from "../i18n/en.ts";
 
 export interface ShareInfo {
@@ -27,26 +28,16 @@ export interface ShareInfo {
 
 const W = 1080;
 const H = 1350;
-const FONT = '"Nunito Variable", ui-rounded, system-ui, sans-serif';
+const FONT = '"Nunito Variable", "M PLUS Rounded 1c", ui-rounded, "Hiragino Maru Gothic ProN", "Yu Gothic UI", "Meiryo", system-ui, sans-serif';
 
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
   ctx.beginPath();
   ctx.roundRect(x, y, w, h, r);
 }
 
-/** Breaks text into lines that fit `width`. */
+/** Breaks text into lines that fit `width` (between characters in Japanese). */
 function wrap(ctx: CanvasRenderingContext2D, text: string, width: number): string[] {
-  const lines: string[] = [];
-  let line = "";
-  for (const word of text.split(/\s+/)) {
-    const next = line ? `${line} ${word}` : word;
-    if (ctx.measureText(next).width > width && line) {
-      lines.push(line);
-      line = word;
-    } else line = next;
-  }
-  if (line) lines.push(line);
-  return lines;
+  return wrapLines(text, width, (s) => ctx.measureText(s).width);
 }
 
 function pill(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, fill: string, color: string, size = 34, alignRight = false) {
@@ -121,7 +112,22 @@ async function loadImage(src: string): Promise<HTMLImageElement | null> {
 }
 
 export async function drawShareCard(info: ShareInfo): Promise<Blob> {
-  await Promise.all([document.fonts.load(`900 64px ${FONT}`), document.fonts.load(`700 32px ${FONT}`)]).catch(() => {});
+  // A canvas can't wait for a font, so load every piece the card's words need first (in Japanese,
+  // only the slices holding these characters).
+  const say = info.words;
+  const words = [
+    info.brag,
+    say.line1,
+    say.line2,
+    say.streak(info.streak),
+    say.paintedBy,
+    say.pro(info.pathName),
+    say.stars(info.stars, info.maxStars),
+    say.lessons(info.lessons),
+    info.country?.name ?? "",
+    say.footer(info.site),
+  ].join(" ");
+  await Promise.all([document.fonts.load(`900 64px ${FONT}`, words), document.fonts.load(`700 32px ${FONT}`, words)]).catch(() => {});
   const canvas = document.createElement("canvas");
   canvas.width = W;
   canvas.height = H;

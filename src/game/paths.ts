@@ -24,8 +24,8 @@ export interface PathCard extends PathText {
   tint: string;
 }
 
-/** English text inline; `es` holds the Spanish. */
-const DATA: readonly (PathCard & { es: PathText })[] = [
+/** English text inline; `es` holds the Spanish, `ja` the Japanese. */
+const DATA: readonly (PathCard & { es: PathText; ja: PathText })[] = [
   // Busy parent
   {
     id: "parent-barbecue",
@@ -38,6 +38,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
     lessons: ["Plan the menu", "Invite your friends", "Order the groceries"],
     tint: "from-brand-400 to-brand-700",
     es: { name: "Parrillada del sábado", brag: "Mi agente de IA planeó, invitó y compró todo para una parrillada 🍔", blurb: "Vienen amigos. Pipo planea la comida, envía las invitaciones y hace las compras.", lessons: ["Planea el menú","Invita a tus amigos","Pide el súper"] },
+    ja: { name: "土曜日のバーベキュー", brag: "AIエージェントがバーベキューの計画も招待も買い物も全部やってくれた 🍔", blurb: "友だちが遊びに来ます。Pipoが料理を考えて、招待を送って、買い物をします。", lessons: ["メニューを考えよう", "友だちを招待しよう", "食料品を注文しよう"] },
   },
   {
     id: "parent-school",
@@ -50,6 +51,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
     lessons: ["Plan the week's lunches", "Reply about the field trip", "Add school events to the calendar"],
     tint: "from-sky-400 to-brand-600",
     es: { name: "Semana de escuela", brag: "Mi agente de IA se encargó de toda una semana de escuela 🎒", blurb: "Una semana ocupada en la escuela. Pipo planea los almuerzos, le responde a la maestra y llena el calendario.", lessons: ["Planea los almuerzos de la semana","Responde sobre la excursión","Agrega los eventos de la escuela al calendario"] },
+    ja: { name: "学校の一週間", brag: "AIエージェントが学校の一週間を丸ごと回してくれた 🎒", blurb: "学校の忙しい一週間。Pipoがお弁当を考えて、先生に返信して、カレンダーを埋めます。", lessons: ["1週間のお弁当を考えよう", "校外学習の返事をしよう", "学校の予定をカレンダーに入れよう"] },
   },
   {
     id: "parent-daytrip",
@@ -62,6 +64,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
     lessons: ["Pick a spot for Sunday", "Book the tickets", "Tell Grandma the plan"],
     tint: "from-amber-300 to-brand-600",
     es: { name: "Paseo en familia", brag: "Mi agente de IA planeó nuestro domingo lluvioso 🚗", blurb: "Un domingo lluvioso. Pipo elige un lugar, compra los boletos y le cuenta el plan a la abuela.", lessons: ["Elige un lugar para el domingo","Compra los boletos","Cuéntale el plan a la abuela"] },
+    ja: { name: "家族でお出かけ", brag: "AIエージェントが雨の日曜日の予定を立ててくれた 🚗", blurb: "雨の日曜日。Pipoが行き先を選んで、チケットを買って、おばあちゃんに予定を伝えます。", lessons: ["日曜日のおでかけ先を選ぼう", "チケットを予約しよう", "おばあちゃんに予定を伝えよう"] },
   },
   // Student
   {
@@ -75,6 +78,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
     lessons: ["Make a study plan", "Book study sessions", "Quiz me"],
     tint: "from-sky-400 to-brand-600",
     es: { name: "Semana de exámenes", brag: "Mi agente de IA me preparó para la semana de exámenes 📚", blurb: "Se acercan los exámenes. Pipo arma un plan de estudio, aparta tiempo para estudiar y te hace preguntas.", lessons: ["Arma un plan de estudio","Aparta sesiones de estudio","Hazme preguntas"] },
+    ja: { name: "試験週間", brag: "AIエージェントのおかげで試験週間の準備ばっちり 📚", blurb: "試験が近づいています。Pipoが勉強の計画を立てて、勉強時間を確保して、問題を出してくれます。", lessons: ["勉強の計画を立てる", "勉強の予定を入れる", "クイズを出して"] },
   },
   {
     id: "student-project",
@@ -87,6 +91,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
     lessons: ["Split the tasks", "Message the group", "Email the professor"],
     tint: "from-brand-400 to-fuchsia-500",
     es: { name: "Proyecto en equipo", brag: "Mi agente de IA organizó todo nuestro proyecto en equipo 🧩", blurb: "Cuatro personas, un proyecto. Pipo reparte el trabajo, le escribe al grupo y le manda un correo al profesor.", lessons: ["Reparte las tareas","Escríbele al grupo","Mándale un correo al profesor"] },
+    ja: { name: "グループ課題", brag: "AIエージェントがグループ課題をまるごと整理してくれた 🧩", blurb: "4人でひとつの課題。Pipoが作業を分けて、グループに連絡して、教授にメールします。", lessons: ["作業を分担する", "グループにメッセージする", "教授にメールする"] },
   },
   {
     id: "student-job",
@@ -99,6 +104,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
     lessons: ["Polish your résumé", "Email about the job", "Practice the interview"],
     tint: "from-emerald-300 to-brand-600",
     es: { name: "Primer trabajo", brag: "Mi agente de IA me ayudó a buscar mi primer trabajo 💼", blurb: "Hora de ganar un poco. Pipo mejora tu CV, le escribe a Bloom Café y te ayuda a practicar.", lessons: ["Mejora tu CV","Escribe por el trabajo","Practica la entrevista"] },
+    ja: { name: "はじめてのバイト", brag: "AIエージェントがはじめてのバイト探しを手伝ってくれた 💼", blurb: "ちょっと稼ぐ時が来た。Pipoが履歴書を良くして、Bloom Caféに連絡して、面接の練習を手伝います。", lessons: ["履歴書をみがく", "仕事の応募メールを送る", "面接の練習をする"] },
   },
   // Café owner
   {
@@ -112,6 +118,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
     lessons: ["Write the sale post", "Email your regulars", "Restock the shelves"],
     tint: "from-fuchsia-400 to-brand-700",
     es: { name: "Oferta del fin de semana", brag: "Mi agente de IA manejó la oferta del fin de semana de mi café 🥐", blurb: "Pan dulce a mitad de precio este fin de semana. Pipo escribe la publicación, les escribe a tus clientes frecuentes y resurte.", lessons: ["Escribe la publicación de la oferta","Escríbeles a tus clientes frecuentes","Resurte los estantes"] },
+    ja: { name: "週末セール", brag: "AIエージェントがうちのカフェの週末セールを回してくれた 🥐", blurb: "今週末は焼き菓子が半額。Pipoが投稿を書いて、常連さんに連絡して、在庫を補充します。", lessons: ["セールの投稿を書く", "常連さんにメールする", "材料を仕入れる"] },
   },
   {
     id: "business-review",
@@ -124,6 +131,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
     lessons: ["Reply to the review", "Handle a refund", "Follow up next week"],
     tint: "from-rose-300 to-brand-600",
     es: { name: "Cliente molesto", brag: "Mi agente de IA convirtió una reseña de una estrella en un cliente feliz ☕", blurb: "Una reseña de una estrella. Pipo responde con amabilidad, resuelve un reembolso y prepara una cálida bienvenida de vuelta.", lessons: ["Responde la reseña","Resuelve un reembolso","Da seguimiento la próxima semana"] },
+    ja: { name: "不満なお客さん", brag: "AIエージェントが星1つのレビューを笑顔のお客さんに変えてくれた ☕", blurb: "星1つのレビュー。Pipoがやさしく返信して、返金を済ませて、また来てもらえるよう準備します。", lessons: ["レビューに返信する", "返金の対応をする", "来週フォローする"] },
   },
   {
     id: "business-staff",
@@ -136,6 +144,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
     lessons: ["Plan the shifts", "Message the team", "Put shifts on the calendar"],
     tint: "from-sky-300 to-brand-700",
     es: { name: "Semana del equipo", brag: "Mi agente de IA organizó la semana del equipo de mi café 🗓️", blurb: "Días ocupados en el café. Pipo planea los turnos, le escribe al equipo y llena el calendario.", lessons: ["Planea los turnos","Escríbele al equipo","Pon los turnos en el calendario"] },
+    ja: { name: "スタッフの一週間", brag: "AIエージェントがうちのカフェのスタッフの一週間を整えてくれた 🗓️", blurb: "カフェの忙しい日々。Pipoがシフトを組んで、チームに連絡して、カレンダーを埋めます。", lessons: ["シフトを組む", "チームにメッセージする", "シフトをカレンダーに入れる"] },
   },
   // Young coder (Pipo Code on the laptop)
   {
@@ -149,6 +158,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
     lessons: ["Plan your website", "Build the home page", "Fix a bug"],
     tint: "from-amber-300 to-orange-500",
     es: { name: "Mi primera página web", brag: "Hice mi primera página web con un agente de IA que programa 🌐", blurb: "Una página sobre Nugget el hámster. Pipo Code la planea, la construye y arregla un error.", lessons: ["Planea tu página","Construye la página de inicio","Arregla un error"] },
+    ja: { name: "はじめてのウェブサイト", brag: "コードを書くAIエージェントと、はじめてのウェブサイトを作ったよ 🌐", blurb: "ハムスターのナゲットのページ。Pipo Codeが計画して、作って、バグを直します。", lessons: ["ウェブサイトを計画しよう", "ホームページを作ろう", "バグを直そう"] },
   },
   {
     id: "kid-game",
@@ -161,6 +171,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
     lessons: ["Design your game", "Build the first level", "Add a shop"],
     tint: "from-fuchsia-400 to-violet-600",
     es: { name: "Haz un juego", brag: "Hice mi propio juego con un agente de IA que programa 🎮", blurb: "Candy Climb, una carrera de obstáculos en BlockStudio. Diséñalo, construye un nivel y agrega una tienda.", lessons: ["Diseña tu juego","Construye el primer nivel","Agrega una tienda"] },
+    ja: { name: "ゲームを作ろう", brag: "コードを書くAIエージェントと、自分のゲームを作ったよ 🎮", blurb: "BlockStudioのアスレチックゲーム「キャンディ・クライム」。デザインして、ステージを作って、ショップを追加しよう。", lessons: ["ゲームをデザインしよう", "最初のステージを作ろう", "ショップを追加しよう"] },
   },
   {
     id: "kid-homework",
@@ -173,6 +184,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
     lessons: ["Learn, don't copy", "Make a chart", "Draw a diagram"],
     tint: "from-emerald-300 to-sky-500",
     es: { name: "Ayuda con la tarea", brag: "Mi agente de IA me ayudó a aprender, no a copiar 📊", blurb: "Pipo Code te ayuda a aprender y luego hace una gráfica y un diagrama para tu tarea.", lessons: ["Aprende, no copies","Haz una gráfica","Dibuja un diagrama"] },
+    ja: { name: "宿題のおたすけ", brag: "AIエージェントが写すんじゃなくて、学ぶのを手伝ってくれた 📊", blurb: "Pipo Codeが学ぶのを手伝って、宿題用のグラフと図を作ります。", lessons: ["写さないで、学ぼう", "グラフを作ろう", "図をかこう"] },
   },
   // Busy executive
   {
@@ -186,6 +198,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
     lessons: ["File the refund claim", "Claim the hotel cost", "Add the new flight to your calendar"],
     tint: "from-sky-400 to-brand-700",
     es: { name: "Vuelo cancelado", brag: "Mi agente de IA consiguió el reembolso de mi vuelo cancelado ✈️", blurb: "Te cancelaron el vuelo. Pipo presenta el reclamo de reembolso, recupera lo del hotel y agenda el vuelo nuevo.", lessons: ["Presenta el reclamo de reembolso","Reclama lo del hotel","Agrega el vuelo nuevo a tu calendario"] },
+    ja: { name: "欠航したフライト", brag: "AIエージェントが欠航したフライトの返金を取り戻してくれた ✈️", blurb: "フライトが欠航に。Pipoが返金を申請して、ホテル代を取り戻して、新しい便を予定に入れます。", lessons: ["払い戻しを申請する", "ホテル代を請求する", "新しいフライトをカレンダーに追加する"] },
   },
   {
     id: "executive-marketplace",
@@ -198,6 +211,7 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
     lessons: ["Find and save the best chairs", "Message the seller", "Buy it safely"],
     tint: "from-fuchsia-400 to-brand-700",
     es: { name: "Compra en marketplace", brag: "Mi agente de IA me encontró una gran oferta en marketplace 🛋️", blurb: "Quieres una silla de escritorio en marketplace. Pipo encuentra y guarda las mejores, le escribe al vendedor y la compra de forma segura.", lessons: ["Encuentra y guarda las mejores sillas","Escríbele al vendedor","Cómprala de forma segura"] },
+    ja: { name: "マーケットプレイスでお買い物", brag: "AIエージェントがマーケットプレイスでお得な品を見つけてくれた 🛋️", blurb: "マーケットプレイスでデスクチェアが欲しい。Pipoが良いものを探して保存し、出品者に連絡して、安全に買います。", lessons: ["いちばんいい椅子を探して保存する", "出品者にメッセージする", "安全に買う"] },
   },
   {
     id: "executive-taxes",
@@ -210,12 +224,13 @@ const DATA: readonly (PathCard & { es: PathText })[] = [
     lessons: ["Gather your documents", "Fill in the expense form", "Email your accountant"],
     tint: "from-emerald-300 to-brand-600",
     es: { name: "Temporada de impuestos", brag: "Mi agente de IA dejó listo mi papeleo de impuestos 🧾", blurb: "Temporada de impuestos. Pipo reúne tus documentos, llena el formulario de gastos y agenda una llamada con tu contador.", lessons: ["Reúne tus documentos","Llena el formulario de gastos","Escríbele a tu contador"] },
+    ja: { name: "税金の季節", brag: "AIエージェントが税金の書類を片付けてくれた 🧾", blurb: "税金の季節。Pipoが書類を集めて、経費フォームを埋めて、税理士との電話を予定に入れます。", lessons: ["書類を集める", "経費フォームに記入する", "会計士にメールする"] },
   },
 ];
 
 const inLang = (card: (typeof DATA)[number], lang: Lang): PathCard => {
-  const { es, ...base } = card;
-  return lang === "es" ? { ...base, ...es } : base;
+  const { es, ja, ...base } = card;
+  return lang === "en" ? base : { ...base, ...{ es, ja }[lang] };
 };
 
 /** All paths in English. */

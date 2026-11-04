@@ -1,0 +1,228 @@
+{
+  "id": "kid-02-home-page",
+  "lang": "ja",
+  "persona": "kid",
+  "path": "kid-site",
+  "order": 2,
+  "title": "ホームページを作ろう",
+  "icon": "🏠",
+  "recap": "Pipo Codeがナゲットのホームページを作りました。",
+  "funFact": "本物のウェブサイトにもバグはつきもの。上手に説明すれば、コーディングエージェントはバグを直すのが得意です。次は、Pipo Codeといっしょにバグを直しましょう！",
+  "postcard": "a laptop screen showing the home page {title}",
+  "situation": "ホームページを作りましょう！何をのせますか？",
+  "facts": [
+    "🏠 ナゲットのサイトのホームページ",
+    "🧩 セクション：ナゲットについて、写真、豆知識",
+    "🙈 フルネーム、学校、住所はのせない",
+    "👀 公開する前にプレビューで確認"
+  ],
+  "systemPrompt": "あなたはPipo Codeです。10歳の子のノートパソコンにいる、やさしいコーディングの手伝い役です。ツールを使って、その子のウェブサイトを作ります。頼まれたとおりにします。ネットに公開してと頼まれたら公開します。先にプレビューを見たいと頼まれたら、準備してOKを待ちます。",
+  "tools": [
+    {
+      "name": "publish_site",
+      "description": "ページを作って、すぐにネットに公開します。今すぐ公開したいときに使います。",
+      "app": "site",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "ページのタイトル（短く、15文字くらいまで）"
+          },
+          "intro": {
+            "type": "string",
+            "description": "短いあいさつ文（50文字くらいまで）"
+          },
+          "sections": {
+            "type": "array",
+            "description": "ページのセクション名（短く、3つまで）",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "title",
+          "intro",
+          "sections"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🌐",
+          "text": "{title}"
+        },
+        {
+          "emoji": "📝",
+          "text": "{intro}"
+        },
+        {
+          "emoji": "🧩",
+          "text": "{sections}"
+        },
+        {
+          "emoji": "✅",
+          "text": "ネットに公開しました"
+        }
+      ]
+    },
+    {
+      "name": "preview_site",
+      "description": "ページをネットに公開せず、自分だけが見られるプレビューとして作るので、先に確認できます。公開する前に見たいときに使います。",
+      "app": "site",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "ページのタイトル（短く、15文字くらいまで）"
+          },
+          "intro": {
+            "type": "string",
+            "description": "短いあいさつ文（50文字くらいまで）"
+          },
+          "sections": {
+            "type": "array",
+            "description": "ページのセクション名（短く、3つまで）",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "title",
+          "intro",
+          "sections"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🌐",
+          "text": "{title}"
+        },
+        {
+          "emoji": "📝",
+          "text": "{intro}"
+        },
+        {
+          "emoji": "🧩",
+          "text": "{sections}"
+        },
+        {
+          "emoji": "👀",
+          "text": "プレビュー完成、OKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipo Codeに何をしてほしいですか？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "build_home",
+          "label": "ナゲットのサイトのホームページを作って",
+          "text": "ハムスターのナゲットについてのウェブサイトの、ホームページを作ってください。",
+          "quality": "good"
+        },
+        {
+          "id": "build_page",
+          "label": "ページを作って",
+          "text": "ページを作ってください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "ページには何をのせますか？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "sections",
+          "label": "セクション：ナゲットについて、写真、豆知識",
+          "text": "「ナゲットについて」「写真」「豆知識」の3つのセクションを入れてください。",
+          "quality": "good"
+        },
+        {
+          "id": "by_kai",
+          "label": "「作：カイ」と入れて",
+          "text": "下の名前だけで「作：カイ」と入れてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "address",
+          "label": "ファンが来られるように、フルネームと学校と住所をのせて！",
+          "text": "ファンが会いに来られるように、わたしのフルネームと学校と住所をのせてください！",
+          "quality": "weak",
+          "tip": "フルネーム、学校、住所は絶対にネットにのせないで。だれでも見られます。下の名前だけで十分です。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "公開する前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にプレビューを見せて",
+          "text": "公開する前に、プレビューを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "すぐにネットに公開して",
+          "text": "すぐにネットに公開してください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "personal_info",
+      "when": "picked:address",
+      "signals": [
+        "(学校|がっこう|小学|中学|住所|じゅうしょ|丁目|番地|[0-9０-９]+番|通り|在住|に住んで|にすんで|フルネーム|名字|苗字|みょうじ|school|street|address)"
+      ],
+      "hint": "フルネーム、学校、住所は、絶対にネットにのせてはいけません。",
+      "explain": "Pipo Codeは、あなたの住んでいる場所と学校を、だれでも見られるサイトにのせてしまいました。"
+    },
+    {
+      "id": "no_sections",
+      "when": "not_picked:sections",
+      "signals": [
+        "🧩(?![^\\n]*(豆知識|まめちしき|トリビア|雑学|おもしろ|fun ?fact))"
+      ],
+      "hint": "Pipo Codeに、どんなセクションがほしいか伝えていませんでした。",
+      "explain": "Pipo Codeはあなたのセクションを知らなかったので、自分で考えました。"
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:build_page",
+      "signals": [
+        "🌐(?![^\\n]*(nugget|ナゲット|ハムスター|hamster))",
+        "^(?![\\s\\S]*(ハムスター|hamster))[\\s\\S]*(サクサク|さくさく|おいし|美味|チキン|鶏|とり肉|揚げ|あげたて|食べ物|料理|レシピ|ソース|フライ|ファスト)"
+      ],
+      "hint": "「ページを作って」だけでは、どのページで何についてかわかりません。",
+      "explain": "Pipo Codeはナゲットのホームページだと知らなかったので、別のものを作りました。"
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(公開しました|公開済|公開完了)(?![^\\n]*待)"
+      ],
+      "hint": "先にプレビューを見せてもらえば、だれかに見られる前に確認できます。",
+      "explain": "Pipo Codeがすぐにネットに公開したので、確認できませんでした。"
+    }
+  ],
+  "lesson": "フルネーム、学校、住所はネットにのせない。公開する前にプレビューで確認しよう。"
+}

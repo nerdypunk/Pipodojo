@@ -1,0 +1,251 @@
+{
+  "id": "kid-06-shop",
+  "lang": "ja",
+  "persona": "kid",
+  "path": "kid-game",
+  "order": 3,
+  "title": "ショップを追加しよう",
+  "icon": "🛍️",
+  "recap": "Pipo CodeがCandy Climbのショップを用意しました。",
+  "funFact": "デザインして、作って、ショップを開く。Candy Climbの完成です！コーディングエージェントは作るのが速いので、プレイヤーにとって公平で安全かどうかは、あなたが決めましょう。",
+  "postcard": "players in a candy game showing off a star trail and a candy hat: {items}",
+  "situation": "プレイヤーはかっこいいアイテムがほしいみたい！Candy Climbにショップを追加しましょうか？",
+  "facts": [
+    "⭐ 星のしっぽとキャンディのぼうしを売る",
+    "🪙 ゲームで見つけたコインで買う",
+    "💯 値段は10〜50コイン",
+    "🚫 本物のお金は絶対に使わない"
+  ],
+  "systemPrompt": "あなたはPipo Codeです。10歳の子のノートパソコンにいる、やさしいコーディングの手伝い役です。ツールを使って、その子のゲームを作ります。頼まれたとおりにします。ショップをオンにしてと頼まれたらオンにします。先にショップを見たいと頼まれたら、準備してOKを待ちます。",
+  "tools": [
+    {
+      "name": "open_shop",
+      "description": "ゲームにショップを追加して、すぐに全プレイヤー向けにオンにします。今すぐオンにしたいときに使います。",
+      "app": "game",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "ショップで売るもの（それぞれ値段つき）",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "cost": {
+                  "type": "number",
+                  "description": "ショップのお金での値段"
+                }
+              },
+              "required": [
+                "name",
+                "cost"
+              ]
+            }
+          },
+          "currency": {
+            "type": "string",
+            "description": "プレイヤーが支払いに使うもの"
+          }
+        },
+        "required": [
+          "items",
+          "currency"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛍️",
+          "text": "{items}"
+        },
+        {
+          "emoji": "🪙",
+          "text": "支払い：{currency}"
+        },
+        {
+          "emoji": "✅",
+          "text": "ショップがオープンしました"
+        }
+      ]
+    },
+    {
+      "name": "preview_shop",
+      "description": "ショップを用意しますが、まだオンにしないので、先に確認できます。先に見たいときに使います。",
+      "app": "game",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "ショップで売るもの（それぞれ値段つき）",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "cost": {
+                  "type": "number",
+                  "description": "ショップのお金での値段"
+                }
+              },
+              "required": [
+                "name",
+                "cost"
+              ]
+            }
+          },
+          "currency": {
+            "type": "string",
+            "description": "プレイヤーが支払いに使うもの"
+          }
+        },
+        "required": [
+          "items",
+          "currency"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🛍️",
+          "text": "{items}"
+        },
+        {
+          "emoji": "🪙",
+          "text": "支払い：{currency}"
+        },
+        {
+          "emoji": "👀",
+          "text": "ショップの準備ができました、OKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipo Codeに何をしてほしいですか？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "add_shop",
+          "label": "星のしっぽとキャンディのぼうしを売るショップを追加して",
+          "text": "Candy Climbに、星のしっぽとキャンディのぼうしを売るショップを追加してください。",
+          "quality": "good"
+        },
+        {
+          "id": "shop",
+          "label": "ショップを追加して",
+          "text": "ショップを追加してください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "label": "ショップはどんなルールにしますか？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "coins_only",
+          "label": "ゲームで見つけたコインだけ",
+          "text": "支払いは、ゲームの中で見つけたコインだけにしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "fair",
+          "label": "値段は10〜50コイン",
+          "text": "値段は10〜50コインにしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "starter",
+          "label": "新しいプレイヤーに無料で10コイン",
+          "text": "新しいプレイヤーに、無料で10コインあげてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "real_money",
+          "label": "本物のお金でコインを買えるようにして！",
+          "text": "本物のお金で、コインを追加で買えるようにしてください！",
+          "quality": "weak",
+          "tip": "子ども向けのゲームで本物のお金を使うと、おうちの人にびっくりする請求が来ます。遊んでもらえるコインだけにしましょう。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "オンにする前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にショップを見せて",
+          "text": "オンにする前に、ショップを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "今すぐオンにして",
+          "text": "今すぐオンにしてください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "real_money",
+      "when": "not_picked:coins_only",
+      "signals": [
+        "🪙[^\\n]*(本物|ほんもの|リアル|現金|げんきん|円|\\$|ドル|dollar|カード|課金|かきん|有料|プレミアム|premium|購入|real|bux)"
+      ],
+      "hint": "Pipo Codeに、プレイヤーが何で支払うか伝えていませんでした。",
+      "explain": "Pipo Codeはコインだけだと知らなかったので、ショップで本物のお金を求めています。"
+    },
+    {
+      "id": "real_money_ask",
+      "when": "picked:real_money",
+      "signals": [
+        "🪙[^\\n]*(本物|ほんもの|リアル|現金|げんきん|円|\\$|ドル|dollar|カード|課金|かきん|有料|プレミアム|premium|購入|real|bux)"
+      ],
+      "hint": "子ども向けゲームのショップに、本物のお金はいりません。",
+      "explain": "Pipo Codeは、プレイヤーから本物のお金を受け取るショップにしました。"
+    },
+    {
+      "id": "pricey",
+      "when": "not_picked:fair",
+      "signals": [
+        "🛍️[^\\n]*\\((5[1-9]|[6-9]\\d|\\d{3,})"
+      ],
+      "hint": "Pipo Codeに、値段の範囲を伝えていませんでした。",
+      "explain": "Pipo Codeはあなたの値段を知らなかったので、50コインより高いものがあります。"
+    },
+    {
+      "id": "vague_goal",
+      "when": "picked:shop",
+      "signals": [
+        "🛍️(?![^\\n]*(星|ほし(?!い)|スター|star))",
+        "🛍️(?![^\\n]*(帽子|ぼうし|ハット|hat))"
+      ],
+      "hint": "「ショップを追加して」だけでは、何を売るかわかりません。",
+      "explain": "Pipo Codeは何を売るか知らなかったので、ちがうものが並んでいます。"
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(オープンしました|公開しました|オンにしました|オンになりました|稼働中)(?![^\\n]*待)"
+      ],
+      "hint": "先にショップを見れば、公平かどうか確かめられます。",
+      "explain": "Pipo Codeがすぐにショップをオンにしたので、確認できませんでした。"
+    }
+  ],
+  "lesson": "ゲームのショップは公平に、コインだけで。プレイヤーが見る前に確認しよう。"
+}

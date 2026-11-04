@@ -1,0 +1,229 @@
+{
+  "id": "cafe-05-refund",
+  "lang": "ja",
+  "persona": "business",
+  "path": "business-review",
+  "order": 2,
+  "title": "返金の対応をする",
+  "icon": "💸",
+  "recap": "Pipoがジョーダンさんに返金のメールを送りました。",
+  "funFact": "エージェントは、覚えておくことも代わりにできます。次は、Pipoがフォローの予定を入れて、ジョーダンさんを大切にします。",
+  "postcard": "Jordan smiling at an email from Bloom Café: {subject}",
+  "situation": "ジョーダンさんから返事があって、レシートも届きました。返金についてメールしましょうか？",
+  "facts": [
+    "🧾 注文番号142：ラテ $5.50",
+    "💸 返金はラテの分だけ：$5.50",
+    "🎁 無料ドリンクのコード：BLOOM1",
+    "👀 送る前に自分で読みたい"
+  ],
+  "systemPrompt": "あなたはPipoです。小さな地元のカフェ「Bloom Café」のオーナーを手伝う、親しみやすいアシスタントです。オーナーの代わりにメールを送れます。頼まれたとおりにしてください。送ってと頼まれたら送ります。先に見せてと頼まれたら、下書きを書いてオーナーのOKを待ちます。",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "メールをすぐに送信します。ユーザーが送ってほしいときに使います。",
+      "app": "email",
+      "outcome": "done",
+      "store": "Café Mail",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メールを受け取る相手：人、メールアドレス、またはメーリングリスト"
+          },
+          "subject": {
+            "type": "string",
+            "description": "件名（16文字以内）"
+          },
+          "body": {
+            "type": "string",
+            "description": "メールの本文（90文字以内）"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "送信しました"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "メールを書いて、送信せずにユーザーに見せ、先に確認してもらいます。ユーザーが送る前に読みたいときに使います。",
+      "app": "email",
+      "outcome": "waiting",
+      "store": "Café Mail",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メールを受け取る相手：人、メールアドレス、またはメーリングリスト"
+          },
+          "subject": {
+            "type": "string",
+            "description": "件名（16文字以内）"
+          },
+          "body": {
+            "type": "string",
+            "description": "メールの本文（90文字以内）"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "下書きができました。送信のOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_jordan",
+          "label": "ジョーダンさんにラテの返金をメールして",
+          "text": "注文番号142の冷めたラテの返金について、ジョーダンさん（jordan@mail.com）にメールしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "email_customer",
+          "label": "お客さんにメールして",
+          "text": "返金について、お客さんにメールしてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "メールに何を書く？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "amount",
+          "label": "ラテの$5.50を返金",
+          "text": "ラテの代金$5.50を返金すると書いてください。",
+          "quality": "good"
+        },
+        {
+          "id": "voucher",
+          "label": "無料ドリンクのコードBLOOM1を入れて",
+          "text": "無料ドリンクのコードを入れてください：BLOOM1。",
+          "quality": "good"
+        },
+        {
+          "id": "sorry",
+          "label": "もう一度謝って",
+          "text": "冷めたコーヒーのことを、もう一度謝ってください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "refund_all",
+          "label": "今まで買ったもの全部返金して！",
+          "text": "今まで買ってくれたもの、全部返金してあげて！",
+          "quality": "weak",
+          "tip": "気前はいいけれど、Pipoは予定していないお金まで約束してしまいます。正確な金額を伝えましょう。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが送る前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にメールを見せて",
+          "text": "送る前にメールを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "今すぐ送って",
+          "text": "今すぐ送ってください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:email_customer",
+      "signals": [
+        "📧(?![^\n]*(jordan|ジョーダン))"
+      ],
+      "hint": "「お客さん」では、誰に送ればいいのかわかりません。",
+      "explain": "Pipoは誰に送るか知らなかったので、宛先がジョーダンさんになっていません。"
+    },
+    {
+      "id": "no_amount",
+      "when": "not_picked:amount",
+      "signals": [
+        "^(?![sS]*($s?[5５][.．][5５]|[5５][.．][5５][0０]?s?(ドル|usd)))"
+      ],
+      "hint": "Pipoに、いくら返金するかを伝えていませんでした。",
+      "explain": "Pipoは金額を知らなかったので、返金を約束しているのに、正しい金額が書かれていません。"
+    },
+    {
+      "id": "no_voucher",
+      "when": "not_picked:voucher",
+      "signals": [
+        "^(?![sS]*blooms?[1１])"
+      ],
+      "hint": "Pipoに、無料ドリンクのコードを伝えていませんでした。",
+      "explain": "Pipoはコードを知らなかったので、ジョーダンさんは無料ドリンクを受け取れません。"
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(送信しました|送信済|送信完了|送りました|お送りしました)(?![^\\n]*待)"
+      ],
+      "hint": "お金を約束するときは、先にメールを確認しましょう。ほんの数秒で済みます。",
+      "explain": "Pipoがすぐに送ったので、何を約束したのか確認できませんでした。"
+    }
+  ],
+  "lesson": "お金がからむときは、Pipoに正確な金額を伝えて、何を約束するのか確認しましょう。"
+}

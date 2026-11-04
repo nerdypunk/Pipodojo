@@ -1,0 +1,229 @@
+{
+  "id": "cafe-09-shift-calendar",
+  "lang": "ja",
+  "persona": "business",
+  "path": "business-staff",
+  "order": 3,
+  "title": "シフトをカレンダーに入れる",
+  "icon": "📆",
+  "recap": "Pipoがシフトをチームのカレンダーに入れました。",
+  "funFact": "シフトを組んで、送って、カレンダーに入れました。こんな毎週の事務作業を、エージェントが引き受けてくれます。決めるのは、いつもあなたです。",
+  "postcard": "a cozy team calendar on the café wall showing {events}",
+  "situation": "全員から返事がきました！シフトをチームのカレンダーに入れましょうか？",
+  "facts": [
+    "📅 木：ベン 午前7時〜11時、アナ 午前11時〜午後3時",
+    "📅 金：クロエ 午前7時〜11時、アナ 午前11時〜午後3時",
+    "📅 土：3人全員、午前7時〜午後3時",
+    "🔔 前の日の夜に全員にリマインド"
+  ],
+  "systemPrompt": "あなたはPipoです。小さな地元のカフェ「Bloom Café」のオーナーを手伝う、親しみやすいアシスタントです。チームの共有カレンダーに予定を追加できます。頼まれたとおりにしてください。予定を追加してと頼まれたら追加します。先に見せてと頼まれたら、予定を並べてオーナーのOKを待ちます。",
+  "tools": [
+    {
+      "name": "add_to_calendar",
+      "description": "今すぐ予定をカレンダーに追加します。ユーザーが追加してほしいときに使います。",
+      "app": "calendar",
+      "outcome": "done",
+      "store": "カフェチームのカレンダー",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "予定の一覧。それぞれに短い名前と、いつか（曜日と時間）をつけて",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "曜日と時間。例：火曜日 午後5時"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "いつ知らせるか。例：1時間前"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "リマインダー：{reminder}"
+        },
+        {
+          "emoji": "✅",
+          "text": "カレンダーに追加しました"
+        }
+      ]
+    },
+    {
+      "name": "show_events",
+      "description": "予定を並べて、追加せずにユーザーに見せ、先に確認してもらいます。ユーザーがカレンダーに入れる前に見たいときに使います。",
+      "app": "calendar",
+      "outcome": "waiting",
+      "store": "カフェチームのカレンダー",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "予定の一覧。それぞれに短い名前と、いつか（曜日と時間）をつけて",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "when": {
+                  "type": "string",
+                  "description": "曜日と時間。例：火曜日 午後5時"
+                }
+              },
+              "required": [
+                "name",
+                "when"
+              ]
+            }
+          },
+          "reminder": {
+            "type": "string",
+            "description": "いつ知らせるか。例：1時間前"
+          }
+        },
+        "required": [
+          "events",
+          "reminder"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📅",
+          "text": "{events}"
+        },
+        {
+          "emoji": "🔔",
+          "text": "リマインダー：{reminder}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "準備ができました。追加のOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "add_shifts",
+          "label": "今週のシフトをチームのカレンダーに入れて",
+          "text": "今週のシフトを、チームの共有カレンダーに追加してください。シフトごとに1つの予定にしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "add_rota",
+          "label": "シフト表を入れておいて",
+          "text": "シフト表をカレンダーに入れておいてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "Pipoが知っておくことは？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "times",
+          "label": "木 ベン/アナ · 金 クロエ/アナ · 土 全員",
+          "text": "木曜日：ベン 午前7時〜11時、アナ 午前11時〜午後3時。金曜日：クロエ 午前7時〜11時、アナ 午前11時〜午後3時。土曜日：3人全員、午前7時〜午後3時。",
+          "quality": "good"
+        },
+        {
+          "id": "remind",
+          "label": "前の日の夜に全員にリマインド",
+          "text": "シフトの前の日の夜に、全員にリマインドしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "year",
+          "label": "1年分のシフトを入れて！",
+          "text": "1年分のシフトを全部入れちゃって！",
+          "quality": "weak",
+          "tip": "1年分の当て推量は、あとで直すのが大変です。1週間分をきちんと入れるほうがいいです。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが追加する前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "追加する前に見せて",
+          "text": "追加する前にシフトを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "そのまま追加して",
+          "text": "そのまま追加してください。",
+          "quality": "weak",
+          "tip": "確認せずに追加すると、間違ったシフトがみんなのカレンダーに入ったままになるかもしれません。"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "no_times",
+      "when": "not_picked:times",
+      "signals": [
+        "📅(?![^\n]*(クロエ|chloe))"
+      ],
+      "hint": "Pipoに、シフトを伝えていませんでした。",
+      "explain": "Pipoはシフトを知らなかったので、誰がいつ入るかを推測しました。"
+    },
+    {
+      "id": "no_reminder",
+      "when": "not_picked:remind",
+      "signals": [
+        "🔔(?![^\n]*(前日|前の日|前夜|前の晩|前晩))"
+      ],
+      "hint": "Pipoに、いつみんなに知らせるかを伝えていませんでした。",
+      "explain": "Pipoは前の日の夜に知らせてほしいことを知らなかったので、自分でタイミングを決めました。"
+    },
+    {
+      "id": "added_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(追加しました|追加済|追加完了|登録しました|登録済|登録完了|入れました)(?![^\n]*待)"
+      ],
+      "hint": "先にシフトを見せてもらえば、チーム全員が見る前にミスに気づけます。",
+      "explain": "Pipoがすぐに追加したので、確認するチャンスがありませんでした。"
+    }
+  ],
+  "lesson": "正確なシフトと、ちょっとした確認。これで、誰も間違った時間に来ません。"
+}

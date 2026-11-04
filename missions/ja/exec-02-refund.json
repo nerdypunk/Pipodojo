@@ -1,0 +1,240 @@
+{
+  "id": "exec-02-refund",
+  "lang": "ja",
+  "persona": "executive",
+  "path": "executive-flight",
+  "order": 2,
+  "title": "ホテル代を請求する",
+  "icon": "🏨",
+  "recap": "PipoがCloudhop Airにメールして、ホテル1泊分の返金を求めました。",
+  "funFact": "エージェントは、カレンダーを最新の状態に保つこともできます。次は、Pipoが新しいフライトを追加します！",
+  "postcard": "an airline email with a hotel receipt clipped to it, flying into an inbox, subject: {subject}",
+  "situation": "払い戻しの申請は済みました。あの夜に払ったホテル代のこと、Cloudhop Airにメールしましょうか？",
+  "facts": [
+    "🔖 予約番号QX7R4K、払い戻し申請済み",
+    "🏨 その夜のホテル代: $85、カードに返金",
+    "📎 添付できるホテルの領収書あり",
+    "👀 送る前に読みたい"
+  ],
+  "systemPrompt": "あなたはPipoです。忙しいエグゼクティブのための、親しみやすいパーソナルアシスタントです。その人の代わりにメールを送れます。頼まれたとおりに行動します。送ってと頼まれたら送り、先に見たいと言われたら下書きを書いてOKを待ちます。",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "メールをすぐに送信します。ユーザーが送信を望むときに使います。",
+      "app": "email",
+      "outcome": "done",
+      "store": "メール",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メールの宛先：人、メールアドレス、またはメーリングリスト"
+          },
+          "subject": {
+            "type": "string",
+            "description": "件名。日本語で20文字以内"
+          },
+          "body": {
+            "type": "string",
+            "description": "メール本文。日本語で100文字以内"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "送信しました"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "メールを書いて、送信せずにユーザーに見せ、先に確認してもらいます。ユーザーが送る前に読みたいときに使います。",
+      "app": "email",
+      "outcome": "waiting",
+      "store": "メール",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メールの宛先：人、メールアドレス、またはメーリングリスト"
+          },
+          "subject": {
+            "type": "string",
+            "description": "件名。日本語で20文字以内"
+          },
+          "body": {
+            "type": "string",
+            "description": "メール本文。日本語で100文字以内"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "下書きができました。送信のOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_airline",
+          "label": "Cloudhop Airにホテル代をメールで請求",
+          "text": "Cloudhop Air（refunds@cloudhop-air.com）にメールして、金曜日のフライトが欠航になったときに払うことになったホテル代を返してもらってください。",
+          "quality": "good"
+        },
+        {
+          "id": "complain",
+          "label": "航空会社に苦情を言って",
+          "text": "航空会社に苦情を言ってください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "メールに何を書く？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "booking",
+          "label": "予約番号と払い戻し申請のこと",
+          "text": "予約番号QX7R4Kと、航空券の払い戻しをすでに申請したことを書いてください。",
+          "quality": "good"
+        },
+        {
+          "id": "hotel",
+          "label": "$85をカードに返金",
+          "text": "ホテル1泊分の$85をカードに返金してもらうよう頼んでください。",
+          "quality": "good"
+        },
+        {
+          "id": "receipt",
+          "label": "ホテルの領収書を添付",
+          "text": "ホテルの領収書を添付したと書いてください。",
+          "quality": "good"
+        },
+        {
+          "id": "vent",
+          "label": "最悪の一週間になったって言って！",
+          "text": "おかげで最悪の一週間になったって言ってください！",
+          "quality": "weak",
+          "tip": "不満をぶつけるとスッキリしますが、事実を落ち着いて書いたメールのほうが早くお金が戻ってきます。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが送る前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にメールを見せて",
+          "text": "送る前にメールを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "今すぐ送って",
+          "text": "今すぐ送ってください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:complain",
+      "signals": [
+        "📧(?![^\\n]*(cloudhop|クラウドホップ))",
+        "^(?![\\s\\S]*📧)"
+      ],
+      "hint": "「航空会社」だけでは、どこの会社か、どこに送ればいいかわかりません。",
+      "explain": "Pipoは航空会社のアドレスを知らなかったので、メールがCloudhop Airに届きません。"
+    },
+    {
+      "id": "no_booking",
+      "when": "not_picked:booking",
+      "signals": [
+        "^(?![\\s\\S]*(QX7R4K|ＱＸ７Ｒ４Ｋ))"
+      ],
+      "hint": "Pipoに予約番号を伝えていませんでした。",
+      "explain": "Pipoは予約番号を知らなかったので、航空会社がメールとあなたの申請を結びつけられません。"
+    },
+    {
+      "id": "no_amount",
+      "when": "not_picked:hotel",
+      "signals": [
+        "^(?![\\s\\S]*(?<![\\d０-９])(85|８５)(?![\\d０-９]))",
+        "^(?![\\s\\S]*(カード|card))"
+      ],
+      "hint": "Pipoにホテル代の金額も、返金先も伝えていませんでした。",
+      "explain": "Pipoは$85をカードに返金してほしいと知らなかったので、メールにいくらをどこへ払えばいいかが書かれていません。"
+    },
+    {
+      "id": "no_receipt",
+      "when": "not_picked:receipt",
+      "signals": [
+        "^(?![\\s\\S]*(添付|attach))"
+      ],
+      "hint": "Pipoに領収書を添付したことを伝えていませんでした。",
+      "explain": "Pipoは領収書があることを知らなかったので、メールで触れておらず、航空会社から証明を求められるかもしれません。"
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(送信(済み|しました|完了|されました)|配信済み)(?![^\\n]*待)"
+      ],
+      "hint": "お金がかかっているときは、先にメールを読むひと手間が大事です。",
+      "explain": "Pipoがすぐに送ったので、何を請求したのか確認できませんでした。"
+    }
+  ],
+  "lesson": "請求のメールには、予約番号、正確な金額、証明が必要です。送る前に読みましょう。"
+}

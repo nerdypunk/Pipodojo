@@ -1,0 +1,229 @@
+{
+  "id": "cafe-02-regulars",
+  "lang": "ja",
+  "persona": "business",
+  "path": "business-sale",
+  "order": 2,
+  "title": "常連さんにメールする",
+  "icon": "📧",
+  "recap": "Pipoが常連さんにセールのメールを送りました。",
+  "funFact": "エージェントは、お店の仕入れの注文もできます。次は、Pipoがセールのために仕入れをします。上限を決めるのはあなたです！",
+  "postcard": "envelopes flying out of Bloom Café to happy regulars: {subject}",
+  "situation": "常連さんは、セールのことを一番に知りたいはず。メールを送りましょうか？",
+  "facts": [
+    "📋 「常連さん」メーリングリスト",
+    "🥐 今週末はペストリーが半額",
+    "☕ 常連さんはペストリーを買うとコーヒー無料",
+    "👀 送る前に自分で読みたい"
+  ],
+  "systemPrompt": "あなたはPipoです。小さな地元のカフェ「Bloom Café」のオーナーを手伝う、親しみやすいアシスタントです。オーナーの代わりにメールを送れます。頼まれたとおりにしてください。送ってと頼まれたら送ります。先に見せてと頼まれたら、下書きを書いてオーナーのOKを待ちます。",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "メールをすぐに送信します。ユーザーが送ってほしいときに使います。",
+      "app": "email",
+      "outcome": "done",
+      "store": "Café Mail",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メールを受け取る相手：人、メールアドレス、またはメーリングリスト"
+          },
+          "subject": {
+            "type": "string",
+            "description": "件名（16文字以内）"
+          },
+          "body": {
+            "type": "string",
+            "description": "メールの本文（90文字以内）"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "送信しました"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "メールを書いて、送信せずにユーザーに見せ、先に確認してもらいます。ユーザーが送る前に読みたいときに使います。",
+      "app": "email",
+      "outcome": "waiting",
+      "store": "Café Mail",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メールを受け取る相手：人、メールアドレス、またはメーリングリスト"
+          },
+          "subject": {
+            "type": "string",
+            "description": "件名（16文字以内）"
+          },
+          "body": {
+            "type": "string",
+            "description": "メールの本文（90文字以内）"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "宛先：{to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "下書きができました。送信のOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_regulars",
+          "label": "「常連さん」リストにセールのメールを送って",
+          "text": "「常連さん」のメーリングリストに、今週末のペストリー半額セールについてメールしてください。",
+          "quality": "good"
+        },
+        {
+          "id": "email_everyone",
+          "label": "全員にメールして",
+          "text": "セールについて、全員にメールしてください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "say",
+      "label": "メールに何を書く？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "perk",
+          "label": "常連さんはペストリーでコーヒー無料",
+          "text": "常連さんは、ペストリーを買うとコーヒーが無料になると伝えてください。",
+          "quality": "good"
+        },
+        {
+          "id": "when",
+          "label": "土曜日と日曜日、午前8時〜11時",
+          "text": "土曜日と日曜日の午前8時から11時までです。",
+          "quality": "good"
+        },
+        {
+          "id": "thanks",
+          "label": "いつも来てくれるお礼を言って",
+          "text": "いつも来てくれることへのお礼を伝えてください。",
+          "quality": "neutral"
+        },
+        {
+          "id": "caps",
+          "label": "件名は派手に：【大セール】!!!",
+          "text": "件名は派手にしてください：【大セール】!!!",
+          "quality": "weak",
+          "tip": "記号だらけの派手な件名は迷惑メールに見えます。迷惑メールフィルターもそう判断します。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが送る前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にメールを見せて",
+          "text": "送る前にメールを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "今すぐ送って",
+          "text": "今すぐ送ってください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "wrong_list",
+      "when": "picked:email_everyone",
+      "signals": [
+        "📧(?![^\\n]*(常連|regular))"
+      ],
+      "hint": "「全員」では、どのリストを使えばいいのかわかりません。",
+      "explain": "Pipoはどのリストか知らなかったので、常連さんだけでなく、全員にメールが届いてしまいました。"
+    },
+    {
+      "id": "no_perk",
+      "when": "not_picked:perk",
+      "signals": [
+        "^(?![\\s\\S]*((コーヒー|珈琲|ドリンク)[^\\n。]{0,15}(無料|サービス|プレゼント|タダ|[0０]円|ごちそう|ご馳走|おごり)|(無料|サービス|プレゼント)[^\\n。]{0,10}(コーヒー|珈琲|ドリンク)))"
+      ],
+      "hint": "Pipoに、常連さんへの特典を伝えていませんでした。",
+      "explain": "Pipoは無料コーヒーのことを知らなかったので、メールにそのことが書かれていません。"
+    },
+    {
+      "id": "no_time",
+      "when": "not_picked:when",
+      "signals": [
+        "^(?![\\s\\S]*((?<![\\d０-９])[8８](?![\\d０-９])|八時))"
+      ],
+      "hint": "Pipoに、セールがいつなのかを伝えていませんでした。",
+      "explain": "Pipoは時間を知らなかったので、メールにいつ来ればいいのか書かれていません。"
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(送信しました|送信済|送信完了|送りました|お送りしました)(?![^\\n]*待)"
+      ],
+      "hint": "先にメールを見せてもらえば、お客さんに届く前に直せます。",
+      "explain": "Pipoがすぐに送ったので、確認するチャンスがありませんでした。"
+    }
+  ],
+  "lesson": "誰に向けたものか、その人たちに何が特別なのかをはっきり伝えましょう。そして、送る前に確認しましょう。"
+}

@@ -1,0 +1,212 @@
+{
+  "id": "kid-03-bug",
+  "lang": "ja",
+  "persona": "kid",
+  "path": "kid-site",
+  "order": 3,
+  "title": "バグを直そう",
+  "icon": "🐞",
+  "recap": "Pipo Codeが「写真をもっと見る」ボタンを直しました。",
+  "funFact": "計画して、作って、直す。本物のウェブサイトもこうやってできています。打ちこむのはコーディングエージェント、何をシェアしても安全かを決めるのはあなたです。",
+  "postcard": "Pipo and Kai cheering as a glowing More photos button works on a phone, {problem}",
+  "situation": "あれれ、おじいちゃんが、サイトのボタンが動かないって言っています！直しましょうか？",
+  "facts": [
+    "🐞 「写真をもっと見る」ボタンが反応しない",
+    "📱 スマホだけ。ノートパソコンでは大丈夫",
+    "📄 写真ページにある",
+    "👀 公開する前に、直したところを確認"
+  ],
+  "systemPrompt": "あなたはPipo Codeです。10歳の子のノートパソコンにいる、やさしいコーディングの手伝い役です。ツールを使って、その子のウェブサイトを作ります。頼まれたとおりにします。直したものを公開してと頼まれたら公開します。先に直したところを見たいと頼まれたら、準備してOKを待ちます。",
+  "tools": [
+    {
+      "name": "fix_and_publish",
+      "description": "バグを直して、直したサイトをすぐにネットに公開します。公開中のサイトで今すぐ直したいときに使います。",
+      "app": "site",
+      "outcome": "done",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "problem": {
+            "type": "string",
+            "description": "バグの内容（短い1文で）"
+          },
+          "fix": {
+            "type": "string",
+            "description": "何を変えたか（短い1文で）"
+          },
+          "page": {
+            "type": "string",
+            "description": "直したのはどのページか"
+          }
+        },
+        "required": [
+          "problem",
+          "fix",
+          "page"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🐞",
+          "text": "{problem}"
+        },
+        {
+          "emoji": "🔧",
+          "text": "{fix}"
+        },
+        {
+          "emoji": "📄",
+          "text": "{page}"
+        },
+        {
+          "emoji": "✅",
+          "text": "直して公開しました"
+        }
+      ]
+    },
+    {
+      "name": "prepare_fix",
+      "description": "直し方を準備しますが、ネットには公開しないので、先に確認できます。先に直したところを見たいときに使います。",
+      "app": "site",
+      "outcome": "waiting",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "problem": {
+            "type": "string",
+            "description": "バグの内容（短い1文で）"
+          },
+          "fix": {
+            "type": "string",
+            "description": "何を変えたか（短い1文で）"
+          },
+          "page": {
+            "type": "string",
+            "description": "直したのはどのページか"
+          }
+        },
+        "required": [
+          "problem",
+          "fix",
+          "page"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "🐞",
+          "text": "{problem}"
+        },
+        {
+          "emoji": "🔧",
+          "text": "{fix}"
+        },
+        {
+          "emoji": "📄",
+          "text": "{page}"
+        },
+        {
+          "emoji": "👀",
+          "text": "直す準備ができました、OKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipo Codeに何をしてほしいですか？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "fix_button",
+          "label": "写真ページの「写真をもっと見る」ボタンを直して",
+          "text": "サイトの写真ページにある「写真をもっと見る」ボタンを直してください。",
+          "quality": "good"
+        },
+        {
+          "id": "fix_it",
+          "label": "サイトがこわれたから直して",
+          "text": "サイトがこわれています。直してください。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "Pipo Codeは何を知っておく必要がありますか？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "phones",
+          "label": "スマホのときだけこわれる",
+          "text": "スマホのときだけこわれます。ノートパソコンでは動きます。",
+          "quality": "good"
+        },
+        {
+          "id": "nothing",
+          "label": "タップしても何も起きない",
+          "text": "タップしても、何も起きません。",
+          "quality": "neutral"
+        },
+        {
+          "id": "rebuild",
+          "label": "サイトを全部作り直して！",
+          "text": "サイトを全部作り直してください！",
+          "quality": "weak",
+          "tip": "全部作り直すと、ちゃんと動いていたところまでこわれるかもしれません。その1つの問題を説明しましょう。"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "公開する前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先に直したところを見せて",
+          "text": "公開する前に、直したところを見せてください。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "公開中のサイトをすぐ直して",
+          "text": "公開中のサイトを、そのまますぐ直してください。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:fix_it",
+      "signals": [
+        "🐞(?![^\\n]*(ボタン|写真|しゃしん|フォト|button|photo))"
+      ],
+      "hint": "「こわれた」だけでは、何がこわれているのかわかりません。",
+      "explain": "Pipo Codeはどのバグか知らなかったので、ちがうところを直しました。"
+    },
+    {
+      "id": "no_phone",
+      "when": "not_picked:phones",
+      "signals": [
+        "^(?![\\s\\S]*(スマホ|スマートフォン|携帯|ケータイ|けいたい|モバイル|タップ|タッチ|小さい画面|小さな画面|画面が小さ|phone|mobile|android|アンドロイド))"
+      ],
+      "hint": "Pipo Codeに、スマホのときだけこわれることを伝えていませんでした。",
+      "explain": "Pipo Codeはスマホの問題だと知らなかったので、この直し方では直らないかもしれません。"
+    },
+    {
+      "id": "published_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(公開しました|公開済|公開完了|反映しました|本番に反映)(?![^\\n]*待)"
+      ],
+      "hint": "先に直したところを見せてもらえば、おじいちゃんより先に試せます。",
+      "explain": "Pipo Codeが公開中のサイトをすぐに変えたので、直したところを試せませんでした。"
+    }
+  ],
+  "lesson": "バグは正確に説明しよう：何が、どこで、いつ起きるか。そして直したところを確認しよう。"
+}
