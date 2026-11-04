@@ -11,6 +11,7 @@ import { isDebug, liveClient, takeLiveRun } from "../app/liveClient.ts";
 import { ActionBar, MessageBubble } from "./ActionBar.tsx";
 import { BriefBuilder } from "./BriefBuilder.tsx";
 import { LessonTutorial, tutorialPending } from "./LessonTutorial.tsx";
+import { MessageCube } from "./MessageCube.tsx";
 import { DebugPanel } from "./DebugPanel.tsx";
 import { celebrate, FloatingPhone, type PhoneStatus } from "./FloatingPhone.tsx";
 import { PipoScene } from "./PipoScene.tsx";
@@ -167,7 +168,7 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack, picker }: Pro
         <ShaderBorder mode={borderMode} roundness={0.08} className="flex flex-col">
           <section
             ref={buildRef}
-            className="glass flex flex-1 flex-col gap-3 rounded-3xl p-3 md:gap-4 md:p-5"
+            className="glass relative flex flex-1 flex-col gap-3 rounded-3xl p-3 md:gap-4 md:p-5"
             aria-label={t.lesson.buildMessage}
           >
             {/* The pieces come first; the message they make sits at the foot, next to Check, like a
@@ -229,6 +230,18 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack, picker }: Pro
               {result && <ActionBar state="result" mission={mission} score={result.score} onTryAgain={tryAgain} next={{ label: t.common.continue, onGo: () => onFinish(result) }} />}
               {phase.name === "failed" && <ActionBar state="failed" onTryAgain={tryAgain} />}
             </div>
+            {/* The 3D message cube, in the card's empty corner (computers only, never over words). Not for
+                "pick a message" lessons: there are no pieces to build with there. */}
+            {!picker && (
+              <MessageCube
+                area={buildRef}
+                mission={mission}
+                picks={picks}
+                stage={phase.name === "build" ? "build" : thinking ? "assemble" : "done"}
+                stars={result ? result.score.stars : null}
+                hidden={!!phone?.open}
+              />
+            )}
           </section>
         </ShaderBorder>
 

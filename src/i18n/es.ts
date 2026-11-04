@@ -124,6 +124,12 @@ export const es: Strings = {
     modePick: "⚖️ Elige un mensaje",
   },
 
+  cube: {
+    building: "Tu mensaje, pieza a pieza",
+    fits: "¡Todas las piezas encajan!",
+    gaps: "Faltan algunas piezas",
+    bumps: "Algunas piezas no encajan",
+  },
   lesson: {
     backToPaths: "Volver a los caminos",
     back: "Volver",

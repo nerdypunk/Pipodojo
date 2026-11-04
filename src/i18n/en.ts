@@ -126,6 +126,13 @@ export const en = {
     modePick: "⚖️ Pick a prompt",
   },
 
+  /** The 3D message cube over the lesson card (computers only), and its caption. */
+  cube: {
+    building: "Your message, piece by piece",
+    fits: "Every piece fits!",
+    gaps: "A few pieces are missing",
+    bumps: "Some pieces don't fit",
+  },
   lesson: {
     backToPaths: "Back to paths",
     back: "Back",

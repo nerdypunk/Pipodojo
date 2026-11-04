@@ -122,6 +122,12 @@ export const ja: Strings = {
     modePick: "⚖️ メッセージを選ぶ",
   },
 
+  cube: {
+    building: "メッセージを組み立て中",
+    fits: "ぴったり完成！",
+    gaps: "足りないピースがあるよ",
+    bumps: "はまらないピースがあるよ",
+  },
   lesson: {
     backToPaths: "コースにもどる",
     back: "もどる",
