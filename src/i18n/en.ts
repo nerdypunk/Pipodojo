@@ -76,6 +76,7 @@ export const en = {
       role: "I'm a",
       roles: { parent: "Parent", teacher: "Teacher or school", researcher: "Researcher" },
       birthYear: "Year you were born",
+      yearNeeded: "Please pick the year you were born.",
       submit: "Notify me",
       sending: "Saving…",
       done: "You're on the list! We'll email you when it opens.",
@@ -164,6 +165,8 @@ export const en = {
     colors: "Colors",
     go: "Let's go to town",
     back: "Back to town",
+    /** The garage's back button when you came from the front page. */
+    home: "Home",
   },
 
   town: {

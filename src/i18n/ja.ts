@@ -70,6 +70,7 @@ export const ja: Strings = {
       role: "わたしは",
       roles: { parent: "保護者", teacher: "先生・学校", researcher: "研究者" },
       birthYear: "生まれた年",
+      yearNeeded: "生まれた年を選んでください。",
       submit: "お知らせを受け取る",
       sending: "保存中…",
       done: "登録しました！始まったらメールでお知らせします。",
@@ -155,6 +156,8 @@ export const ja: Strings = {
     colors: "色",
     go: "町へ行こう",
     back: "町にもどる",
+    /** The garage's back button when you came from the front page. */
+    home: "ホーム",
   },
 
   town: {

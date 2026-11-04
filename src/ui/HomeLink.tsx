@@ -7,6 +7,11 @@ import { useLang } from "../i18n/index.tsx";
 /** Takes the player back to the front page (set by App). */
 export const HomeContext = createContext<(() => void) | null>(null);
 
+/** The way back to the front page, for a screen's own back button (null outside the app). */
+export function useGoHome(): (() => void) | null {
+  return useContext(HomeContext);
+}
+
 /** Its children (the name, by default) as a link to the front page; plain text if there's no way home. */
 export function HomeLink({ className = "", children = "Pipodojo" }: { className?: string; children?: ReactNode }) {
   const goHome = useContext(HomeContext);

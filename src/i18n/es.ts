@@ -72,6 +72,7 @@ export const es: Strings = {
       role: "Soy",
       roles: { parent: "Familia", teacher: "Docente o escuela", researcher: "Investigador(a)" },
       birthYear: "Año en que naciste",
+      yearNeeded: "Elige el año en que naciste, por favor.",
       submit: "Avísenme",
       sending: "Guardando…",
       done: "¡Ya estás en la lista! Te escribiremos cuando abra.",
@@ -157,6 +158,8 @@ export const es: Strings = {
     colors: "Colores",
     go: "¡Vamos al pueblo!",
     back: "Volver al pueblo",
+    /** The garage's back button when you came from the front page. */
+    home: "Inicio",
   },
 
   town: {

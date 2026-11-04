@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { BODIES, COLORS, HEADS, paletteOf, type PipoLook } from "../game/pipoLook.ts";
 import { useLang } from "../i18n/index.tsx";
 import { Button } from "./Button.tsx";
-import { HomeLink } from "./HomeLink.tsx";
+import { useGoHome } from "./HomeLink.tsx";
 import { LangSwitch } from "./LangSwitch.tsx";
 import { SoundButton } from "./SoundButton.tsx";
 import { play } from "../app/sound.ts";
@@ -24,6 +24,8 @@ interface Props {
 export function PipoBuilder({ look, onChange, onDone, first }: Props) {
   const still = useReducedMotion();
   const { lang, t } = useLang();
+  const goHome = useGoHome();
+  const back = first ? goHome : onDone;
   const label = (option: { label: string; es: string; ja: string }) => (lang === "en" ? option.label : option[lang]);
   const go = (
     <Button className="flex-1" onClick={onDone}>
@@ -33,7 +35,23 @@ export function PipoBuilder({ look, onChange, onDone, first }: Props) {
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col justify-center gap-3 p-3 pb-28 md:px-6 md:py-4">
       <header className="glass flex items-center gap-3 rounded-2xl py-1.5 pr-4 pl-1.5">
-        <HomeLink className="ml-2.5 text-lg font-black tracking-tight text-brand-700" />
+        {/* A clear way back: home when you came from the front page, town when you came from the garage in town. */}
+        {back && (
+          <button
+            type="button"
+            onClick={() => {
+              play("tap");
+              back();
+            }}
+            className="flex shrink-0 items-center gap-1.5 rounded-xl border-b-4 border-brand-800 bg-brand-600 py-1.5 pr-3 pl-2 text-sm font-black whitespace-nowrap text-white shadow-[0_8px_18px_-8px_rgb(45_36_112/0.6)] transition hover:bg-brand-700 active:translate-y-0.5 active:border-b-2 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand-500 motion-reduce:transition-none md:text-base"
+          >
+            <span aria-hidden="true" className="text-lg leading-none">
+              ‹
+            </span>
+            {first ? t.builder.home : t.builder.back}
+          </button>
+        )}
+        <span className={`${back ? "hidden sm:inline" : "ml-2.5"} text-lg font-black tracking-tight text-brand-700`}>Pipodojo</span>
         <span className="rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-extrabold text-white">{first ? t.builder.welcome : t.builder.garage}</span>
         <span className="ml-auto hidden items-center gap-1.5 text-xs font-extrabold text-brand-800 sm:inline-flex">
           <span aria-hidden="true">⚡</span> {t.common.poweredBy}

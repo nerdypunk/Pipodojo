@@ -60,14 +60,14 @@ export function Landing({ onPlay }: { onPlay: () => void }) {
                 </li>
               ))}
             </ol>
-            <p className="mt-4 text-sm font-bold text-brand-200">⚡ {l.about.powered}</p>
+            <p className="mt-5 text-center text-sm font-bold text-brand-200">⚡ {l.about.powered}</p>
           </Section>
 
           <Divider />
 
           <Section id="teachers" title={l.teachers.title} lead={l.teachers.lead}>
             <Cards items={l.teachers.points} columns="md:grid-cols-2" />
-            <p className="mt-4 rounded-3xl bg-amber-300/10 px-5 py-4 font-bold text-amber-100 ring-1 ring-amber-200/30">💡 {l.teachers.idea}</p>
+            <p className="mt-4 rounded-3xl bg-amber-300/10 px-5 py-4 text-center font-bold text-amber-100 ring-1 ring-amber-200/30">💡 {l.teachers.idea}</p>
             <div className={`${PANEL} mt-4 px-5 py-8 text-center md:px-10 md:py-10`}>
               <h3 className="text-2xl font-black text-white">👪 {l.accounts.title}</h3>
               <p className="mx-auto mt-2 mb-6 max-w-xl font-semibold text-brand-100/85">{l.accounts.text}</p>

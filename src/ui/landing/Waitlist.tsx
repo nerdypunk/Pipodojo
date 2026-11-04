@@ -6,15 +6,17 @@
 // Adults only (COPPA): the birth year question gives no hint of the cutoff, anyone who might be
 // under 18 gets a kind "ask a grown-up" message, nothing is sent, and the forms stay closed for the
 // rest of the visit so a child can't simply try another year.
+import { motion, useReducedMotion } from "motion/react";
 import { useId, useState, type FormEvent } from "react";
 import { closeWaitlist, isSurelyAdult, joinWaitlist, waitlistClosed, type WaitlistResult, type WaitlistRole } from "../../app/waitlist.ts";
 import { play } from "../../app/sound.ts";
 import { useLang } from "../../i18n/index.tsx";
+import { YearPicker } from "./YearPicker.tsx";
 
-/** Every year from this one back 100 years: recent years too, so the list doesn't hint at an age. */
-const YEARS = Array.from({ length: 101 }, (_, i) => new Date().getFullYear() - i);
+type Status = "idle" | "sending" | "need_year" | WaitlistResult;
 
-type Status = "idle" | "sending" | WaitlistResult;
+/** The switch's pill: a soft spring that overshoots a touch, like something squishy settling. */
+const SPRING = { type: "spring", stiffness: 520, damping: 24, mass: 0.7 } as const;
 
 const FIELD =
   "h-12 w-full rounded-2xl bg-white/10 px-4 font-bold text-white ring-1 ring-white/20 placeholder:text-brand-200/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300";
@@ -26,14 +28,19 @@ export function Waitlist({ roles }: { roles: readonly WaitlistRole[] }) {
   const id = useId();
   const [role, setRole] = useState<WaitlistRole>(roles[0] ?? "parent");
   const [email, setEmail] = useState("");
-  const [year, setYear] = useState("");
+  const [year, setYear] = useState<number | null>(null);
+  const still = useReducedMotion();
   const [website, setWebsite] = useState("");
   const [status, setStatus] = useState<Status>(() => (waitlistClosed() ? "too_young" : "idle"));
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     play("tap");
-    const birthYear = Number(year);
+    if (year === null) {
+      setStatus("need_year");
+      return;
+    }
+    const birthYear = year;
     if (!isSurelyAdult(birthYear)) {
       closeWaitlist();
       setStatus("too_young");
@@ -58,17 +65,41 @@ export function Waitlist({ roles }: { roles: readonly WaitlistRole[] }) {
       {roles.length > 1 && (
         <fieldset className="mb-4 flex justify-center">
           <legend className="sr-only">{w.role}</legend>
+          {/* One pill slides between the choices on a spring and squishes as it lands; a pressed
+              choice gives a little. Still when the player asks for reduced motion. */}
           <div className="inline-flex rounded-full bg-white/10 p-1 ring-1 ring-white/15">
             {roles.map((r) => (
-              <label
+              <motion.label
                 key={r}
-                className={`cursor-pointer rounded-full px-4 py-1.5 text-sm font-extrabold transition has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-brand-300 ${
-                  role === r ? "bg-brand-500 text-white shadow-sm" : "text-brand-100 hover:text-white"
+                whileTap={still ? undefined : { scale: 0.93 }}
+                transition={SPRING}
+                className={`relative cursor-pointer rounded-full px-4 py-1.5 text-sm font-extrabold transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-brand-300 ${
+                  role === r ? "text-white" : "text-brand-100 hover:text-white"
                 }`}
               >
-                <input type="radio" name={`${id}-role`} value={r} checked={role === r} onChange={() => setRole(r)} className="sr-only" />
-                {w.roles[r]}
-              </label>
+                {role === r && (
+                  <motion.span
+                    layoutId={`${id}-pill`}
+                    initial={still ? false : { scaleX: 1.12, scaleY: 0.82 }}
+                    animate={{ scaleX: 1, scaleY: 1 }}
+                    transition={still ? { duration: 0 } : SPRING}
+                    className="absolute inset-0 rounded-full bg-brand-500 shadow-[0_6px_16px_-6px_rgb(110_92_242/0.9)]"
+                    aria-hidden="true"
+                  />
+                )}
+                <input
+                  type="radio"
+                  name={`${id}-role`}
+                  value={r}
+                  checked={role === r}
+                  onChange={() => {
+                    play("toggle");
+                    setRole(r);
+                  }}
+                  className="sr-only"
+                />
+                <span className="relative">{w.roles[r]}</span>
+              </motion.label>
             ))}
           </div>
         </fieldset>
@@ -91,24 +122,15 @@ export function Waitlist({ roles }: { roles: readonly WaitlistRole[] }) {
             className={FIELD}
           />
         </label>
-        <label className="sm:w-52">
-          <span className="sr-only">{w.birthYear}</span>
-          <select
-            required
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-            className={`${FIELD} ${year ? "" : "text-brand-200/70"} [&>option]:bg-[#231c52] [&>option]:text-white`}
-          >
-            <option value="" disabled>
-              {w.birthYear}
-            </option>
-            {YEARS.map((y) => (
-              <option key={y} value={y}>
-                {y}
-              </option>
-            ))}
-          </select>
-        </label>
+        <YearPicker
+          value={year}
+          onChange={(y) => {
+            setYear(y);
+            if (status === "need_year") setStatus("idle");
+          }}
+          invalid={status === "need_year"}
+          className="sm:w-52"
+        />
         {/* Hidden from people (and from screen readers and the keyboard); simple bots fill it in. */}
         <input
           type="text"
@@ -129,7 +151,7 @@ export function Waitlist({ roles }: { roles: readonly WaitlistRole[] }) {
         </button>
       </div>
       <p aria-live="polite" className="mt-2 text-center text-sm font-bold text-amber-200 empty:hidden">
-        {status === "invalid" ? w.invalid : status === "failed" ? w.failed : ""}
+        {status === "invalid" ? w.invalid : status === "failed" ? w.failed : status === "need_year" ? w.yearNeeded : ""}
       </p>
       <p className="mx-auto mt-3 max-w-lg text-center text-xs leading-relaxed font-semibold text-brand-200/80">🔒 {w.privacy}</p>
     </form>
