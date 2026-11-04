@@ -234,7 +234,7 @@ export function App() {
     <PipoLookContext.Provider value={look}>
       {/* The front page has its own dark backgrounds that cover this one completely. */}
       <Backdrop paused={screen.kind === "landing"} />
-      <div className="swup-transition-main">{content}</div>
+      <div className="swup-transition-main" data-screen={screen.kind}>{content}</div>
       <TransitionOverlay direction={direction} />
       {screen.kind !== "landing" && <DesktopNote />}
       {finished && (
