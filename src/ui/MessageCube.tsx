@@ -32,7 +32,9 @@ const DESKTOP = "(min-width: 768px) and (pointer: fine)";
 const STILL = "(prefers-reduced-motion: reduce)";
 /** Things in the card drawn as a shape of their own (pieces, badges, the message bubble, the result). */
 const SHAPES = 'button, img, svg, [class*="bg-"], [class*="ring-"]';
-const ROOM = { max: 230, min: 136, edge: 12, gap: 10 };
+/** `min` is small enough for the narrow strip beside the first pieces on most lessons: with a bigger
+ *  one, a few pixels of window or word width decided whether the cube showed at all. */
+const ROOM = { max: 230, min: 112, edge: 12, gap: 10 };
 
 function useMedia(query: string): boolean {
   return useSyncExternalStore(
@@ -174,7 +176,7 @@ export function MessageCube({ mission, picks, stage, stars, hidden = false }: Pr
           </Suspense>
           <p
             key={caption}
-            className="pop-in absolute bottom-0 left-1/2 max-w-full -translate-x-1/2 rounded-full bg-white/85 px-2.5 py-0.5 text-center text-[11px] leading-tight font-black whitespace-nowrap text-brand-700 shadow-sm ring-1 ring-white"
+            className="pop-in absolute bottom-0 left-1/2 w-max max-w-full -translate-x-1/2 rounded-2xl bg-white/85 px-2.5 py-0.5 text-center text-[11px] leading-tight font-black text-balance text-brand-700 shadow-sm ring-1 ring-white"
           >
             {caption}
           </p>
