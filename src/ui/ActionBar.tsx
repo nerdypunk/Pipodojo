@@ -42,8 +42,9 @@ export function ActionBar(props: Props) {
     );
   }
 
-  // Like a chat app: the message to Pipo sits right next to Check. It's built from the pieces
-  // (never typed), so an empty message is a pointer back up to them, not a text box.
+  // Like a chat app's composer: on phones the message to Pipo uses the full width with Check
+  // under it at the right; on wider screens Check sits right next to it. The message is built
+  // from the pieces (never typed), so an empty message is a pointer back up to them, not a text box.
   const thinking = props.state === "thinking";
   const note = thinking ? t.lesson.reading : props.nudge;
   return (
@@ -54,11 +55,11 @@ export function ActionBar(props: Props) {
           {note}
         </p>
       )}
-      <div className="flex items-end gap-2 sm:gap-3">
-        <div className="min-w-0 flex-1" aria-live="polite">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:gap-3">
+        <div className="min-w-0 sm:flex-1" aria-live="polite">
           <MessageBubble text={props.message} empty={props.state === "build" ? props.empty : ""} />
         </div>
-        <Button className="w-28 shrink-0 sm:w-40" disabled={thinking} onClick={thinking ? undefined : props.onCheck}>
+        <Button className="w-32 shrink-0 self-end sm:w-40" disabled={thinking} onClick={thinking ? undefined : props.onCheck}>
           {thinking ? t.lesson.thinkingButton : t.lesson.check}
         </Button>
       </div>
