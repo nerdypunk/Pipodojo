@@ -4,7 +4,19 @@
 // covers no words: it measures the card each time it changes, finds the biggest empty square
 // along the right edge (lib/freeSpot.ts), and hides itself if there's none. Purely decorative:
 // Pipo's answer and the stars say the same thing in words.
-import { Component, lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from "react";
+import {
+  Component,
+  lazy,
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+  type RefObject,
+} from "react";
 import { flushSync } from "react-dom";
 import type { Mission } from "../engine/types.ts";
 import { cubePieces, cubeVerdict } from "../game/messageCube.ts";
@@ -45,7 +57,8 @@ const near = (a: Spot | null, b: Spot | null) =>
 function taken(el: HTMLElement, box: DOMRect) {
   const rects: DOMRect[] = [];
   const text = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
-    acceptNode: (node) => (node.textContent?.trim() && !node.parentElement?.closest("[data-cube]") ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT),
+    acceptNode: (node) =>
+      node.textContent?.trim() && !node.parentElement?.closest("[data-cube]") ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT,
   });
   const range = document.createRange();
   for (let node = text.nextNode(); node; node = text.nextNode()) {
@@ -59,16 +72,18 @@ function taken(el: HTMLElement, box: DOMRect) {
     // Skip wrappers as big as the card itself.
     if (r.width * r.height < box.width * box.height * 0.6) rects.push(r);
   }
-  return rects
-    .filter((r) => r.width > 0 && r.height > 0)
-    .map((r) => ({ x: r.left - box.left, y: r.top - box.top, w: r.width, h: r.height }));
+  return rects.filter((r) => r.width > 0 && r.height > 0).map((r) => ({ x: r.left - box.left, y: r.top - box.top, w: r.width, h: r.height }));
 }
 
-/** The biggest empty square in the card, kept up to date as the card changes. */
-function useFreeSpot(area: RefObject<HTMLElement | null>, on: boolean): Spot | null {
+/**
+ * The biggest empty square in the card, kept up to date as the card changes. The card is whatever
+ * holds the cube's own invisible marker: a component's own elements are always in place when its
+ * effects run (a parent's ref may not be yet, which once left the cube with no card to measure).
+ */
+function useFreeSpot(marker: RefObject<HTMLElement | null>, on: boolean): Spot | null {
   const [spot, setSpot] = useState<Spot | null>(null);
   useLayoutEffect(() => {
-    const el = area.current;
+    const el = marker.current?.parentElement;
     if (!on || !el) return;
     // Measured the moment the card changes and applied before the next paint, so the cube is never
     // seen over a piece that just got wider.
@@ -97,7 +112,7 @@ function useFreeSpot(area: RefObject<HTMLElement | null>, on: boolean): Spot | n
       resize.disconnect();
       changes.disconnect();
     };
-  }, [area, on]);
+  }, [marker, on]);
   return on ? spot : null;
 }
 
@@ -119,48 +134,53 @@ interface Props {
   picks: readonly string[];
   stage: CubeStage;
   stars: number | null;
-  /** The card the cube hovers over (positioned, so the cube can sit inside it). */
-  area: RefObject<HTMLElement | null>;
   /** Hidden while something else needs the attention (Pipo's floating phone). */
   hidden?: boolean;
 }
 
-export function MessageCube({ mission, picks, stage, stars, area, hidden = false }: Props) {
+/** Goes straight inside the card it hovers over, which must be positioned (relative). */
+export function MessageCube({ mission, picks, stage, stars, hidden = false }: Props) {
   const desktop = useMedia(DESKTOP) && !TOUCH;
   const still = useMedia(STILL);
   const { t } = useLang();
   const pieces = useMemo(() => cubePieces(mission), [mission]);
-  const spot = useFreeSpot(area, desktop);
+  const marker = useRef<HTMLSpanElement>(null);
+  const spot = useFreeSpot(marker, desktop);
   // Once loaded, the 3D stays put while hidden (rebuilding it costs more than keeping it), just paused.
   const last = useRef<Spot | null>(null);
   if (spot) last.current = spot;
   const self = useRef<HTMLDivElement>(null);
   const onScreen = useOnScreen(self, desktop && !!last.current);
-  if (!desktop || !last.current) return null;
-  const shown = !!spot && !hidden;
+  if (!desktop) return null;
   const at = last.current;
+  const marked = <span ref={marker} data-cube="" hidden />;
+  if (!at) return <>{marked}</>;
+  const shown = !!spot && !hidden;
   // Live, like the cube: what the message so far looks like.
   const caption = pieces.some((p) => picks.includes(p.id)) ? t.cube[cubeVerdict(pieces, picks)] : t.cube.building;
   return (
-    <Quiet>
-      <div
-        ref={self}
-        data-cube=""
-        aria-hidden="true"
-        className={`pointer-events-none absolute z-20 transition-opacity duration-300 motion-reduce:transition-none ${shown ? "opacity-100" : "opacity-0"}`}
-        style={{ left: at.x, top: at.y, width: at.size, height: at.size }}
-      >
-        <Suspense fallback={null}>
-          <MessageCubeCanvas pieces={pieces} picks={picks} stage={stage} stars={stars} still={still} paused={!shown || !onScreen} />
-        </Suspense>
-        <p
-          key={caption}
-          className="pop-in absolute bottom-0 left-1/2 max-w-full -translate-x-1/2 rounded-full bg-white/85 px-2.5 py-0.5 text-center text-[11px] leading-tight font-black whitespace-nowrap text-brand-700 shadow-sm ring-1 ring-white"
+    <>
+      {marked}
+      <Quiet>
+        <div
+          ref={self}
+          data-cube=""
+          aria-hidden="true"
+          className={`pointer-events-none absolute z-20 transition-opacity duration-300 motion-reduce:transition-none ${shown ? "opacity-100" : "opacity-0"}`}
+          style={{ left: at.x, top: at.y, width: at.size, height: at.size }}
         >
-          {caption}
-        </p>
-      </div>
-    </Quiet>
+          <Suspense fallback={null}>
+            <MessageCubeCanvas pieces={pieces} picks={picks} stage={stage} stars={stars} still={still} paused={!shown || !onScreen} />
+          </Suspense>
+          <p
+            key={caption}
+            className="pop-in absolute bottom-0 left-1/2 max-w-full -translate-x-1/2 rounded-full bg-white/85 px-2.5 py-0.5 text-center text-[11px] leading-tight font-black whitespace-nowrap text-brand-700 shadow-sm ring-1 ring-white"
+          >
+            {caption}
+          </p>
+        </div>
+      </Quiet>
+    </>
   );
 }
 

@@ -234,7 +234,6 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack, picker }: Pro
                 "pick a message" lessons: there are no pieces to build with there. */}
             {!picker && (
               <MessageCube
-                area={buildRef}
                 mission={mission}
                 picks={picks}
                 stage={phase.name === "build" ? "build" : thinking ? "assemble" : "done"}
