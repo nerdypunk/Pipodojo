@@ -75,8 +75,11 @@ function sameSecret(a, b) {
 export function createDigestHandler({ now = Date.now } = {}) {
   return async function onDigest({ request, env }) {
     if (request.method !== "POST") return json(405, { error: { message: "Use POST." } });
-    if (!env.DIGEST_KEY || !sameSecret(request.headers.get("x-digest-key"), env.DIGEST_KEY)) {
-      return json(403, { error: { message: "Not allowed." } });
+    // Says which problem it is (never the key itself), and forgives spaces or line breaks that slip
+    // in when a key is pasted.
+    if (!env.DIGEST_KEY?.trim()) return json(503, { error: { message: "The digest key isn't set up on this version." } });
+    if (!sameSecret(request.headers.get("x-digest-key")?.trim(), env.DIGEST_KEY.trim())) {
+      return json(403, { error: { message: "Not allowed: that key doesn't match." } });
     }
     try {
       const time = now();
