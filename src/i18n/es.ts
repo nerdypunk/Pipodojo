@@ -63,7 +63,7 @@ export const es: Strings = {
     },
     accounts: {
       title: "Pronto: cuentas para familias y escuelas",
-      text: "Muy pronto las familias y las escuelas podrán crear cuentas. Déjanos tu correo y te avisamos cuando estén listas.",
+      text: "Las cuentas traerán contenido premium adicional y rutas de aprendizaje personalizadas para cada niño o clase. Déjanos tu correo y te avisamos cuando estén listas.",
     },
     waitlist: {
       label: "Únete a la lista de espera",

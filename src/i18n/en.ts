@@ -66,7 +66,7 @@ export const en = {
     /** Accounts for parents and schools: coming, with a waitlist. */
     accounts: {
       title: "Accounts for parents and schools are coming",
-      text: "Soon parents and schools will be able to make accounts. Leave your email and we'll let you know when they open.",
+      text: "Accounts will bring extra premium content and personalized learning tracks for each child or class. Leave your email and we'll let you know when they open.",
     },
     /** The waitlist form (adults only). */
     waitlist: {
