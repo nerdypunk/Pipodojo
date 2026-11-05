@@ -68,7 +68,7 @@ export function FloatingPhone({ action, flags, status, open, onOpen, onClose, on
         onClick={onOpen}
         initial={still ? false : { scale: 0.6, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-[calc(50%-80px)] z-40 flex items-center gap-2 rounded-full bg-ink px-4 py-3 font-extrabold text-white shadow-[0_12px_30px_-8px_rgb(27_22_64/0.7)] md:top-24 md:right-8 md:bottom-auto md:left-auto"
+        className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-[calc(50%-80px)] z-40 flex items-center gap-2 rounded-full bg-ink px-4 py-3 font-extrabold text-white shadow-[0_12px_30px_-8px_rgb(27_22_64/0.7)] md:top-24 md:right-8 md:bottom-auto md:left-auto min-[1700px]:right-auto min-[1700px]:left-[calc(50%+576px)]"
       >
         <span aria-hidden="true">{laptop ? "💻" : "📱"}</span> {laptop ? t.device.laptop : t.device.phone}
         {status === "review" && <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-amber-300 motion-reduce:animate-none" />}
@@ -78,7 +78,8 @@ export function FloatingPhone({ action, flags, status, open, onOpen, onClose, on
 
   return (
     <>
-      {/* The phone can be dragged anywhere inside the window */}
+      {/* On wide screens the phone sits right beside the lesson (576px is half its max-w-6xl), not out at
+          the window's edge; with no room there it keeps 2rem from the edge. It can be dragged anywhere. */}
       <div ref={bounds} className="pointer-events-none fixed inset-3 z-40" aria-hidden="true" />
       <motion.div
         drag
@@ -99,10 +100,10 @@ export function FloatingPhone({ action, flags, status, open, onOpen, onClose, on
         style={{ rotateX, rotateY, transformPerspective: 1600 }}
         onPointerMove={tilt}
         onPointerLeave={untilt}
-        className={`fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-50 cursor-grab touch-none md:top-20 md:right-8 md:bottom-auto md:left-auto ${
+        className={`fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-50 cursor-grab touch-none md:top-20 md:bottom-auto md:left-auto ${
           laptop
-            ? "left-[calc(50%-170px)] h-[min(400px,calc(100dvh-1.5rem))] w-[340px] md:h-[min(420px,calc(100dvh-14rem))] md:w-[460px]"
-            : "left-[calc(50%-136px)] h-[min(568px,calc(100dvh-1.5rem))] w-[272px] md:h-[min(568px,calc(100dvh-18rem))]"
+            ? "left-[calc(50%-170px)] h-[min(400px,calc(100dvh-1.5rem))] w-[340px] md:right-[max(2rem,calc(50%-576px-460px))] md:h-[min(420px,calc(100dvh-14rem))] md:w-[460px]"
+            : "left-[calc(50%-136px)] h-[min(568px,calc(100dvh-1.5rem))] w-[272px] md:right-[max(2rem,calc(50%-576px-272px))] md:h-[min(568px,calc(100dvh-18rem))]"
         }`}
         role="dialog"
         aria-label={laptop ? t.device.laptop : t.device.phone}

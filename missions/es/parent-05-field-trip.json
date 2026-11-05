@@ -179,8 +179,8 @@
         },
         {
           "id": "go_now",
-          "label": "Solo envíalo",
-          "text": "Solo envíalo.",
+          "label": "Envíalo ya, la escuela está esperando",
+          "text": "Envíalo ya, la escuela está esperando.",
           "quality": "weak"
         }
       ]

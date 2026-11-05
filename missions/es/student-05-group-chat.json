@@ -122,8 +122,8 @@
         },
         {
           "id": "tell",
-          "label": "Cuéntales el plan a todos",
-          "text": "Cuéntales el plan a todos.",
+          "label": "Cuéntale a toda la clase nuestro plan",
+          "text": "Cuéntale a toda la clase nuestro plan.",
           "quality": "weak"
         }
       ]
@@ -187,7 +187,7 @@
       "signals": [
         "📨(?![^\\n]*clima)"
       ],
-      "hint": "\"Todos\" no dice a qué chat.",
+      "hint": "\"Toda la clase\" no dice a qué chat.",
       "explain": "Pipo no sabía a qué chat, así que no llegó al Grupo Clima."
     },
     {

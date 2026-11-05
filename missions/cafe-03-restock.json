@@ -157,8 +157,8 @@
         },
         {
           "id": "order_stuff",
-          "label": "Order what we need",
-          "text": "Order what we need.",
+          "label": "Order whatever you think we'll need",
+          "text": "Order whatever you think we'll need.",
           "quality": "weak"
         }
       ]
@@ -222,7 +222,7 @@
       "signals": [
         "🛒(?![^\\n]*(flour|butter))"
       ],
-      "hint": "\"What we need\" doesn't say what to order.",
+      "hint": "\"Whatever you think we'll need\" doesn't say what to order.",
       "explain": "Pipo didn't know what to order, so the basket is missing your baking list."
     },
     {

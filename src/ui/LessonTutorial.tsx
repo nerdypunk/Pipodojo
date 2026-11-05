@@ -1,5 +1,5 @@
 // A quick first-time tour of the lesson screen: it dims the page and spotlights one part at a
-// time (the situation, where the message is built, then the message and Check), with a short
+// time (the situation, where the message is built, the message and Check, then Under the hood), with a short
 // card beside it. Shown once, on whichever lesson a player opens first; remembered on the device.
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
 import { useLang } from "../i18n/index.tsx";

@@ -179,8 +179,8 @@
         },
         {
           "id": "go_now",
-          "label": "Envíalo ahora",
-          "text": "Envíalo ahora.",
+          "label": "Envíalo ahora, a mí me parece bien",
+          "text": "Envíalo ahora, a mí me parece bien.",
           "quality": "weak"
         }
       ]
@@ -193,7 +193,7 @@
       "signals": [
         "📧(?![^\\n]*okafor)"
       ],
-      "hint": "\"El profe\" no dice quién debe recibirlo.",
+      "hint": "\"Escríbele al profe\" no dice quién debe recibirlo.",
       "explain": "Pipo no sabía a quién escribirle, así que no va dirigido a la profesora Okafor."
     },
     {

@@ -120,7 +120,7 @@
       "pieces": [
         {
           "id": "fix_button",
-          "label": "Arregla el botón Más fotos de la página de fotos",
+          "label": "Arregla el botón Más fotos",
           "text": "Arregla el botón \"Más fotos\" de la página de fotos de mi sitio.",
           "quality": "good"
         },
@@ -171,8 +171,8 @@
         },
         {
           "id": "go_now",
-          "label": "Arréglalo en vivo",
-          "text": "Arréglalo en vivo y ya.",
+          "label": "Arréglalo en vivo para que nadie lo vea roto",
+          "text": "Arréglalo en vivo para que nadie lo vea roto.",
           "quality": "weak"
         }
       ]

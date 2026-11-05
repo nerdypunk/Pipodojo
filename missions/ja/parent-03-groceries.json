@@ -201,7 +201,7 @@
       "pieces": [
         {
           "id": "check_cart",
-          "label": "カートを見せて、OKを待って",
+          "label": "先にカートを見せて",
           "text": "支払う前にカートを見せて、私のOKを待ってください。",
           "quality": "good"
         },

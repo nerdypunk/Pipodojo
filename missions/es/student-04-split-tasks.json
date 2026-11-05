@@ -33,7 +33,7 @@
         {
           "id": "divide",
           "label": "Divide el trabajo",
-          "text": "Divide el trabajo.",
+          "text": "Divide el trabajo entre todos los del grupo.",
           "quality": "weak"
         }
       ]
@@ -58,13 +58,13 @@
         {
           "id": "fair",
           "label": "Que sea justo",
-          "text": "Que sea justo.",
+          "text": "Que sea justo, que todos hagan más o menos lo mismo.",
           "quality": "neutral"
         },
         {
           "id": "easiest",
           "label": "¡Dame la parte más fácil!",
-          "text": "¡Dame la parte más fácil!",
+          "text": "¡Dame la parte más fácil, esta semana tengo muchísimo que hacer!",
           "quality": "weak",
           "tip": "Quedarte con la parte más fácil no hace un buen plan, y tu grupo lo va a notar."
         }
@@ -94,7 +94,8 @@
       "id": "lee_design",
       "when": "not_picked:design",
       "signals": [
-        "(^|\\n)(?![^\\n]*(diapositiva|dise[ñn]|visual|slide|l[aá]mina|gr[aá]fic))[^a-záéíóúñü\\n]*lee(?![a-záéíóúñü])"
+        "(^|\\n)(?![^\\n]*(diapositiva|dise[ñn]|visual|slide|l[aá]mina|gr[aá]fic))[^a-záéíóúñü\\n]*lee(?![a-záéíóúñü])",
+        "(^|\\n)(?![^\\n]*(?<![a-záéíóúñü])lee(?![a-záéíóúñü]))[^\\n]*(diapositiva|dise[ñn]|visual|slide|l[aá]mina)"
       ],
       "hint": "No le dijiste a Pipo en qué es bueno Lee.",
       "explain": "Pipo no sabía que a Lee se le da muy bien el diseño, así que le tocó otra tarea."

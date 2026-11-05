@@ -94,8 +94,8 @@
         },
         {
           "id": "find_chair",
-          "label": "Búscame una silla cómoda",
-          "text": "Búscame una silla cómoda.",
+          "label": "Búscame una silla bien cómoda y acogedora",
+          "text": "Búscame una silla bien cómoda y acogedora.",
           "quality": "weak"
         }
       ]
@@ -160,7 +160,7 @@
       "signals": [
         "(taburete|plegable|\\bpuff?\\b|silla de piso)"
       ],
-      "hint": "\"Una silla cómoda\" no dice que la necesitas para largas jornadas en tu escritorio.",
+      "hint": "\"Una silla bien cómoda\" no dice que la necesitas para largas jornadas en tu escritorio.",
       "explain": "Pipo no sabía que necesitas soporte para la espalda, así que guardó una silla cómoda que no ayuda a tu espalda en el escritorio."
     },
     {

@@ -127,8 +127,8 @@
         },
         {
           "id": "email_everyone",
-          "label": "Email everyone",
-          "text": "Email everyone about the sale.",
+          "label": "Email everyone in my contacts about it",
+          "text": "Email everyone in my contacts about the sale.",
           "quality": "weak"
         }
       ]

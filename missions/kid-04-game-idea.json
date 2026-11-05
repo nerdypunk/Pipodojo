@@ -31,8 +31,8 @@
         },
         {
           "id": "game",
-          "label": "Make a cool game",
-          "text": "Make a cool game.",
+          "label": "Make a really cool game everyone will love",
+          "text": "Make a really cool game everyone will love.",
           "quality": "weak"
         }
       ]
@@ -57,13 +57,13 @@
         {
           "id": "levels",
           "label": "3 levels",
-          "text": "Give it 3 levels.",
+          "text": "Give it 3 levels, each one a little harder.",
           "quality": "neutral"
         },
         {
           "id": "impossible",
           "label": "Make it super impossible!",
-          "text": "Make it super impossible!",
+          "text": "Make it super impossible, so nobody can ever finish it!",
           "quality": "weak",
           "tip": "Impossible games make players quit. Fun comes from 'hard, but I can do it'."
         }
@@ -75,9 +75,10 @@
       "id": "vague_goal",
       "when": "picked:game",
       "signals": [
-        "^(?![\\s\\S]*(candy|sweet|lolli|choco|gum|sugar))"
+        "^(?![\\s\\S]*(candy|sweet|lolli|choco|gum|sugar))",
+        "^(?![\\s\\S]*(climb|obstacle|parkour))"
       ],
-      "hint": "\"A cool game\" doesn't say what kind of game.",
+      "hint": "\"A really cool game\" doesn't say what kind of game.",
       "explain": "Pipo Code didn't know your idea, so it designed a different game."
     },
     {

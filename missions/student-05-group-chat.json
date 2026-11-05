@@ -121,8 +121,8 @@
         },
         {
           "id": "tell",
-          "label": "Tell everyone the plan",
-          "text": "Tell everyone the plan.",
+          "label": "Let everyone in the class know our plan",
+          "text": "Let everyone in the class know our plan.",
           "quality": "weak"
         }
       ]

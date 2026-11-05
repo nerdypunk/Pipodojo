@@ -178,8 +178,8 @@
         },
         {
           "id": "help_flight",
-          "label": "Ayúdame con mi vuelo",
-          "text": "Ayúdame con mi vuelo.",
+          "label": "Resuélveme todo el lío del vuelo",
+          "text": "Resuélveme todo el lío del vuelo.",
           "quality": "weak"
         }
       ]
@@ -244,7 +244,7 @@
         "👤(?![^\\n]*cloudhop)",
         "^(?![\\s\\S]*📋)"
       ],
-      "hint": "\"Mi vuelo\" no dice cuál aerolínea ni qué quieres que se haga.",
+      "hint": "\"El lío del vuelo\" no dice cuál aerolínea ni qué quieres que se haga.",
       "explain": "Pipo no sabía que era la solicitud de reembolso de Cloudhop Air, así que el reclamo no va a la aerolínea que te debe."
     },
     {

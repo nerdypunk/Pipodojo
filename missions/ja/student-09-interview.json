@@ -26,14 +26,14 @@
       "pieces": [
         {
           "id": "practise",
-          "label": "Bloom Caféのバリスタ面接の練習を手伝って",
+          "label": "Bloom Caféの面接の練習相手になって",
           "text": "Bloom Caféのバリスタの面接に向けて、練習を手伝ってください。",
           "quality": "good"
         },
         {
           "id": "interview",
-          "label": "面接を手伝って",
-          "text": "面接を手伝ってください。",
+          "label": "仕事の面接の準備を手伝って",
+          "text": "仕事の面接の準備を手伝ってください。",
           "quality": "weak"
         }
       ]

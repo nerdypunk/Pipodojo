@@ -136,7 +136,7 @@
       "pieces": [
         {
           "id": "add_all",
-          "label": "Agrega el paseo, la venta y la reunión",
+          "label": "Agrega los tres eventos de la escuela",
           "text": "Agrega estos eventos escolares a nuestro calendario familiar: el paseo al museo, la venta de pasteles y la reunión de padres.",
           "quality": "good"
         },
@@ -168,7 +168,7 @@
         {
           "id": "colours",
           "label": "¡Que quede colorido!",
-          "text": "¡Que quede colorido!",
+          "text": "¡Que quede colorido, con un color distinto para cada evento!",
           "quality": "weak",
           "tip": "Los colores son bonitos, pero Pipo igual necesita las fechas y las horas para que el calendario quede bien."
         }
@@ -188,7 +188,7 @@
         {
           "id": "go_now",
           "label": "Solo agrégalos",
-          "text": "Solo agrégalos.",
+          "text": "Solo agrégalos todos ya, no hace falta que me los muestres.",
           "quality": "weak",
           "tip": "Si se agregan sin que los veas, una hora equivocada puede quedarse en el calendario sin que nadie lo note."
         }

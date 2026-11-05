@@ -190,8 +190,8 @@
         },
         {
           "id": "go_now",
-          "label": "Turn it on now",
-          "text": "Turn it on now.",
+          "label": "Turn it on now, players are waiting",
+          "text": "Turn it on now, players are waiting.",
           "quality": "weak"
         }
       ]

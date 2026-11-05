@@ -121,8 +121,8 @@
         },
         {
           "id": "tell_staff",
-          "label": "Tell the staff",
-          "text": "Tell the staff about the schedule.",
+          "label": "Let all the staff know about the schedule",
+          "text": "Let all the staff know about the schedule.",
           "quality": "weak"
         }
       ]

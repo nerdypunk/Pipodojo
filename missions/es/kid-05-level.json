@@ -161,7 +161,7 @@
         {
           "id": "build",
           "label": "Construye mi juego",
-          "text": "Construye mi juego.",
+          "text": "Construye mi juego para que pueda empezar a jugarlo.",
           "quality": "weak"
         }
       ]
@@ -186,13 +186,13 @@
         {
           "id": "jump",
           "label": "Agrega un trampolín",
-          "text": "Agrega un trampolín en algún lugar.",
+          "text": "Agrega un trampolín en algún lugar divertido del nivel.",
           "quality": "neutral"
         },
         {
           "id": "lava",
           "label": "¡Llénalo de lava!",
-          "text": "¡Llénalo de lava!",
+          "text": "¡Llénalo de lava por todos lados, entre más, mejor!",
           "quality": "weak",
           "tip": "Lava por todos lados en el nivel 1 hace que los jugadores se rindan. Empieza fácil y ve subiendo."
         }
@@ -211,8 +211,8 @@
         },
         {
           "id": "go_now",
-          "label": "Publícalo de inmediato",
-          "text": "Publícalo de inmediato.",
+          "label": "Publícalo de inmediato para poder compartirlo",
+          "text": "Publícalo de inmediato para poder compartirlo.",
           "quality": "weak"
         }
       ]

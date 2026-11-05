@@ -32,7 +32,7 @@
         {
           "id": "divide",
           "label": "Divide the work",
-          "text": "Divide the work.",
+          "text": "Divide the work between everyone in the group.",
           "quality": "weak"
         }
       ]
@@ -57,13 +57,13 @@
         {
           "id": "fair",
           "label": "Keep it fair",
-          "text": "Keep it fair.",
+          "text": "Keep it fair, so everyone does about the same amount.",
           "quality": "neutral"
         },
         {
           "id": "easiest",
           "label": "Give me the easiest bit!",
-          "text": "Give me the easiest bit!",
+          "text": "Give me the easiest bit, I'm really busy this week!",
           "quality": "weak",
           "tip": "Grabbing the easiest part doesn't make a good plan, and your group will notice."
         }
@@ -93,7 +93,8 @@
       "id": "lee_design",
       "when": "not_picked:design",
       "signals": [
-        "(^|\\n)(?=[^\\n]*\\blee\\b)(?![^\\n]*(slide|design|visual))"
+        "(^|\\n)(?=[^\\n]*\\blee\\b)(?![^\\n]*(slide|design|visual))",
+        "(^|\\n)(?![^\\n]*\\blee\\b)[^\\n]*(slide|design|visual)"
       ],
       "hint": "You didn't tell Pipo what Lee is good at.",
       "explain": "Pipo didn't know Lee is great at design, so Lee got a different job."

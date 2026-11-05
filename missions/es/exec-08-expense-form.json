@@ -178,8 +178,8 @@
         },
         {
           "id": "fill_form",
-          "label": "Llena el formulario",
-          "text": "Llena el formulario por mí.",
+          "label": "Llena ese formulario de impuestos por mí",
+          "text": "Llena ese formulario de impuestos por mí.",
           "quality": "weak"
         }
       ]
@@ -243,7 +243,7 @@
       "signals": [
         "👤(?![^\\n]*(dana|reyes))"
       ],
-      "hint": "\"El formulario\" no dice cuál es ni para quién.",
+      "hint": "\"Ese formulario de impuestos\" no dice cuál es ni para quién.",
       "explain": "Pipo no sabía que el formulario es para Dana, así que no va dirigido a tu contador."
     },
     {

@@ -169,8 +169,8 @@
         },
         {
           "id": "buy_any",
-          "label": "Buy me a chair",
-          "text": "Buy me a chair.",
+          "label": "Buy one of the chairs we looked at",
+          "text": "Buy one of the chairs we looked at.",
           "quality": "weak"
         }
       ]
@@ -234,7 +234,7 @@
       "signals": [
         "🪑(?![^\\n]*green)"
       ],
-      "hint": "\"A chair\" doesn't say which one you agreed to buy.",
+      "hint": "\"One of the chairs we looked at\" doesn't say which one you agreed to buy.",
       "explain": "Pipo didn't know which chair, so it isn't Alex's green desk chair."
     },
     {

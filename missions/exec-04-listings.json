@@ -93,8 +93,8 @@
         },
         {
           "id": "find_chair",
-          "label": "Find me a comfy chair",
-          "text": "Find me a comfy chair.",
+          "label": "Find me a really cozy, comfy chair",
+          "text": "Find me a really cozy, comfy chair.",
           "quality": "weak"
         }
       ]
@@ -159,7 +159,7 @@
       "signals": [
         "\\b(stool|folding|bean ?bag|floor chair)"
       ],
-      "hint": "\"A comfy chair\" doesn't say you need it for long workdays at your desk.",
+      "hint": "\"A really cozy, comfy chair\" doesn't say you need it for long workdays at your desk.",
       "explain": "Pipo didn't know you need back support, so it saved a comfy chair that won't help your back at your desk."
     },
     {

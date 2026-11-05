@@ -142,8 +142,8 @@
         },
         {
           "id": "remember",
-          "label": "Acuérdate de lo de Jordan",
-          "text": "Acuérdate de lo de Jordan.",
+          "label": "Anota algo para acordarnos de lo de Jordan",
+          "text": "Anota algo para acordarnos de lo de Jordan.",
           "quality": "weak"
         }
       ]
@@ -193,8 +193,8 @@
         },
         {
           "id": "go_now",
-          "label": "Solo agrégalo",
-          "text": "Solo agrégalo.",
+          "label": "Agrégalo ya, seguro que está bien",
+          "text": "Agrégalo ya, seguro que está bien.",
           "quality": "weak",
           "tip": "Si lo agregas sin revisarlo, un día equivocado puede quedarse en el calendario sin que nadie lo note."
         }
@@ -206,7 +206,7 @@
       "id": "vague_goal",
       "when": "picked:remember",
       "signals": [
-        "📅(?![^\\n]*jordan)"
+        "📅(?![^\\n]*(bienvenid|recib|regres|de vuelta|salud))"
       ],
       "hint": "\"Lo de Jordan\" no dice qué hay que recordar.",
       "explain": "Pipo no sabía qué planear, así que el evento no tiene sentido."

@@ -116,7 +116,7 @@
       "pieces": [
         {
           "id": "invite_group",
-          "label": "Invita al grupo Club de la parrilla",
+          "label": "Invita al Club de la parrilla",
           "text": "Envía una invitación a mi chat de grupo \"Club de la parrilla\".",
           "quality": "good"
         },

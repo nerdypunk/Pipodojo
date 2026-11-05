@@ -193,7 +193,7 @@
       "signals": [
         "📧(?![^\\n]*jordan)"
       ],
-      "hint": "\"El cliente\" no dice quién debe recibirlo.",
+      "hint": "\"Escríbele al cliente\" no dice quién debe recibirlo.",
       "explain": "Pipo no sabía a quién escribirle, así que el correo no va dirigido a Jordan."
     },
     {

@@ -115,7 +115,7 @@
       "id": "vague_goal",
       "when": "picked:somewhere",
       "signals": [
-        "^(?![\\s\\S]*(?<![a-záéíóúñü])(niñ[oa]s?|ni[nñ]os|familia(r|res)?|hij[oa]s?|peques|infantil(es)?)(?![a-záéíóúñü]))"
+        "^(?![\\s\\S]*((?<![$\\d.])\\b(6|seis)\\b[^\\n]{0,15}(?<![$\\d.])\\b(9|nueve)\\b|\\b(2|dos) (niñ[oa]s|hij[oa]s|chic[oa]s)(?![a-záéíóúñü])))"
       ],
       "hint": "\"Algo divertido\" no dice quiénes van, así que Pipo tiene que adivinar.",
       "explain": "Pipo no sabía que es para la familia, así que no pensó en los niños."

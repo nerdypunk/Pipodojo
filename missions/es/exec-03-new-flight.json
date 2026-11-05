@@ -193,8 +193,8 @@
         },
         {
           "id": "go_now",
-          "label": "Solo agrégalos",
-          "text": "Solo agrégalos.",
+          "label": "Agrega todo a mi calendario ya",
+          "text": "Agrega todo a mi calendario ahora mismo.",
           "quality": "weak",
           "tip": "Si se agregan sin que los veas, una hora equivocada puede quedarse en tu calendario sin que lo notes."
         }

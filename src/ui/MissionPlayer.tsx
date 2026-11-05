@@ -67,6 +67,7 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack, picker }: Pro
   const [touring, setTouring] = useState(tutorialPending);
   const buildRef = useRef<HTMLElement>(null);
   const composerRef = useRef<HTMLDivElement>(null);
+  const hoodRef = useRef<HTMLButtonElement>(null);
   const traced = (client: ModelClient) => recordingClient(client, () => performance.now(), (call) => setCalls((c) => [...c, call]));
 
   async function check() {
@@ -253,10 +254,11 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack, picker }: Pro
 
       <UnderTheHood
         mission={mission}
-        prompt={buildPrompt(mission, picks)}
+        picks={picks}
         calls={calls}
         waiting={thinking || phone?.status === "working"}
         score={result?.score ?? null}
+        buttonRef={hoodRef}
       />
 
       {touring && (
@@ -265,6 +267,7 @@ export function MissionPlayer({ mission, lesson, onFinish, onBack, picker }: Pro
             { target: sceneRef, title: t.tutorial.situationTitle, text: t.tutorial.situation },
             { target: buildRef, title: picker ? t.tutorial.pickTitle : t.tutorial.buildTitle, text: picker ? t.tutorial.pick : t.tutorial.build },
             { target: composerRef, title: t.tutorial.checkTitle, text: picker ? t.tutorial.checkPick : t.tutorial.checkBuild },
+            { target: hoodRef, title: t.tutorial.hoodTitle, text: t.tutorial.hood },
           ]}
           onDone={() => setTouring(false)}
         />

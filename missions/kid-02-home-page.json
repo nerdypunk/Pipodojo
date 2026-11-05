@@ -131,8 +131,8 @@
         },
         {
           "id": "build_page",
-          "label": "Build a page",
-          "text": "Build a page.",
+          "label": "Build an awesome page with lots of cool stuff",
+          "text": "Build an awesome page with lots of cool stuff.",
           "quality": "weak"
         }
       ]
@@ -208,7 +208,7 @@
       "signals": [
         "🌐(?![^\\n]*(nugget|hamster))"
       ],
-      "hint": "\"Build a page\" doesn't say which page or what it's about.",
+      "hint": "\"Build an awesome page with lots of cool stuff\" doesn't say which page or what it's about.",
       "explain": "Pipo Code didn't know it's Nugget's home page, so it built something else."
     },
     {

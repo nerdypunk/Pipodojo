@@ -126,8 +126,8 @@
         },
         {
           "id": "email_accountant",
-          "label": "Escríbele a mi contador",
-          "text": "Escríbele un correo a mi contador sobre una llamada.",
+          "label": "Escríbele a mi contador para que hablemos pronto",
+          "text": "Escríbele un correo a mi contador para que hablemos pronto.",
           "quality": "weak"
         }
       ]

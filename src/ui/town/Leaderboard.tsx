@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { fetchLeaderboard, type CountryRow, type Leaderboard as Board } from "../../app/leaderboard.ts";
 import { countryName, flagOf } from "../../game/countries.ts";
 import { useLang } from "../../i18n/index.tsx";
+import { useCloseOnOutside } from "../useCloseOnOutside.ts";
 
 const TOP = 10;
 const MEDALS = ["🥇", "🥈", "🥉"];
@@ -20,6 +21,8 @@ export function Leaderboard({ onClose }: Props) {
   const [board, setBoard] = useState<Board | null | "loading">("loading");
   const [tab, setTab] = useState<Tab>("today");
   const close = useRef<HTMLButtonElement>(null);
+  const panel = useRef<HTMLElement>(null);
+  useCloseOnOutside(panel, onClose, "[data-board-toggle]");
 
   useEffect(() => {
     let live = true;
@@ -40,13 +43,12 @@ export function Leaderboard({ onClose }: Props) {
   const empty = tab === "today" ? t.town.leaderboardEmpty : t.town.leaderboardEmptyAll;
 
   return (
-    <div className="fixed inset-0 z-[55]" onClick={onClose}>
+    <div className="pointer-events-none fixed inset-0 z-[55]">
       <section
+        ref={panel}
         role="dialog"
-        aria-modal="true"
         aria-labelledby="leaderboard-title"
-        onClick={(e) => e.stopPropagation()}
-        className="pop-in absolute inset-x-3 top-20 mx-auto max-w-sm rounded-3xl bg-white/95 p-4 shadow-2xl ring-1 ring-white sm:inset-x-auto sm:right-6 sm:w-80 md:top-24"
+        className="pop-in pointer-events-auto absolute inset-x-3 top-20 mx-auto max-w-sm rounded-3xl bg-white/95 p-4 shadow-2xl ring-1 ring-white sm:inset-x-auto sm:right-6 sm:w-80 md:top-24"
       >
         <div className="flex items-start justify-between gap-2">
           <div>

@@ -9,7 +9,7 @@ import { pathsOf } from "../../game/paths.ts";
 import type { PipoLook } from "../../game/pipoLook.ts";
 import { personasIn } from "../../game/personas.ts";
 import { useLang } from "../../i18n/index.tsx";
-import { HomeLink } from "../HomeLink.tsx";
+import { useGoHome } from "../HomeLink.tsx";
 import { LangSwitch } from "../LangSwitch.tsx";
 import { SoundButton } from "../SoundButton.tsx";
 import { SupportButton } from "../Support.tsx";
@@ -55,6 +55,7 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
   const [selected, setSelected] = useState<PlaceId | null>(null);
   // Today's leaderboard, opened from the 🏆 button.
   const [showBoard, setShowBoard] = useState(false);
+  const goHome = useGoHome();
   const closeBoard = useCallback(() => setShowBoard(false), []);
   const [has3D] = useState(canDraw3D);
   const [still] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -160,14 +161,30 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
 
       {/* Top: the title, then (wider screens) streak, stars, ranking, garage, language and sound */}
       <header className="pointer-events-none absolute inset-x-0 top-0 z-[45] flex items-start justify-between gap-2 p-3 md:gap-3 md:p-6">
-        {/* data-town-header: the 3D town keeps its "under construction" island clear of this card. */}
-        <div data-town-header className="glass pointer-events-auto min-w-0 rounded-2xl px-3 py-2 md:px-4 md:py-2.5">
-          <p className="text-xs font-black text-brand-700 md:text-sm">
-            <HomeLink>‹ {t.town.backHome}</HomeLink>
-          </p>
-          {/* Nunito kerns "Wh" apart; without kerning the W sits next to the h */}
-          <h1 className="text-lg leading-tight font-black text-ink [font-kerning:none] md:text-2xl">{t.town.title}</h1>
-          <p className="hidden text-sm font-semibold text-gray-600 sm:block">{t.town.hint}</p>
+        {/* The way back to the front page, a real button like the garage's "‹ Home", sitting on its own
+            above the title card. data-town-header: the 3D town keeps its "under construction" island
+            clear of both. */}
+        <div data-town-header className="pointer-events-none flex min-w-0 flex-col items-start gap-2">
+          {goHome && (
+            <button
+              type="button"
+              onClick={() => {
+                play("tap");
+                goHome();
+              }}
+              className="pointer-events-auto flex items-center gap-1.5 rounded-xl border-b-4 border-brand-800 bg-brand-600 py-1 pr-3 pl-2 text-sm font-black whitespace-nowrap text-white shadow-[0_8px_18px_-8px_rgb(45_36_112/0.6)] transition hover:bg-brand-700 active:translate-y-0.5 active:border-b-2 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand-500 motion-reduce:transition-none md:py-1.5 md:text-base"
+            >
+              <span aria-hidden="true" className="text-lg leading-none">
+                ‹
+              </span>
+              {t.town.backHome}
+            </button>
+          )}
+          <div className="glass pointer-events-auto min-w-0 rounded-2xl px-3 py-2 md:px-4 md:py-2.5">
+            {/* Nunito kerns "Wh" apart; without kerning the W sits next to the h */}
+            <h1 className="text-lg leading-tight font-black text-ink [font-kerning:none] md:text-2xl">{t.town.title}</h1>
+            <p className="hidden text-sm font-semibold text-gray-600 sm:block">{t.town.hint}</p>
+          </div>
         </div>
         {/* From sm up, one row of buttons. Phones have the tab bar along the bottom instead (PhoneTabBar). */}
         <div data-town-buttons className="pointer-events-auto flex shrink-0 flex-row items-center gap-2 max-sm:hidden">
@@ -183,7 +200,9 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
           </span>
           <button
             type="button"
-            onClick={() => setShowBoard(true)}
+            onClick={() => setShowBoard((open) => !open)}
+            data-board-toggle=""
+            aria-expanded={showBoard}
             className={`chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-extrabold transition hover:bg-brand-700 active:translate-y-px focus-visible:outline-3 focus-visible:outline-white md:px-4`}
             aria-label={t.town.leaderboard}
             title={t.town.leaderboard}
@@ -207,7 +226,7 @@ export function Town({ look, stars, streak, onVisit, onGarage }: Props) {
 
       {showBoard && <Leaderboard onClose={closeBoard} />}
 
-      <PhoneTabBar streak={streak} stars={total} pathsDone={pathsDone} onRanking={() => setShowBoard(true)} />
+      <PhoneTabBar streak={streak} stars={total} pathsDone={pathsDone} onRanking={() => setShowBoard((open) => !open)} />
 
       {/* Bottom: the same places as buttons, and who powers Pipo. On phones they sit just above the tab bar. */}
       <nav className="absolute inset-x-0 bottom-0 z-[45] flex flex-col items-center gap-2 p-3 max-sm:bottom-[calc(4rem+env(safe-area-inset-bottom))] max-sm:gap-1.5 max-sm:pb-2 md:p-6" aria-label={t.town.places}>

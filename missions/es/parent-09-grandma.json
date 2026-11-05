@@ -173,8 +173,8 @@
         },
         {
           "id": "go_now",
-          "label": "Envíalo de inmediato",
-          "text": "Envíalo de inmediato.",
+          "label": "Envíalo de inmediato, no hace falta revisarlo",
+          "text": "Envíalo de inmediato, no hace falta revisarlo.",
           "quality": "weak"
         }
       ]

@@ -172,8 +172,8 @@
         },
         {
           "id": "go_now",
-          "label": "Send it right away",
-          "text": "Send it right away.",
+          "label": "Send it right away, Leo won't mind",
+          "text": "Send it right away, Leo won't mind.",
           "quality": "weak"
         }
       ]

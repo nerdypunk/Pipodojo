@@ -186,8 +186,8 @@
         },
         {
           "id": "go_now",
-          "label": "Just add them",
-          "text": "Just add them.",
+          "label": "Add them all now, no need to show me",
+          "text": "Add them all now, no need to show me.",
           "quality": "weak",
           "tip": "Adding without a look means a wrong shift can sit in everyone's calendar."
         }

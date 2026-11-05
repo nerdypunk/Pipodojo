@@ -189,8 +189,8 @@
         },
         {
           "id": "go_now",
-          "label": "Compártela con la clase ya",
-          "text": "Compártela con la clase ya.",
+          "label": "Compártela con toda la clase ahora mismo",
+          "text": "Compártela con toda la clase ahora mismo.",
           "quality": "weak"
         }
       ]

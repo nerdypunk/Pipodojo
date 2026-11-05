@@ -32,8 +32,8 @@
         },
         {
           "id": "game",
-          "label": "Haz un juego genial",
-          "text": "Haz un juego genial.",
+          "label": "Haz un juego súper genial que a todo el mundo le encante",
+          "text": "Haz un juego súper genial que a todo el mundo le encante.",
           "quality": "weak"
         }
       ]
@@ -58,13 +58,13 @@
         {
           "id": "levels",
           "label": "3 niveles",
-          "text": "Ponle 3 niveles.",
+          "text": "Ponle 3 niveles, cada uno un poco más difícil.",
           "quality": "neutral"
         },
         {
           "id": "impossible",
           "label": "¡Hazlo súper imposible!",
-          "text": "¡Hazlo súper imposible!",
+          "text": "¡Hazlo súper imposible, que nadie pueda terminarlo nunca!",
           "quality": "weak",
           "tip": "Los juegos imposibles hacen que los jugadores se rindan. Lo divertido es \"difícil, pero sí puedo\"."
         }
@@ -76,9 +76,10 @@
       "id": "vague_goal",
       "when": "picked:game",
       "signals": [
-        "^(?![\\s\\S]*(candy|dulce|caramel|golosina|paleta|chupet|chocola|chicle|az[uú]car|piruleta|gomita|bomb[oó]n))"
+        "^(?![\\s\\S]*(candy|dulce|caramel|golosina|paleta|chupet|chocola|chicle|az[uú]car|piruleta|gomita|bomb[oó]n))",
+        "^(?![\\s\\S]*(escal|trepa|obst[aá]culo|parkour|climb))"
       ],
-      "hint": "\"Un juego genial\" no dice qué tipo de juego es.",
+      "hint": "\"Un juego súper genial\" no dice qué tipo de juego es.",
       "explain": "Pipo Code no conocía tu idea, así que diseñó otro juego."
     },
     {

@@ -119,7 +119,7 @@
       "pieces": [
         {
           "id": "fix_button",
-          "label": "Fix the More photos button on the photos page",
+          "label": "Fix the More photos button",
           "text": "Fix the \"More photos\" button on the photos page of my site.",
           "quality": "good"
         },
@@ -170,8 +170,8 @@
         },
         {
           "id": "go_now",
-          "label": "Just fix it live",
-          "text": "Just fix it live.",
+          "label": "Fix it live so nobody sees it broken",
+          "text": "Fix it live so nobody sees it broken.",
           "quality": "weak"
         }
       ]
@@ -184,7 +184,7 @@
       "signals": [
         "🐞(?![^\\n]*(button|photo))"
       ],
-      "hint": "\"It's broken\" doesn't say what's broken.",
+      "hint": "\"My site is broken\" doesn't say what's broken.",
       "explain": "Pipo Code didn't know which bug, so it fixed the wrong thing."
     },
     {

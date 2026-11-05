@@ -25,14 +25,14 @@
       "pieces": [
         {
           "id": "practise",
-          "label": "Help me practice for my Bloom Café barista interview",
+          "label": "Practice my Bloom Café interview with me",
           "text": "Help me practice for my barista interview at Bloom Café.",
           "quality": "good"
         },
         {
           "id": "interview",
-          "label": "Help me with an interview",
-          "text": "Help me with an interview.",
+          "label": "Help me get ready for a job interview",
+          "text": "Help me get ready for a job interview.",
           "quality": "weak"
         }
       ]
@@ -77,7 +77,7 @@
       "signals": [
         "^(?![\\s\\S]*(barista|coffee|caf|customer|drink))"
       ],
-      "hint": "\"An interview\" doesn't say for what job.",
+      "hint": "\"A job interview\" doesn't say for what job.",
       "explain": "Pipo didn't know the job, so the questions aren't about being a barista."
     },
     {

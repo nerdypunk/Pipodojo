@@ -128,8 +128,8 @@
         },
         {
           "id": "complain",
-          "label": "Quéjate con la aerolínea",
-          "text": "Quéjate con la aerolínea.",
+          "label": "Quéjate con la aerolínea de lo mal que estuvo todo",
+          "text": "Quéjate con la aerolínea de lo mal que estuvo todo.",
           "quality": "weak"
         }
       ]

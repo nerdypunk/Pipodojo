@@ -32,8 +32,8 @@
         },
         {
           "id": "reply_bad",
-          "label": "Responde la reseña mala",
-          "text": "Responde la reseña mala.",
+          "label": "Responde la reseña mala que todos vieron",
+          "text": "Responde la reseña mala que todos vieron.",
           "quality": "weak"
         }
       ]

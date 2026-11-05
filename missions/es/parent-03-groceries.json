@@ -201,7 +201,7 @@
       "pieces": [
         {
           "id": "check_cart",
-          "label": "Muéstrame el carrito y espera mi OK",
+          "label": "Muéstrame el carrito primero",
           "text": "Muéstrame el carrito y espera mi OK antes de pagar.",
           "quality": "good"
         },

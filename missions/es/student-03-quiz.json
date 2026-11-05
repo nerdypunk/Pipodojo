@@ -32,8 +32,8 @@
         },
         {
           "id": "quiz",
-          "label": "Hazme un quiz",
-          "text": "Hazme un quiz.",
+          "label": "Hazme un quiz de lo que pueda venir en el examen",
+          "text": "Hazme un quiz de lo que pueda venir en el examen.",
           "quality": "weak"
         }
       ]
@@ -78,7 +78,7 @@
       "signals": [
         "^(?![\\s\\S]*(c[eé]lul|n[uú]cleo|membrana|mitocond|org[aá]nul|organel|ribosom))"
       ],
-      "hint": "\"Hazme un quiz\" no dice sobre qué.",
+      "hint": "\"Hazme un quiz de lo que pueda venir en el examen\" no dice de qué materia ni de qué tema.",
       "explain": "Pipo no sabía tu tema, así que el quiz no es sobre células."
     },
     {

@@ -187,8 +187,8 @@
         },
         {
           "id": "go_now",
-          "label": "Solo agrégalos",
-          "text": "Solo agrégalos.",
+          "label": "Agrégalos todos ya, no necesito verlos",
+          "text": "Agrégalos todos ya, no necesito verlos.",
           "quality": "weak",
           "tip": "Si los agregas sin revisarlos, un turno equivocado puede quedarse en el calendario de todos."
         }

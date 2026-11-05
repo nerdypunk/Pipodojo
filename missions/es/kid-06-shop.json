@@ -191,8 +191,8 @@
         },
         {
           "id": "go_now",
-          "label": "Actívala ya",
-          "text": "Actívala ya.",
+          "label": "Actívala ya, los jugadores están esperando",
+          "text": "Actívala ya, los jugadores están esperando.",
           "quality": "weak"
         }
       ]

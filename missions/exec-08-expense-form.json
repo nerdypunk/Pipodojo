@@ -177,8 +177,8 @@
         },
         {
           "id": "fill_form",
-          "label": "Fill out the form",
-          "text": "Fill out the form for me.",
+          "label": "Fill out that tax form thing for me",
+          "text": "Fill out that tax form thing for me.",
           "quality": "weak"
         }
       ]

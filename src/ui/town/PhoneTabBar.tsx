@@ -7,6 +7,7 @@ import { useLang } from "../../i18n/index.tsx";
 import { LangSwitch } from "../LangSwitch.tsx";
 import { Pipo } from "../Pipo.tsx";
 import { SoundButton } from "../SoundButton.tsx";
+import { useCloseOnOutside } from "../useCloseOnOutside.ts";
 
 /** One tab: an icon over a short label, the full width of its quarter. */
 const TAB =
@@ -32,9 +33,10 @@ export function PhoneTabBar({ streak, stars, pathsDone, onRanking }: Props) {
           type="button"
           aria-haspopup="dialog"
           aria-expanded={showMe}
+          data-me-toggle=""
           onClick={() => {
             play("tap");
-            setShowMe(true);
+            setShowMe((open) => !open);
           }}
           className={`${TAB} ${showMe ? "text-brand-600" : ""}`}
         >
@@ -44,6 +46,7 @@ export function PhoneTabBar({ streak, stars, pathsDone, onRanking }: Props) {
         <button
           type="button"
           aria-haspopup="dialog"
+          data-board-toggle=""
           onClick={() => {
             play("tap");
             onRanking();
@@ -65,6 +68,8 @@ export function PhoneTabBar({ streak, stars, pathsDone, onRanking }: Props) {
 function MeSheet({ streak, stars, pathsDone, onClose }: Omit<Props, "onRanking"> & { onClose: () => void }) {
   const { t } = useLang();
   const close = useRef<HTMLButtonElement>(null);
+  const panel = useRef<HTMLElement>(null);
+  useCloseOnOutside(panel, onClose, "[data-me-toggle]");
   useEffect(() => {
     close.current?.focus();
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -78,13 +83,12 @@ function MeSheet({ streak, stars, pathsDone, onClose }: Omit<Props, "onRanking">
     { icon: "🏅", value: pathsDone, label: t.town.mePaths },
   ];
   return (
-    <div className="fixed inset-0 z-[55]" onClick={onClose}>
+    <div className="pointer-events-none fixed inset-0 z-[55]">
       <section
+        ref={panel}
         role="dialog"
-        aria-modal="true"
         aria-labelledby="me-title"
-        onClick={(e) => e.stopPropagation()}
-        className="pop-in absolute inset-x-3 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] mx-auto max-w-sm rounded-3xl bg-white/95 p-4 shadow-2xl ring-1 ring-white"
+        className="pop-in pointer-events-auto absolute inset-x-3 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] mx-auto max-w-sm rounded-3xl bg-white/95 p-4 shadow-2xl ring-1 ring-white"
       >
         <div className="flex items-center gap-3">
           <Pipo mood="happy" className="h-12 w-12 shrink-0" />

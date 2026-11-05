@@ -31,8 +31,8 @@
         },
         {
           "id": "post_something",
-          "label": "Write a post about the café",
-          "text": "Write a post about the café.",
+          "label": "Write a fun post to get more people into the café",
+          "text": "Write a fun post to get more people into the café.",
           "quality": "weak"
         }
       ]
@@ -82,8 +82,8 @@
         },
         {
           "id": "pushy",
-          "label": "Pushy: BUY NOW!",
-          "text": "Make it pushy: BUY NOW!",
+          "label": "Loud and pushy, in caps: BUY NOW!",
+          "text": "Make it loud and pushy, in all caps: BUY NOW!",
           "quality": "weak",
           "tip": "Pushy posts put people off. Friendly and clear works better for a local café."
         }
@@ -115,7 +115,7 @@
       "signals": [
         "^(?![\\s\\S]*bloom)"
       ],
-      "hint": "\"A post about the café\" doesn't say which café or what the post is for.",
+      "hint": "\"A fun post to get more people in\" doesn't say which café or what the post is for.",
       "explain": "Pipo didn't know it's Bloom Café's Instagram post, so the post never names the café."
     }
   ],

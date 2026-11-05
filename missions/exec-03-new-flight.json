@@ -192,8 +192,8 @@
         },
         {
           "id": "go_now",
-          "label": "Just add them",
-          "text": "Just add them.",
+          "label": "Add everything to my calendar now",
+          "text": "Add everything to my calendar right now.",
           "quality": "weak",
           "tip": "Adding without a look means a wrong time can sit in your calendar unnoticed."
         }

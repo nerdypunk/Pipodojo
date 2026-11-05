@@ -128,8 +128,8 @@
         },
         {
           "id": "email_everyone",
-          "label": "Escríbele a todo el mundo",
-          "text": "Envíale un correo a todo el mundo sobre la oferta.",
+          "label": "Escríbeles a todos mis contactos sobre la oferta",
+          "text": "Envíales un correo a todos mis contactos sobre la oferta.",
           "quality": "weak"
         }
       ]
@@ -193,7 +193,7 @@
       "signals": [
         "📧(?![^\\n]*(frecuente|habitual))"
       ],
-      "hint": "\"Todo el mundo\" no dice qué lista usar.",
+      "hint": "\"Todos mis contactos\" no dice qué lista usar.",
       "explain": "Pipo no sabía qué lista usar, así que el correo le llegó a todo el mundo, no solo a tus clientes frecuentes."
     },
     {

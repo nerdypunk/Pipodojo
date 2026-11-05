@@ -25,14 +25,14 @@
       "pieces": [
         {
           "id": "plan_study",
-          "label": "Plan my study for Monday's and Wednesday's exams",
+          "label": "Plan my study for both exams",
           "text": "Plan my study days, starting today (Thursday), for my Biology exam on Monday and my History exam on Wednesday.",
           "quality": "good"
         },
         {
           "id": "help_study",
-          "label": "Help me study",
-          "text": "Help me study for my exams.",
+          "label": "Help me study for all my exams",
+          "text": "Help me study for all my exams.",
           "quality": "weak"
         }
       ]
@@ -115,7 +115,7 @@
       "signals": [
         "^(?![\\s\\S]*(bio|history))"
       ],
-      "hint": "\"Help me study\" doesn't say which exams or when.",
+      "hint": "\"Help me study for all my exams\" doesn't say which exams or when.",
       "explain": "Pipo didn't know your exams, so the plan isn't built around them."
     }
   ],

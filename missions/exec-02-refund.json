@@ -127,8 +127,8 @@
         },
         {
           "id": "complain",
-          "label": "Complain to the airline",
-          "text": "Complain to the airline.",
+          "label": "Complain to the airline about how bad it was",
+          "text": "Complain to the airline about how bad it was.",
           "quality": "weak"
         }
       ]

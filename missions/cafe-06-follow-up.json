@@ -141,8 +141,8 @@
         },
         {
           "id": "remember",
-          "label": "Remember the Jordan thing",
-          "text": "Remember the Jordan thing.",
+          "label": "Make a note so we remember the Jordan thing",
+          "text": "Make a note so we remember the Jordan thing.",
           "quality": "weak"
         }
       ]
@@ -192,8 +192,8 @@
         },
         {
           "id": "go_now",
-          "label": "Just add it",
-          "text": "Just add it.",
+          "label": "Add it now, I'm sure it's fine",
+          "text": "Add it now, I'm sure it's fine.",
           "quality": "weak",
           "tip": "Adding without a look means a wrong day can sit in the calendar unnoticed."
         }
@@ -205,7 +205,7 @@
       "id": "vague_goal",
       "when": "picked:remember",
       "signals": [
-        "📅(?![^\\n]*jordan)"
+        "📅(?![^\\n]*(welcom|greet|back))"
       ],
       "hint": "\"The Jordan thing\" doesn't say what to remember.",
       "explain": "Pipo didn't know what to plan, so the event doesn't make sense."

@@ -122,8 +122,8 @@
         },
         {
           "id": "tell_staff",
-          "label": "Avísale al personal",
-          "text": "Avísale al personal sobre el horario.",
+          "label": "Avísale a todo el personal sobre el horario",
+          "text": "Avísale a todo el personal sobre el horario.",
           "quality": "weak"
         }
       ]
@@ -187,7 +187,7 @@
       "signals": [
         "📨(?![^\\n]*equipo caf[eé])"
       ],
-      "hint": "\"El personal\" no dice a dónde enviarlo.",
+      "hint": "\"Todo el personal\" no dice a dónde enviarlo.",
       "explain": "Pipo no sabía a qué chat, así que no llegó al grupo Equipo Café."
     },
     {

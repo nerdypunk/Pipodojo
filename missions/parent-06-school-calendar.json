@@ -135,7 +135,7 @@
       "pieces": [
         {
           "id": "add_all",
-          "label": "Add the trip, bake sale and meeting",
+          "label": "Add the three school events",
           "text": "Add these school events to our family calendar: the museum trip, the bake sale and the parent meeting.",
           "quality": "good"
         },
@@ -167,7 +167,7 @@
         {
           "id": "colours",
           "label": "Make it colorful!",
-          "text": "Make it colorful!",
+          "text": "Make it colorful, with a different color for each event!",
           "quality": "weak",
           "tip": "Colors are nice, but Pipo still needs the dates and times to get the calendar right."
         }
@@ -187,7 +187,7 @@
         {
           "id": "go_now",
           "label": "Just add them",
-          "text": "Just add them.",
+          "text": "Just add them all now, no need to show me.",
           "quality": "weak",
           "tip": "Adding without a look means a wrong time can sit in the calendar unnoticed."
         }

@@ -188,8 +188,8 @@
         },
         {
           "id": "go_now",
-          "label": "Share it with the class now",
-          "text": "Share it with the class now.",
+          "label": "Share it with the whole class right now",
+          "text": "Share it with the whole class right now.",
           "quality": "weak"
         }
       ]

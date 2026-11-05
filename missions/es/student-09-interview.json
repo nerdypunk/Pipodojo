@@ -26,14 +26,14 @@
       "pieces": [
         {
           "id": "practise",
-          "label": "Ayúdame a practicar mi entrevista de barista en Bloom Café",
+          "label": "Practica conmigo mi entrevista en Bloom Café",
           "text": "Ayúdame a practicar para mi entrevista de barista en Bloom Café.",
           "quality": "good"
         },
         {
           "id": "interview",
-          "label": "Ayúdame con una entrevista",
-          "text": "Ayúdame con una entrevista.",
+          "label": "Ayúdame a prepararme para una entrevista de trabajo",
+          "text": "Ayúdame a prepararme para una entrevista de trabajo.",
           "quality": "weak"
         }
       ]
@@ -76,7 +76,7 @@
       "id": "vague_goal",
       "when": "picked:interview",
       "signals": [
-        "^(?![\\s\\S]*(barista|caf|cliente|bebida))"
+        "^(?![\\s\\S]*(barista|caf|cliente|bebida|latte|repost|pastel|panader|bloom))"
       ],
       "hint": "\"Una entrevista\" no dice para qué trabajo.",
       "explain": "Pipo no sabía el trabajo, así que las preguntas no son sobre ser barista."

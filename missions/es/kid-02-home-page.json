@@ -132,8 +132,8 @@
         },
         {
           "id": "build_page",
-          "label": "Construye una página",
-          "text": "Construye una página.",
+          "label": "Construye una página increíble con muchas cosas geniales",
+          "text": "Construye una página increíble con muchas cosas geniales.",
           "quality": "weak"
         }
       ]
@@ -209,7 +209,7 @@
       "signals": [
         "🌐(?![^\\n]*(nugget|h[aá]mster))"
       ],
-      "hint": "\"Construye una página\" no dice qué página es ni de qué se trata.",
+      "hint": "\"Construye una página increíble con muchas cosas geniales\" no dice qué página es ni de qué se trata.",
       "explain": "Pipo Code no sabía que es la página de inicio de Nugget, así que construyó otra cosa."
     },
     {

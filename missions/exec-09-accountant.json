@@ -125,8 +125,8 @@
         },
         {
           "id": "email_accountant",
-          "label": "Email my accountant",
-          "text": "Email my accountant about a call.",
+          "label": "Email my accountant so we can talk soon",
+          "text": "Email my accountant so we can talk soon.",
           "quality": "weak"
         }
       ]

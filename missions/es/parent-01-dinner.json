@@ -31,8 +31,8 @@
         },
         {
           "id": "help_dinner",
-          "label": "Ayúdame con la parrillada",
-          "text": "Ayúdame con la parrillada.",
+          "label": "Ayúdame a hacer una parrillada increíble este fin de semana",
+          "text": "Ayúdame a hacer una parrillada increíble este fin de semana.",
           "quality": "weak"
         }
       ]
@@ -109,7 +109,7 @@
       "signals": [
         "^(?![\\s\\S]*(?<![a-záéíóúñü\\d])(6|seis)(?![a-záéíóúñü\\d]))"
       ],
-      "hint": "\"Ayúdame con la parrillada\" no dice cuántas personas vienen, así que Pipo tiene que adivinar.",
+      "hint": "\"Ayúdame a hacer una parrillada increíble\" no dice cuántas personas vienen, así que Pipo tiene que adivinar.",
       "explain": "Pipo no sabía que vienen 6 personas, así que adivinó para cuántos cocinar."
     }
   ],

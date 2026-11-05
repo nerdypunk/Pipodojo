@@ -26,14 +26,14 @@
       "pieces": [
         {
           "id": "plan_study",
-          "label": "Planea mi estudio para los exámenes del lunes y el miércoles",
+          "label": "Planea mi estudio para los dos exámenes",
           "text": "Planea mis días de estudio, empezando hoy (jueves), para mi examen de Biología del lunes y mi examen de Historia del miércoles.",
           "quality": "good"
         },
         {
           "id": "help_study",
-          "label": "Ayúdame a estudiar",
-          "text": "Ayúdame a estudiar para mis exámenes.",
+          "label": "Ayúdame a estudiar para todos mis exámenes",
+          "text": "Ayúdame a estudiar para todos mis exámenes.",
           "quality": "weak"
         }
       ]
@@ -117,7 +117,7 @@
       "signals": [
         "^(?![\\s\\S]*(bio|histori))"
       ],
-      "hint": "\"Ayúdame a estudiar\" no dice qué exámenes tienes ni cuándo.",
+      "hint": "\"Ayúdame a estudiar para todos mis exámenes\" no dice qué exámenes tienes ni cuándo.",
       "explain": "Pipo no sabía de tus exámenes, así que el plan no está armado alrededor de ellos."
     }
   ],

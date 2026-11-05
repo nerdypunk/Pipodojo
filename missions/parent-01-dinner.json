@@ -30,8 +30,8 @@
         },
         {
           "id": "help_dinner",
-          "label": "Help me with the barbecue",
-          "text": "Help me with the barbecue.",
+          "label": "Help me throw an amazing barbecue this weekend",
+          "text": "Help me throw an amazing barbecue this weekend.",
           "quality": "weak"
         }
       ]
@@ -108,7 +108,7 @@
       "signals": [
         "^(?![\\s\\S]*\\b(6|six)\\b)"
       ],
-      "hint": "\"Help me with the barbecue\" doesn't say how many people are coming, so Pipo has to guess.",
+      "hint": "\"Help me throw an amazing barbecue\" doesn't say how many people are coming, so Pipo has to guess.",
       "explain": "Pipo didn't know 6 people are coming, so it guessed how many to feed."
     }
   ],

@@ -178,8 +178,8 @@
         },
         {
           "id": "go_now",
-          "label": "Send it now",
-          "text": "Send it now.",
+          "label": "Send it now, it looks fine to me",
+          "text": "Send it now, it looks fine to me.",
           "quality": "weak"
         }
       ]

@@ -298,7 +298,65 @@ body {
   animation: pick-pop 260ms ease-out;
 }
 
+/* Under the hood: beads of light bounce along the wires from one step to the next, popping in
+   small, swelling, and shrinking away as they arrive. Reduced motion shows no beads (the wire fills). */
+@keyframes hood-bead-x {
+  0% {
+    left: -0.25rem;
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  18% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+  32% {
+    transform: scale(1);
+  }
+  82% {
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% - 0.25rem);
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+@keyframes hood-bead-y {
+  0% {
+    top: -0.25rem;
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  18% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+  32% {
+    transform: scale(1);
+  }
+  82% {
+    opacity: 1;
+  }
+  100% {
+    top: calc(100% - 0.25rem);
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+.hood-bead-x {
+  animation: hood-bead-x 1.8s cubic-bezier(0.6, 0, 0.35, 1) infinite both;
+}
+
+.hood-bead-y {
+  animation: hood-bead-y 1.8s cubic-bezier(0.6, 0, 0.35, 1) infinite both;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .hood-bead-x,
+  .hood-bead-y,
   .pick-pop,
   .twinkle,
   .pop-in,

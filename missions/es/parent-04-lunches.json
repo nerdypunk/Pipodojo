@@ -32,8 +32,8 @@
         },
         {
           "id": "help_lunch",
-          "label": "Ayúdame con los almuerzos",
-          "text": "Ayúdame con los almuerzos escolares.",
+          "label": "Ayúdame a pensar en algunas ideas de almuerzos fáciles",
+          "text": "Ayúdame a pensar en algunas ideas de almuerzos escolares fáciles.",
           "quality": "weak"
         }
       ]
@@ -116,7 +116,7 @@
       "signals": [
         "^(?![\\s\\S]*(?<![a-záéíóúñü])leo(?![a-záéíóúñü]))"
       ],
-      "hint": "\"Ayúdame con los almuerzos\" no dice para quién son, así que Pipo tiene que adivinar.",
+      "hint": "\"Ayúdame a pensar en algunas ideas de almuerzos fáciles\" no dice para quién son, así que Pipo tiene que adivinar.",
       "explain": "Pipo no sabía para quién son los almuerzos, así que adivinó."
     }
   ],

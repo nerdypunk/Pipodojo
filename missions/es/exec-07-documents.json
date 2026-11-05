@@ -173,8 +173,8 @@
         },
         {
           "id": "go_now",
-          "label": "Envíalo ya",
-          "text": "Envíalo ya.",
+          "label": "Envíalo ya, a Leo no le va a importar",
+          "text": "Envíalo ya, a Leo no le va a importar.",
           "quality": "weak"
         }
       ]

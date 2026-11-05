@@ -158,8 +158,8 @@
         },
         {
           "id": "order_stuff",
-          "label": "Pide lo que necesitamos",
-          "text": "Pide lo que necesitamos.",
+          "label": "Pide todo lo que creas que vamos a necesitar",
+          "text": "Pide todo lo que creas que vamos a necesitar.",
           "quality": "weak"
         }
       ]
@@ -223,7 +223,7 @@
       "signals": [
         "🛒(?![^\\n]*(harina|mantequilla))"
       ],
-      "hint": "\"Lo que necesitamos\" no dice qué pedir.",
+      "hint": "\"Lo que creas que vamos a necesitar\" no dice qué pedir.",
       "explain": "Pipo no sabía qué pedir, así que al carrito le falta tu lista de repostería."
     },
     {

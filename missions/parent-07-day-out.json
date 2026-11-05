@@ -114,7 +114,7 @@
       "id": "vague_goal",
       "when": "picked:somewhere",
       "signals": [
-        "^(?![\\s\\S]*\\b(kids?|family|children)\\b)"
+        "^(?![\\s\\S]*((?<![$\\d.])\\b(6|six)\\b[^\\n]{0,15}(?<![$\\d.])\\b(9|nine)\\b|\\b(2|two) (kids|children)\\b))"
       ],
       "hint": "\"Something fun\" doesn't say who's going, so Pipo has to guess.",
       "explain": "Pipo didn't know it's for the family, so it didn't plan for the kids."

@@ -200,7 +200,7 @@
       "pieces": [
         {
           "id": "check_cart",
-          "label": "Show me the cart and wait for my OK",
+          "label": "Show me the cart first",
           "text": "Show me the cart and wait for my OK before you pay.",
           "quality": "good"
         },

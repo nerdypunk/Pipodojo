@@ -32,8 +32,8 @@
         },
         {
           "id": "post_something",
-          "label": "Escribe un post sobre la cafetería",
-          "text": "Escribe un post sobre la cafetería.",
+          "label": "Escribe un post divertido para atraer más gente a la cafetería",
+          "text": "Escribe un post divertido para atraer más gente a la cafetería.",
           "quality": "weak"
         }
       ]
@@ -83,8 +83,8 @@
         },
         {
           "id": "pushy",
-          "label": "Insistente: ¡COMPRA YA!",
-          "text": "Que sea insistente: ¡COMPRA YA!",
+          "label": "Escandaloso e insistente, en mayúsculas: ¡COMPRA YA!",
+          "text": "Que sea escandaloso e insistente, todo en mayúsculas: ¡COMPRA YA!",
           "quality": "weak",
           "tip": "Los posts insistentes alejan a la gente. Para una cafetería de barrio funciona mejor algo amigable y claro."
         }
@@ -116,7 +116,7 @@
       "signals": [
         "^(?![\\s\\S]*bloom)"
       ],
-      "hint": "\"Un post sobre la cafetería\" no dice de qué cafetería ni para qué es el post.",
+      "hint": "\"Atraer más gente a la cafetería\" no dice de qué cafetería ni para qué es el post.",
       "explain": "Pipo no sabía que es el post de Instagram de Bloom Café, así que nunca nombra la cafetería."
     }
   ],

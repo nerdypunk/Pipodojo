@@ -170,8 +170,8 @@
         },
         {
           "id": "buy_any",
-          "label": "Cómprame una silla",
-          "text": "Cómprame una silla.",
+          "label": "Compra una de las sillas que estuvimos viendo",
+          "text": "Compra una de las sillas que estuvimos viendo.",
           "quality": "weak"
         }
       ]
@@ -235,7 +235,7 @@
       "signals": [
         "🪑(?![^\\n]*verde)"
       ],
-      "hint": "\"Una silla\" no dice cuál acordaste comprar.",
+      "hint": "\"Una de las sillas que estuvimos viendo\" no dice cuál acordaste comprar.",
       "explain": "Pipo no sabía cuál silla, así que no es la silla de escritorio verde de Alex."
     },
     {

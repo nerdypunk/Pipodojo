@@ -160,7 +160,7 @@
         {
           "id": "build",
           "label": "Build my game",
-          "text": "Build my game.",
+          "text": "Build my game so I can start playing it.",
           "quality": "weak"
         }
       ]
@@ -185,13 +185,13 @@
         {
           "id": "jump",
           "label": "Add a jump pad",
-          "text": "Add a jump pad somewhere.",
+          "text": "Add a jump pad somewhere fun on the level.",
           "quality": "neutral"
         },
         {
           "id": "lava",
           "label": "Fill it with lava!",
-          "text": "Fill it with lava!",
+          "text": "Fill it with lava everywhere, the more the better!",
           "quality": "weak",
           "tip": "Lava everywhere on level 1 makes players quit. Start easy and build up."
         }
@@ -210,8 +210,8 @@
         },
         {
           "id": "go_now",
-          "label": "Publish it straight away",
-          "text": "Publish it straight away.",
+          "label": "Publish it straight away so I can share it",
+          "text": "Publish it straight away so I can share it.",
           "quality": "weak"
         }
       ]
