@@ -1,6 +1,10 @@
 <p align="center">
-  <a href="https://pipodojo.com"><img src="public/og-image.jpg" alt="Pipodojo: learn to use AI agents, one tap at a time. A free AI playground for your phone and computer, powered by Meta's Muse Spark." width="100%"></a>
+  <a href="https://pipodojo.com"><img src="public/pipo-logo.svg" alt="Pipo, the Pipodojo robot" width="96"></a>
 </p>
+
+<h1 align="center">Pipodojo</h1>
+
+<p align="center"><b>Learn to use AI agents, one tap at a time.</b></p>
 
 <p align="center">
   <a href="https://pipodojo.com"><img alt="website: pipodojo.com" src="https://img.shields.io/badge/website-pipodojo.com-6D5DF6"></a>
@@ -20,7 +24,7 @@
   <a href="https://workers.cloudflare.com"><img alt="Cloudflare Workers" src="https://img.shields.io/badge/Cloudflare%20Workers-F38020?logo=cloudflare&logoColor=white"></a>
 </p>
 
-**Learn to use AI agents, one tap at a time.** Pipodojo is a free AI playground where anyone, with no technical background, learns to give clear instructions to a personal AI agent. Pipo, a little robot agent powered by Meta's Muse Spark, gets a real-life request. You build the instruction by tapping ready-made pieces (no typing), then see what Pipo does with it. Leave out something that matters and you'll see it in Pipo's answer.
+Pipodojo is a free AI playground where anyone, with no technical background, learns to give clear instructions to a personal AI agent. Pipo, a little robot agent powered by Meta's Muse Spark, gets a real-life request. You build the instruction by tapping ready-made pieces (no typing), then see what Pipo does with it. Leave out something that matters and you'll see it in Pipo's answer.
 
 **Try it: [pipodojo.com](https://pipodojo.com)**, in English, Spanish or Japanese, on a phone or a computer.
 
