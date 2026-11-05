@@ -1,18 +1,24 @@
-# Pipodojo
+<p align="center">
+  <a href="https://pipodojo.com"><img src="public/og-image.jpg" alt="Pipodojo: learn to use AI agents, one tap at a time. A free AI playground for your phone and computer, powered by Meta's Muse Spark." width="100%"></a>
+</p>
 
-[![website: pipodojo.com](https://img.shields.io/badge/website-pipodojo.com-6D5DF6)](https://pipodojo.com)
-[![powered by Muse Spark](https://img.shields.io/badge/powered%20by-Muse%20Spark-FF8A3D)](#powered-by-muse-spark)
-[![Meta Global AI Developer Hackathon: Indie track](https://img.shields.io/badge/Meta%20Global%20AI%20Developer%20Hackathon-Indie%20track-4F6BED)](#powered-by-muse-spark)
-
-[![languages: English, Español and 日本語](https://img.shields.io/badge/languages-English%20%C2%B7%20Espa%C3%B1ol%20%C2%B7%20%E6%97%A5%E6%9C%AC%E8%AA%9E-6D5DF6)](https://pipodojo.com)
-[![license: MIT](https://img.shields.io/badge/license-MIT-4F6BED)](LICENSE)
-
-[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![React 18](https://img.shields.io/badge/React-18-149ECA?logo=react&logoColor=white)](https://react.dev)
-[![three.js](https://img.shields.io/badge/three.js-React%20Three%20Fiber-000000?logo=threedotjs&logoColor=white)](https://threejs.org)
-[![tested with Vitest](https://img.shields.io/badge/tested%20with-Vitest-6E9F18?logo=vitest&logoColor=white)](#run-it-locally)
-[![hosted on Cloudflare Workers](https://img.shields.io/badge/hosted%20on-Cloudflare%20Workers-F38020?logo=cloudflare&logoColor=white)](https://workers.cloudflare.com)
-[![Node 24](https://img.shields.io/badge/node-24-5FA04E?logo=nodedotjs&logoColor=white)](.nvmrc)
+<p align="center">
+  <a href="https://pipodojo.com"><img alt="website: pipodojo.com" src="https://img.shields.io/badge/website-pipodojo.com-6D5DF6"></a>
+  <a href="#powered-by-muse-spark"><img alt="powered by Muse Spark" src="https://img.shields.io/badge/powered%20by-Muse%20Spark-FF8A3D"></a>
+  <a href="#powered-by-muse-spark"><img alt="Meta Global AI Developer Hackathon: Indie track" src="https://img.shields.io/badge/Meta%20Global%20AI%20Developer%20Hackathon-Indie%20track-4F6BED"></a>
+  <br>
+  <a href="https://pipodojo.com"><img alt="languages: English, Español and 日本語" src="https://img.shields.io/badge/languages-English%20%C2%B7%20Espa%C3%B1ol%20%C2%B7%20%E6%97%A5%E6%9C%AC%E8%AA%9E-6D5DF6"></a>
+  <a href="#privacy"><img alt="privacy: no cookies" src="https://img.shields.io/badge/privacy-no%20cookies-2EA27A"></a>
+  <a href="LICENSE"><img alt="license: MIT" src="https://img.shields.io/badge/license-MIT-4F6BED"></a>
+  <br>
+  <a href="https://www.typescriptlang.org"><img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white"></a>
+  <a href="https://react.dev"><img alt="React" src="https://img.shields.io/badge/React-149ECA?logo=react&logoColor=white"></a>
+  <a href="https://threejs.org"><img alt="three.js" src="https://img.shields.io/badge/three.js-000000?logo=threedotjs&logoColor=white"></a>
+  <a href="https://vite.dev"><img alt="Vite" src="https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white"></a>
+  <a href="https://tailwindcss.com"><img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind%20CSS-06B6D4?logo=tailwindcss&logoColor=white"></a>
+  <a href="#run-it-locally"><img alt="Vitest" src="https://img.shields.io/badge/Vitest-6E9F18?logo=vitest&logoColor=white"></a>
+  <a href="https://workers.cloudflare.com"><img alt="Cloudflare Workers" src="https://img.shields.io/badge/Cloudflare%20Workers-F38020?logo=cloudflare&logoColor=white"></a>
+</p>
 
 **Learn to use AI agents, one tap at a time.** Pipodojo is a free AI playground where anyone, with no technical background, learns to give clear instructions to a personal AI agent. Pipo, a little robot agent powered by Meta's Muse Spark, gets a real-life request. You build the instruction by tapping ready-made pieces (no typing), then see what Pipo does with it. Leave out something that matters and you'll see it in Pipo's answer.
 
