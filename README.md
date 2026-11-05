@@ -13,7 +13,7 @@
   <br>
   <a href="https://www.typescriptlang.org"><img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white"></a>
   <a href="https://react.dev"><img alt="React" src="https://img.shields.io/badge/React-149ECA?logo=react&logoColor=white"></a>
-  <a href="https://threejs.org"><img alt="three.js" src="https://img.shields.io/badge/three.js-000000?logo=threedotjs&logoColor=white"></a>
+  <a href="https://threejs.org"><img alt="three.js" src="https://img.shields.io/badge/three.js-5D6B7A?logo=threedotjs&logoColor=white"></a>
   <a href="https://vite.dev"><img alt="Vite" src="https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white"></a>
   <a href="https://tailwindcss.com"><img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind%20CSS-06B6D4?logo=tailwindcss&logoColor=white"></a>
   <a href="#run-it-locally"><img alt="Vitest" src="https://img.shields.io/badge/Vitest-6E9F18?logo=vitest&logoColor=white"></a>
