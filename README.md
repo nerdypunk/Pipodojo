@@ -1,8 +1,13 @@
 <p align="center">
-  <a href="https://pipodojo.com"><img src="public/pipo-logo.svg" alt="Pipo, the Pipodojo robot" width="96"></a>
+  <a href="https://pipodojo.com"><img src=".github/readme/pipo-logo.svg" alt="Pipo, the Pipodojo robot" width="96"></a>
 </p>
 
-<h1 align="center">Pipodojo</h1>
+<h1 align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/wordmark-dark.svg">
+    <img alt="Pipodojo" src=".github/readme/wordmark-light.svg" height="52">
+  </picture>
+</h1>
 
 <p align="center"><b>Learn to use AI agents, one tap at a time.</b></p>
 
