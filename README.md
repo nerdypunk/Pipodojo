@@ -3,6 +3,7 @@
 [![website: pipodojo.com](https://img.shields.io/badge/website-pipodojo.com-6D5DF6)](https://pipodojo.com)
 [![powered by Muse Spark](https://img.shields.io/badge/powered%20by-Muse%20Spark-FF8A3D)](#powered-by-muse-spark)
 [![Meta Global AI Developer Hackathon: Indie track](https://img.shields.io/badge/Meta%20Global%20AI%20Developer%20Hackathon-Indie%20track-4F6BED)](#powered-by-muse-spark)
+
 [![languages: English, Español and 日本語](https://img.shields.io/badge/languages-English%20%C2%B7%20Espa%C3%B1ol%20%C2%B7%20%E6%97%A5%E6%9C%AC%E8%AA%9E-6D5DF6)](https://pipodojo.com)
 [![license: MIT](https://img.shields.io/badge/license-MIT-4F6BED)](LICENSE)
 
