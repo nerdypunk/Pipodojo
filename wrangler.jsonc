@@ -11,8 +11,13 @@
     "run_worker_first": ["/api/*", "/admin", "/admin/*"]
   },
   // The waitlist dashboard (/admin, functions/admin) sits behind a Cloudflare Access login and checks
-  // it again itself. Its two settings, ACCESS_TEAM_DOMAIN and ACCESS_AUD, are variables set in the
-  // dashboard (kept on deploy by keep_vars below); without them, /admin lets nobody in.
+  // it again itself against these two settings. Neither is a secret: they only say which Access login
+  // to trust (the team's sign-in domain and the Access application's audience tag). Without them,
+  // /admin lets nobody in.
+  "vars": {
+    "ACCESS_TEAM_DOMAIN": "crimson-dawn-5c34.cloudflareaccess.com",
+    "ACCESS_AUD": "96033b922576fbda758bda3d8760fcf54840cce856542db0a4eda26c4221c8d5"
+  },
   "observability": { "enabled": true },
   // Today's leaderboard (functions/api/leaderboard.js): daily star totals per country, and
   // one-time receipts for real answers. No personal data. The tables are made on first use.
