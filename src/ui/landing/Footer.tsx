@@ -7,7 +7,6 @@
 import { ExternalLink } from "lucide-react";
 import { useLang } from "../../i18n/index.tsx";
 import { Pipo } from "../Pipo.tsx";
-import { SupportButton } from "../Support.tsx";
 import { CONTACT_EMAIL, NIGHT, REPO_URL, type SectionId } from "./shared.ts";
 
 const SITE_URL = "https://nerdypunk.dev";
@@ -86,9 +85,6 @@ export function Footer({ onPlay, onSection }: Props) {
             <h2 className="mb-4 font-black">{f.involved}</h2>
             <ul className="space-y-3">
               <li>{section("teachers", f.waitlist)}</li>
-              <li>
-                <SupportButton className={LINK}>{f.support}</SupportButton>
-              </li>
               <li>{section("contact", nav.contact)}</li>
             </ul>
           </nav>

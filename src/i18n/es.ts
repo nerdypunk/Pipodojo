@@ -90,7 +90,6 @@ export const es: Strings = {
       privacy: "Privacidad",
       involved: "Participa",
       waitlist: "Únete a la lista",
-      support: "Apoya a Pipodojo",
       powered: "Funciona con Muse Spark, de Meta",
     },
   },
@@ -263,17 +262,6 @@ export const es: Strings = {
     ready: "Pipo está listo",
     thinking: "Pipo está pensando…",
     answered: "Pipo respondió",
-  },
-
-  support: {
-    button: "Apoya Pipodojo",
-    title: "Apoya Pipodojo",
-    sub: "Pipodojo es gratis para todos. Un cafecito ayuda a que siga así.",
-    ask: "¿Te gustó este camino?",
-    loading: "Abriendo Ko-fi…",
-    panel: "Formulario de donación de Ko-fi",
-    backup: "¿Problemas para pagar aquí? Ábrelo en Ko-fi",
-    privacy: "Las donaciones las maneja Ko-fi, que solo se carga cuando abres esta ventana.",
   },
 
   tutorial: {

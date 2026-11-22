@@ -88,7 +88,6 @@ export const ja: Strings = {
       privacy: "プライバシー",
       involved: "参加する",
       waitlist: "お知らせリストに登録",
-      support: "Pipodojoを応援する",
       powered: "MetaのMuse Sparkで動いています",
     },
   },
@@ -261,17 +260,6 @@ export const ja: Strings = {
     ready: "Pipo、準備OK",
     thinking: "Pipoが考えています…",
     answered: "Pipoが答えました",
-  },
-
-  support: {
-    button: "Pipodojoを応援する",
-    title: "Pipodojoを応援する",
-    sub: "Pipodojoはだれでも無料。コーヒー1杯の応援で、これからも無料のままにできます。",
-    ask: "このコース、楽しめましたか？",
-    loading: "Ko-fiを開いています…",
-    panel: "Ko-fiの寄付フォーム",
-    backup: "ここで払えないときは、Ko-fiで開く",
-    privacy: "寄付はKo-fiが扱います。Ko-fiはこのウィンドウを開いたときだけ読み込まれます。",
   },
 
   tutorial: {
