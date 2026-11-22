@@ -7,9 +7,12 @@
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./dist",
-    // Only the API runs code; the game itself is plain files.
-    "run_worker_first": ["/api/*"]
+    // Only the API and the waitlist dashboard run code; the game itself is plain files.
+    "run_worker_first": ["/api/*", "/admin", "/admin/*"]
   },
+  // The waitlist dashboard (/admin, functions/admin) sits behind a Cloudflare Access login and checks
+  // it again itself. Its two settings, ACCESS_TEAM_DOMAIN and ACCESS_AUD, are variables set in the
+  // dashboard (kept on deploy by keep_vars below); without them, /admin lets nobody in.
   "observability": { "enabled": true },
   // Today's leaderboard (functions/api/leaderboard.js): daily star totals per country, and
   // one-time receipts for real answers. No personal data. The tables are made on first use.

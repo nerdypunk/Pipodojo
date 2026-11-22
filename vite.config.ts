@@ -40,9 +40,10 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: true,
-    // In dev, /api/* goes to the Worker served by wrangler (see scripts/dev.mjs).
+    // In dev, /api/* and the /admin dashboard go to the Worker served by wrangler (see scripts/dev.mjs).
     proxy: {
       "/api": "http://127.0.0.1:8788",
+      "/admin": "http://127.0.0.1:8788",
     },
   },
   // Pre-bundle these so dev never re-optimizes mid-session (that once loaded two copies of React).

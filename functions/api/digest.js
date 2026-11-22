@@ -9,6 +9,8 @@
 import { ensureTable, ROLES } from "./waitlist.js";
 
 const FROM = { email: "waitlist@pipodojo.com", name: "Pipodojo" };
+/** The waitlist dashboard (functions/admin), behind a Cloudflare Access login. */
+const DASHBOARD = "https://pipodojo.com/admin";
 /** One and many of each role, for the email. */
 const ROLE_NAMES = { parent: ["parent", "parents"], teacher: ["teacher or school", "teachers or schools"], researcher: ["researcher", "researchers"] };
 
@@ -38,14 +40,13 @@ export function digestEmail({ day, byRole, newOnes, total }, label) {
     summary,
     `${total} on the list in all.`,
     "",
-    "The list itself (emails) stays in Cloudflare D1 (pipodojo-leaderboard). To see it:",
-    'cf d1 query bcb2faf7-0684-4710-951e-e8651141be2c --sql "SELECT * FROM waitlist ORDER BY day"',
+    `The list itself (emails) stays in Cloudflare D1. See everyone on the dashboard: ${DASHBOARD}`,
   ].join("\n");
   const html = `<div style="font-family:system-ui,sans-serif;font-size:16px;line-height:1.5;color:#26233a">
 <p style="font-size:20px;font-weight:800;margin:0 0 8px">🤖 ${newOnes} new on the Pipodojo waitlist ${label}</p>
 <p style="margin:0 0 4px">${summary}</p>
 <p style="margin:0 0 16px"><b>${total}</b> on the list in all.</p>
-<p style="margin:0;color:#6b6782;font-size:14px">The list itself stays in Cloudflare D1:<br><code>cf d1 query bcb2faf7-0684-4710-951e-e8651141be2c --sql "SELECT * FROM waitlist ORDER BY day"</code></p>
+<p style="margin:0;color:#6b6782;font-size:14px">The list itself stays in Cloudflare D1. <a href="${DASHBOARD}" style="color:#5b4bd6;font-weight:700">See everyone on the dashboard</a></p>
 </div>`;
   return { subject, text, html };
 }

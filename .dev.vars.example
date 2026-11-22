@@ -5,3 +5,7 @@ MODEL_API_KEY=paste-your-meta-model-api-key-here
 # Optional. Pipodojo uses muse-spark-1.2-contributor by default, locally and deployed
 # (cheaper; Meta may use the prompts to improve its models). Set muse-spark-1.2 to override.
 # MODEL_ID=muse-spark-1.2-contributor
+
+# Optional. Lets you open the waitlist dashboard at http://localhost:5173/admin without the
+# Cloudflare Access login. Only works on localhost; never set it on Cloudflare.
+# DEV_ADMIN_BYPASS=true
