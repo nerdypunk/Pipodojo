@@ -161,7 +161,7 @@
       "id": "no_days",
       "when": "picked:ideas",
       "signals": [
-        "^(?![\\s\\S]*martes[\\s\\S]*jueves)"
+        "^(?![\\s\\S]*(?<![a-záéíóúñü])lun(es)?(?![a-záéíóúñü])[\\s\\S]*(?<![a-záéíóúñü])jue(ves)?(?![a-záéíóúñü]))"
       ],
       "hint": "\"Muchas ideas\" no dice qué tipo de respuesta necesitas.",
       "explain": "Pipo te dio ideas, no un plan, así que todavía tienes que decidir qué pasa cada día."
