@@ -111,7 +111,7 @@ function NeonSign({ text, color, position, rotation = [0, 0, 0], size, vertical 
       {board && (
         <mesh position={[0, 0, -0.03]}>
           <boxGeometry args={[w * 0.92, size * 0.86, 0.05]} />
-          <meshStandardMaterial color="#1c1b3e" roughness={0.6} />
+          <meshStandardMaterial color="#2a2858" roughness={0.6} />
         </mesh>
       )}
       <mesh raycast={noRaycast} renderOrder={3}>
@@ -250,13 +250,13 @@ export function FounderLoft() {
   const H = 3.0;
   return (
     <group>
-      <Box size={[3.0, H, 2.3]} position={[0, H / 2, 0]} color="#47386f" />
-      <Box size={[3.1, 0.12, 2.4]} position={[0, 1.5, 0]} color="#5a4a86" />
+      <Box size={[3.0, H, 2.3]} position={[0, H / 2, 0]} color="#8a78c4" />
+      <Box size={[3.1, 0.12, 2.4]} position={[0, 1.5, 0]} color="#9c8bd2" />
       {/* Big factory windows */}
       <Windows at={[0, 0.78, 1.15]} w={2.4} h={0.8} cols={3} rows={1} pane={[0.68, 0.62]} seed={11} lit={1} />
       <Windows at={[0, 2.25, 1.15]} w={2.4} h={0.8} cols={3} rows={1} pane={[0.68, 0.62]} seed={12} lit={0.7} />
       <Windows at={[1.5, H / 2, 0]} turn={Math.PI / 2} w={1.8} h={2.2} cols={2} rows={2} pane={[0.6, 0.55]} seed={13} lit={0.6} />
-      <Parapet w={3.0} d={2.3} y={H} color="#5a4a86" />
+      <Parapet w={3.0} d={2.3} y={H} color="#9c8bd2" />
       {/* Billboard on the roof */}
       <group position={[-0.3, H, -0.55]}>
         {[-0.8, 0.8].map((x) => (
@@ -425,7 +425,8 @@ export function CityBase() {
         <boxGeometry args={[h * 2, 1.5, h * 2]} />
         <meshStandardMaterial color={NIGHT.base} roughness={0.95} />
       </mesh>
-      <mesh position={[0, -0.005, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={noRaycast} receiveShadow>
+      {/* Grass, just above the slab (and under the roads, which start at 0) */}
+      <mesh position={[0, 0.004, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={noRaycast} receiveShadow>
         <planeGeometry args={[h * 2 - 0.1, h * 2 - 0.1]} />
         <meshStandardMaterial color={NIGHT.ground} roughness={0.95} />
       </mesh>
@@ -444,7 +445,7 @@ export function CityBlocks() {
       <group>
         {blocks.map((b, i) => (
           <group key={i} position={[b.x, 0, b.z]}>
-            <Box size={[b.w, b.h, b.d]} position={[0, b.h / 2, 0]} color={i % 3 === 0 ? NIGHT.wallDark : i % 3 === 1 ? NIGHT.wall : "#353667"} />
+            <Box size={[b.w, b.h, b.d]} position={[0, b.h / 2, 0]} color={i % 3 === 0 ? NIGHT.wallDark : i % 3 === 1 ? NIGHT.wall : "#7073b6"} />
             <Box size={[b.w + 0.06, 0.08, b.d + 0.06]} position={[0, b.h, 0]} color={NIGHT.trim} />
             <Windows at={[0, b.h / 2, b.d / 2]} w={b.w - 0.4} h={b.h - 0.4} cols={Math.max(1, Math.round(b.w / 0.55))} rows={Math.max(1, Math.round(b.h / 0.6))} pane={[0.22, 0.26]} seed={100 + i} lit={0.4} />
             <Windows at={[b.w / 2, b.h / 2, 0]} turn={Math.PI / 2} w={b.d - 0.4} h={b.h - 0.4} cols={Math.max(1, Math.round(b.d / 0.55))} rows={Math.max(1, Math.round(b.h / 0.6))} pane={[0.22, 0.26]} seed={200 + i} lit={0.35} />
@@ -563,11 +564,11 @@ export function Fireflies({ still }: { still: boolean }) {
 export function NightLights({ shadowSize }: { shadowSize: number }) {
   return (
     <>
-      <hemisphereLight args={["#7d80d8", "#1a1638", 1.15]} />
+      <hemisphereLight args={["#c4c7ff", "#4a4380", 1.45]} />
       <directionalLight
         position={[-9, 18, 10]}
-        intensity={0.75}
-        color="#aab4ff"
+        intensity={1.15}
+        color="#d6dcff"
         castShadow
         shadow-mapSize={[shadowSize, shadowSize]}
         shadow-camera-left={-15}

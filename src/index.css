@@ -110,23 +110,7 @@ body {
   box-shadow: 0 8px 20px -10px rgb(45 36 112 / 0.6);
 }
 
-/* The grown-ups' night look: deep indigo glass with a faint magenta neon edge. */
-@utility night-glass {
-  background-color: rgb(20 18 58 / 0.72);
-  backdrop-filter: blur(20px) saturate(1.3);
-  border: 1px solid rgb(232 121 249 / 0.28);
-  box-shadow:
-    0 12px 40px -16px rgb(0 0 0 / 0.6),
-    0 0 26px -12px rgb(232 121 249 / 0.55);
-
-  @media (pointer: coarse) {
-    background-color: rgb(20 18 58 / 0.92);
-    backdrop-filter: none;
-  }
-}
-
-/* Grown-ups (set on <html> by App.tsx once they pick it): the night city's colors behind every screen,
-   and header pills in indigo with a neon edge instead of bright violet. */
+/* Grown-ups (set on <html> by App.tsx once they pick it): the night city's colors behind every screen. */
 /* Cards stay crisp and white on the night sky (frosted at 55% they turned grey over the dark). */
 html[data-audience="grownup"] .glass {
   background-color: rgb(255 255 255 / 0.93);
@@ -135,14 +119,6 @@ html[data-audience="grownup"] .glass {
 }
 html[data-audience="grownup"] body {
   background-color: #0b0a24;
-}
-html[data-audience="grownup"] .chip {
-  background-color: #16143c;
-  border-color: rgb(232 121 249 / 0.45);
-  box-shadow: 0 0 18px -6px rgb(232 121 249 / 0.65);
-}
-.night-links a {
-  color: #f5b8ff;
 }
 
 /* Phones and tablets (see src/ui/device.ts): taps act at once (no double-tap-zoom wait, no grey

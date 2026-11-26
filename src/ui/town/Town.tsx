@@ -191,23 +191,15 @@ export function Town({ look, stars, streak, onVisit, onGarage, audience, onSwitc
               play("tap");
               onSwitch();
             }}
-            className={`pointer-events-auto flex items-center gap-1.5 rounded-xl px-2.5 py-1 text-xs font-extrabold whitespace-nowrap transition active:translate-y-px focus-visible:outline-3 focus-visible:outline-offset-2 motion-reduce:transition-none md:text-sm ${
-              night
-                ? "bg-[#14123a]/85 text-indigo-100 ring-1 ring-fuchsia-400/40 hover:bg-[#1f1b52] focus-visible:outline-fuchsia-400"
-                : "bg-white/80 text-brand-800 ring-1 ring-white hover:bg-white focus-visible:outline-brand-500"
-            }`}
+            className="pointer-events-auto flex items-center gap-1.5 rounded-xl border-b-[3px] border-brand-200 bg-white px-2.5 py-1 text-xs font-extrabold whitespace-nowrap text-brand-800 transition hover:bg-brand-50 active:translate-y-px active:border-b focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand-500 motion-reduce:transition-none md:text-sm"
           >
             <span aria-hidden="true">{night ? "🌙" : "☀️"}</span>
             {t.audience.switchLabel}
           </button>
-          <div
-            className={`pointer-events-auto min-w-0 rounded-2xl px-3 py-2 md:px-4 md:py-2.5 ${
-              night ? "night-glass" : "glass"
-            }`}
-          >
+          <div className="glass pointer-events-auto min-w-0 rounded-2xl px-3 py-2 md:px-4 md:py-2.5">
             {/* Nunito kerns "Wh" apart; without kerning the W sits next to the h */}
-            <h1 className={`text-lg leading-tight font-black [font-kerning:none] md:text-2xl ${night ? "text-white" : "text-ink"}`}>{night ? t.town.nightTitle : t.town.title}</h1>
-            <p className={`hidden text-sm font-semibold sm:block ${night ? "text-indigo-200" : "text-gray-600"}`}>{night ? t.town.nightHint : t.town.hint}</p>
+            <h1 className="text-lg leading-tight font-black text-ink [font-kerning:none] md:text-2xl">{night ? t.town.nightTitle : t.town.title}</h1>
+            <p className="hidden text-sm font-semibold text-gray-600 sm:block">{night ? t.town.nightHint : t.town.hint}</p>
           </div>
         </div>
         {/* From sm up, one row of buttons. Phones have the tab bar along the bottom instead (PhoneTabBar). */}
@@ -275,31 +267,25 @@ export function Town({ look, stars, streak, onVisit, onGarage, audience, onSwitc
                 onFocus={() => !selected && setHovered(place.id)}
                 onBlur={() => !selected && setHovered(null)}
                 className={`${place.phoneOnly ? "sm:hidden" : ""} flex min-h-13 min-w-0 items-center gap-2 rounded-2xl border-b-4 py-2 pr-2.5 pl-2 text-left text-sm leading-tight font-extrabold max-sm:min-h-10 max-sm:gap-1.5 max-sm:rounded-xl max-sm:border-b-[3px] max-sm:py-1 max-sm:pr-2 max-sm:pl-1.5 max-sm:text-[13px] shadow-[0_10px_24px_-12px_rgb(45_36_112/0.55)] transition-[background-color,color,border-color,transform] duration-150 active:translate-y-0.5 active:border-b-2 motion-reduce:transition-none sm:pr-3.5 ${
-                  night
-                    ? on
-                      ? "border-fuchsia-700 bg-fuchsia-600 text-white shadow-[0_0_24px_-6px_rgb(232_121_249/0.8)]"
-                      : "border-[#07061a] bg-[#16143c] text-white ring-1 ring-white/10"
-                    : on
-                      ? "border-brand-800 bg-brand-600 text-white"
-                      : "border-brand-200 bg-white text-ink"
+                  on ? "border-brand-800 bg-brand-600 text-white" : "border-brand-200 bg-white text-ink"
                 }`}
               >
                 <span
-                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xl max-sm:h-7 max-sm:w-7 max-sm:rounded-lg max-sm:text-base ${on ? "bg-white/20" : night ? "bg-white/10" : "bg-brand-50"}`}
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xl max-sm:h-7 max-sm:w-7 max-sm:rounded-lg max-sm:text-base ${on ? "bg-white/20" : "bg-brand-50"}`}
                   aria-hidden="true"
                 >
                   {place.emoji}
                 </span>
                 <span className="min-w-0 flex-1">{place.name}</span>
                 {tags[place.id].badge && <span aria-label={t.town.pathComplete}>{tags[place.id].badge}</span>}
-                <span className={`text-lg leading-none max-sm:text-base ${on ? "text-white/80" : night ? "text-fuchsia-300" : "text-brand-400"}`} aria-hidden="true">
+                <span className={`text-lg leading-none max-sm:text-base ${on ? "text-white/80" : "text-brand-400"}`} aria-hidden="true">
                   ›
                 </span>
               </button>
             );
           })}
         </div>
-        <div className={`flex flex-col items-center gap-1 rounded-2xl px-3.5 py-2 text-xs font-extrabold ${night ? "night-links bg-[#14123a]/80 text-indigo-100 ring-1 ring-white/10" : "bg-white/70 text-brand-800 ring-1 ring-white"} max-sm:gap-0.5 max-sm:py-1.5 max-sm:text-[11px] sm:flex-row sm:gap-2 sm:rounded-full sm:py-1`}>
+        <div className={`flex flex-col items-center gap-1 rounded-2xl px-3.5 py-2 text-xs font-extrabold bg-white/85 text-brand-800 ring-1 ring-white max-sm:gap-0.5 max-sm:py-1.5 max-sm:text-[11px] sm:flex-row sm:gap-2 sm:rounded-full sm:py-1`}>
           {/* Both lines share one shape (icon in a fixed slot, same size and weight), and on phones
               each is centered, so the stacked pair sits in the middle. */}
           <p className="inline-flex items-center gap-1.5">
@@ -350,7 +336,7 @@ function Loading({ night }: { night: boolean }) {
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
       <Pipo mood="thinking" className="h-28 w-28" />
-      <p className={`rounded-full px-4 py-1.5 text-sm font-extrabold ${night ? "night-glass text-indigo-100" : "glass text-brand-700"}`}>{night ? t.town.nightLoading : t.town.loading}</p>
+      <p className={`rounded-full px-4 py-1.5 text-sm font-extrabold glass text-brand-700`}>{night ? t.town.nightLoading : t.town.loading}</p>
     </div>
   );
 }

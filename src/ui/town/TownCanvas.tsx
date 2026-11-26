@@ -827,7 +827,7 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
             <div
               ref={cardRef}
               data-part="card"
-              className={`pop-in absolute left-1/2 w-40 -translate-x-1/2 rounded-2xl ${night ? "bg-[#0d0b2b]/90 ring-1 ring-fuchsia-400/50" : "bg-ink/90"} px-3 py-2 text-center text-[11px] font-bold text-white shadow-xl sm:w-48 sm:text-xs ${
+              className={`pop-in absolute left-1/2 w-40 -translate-x-1/2 rounded-2xl bg-ink/90 px-3 py-2 text-center text-[11px] font-bold text-white shadow-xl sm:w-48 sm:text-xs ${
                 below ? "top-full mt-1.5" : "bottom-full mb-1.5"
               }`}
             >
@@ -838,15 +838,11 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
           <div className="pop-in" style={{ animationDelay: `${delay + 0.35}s` }}>
             <div
               className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-black whitespace-nowrap shadow-lg ring-2 sm:gap-1.5 sm:px-3 sm:py-1 sm:text-sm transition-transform duration-200 motion-reduce:transition-none ${
-                night
-                  ? "bg-[#14123a]/90 text-white ring-fuchsia-400/60 shadow-[0_0_18px_-2px_rgb(232_121_249/0.55)]"
-                  : tag.open
-                    ? "bg-white text-ink ring-white"
-                    : "bg-white/75 text-gray-600 ring-white/60"
+                tag.open ? "bg-white text-ink ring-white" : "bg-white/75 text-gray-600 ring-white/60"
               } ${hovered ? "scale-110" : ""}`}
             >
               {tag.title}
-              {tag.progress && <span className={`text-xs font-extrabold ${night ? "text-amber-300" : "text-amber-600"}`}>{tag.progress}</span>}
+              {tag.progress && <span className="text-xs font-extrabold text-amber-600">{tag.progress}</span>}
               {tag.badge && <span aria-hidden="true">{tag.badge}</span>}
             </div>
           </div>
