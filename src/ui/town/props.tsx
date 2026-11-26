@@ -6,6 +6,7 @@ import { useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { RING, ringPoint } from "../../game/townLayout.ts";
 import { DYNAMIC, Static } from "./Static.tsx";
+import { useNight } from "./night.ts";
 
 type V3 = [number, number, number];
 
@@ -219,6 +220,8 @@ export function Person({
 /** A little round car that drives the ring road. */
 export function Car({ color, offset, speed, still }: { color: string; offset: number; speed: number; still: boolean }) {
   const ref = useRef<THREE.Group>(null);
+  // At night: head and tail lights.
+  const night = useNight();
   useFrame(({ clock }) => {
     const p = ringPoint(offset + (still ? 0 : clock.elapsedTime * speed));
     if (!ref.current) return;
@@ -252,6 +255,19 @@ export function Car({ color, offset, speed, still }: { color: string; offset: nu
           <meshStandardMaterial color={INK} roughness={0.8} />
         </mesh>
       ))}
+      {night &&
+        [-0.12, 0.12].map((z) => (
+          <group key={z}>
+            <mesh position={[0.37, 0.24, z]}>
+              <boxGeometry args={[0.03, 0.06, 0.08]} />
+              <meshBasicMaterial color="#fff6d0" toneMapped={false} />
+            </mesh>
+            <mesh position={[-0.37, 0.24, z]}>
+              <boxGeometry args={[0.03, 0.05, 0.08]} />
+              <meshBasicMaterial color="#ff3355" toneMapped={false} />
+            </mesh>
+          </group>
+        ))}
       </Static>
       </group>
     </group>

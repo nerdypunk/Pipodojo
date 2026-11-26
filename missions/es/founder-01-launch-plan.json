@@ -1,0 +1,171 @@
+{
+  "id": "founder-01-launch-plan",
+  "lang": "es",
+  "persona": "founder",
+  "path": "founder-launch",
+  "order": 1,
+  "title": "Planea la semana de lanzamiento",
+  "icon": "🗓️",
+  "recap": "Pipo planeó tu semana de lanzamiento, día por día.",
+  "funFact": "Un plan claro es donde los agentes brillan: tienen en cuenta cada fecha, presupuesto y persona a la vez. ¡Ahora Pipo le escribe a tu diseñadora!",
+  "postcard": "una vitrina de noche en una ciudad con luces de neón, con velas hechas a mano y un gran planificador de la semana de lanzamiento en la pared: {answer}",
+  "situation": "¡Semana importante! La tienda en línea de Ember & Oak está por abrir. ¿Planeo los días antes?",
+  "facts": [
+    "🚀 La tienda abre el viernes 4 de diciembre",
+    "💸 $300 para anuncios, ni un centavo más",
+    "📸 Maya hace las fotos y publicaciones, pero el miércoles no trabaja",
+    "🎯 Meta: 50 pedidos la primera semana"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable para quien fundó un pequeño negocio en línea. Ayuda con lo que te pidan. Sé breve: una línea por punto.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "plan_week",
+          "label": "Prepara la apertura de la tienda en línea",
+          "text": "Ayúdame a preparar a Ember & Oak, mi pequeña marca de velas, para abrir su tienda en línea.",
+          "quality": "good"
+        },
+        {
+          "id": "help_launch",
+          "label": "Ayúdame a lanzar mi negocio",
+          "text": "Ayúdame a lanzar mi negocio y a vender mucho.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "¿Qué necesita saber Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "date",
+          "label": "Abrimos el viernes 4 de diciembre",
+          "text": "La tienda abre el viernes 4 de diciembre.",
+          "quality": "good"
+        },
+        {
+          "id": "budget",
+          "label": "$300 para anuncios, no más",
+          "text": "Tenemos $300 para anuncios, y no más.",
+          "quality": "good"
+        },
+        {
+          "id": "maya",
+          "label": "Maya hace fotos y publicaciones, libre el miércoles",
+          "text": "Maya, mi socia, hace las fotos y las publicaciones, pero el miércoles no trabaja.",
+          "quality": "good"
+        },
+        {
+          "id": "viral",
+          "label": "¡Que se haga viral!",
+          "text": "¡Haz que se vuelva viral!",
+          "tip": "\"Que se haga viral\" es un deseo, no un plan. Fechas, dinero y personas le dan a Pipo algo con qué planear.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "goal",
+      "label": "¿Qué sería un buen lanzamiento?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "fifty",
+          "label": "50 pedidos la primera semana",
+          "text": "Nuestra meta es 50 pedidos en la primera semana.",
+          "quality": "good"
+        },
+        {
+          "id": "max_sales",
+          "label": "Vender lo más posible",
+          "text": "Consigue la mayor cantidad de ventas posible.",
+          "tip": "\"Lo más posible\" no se puede planear. Un número le da a Pipo una meta.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "label": "¿Cómo debe responder Pipo?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "by_day",
+          "label": "Un plan día por día con quién hace qué",
+          "text": "Dame un plan con una línea por día, de lunes a viernes, que diga quién hace qué.",
+          "quality": "good"
+        },
+        {
+          "id": "ideas",
+          "label": "Muchas ideas de marketing",
+          "text": "Dame muchas ideas de marketing.",
+          "tip": "Un montón de ideas te deja a ti la planeación. Pide la forma de respuesta que puedas usar.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:help_launch",
+      "signals": [
+        "^(?![\\s\\S]*vela)"
+      ],
+      "hint": "\"Ayúdame a lanzar mi negocio\" no dice qué negocio es ni qué planear.",
+      "explain": "Pipo no sabía que vendes velas, así que el plan podría ser para cualquier negocio."
+    },
+    {
+      "id": "no_date",
+      "when": "not_picked:date",
+      "signals": [
+        "^(?![\\s\\S]*((?<!\\d)4 de dic|(lanza|abr|apertura)[^\\n]{0,40}viernes|viernes[^\\n]{0,40}(lanza|abr|apertura)))"
+      ],
+      "hint": "No le dijiste a Pipo cuándo abre la tienda.",
+      "explain": "Pipo no sabía que abres el viernes 4 de diciembre, así que el plan no lleva al día del lanzamiento."
+    },
+    {
+      "id": "no_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "^(?![\\s\\S]*\\$\\s?300(?!\\d))"
+      ],
+      "hint": "No le dijiste a Pipo tu presupuesto para anuncios.",
+      "explain": "Pipo no sabía que tienes $300 para anuncios, así que el plan no controla el gasto."
+    },
+    {
+      "id": "no_maya",
+      "when": "not_picked:maya",
+      "signals": [
+        "^(?![\\s\\S]*maya)"
+      ],
+      "hint": "No le contaste a Pipo sobre Maya.",
+      "explain": "Pipo no sabía que Maya hace las fotos y no trabaja el miércoles, así que nadie queda claramente a cargo."
+    },
+    {
+      "id": "no_goal",
+      "when": "picked:max_sales",
+      "signals": [
+        "^(?![\\s\\S]*(?<!\\$)\\b(50|cincuenta)\\s+(pedidos|ventas|[oó]rdenes))"
+      ],
+      "hint": "\"Vender lo más posible\" no le da a Pipo una meta.",
+      "explain": "Pipo no sabía que tu meta es 50 pedidos, así que el plan no apunta a nada."
+    },
+    {
+      "id": "no_days",
+      "when": "picked:ideas",
+      "signals": [
+        "^(?![\\s\\S]*martes[\\s\\S]*jueves)"
+      ],
+      "hint": "\"Muchas ideas\" no dice qué tipo de respuesta necesitas.",
+      "explain": "Pipo te dio ideas, no un plan, así que todavía tienes que decidir qué pasa cada día."
+    }
+  ],
+  "lesson": "Para un trabajo más grande, dale a Pipo cada dato importante, una meta clara y la forma de la respuesta que necesitas."
+}

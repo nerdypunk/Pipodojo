@@ -68,7 +68,31 @@ const DATA: readonly (PersonaCard & { es: PersonaText; ja: PersonaText })[] = [
     es: { name: "Ejecutivo ocupado", place: "Torre de oficinas", blurb: "Reembolsos de vuelos, compras en marketplace y papeleo de impuestos." },
     ja: { name: "忙しいビジネスパーソン", place: "オフィスタワー", blurb: "フライトの返金、マーケットプレイス、税金の書類。" },
   },
+  {
+    id: "founder",
+    name: "Startup founder",
+    emoji: "🚀",
+    place: "Coworking loft",
+    blurb: "A launch week, a first hire and investor updates.",
+    tint: "from-fuchsia-400 to-brand-800",
+    es: { name: "Fundador de startup", place: "Loft de coworking", blurb: "Una semana de lanzamiento, la primera contratación e informes a inversionistas." },
+    ja: { name: "スタートアップ創業者", place: "コワーキングロフト", blurb: "ローンチの一週間、はじめての採用、投資家への報告。" },
+  },
 ];
+
+/**
+ * Who sees which places. Kids keep the daytime island as it was; grown-ups get the night city,
+ * where the young coder's treehouse gives way to the founder's coworking loft.
+ */
+export type Audience = "kid" | "grownup";
+const KID_TOWN: readonly Persona[] = ["parent", "student", "business", "kid", "executive"];
+const GROWNUP_TOWN: readonly Persona[] = ["executive", "founder", "business", "parent", "student"];
+
+/** The personas in an audience's town, in the order their buttons show. */
+export const personasFor = (audience: Audience, lang: Lang): PersonaCard[] => {
+  const all = personasIn(lang);
+  return (audience === "grownup" ? GROWNUP_TOWN : KID_TOWN).map((id) => all.find((p) => p.id === id)!);
+};
 
 const inLang = (card: (typeof DATA)[number], lang: Lang): PersonaCard => {
   const { es, ja, ...base } = card;

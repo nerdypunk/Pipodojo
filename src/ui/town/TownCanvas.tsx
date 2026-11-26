@@ -7,7 +7,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, typ
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import type { PipoLook } from "../../game/pipoLook.ts";
-import { PLACES, RING, SPOKE_END, placeOf, type Place, type PlaceId } from "../../game/townLayout.ts";
+import { CITY_PLACES, PLACES, RING, SPOKE_END, placeOf, type Place, type PlaceId } from "../../game/townLayout.ts";
 import { TOUCH } from "../device.ts";
 import { Pipo3D } from "./Pipo3D.tsx";
 import { ReadyContext, useTownReady } from "./ready.ts";
@@ -16,6 +16,8 @@ import { Cafe, College, Garage, House, KidHouse, OfficeTower, SakuraShrine } fro
 import { mergePlaced, type Placed } from "./merge.ts";
 import { Airplane, Balloon, Car, Cloud } from "./props.tsx";
 import { Birds, Flowers, Forest, IslandBase, MiniIsland, Plaza, Pond, Strollers, grow } from "./scenery.tsx";
+import { Apartments, BarrierGlows, Campus, CityBase, CityBlocks, CrossingLights, ExecTower, Fireflies, FounderLoft, Fountain, Glow, NightCafe, NightGarage, NightLights, StreetLamps } from "./city.tsx";
+import { NIGHT, NightContext, useNight } from "./night.ts";
 
 export interface PlaceTag {
   title: string;
@@ -43,10 +45,14 @@ export interface TownCanvasProps {
   still: boolean;
   /** The sign over the floating "under construction" islands, in the player's language. */
   soonLabel: { title: string; sub: string };
+  /** The grown-ups' night city instead of the kids' sunny island. */
+  night?: boolean;
 }
 
 const CAMERA_HOME = new THREE.Vector3(20.5, 25, 30.5);
 const LOOK_HOME = new THREE.Vector3(0, -1.7, 1.6);
+/** The night city aims a little higher: its office tower is tall, and its name tag must clear the header. */
+const LOOK_NIGHT = new THREE.Vector3(0, 0.2, 1.6);
 /** Where the arrival swoop starts: high up, round to one side. */
 const CAMERA_START = new THREE.Vector3(-14, 44, 30);
 
@@ -184,7 +190,9 @@ export default function TownCanvas(props: TownCanvasProps) {
       aria-label="Pipodojo Town"
     >
       <ReadyContext.Provider value={ready}>
-        <Town {...props} />
+        <NightContext.Provider value={!!props.night}>
+          <Town {...props} />
+        </NightContext.Provider>
       </ReadyContext.Provider>
       {!ready && <WarmUp onReady={start} />}
       {ready && !shown && <Reveal onShown={show} />}
@@ -234,7 +242,10 @@ function Reveal({ onShown }: { onShown: () => void }) {
   return null;
 }
 
-function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, still, soonLabel }: TownCanvasProps) {
+function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, still, soonLabel, night = false }: TownCanvasProps) {
+  // Only the places this town has (the night city swaps the treehouse for the founder's loft).
+  const layout = night ? CITY_PLACES : PLACES;
+  const places = useMemo(() => layout.filter((p) => tags[p.id]), [layout, tags]);
   const root = useRef<THREE.Group>(null);
   const width = useThree((s) => s.size.width);
   const height = useThree((s) => s.size.height);
@@ -248,11 +259,12 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
   }, [camera, width, height]);
   // The header card's size changes with the language, so the corner spot is worked out again then.
   const islands = useMemo((): { at: [number, number, number]; scale: number; compact: boolean }[] => {
+    if (night) return [];
     if (wide) return ISLANDS_WIDE.map((at, i) => ({ at, scale: i ? 0.8 : 1, compact: false }));
     const spot = tallIslandSpot(width, height, headerBox());
     return spot ? [spot] : [];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wide, width, height, soonLabel]);
+  }, [wide, width, height, soonLabel, night]);
 
   // The town casts and catches soft shadows (the scenery under the island doesn't need to).
   useLayoutEffect(() => {
@@ -267,12 +279,84 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
   const active = selected ?? hovered;
   const pipoTarget = useMemo(() => {
     if (!active) return null;
-    const place = placeOf(active);
+    const place = placeOf(active, layout);
     // Just outside the place's footprint on the camera's side, low: beside the building (never inside
     // it) and well below its name tag and hover card.
     const toCamera = new THREE.Vector3(CAMERA_HOME.x, 0, CAMERA_HOME.z).normalize().multiplyScalar(place.clear + 0.4);
     return new THREE.Vector3(place.at[0] + toCamera.x, Math.min(2.4, place.tag * 0.55), place.at[1] + toCamera.z);
-  }, [active]);
+  }, [active, layout]);
+
+  const spots = places.map((place, i) => (
+    <Spot
+      key={place.id}
+      place={place}
+      tag={tags[place.id]}
+      hovered={hovered === place.id}
+      locked={selected !== null}
+      delay={POP_START + i * POP_STEP}
+      still={still}
+      onHover={onHover}
+      onSelect={onSelect}
+    >
+      {night ? (
+        <>
+          {place.id === "parent" && <Apartments />}
+          {place.id === "student" && <Campus />}
+          {place.id === "business" && <NightCafe />}
+          {place.id === "executive" && <ExecTower still={still} />}
+          {place.id === "founder" && <FounderLoft />}
+          {place.id === "garage" && <NightGarage />}
+        </>
+      ) : (
+        <>
+          {place.id === "parent" && <House still={still} />}
+          {place.id === "student" && <College still={still} />}
+          {place.id === "business" && <Cafe still={still} />}
+          {place.id === "kid" && <KidHouse still={still} />}
+          {place.id === "executive" && <OfficeTower still={still} />}
+          {place.id === "garage" && <Garage still={still} />}
+        </>
+      )}
+    </Spot>
+  ));
+
+  if (night) {
+    return (
+      <>
+        <NightLights shadowSize={TOUCH ? 1024 : 2048} />
+        <Rig selected={selected} onArrive={onArrive} still={still} places={layout} />
+        <Static>
+          <CityBase />
+        </Static>
+        <group ref={root}>
+          <Static>
+            <Plaza />
+          </Static>
+          <Roads />
+          <Popper delay={POP_START - 0.25} still={still}>
+            <Static>
+              <SakuraShrine still={still} />
+            </Static>
+          </Popper>
+          {spots}
+          <CityBlocks />
+          <StreetLamps />
+          <Fountain />
+        </group>
+        {/* The sakura is strung with lights at night */}
+        <Glow position={[0, 3.2, 0]} color="#ff7ad9" size={5.5} opacity={0.22} />
+        <CrossingLights />
+        <BarrierGlows />
+        <Car color="#6a5cff" offset={0} speed={0.035} still={still} />
+        <Car color="#ff4fd8" offset={0.36} speed={0.035} still={still} />
+        <Car color="#4ff3ff" offset={0.7} speed={0.035} still={still} />
+        <Strollers still={still} />
+        <Fireflies still={still} />
+        <Pipo3D look={look} target={pipoTarget} still={still} />
+        <BakeShadows after={still ? 0.3 : POP_START + places.length * POP_STEP + 1.2} />
+      </>
+    );
+  }
 
   return (
     <>
@@ -292,7 +376,7 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
         shadow-bias={-0.0004}
         shadow-normalBias={0.03}
       />
-      <Rig selected={selected} onArrive={onArrive} still={still} />
+      <Rig selected={selected} onArrive={onArrive} still={still} places={layout} />
 
       <Static>
         <IslandBase still={still} />
@@ -310,26 +394,7 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
             <SakuraShrine still={still} />
           </Static>
         </Popper>
-        {PLACES.map((place, i) => (
-          <Spot
-            key={place.id}
-            place={place}
-            tag={tags[place.id]}
-            hovered={hovered === place.id}
-            locked={selected !== null}
-            delay={POP_START + i * POP_STEP}
-            still={still}
-            onHover={onHover}
-            onSelect={onSelect}
-          >
-            {place.id === "parent" && <House still={still} />}
-            {place.id === "student" && <College still={still} />}
-            {place.id === "business" && <Cafe still={still} />}
-            {place.id === "kid" && <KidHouse still={still} />}
-            {place.id === "executive" && <OfficeTower still={still} />}
-            {place.id === "garage" && <Garage still={still} />}
-          </Spot>
-        ))}
+        {spots}
         <Forest still={still} />
       </group>
       {/* Things that move: soft blob shadows instead of real ones, which are baked after the intro. */}
@@ -338,7 +403,7 @@ function Town({ look, tags, hovered, onHover, selected, onSelect, onArrive, stil
       <Car color="#5aa0e0" offset={0.7} speed={0.035} still={still} />
       <Strollers still={still} />
       <Pipo3D look={look} target={pipoTarget} still={still} />
-      <BakeShadows after={still ? 0.3 : POP_START + PLACES.length * POP_STEP + 1.2} />
+      <BakeShadows after={still ? 0.3 : POP_START + places.length * POP_STEP + 1.2} />
       <Flowers still={still} />
       <Birds still={still} />
       <Cloud position={[-10, 10.5, -9]} scale={1.3} speed={0.35} still={still} />
@@ -408,23 +473,24 @@ function Popper({ delay, still, children }: { delay: number; still: boolean; chi
 type Flight = { from: THREE.Vector3; fromLook: THREE.Vector3; to: THREE.Vector3; toLook: THREE.Vector3; start: number; ms: number; done: boolean };
 
 /** The camera: swoops in on arrival, follows the mouse a little, then flies in to a clicked place. */
-function Rig({ selected, onArrive, still }: { selected: PlaceId | null; onArrive: () => void; still: boolean }) {
+function Rig({ selected, onArrive, still, places }: { selected: PlaceId | null; onArrive: () => void; still: boolean; places: readonly Place[] }) {
   const { camera, pointer, size } = useThree();
+  const lookHome = useNight() ? LOOK_NIGHT : LOOK_HOME;
   const home = useMemo(() => homeFor(size.width / size.height), [size.width, size.height]);
-  const look = useRef(LOOK_HOME.clone());
+  const look = useRef(lookHome.clone());
   // The arrival swoop starts on its first frame (start -1), not on mount: the town may still be
   // warming up then.
   const flight = useRef<Flight | null>(
     still
       ? null
-      : { from: CAMERA_START.clone(), fromLook: new THREE.Vector3(0, 0, 0), to: home.clone(), toLook: LOOK_HOME.clone(), start: -1, ms: INTRO_MS, done: false },
+      : { from: CAMERA_START.clone(), fromLook: new THREE.Vector3(0, 0, 0), to: home.clone(), toLook: lookHome.clone(), start: -1, ms: INTRO_MS, done: false },
   );
   const arrive = useRef(onArrive);
   arrive.current = onArrive;
 
   useEffect(() => {
     if (!selected) return;
-    const place = placeOf(selected);
+    const place = placeOf(selected, places);
     const toLook = new THREE.Vector3(place.at[0], 1.2, place.at[1]);
     const to = toLook.clone().add(CAMERA_HOME.clone().normalize().multiplyScalar(10));
     if (still) {
@@ -432,7 +498,7 @@ function Rig({ selected, onArrive, still }: { selected: PlaceId | null; onArrive
       return;
     }
     flight.current = { from: camera.position.clone(), fromLook: look.current.clone(), to, toLook, start: performance.now(), ms: FLY_MS, done: false };
-  }, [selected, still, camera]);
+  }, [selected, still, camera, places]);
 
   useFrame((_, delta) => {
     const f = flight.current;
@@ -454,7 +520,7 @@ function Rig({ selected, onArrive, still }: { selected: PlaceId | null; onArrive
     // At home: a slow drift that follows the mouse a little.
     const goal = still ? home : home.clone().add(new THREE.Vector3(pointer.x * 1.6, pointer.y * 0.8, -pointer.x * 0.6));
     camera.position.lerp(goal, still ? 1 : Math.min(1, delta * 1.5));
-    look.current.lerp(LOOK_HOME, Math.min(1, delta * 3));
+    look.current.lerp(lookHome, Math.min(1, delta * 3));
     camera.lookAt(look.current);
   });
   return null;
@@ -469,6 +535,7 @@ type Slab = { pos: [number, number, number]; size: [number, number, number] };
 
 /** Roads in warm gray, with rounded sidewalks along every edge and zebra crossings at the ring. */
 function Roads() {
+  const night = useNight();
   const h = RING.half;
   const w = RING.width;
   const strips: Slab[] = [
@@ -538,19 +605,19 @@ function Roads() {
       {/* Shrine plaza paving */}
       <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={noRaycast}>
         <circleGeometry args={[RING.half - 0.65, 48]} />
-        <meshStandardMaterial color="#e7ebf0" roughness={1} />
+        <meshStandardMaterial color={night ? NIGHT.pavement : "#e7ebf0"} roughness={1} />
       </mesh>
       <mesh geometry={roadGeometry} raycast={noRaycast}>
-        <meshStandardMaterial color={ROAD} roughness={0.95} />
+        <meshStandardMaterial color={night ? NIGHT.road : ROAD} roughness={0.95} />
       </mesh>
       <mesh geometry={walkGeometry} raycast={noRaycast}>
-        <meshStandardMaterial color={PAVEMENT} roughness={0.95} />
+        <meshStandardMaterial color={night ? NIGHT.pavement : PAVEMENT} roughness={0.95} />
       </mesh>
       {/* A barrier across the end of each road, so none of them looks like it runs off the island */}
       <Barriers />
       <Instances limit={dashes.length + zebra.length} raycast={noRaycast}>
         <boxGeometry args={[0.08, 0.01, 0.4]} />
-        <meshStandardMaterial color="#ffffff" />
+        {night ? <meshBasicMaterial color="#c9c4ff" toneMapped={false} transparent opacity={0.55} /> : <meshStandardMaterial color="#ffffff" />}
         {dashes.map((d, i) => (
           <Instance key={`d${i}`} position={d.at} rotation={[0, d.alongX ? Math.PI / 2 : 0, 0]} />
         ))}
@@ -638,6 +705,7 @@ interface SpotProps {
 
 /** A place you can point at: it pops up on arrival, then lifts, glows and shows its name tag. */
 function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, children }: SpotProps) {
+  const night = useNight();
   const lift = useRef<THREE.Group>(null);
   const ring = useRef<THREE.Mesh>(null);
   const hover = useRef(1);
@@ -723,7 +791,7 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
     <group position={[place.at[0], 0, place.at[1]]}>
       <mesh ref={ring} position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={noRaycast}>
         <ringGeometry args={[place.clear - 0.6, place.clear - 0.25, 48]} />
-        <meshBasicMaterial color={tag.open ? "#8c7dfb" : "#ffffff"} transparent opacity={0} depthWrite={false} />
+        <meshBasicMaterial color={night ? NIGHT.magenta : tag.open ? "#8c7dfb" : "#ffffff"} transparent opacity={0} depthWrite={false} toneMapped={!night} />
       </mesh>
       <group
         ref={lift}
@@ -759,7 +827,7 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
             <div
               ref={cardRef}
               data-part="card"
-              className={`pop-in absolute left-1/2 w-40 -translate-x-1/2 rounded-2xl bg-ink/90 px-3 py-2 text-center text-[11px] font-bold text-white shadow-xl sm:w-48 sm:text-xs ${
+              className={`pop-in absolute left-1/2 w-40 -translate-x-1/2 rounded-2xl ${night ? "bg-[#0d0b2b]/90 ring-1 ring-fuchsia-400/50" : "bg-ink/90"} px-3 py-2 text-center text-[11px] font-bold text-white shadow-xl sm:w-48 sm:text-xs ${
                 below ? "top-full mt-1.5" : "bottom-full mb-1.5"
               }`}
             >
@@ -770,11 +838,15 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
           <div className="pop-in" style={{ animationDelay: `${delay + 0.35}s` }}>
             <div
               className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-black whitespace-nowrap shadow-lg ring-2 sm:gap-1.5 sm:px-3 sm:py-1 sm:text-sm transition-transform duration-200 motion-reduce:transition-none ${
-                tag.open ? "bg-white text-ink ring-white" : "bg-white/75 text-gray-600 ring-white/60"
+                night
+                  ? "bg-[#14123a]/90 text-white ring-fuchsia-400/60 shadow-[0_0_18px_-2px_rgb(232_121_249/0.55)]"
+                  : tag.open
+                    ? "bg-white text-ink ring-white"
+                    : "bg-white/75 text-gray-600 ring-white/60"
               } ${hovered ? "scale-110" : ""}`}
             >
               {tag.title}
-              {tag.progress && <span className="text-xs font-extrabold text-amber-600">{tag.progress}</span>}
+              {tag.progress && <span className={`text-xs font-extrabold ${night ? "text-amber-300" : "text-amber-600"}`}>{tag.progress}</span>}
               {tag.badge && <span aria-hidden="true">{tag.badge}</span>}
             </div>
           </div>

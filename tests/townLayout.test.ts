@@ -60,3 +60,30 @@ describe("flowers and the pond", () => {
     expect(scatterFlowers(40).length).toBeGreaterThan(100);
   });
 });
+
+describe("the grown-ups' night city", () => {
+  it("fills its blocks with buildings that stay clear of the lots, the plaza and the base's edge", async () => {
+    const { cityBlocks } = await import("../src/game/townLayout.ts");
+    const half = 12.3;
+    const blocks = cityBlocks(20, half);
+    expect(blocks.length).toBeGreaterThan(12);
+    expect(cityBlocks(20, half)).toEqual(blocks);
+    for (const b of blocks) {
+      expect(Math.abs(b.x) + b.w / 2).toBeLessThanOrEqual(half);
+      expect(Math.abs(b.z) + b.d / 2).toBeLessThanOrEqual(half);
+      expect(Math.max(Math.abs(b.x), Math.abs(b.z))).toBeGreaterThan(PLAZA_CLEAR);
+      for (const p of PLACES) expect(Math.hypot(b.x - p.at[0], b.z - p.at[1])).toBeGreaterThan(p.clear);
+    }
+  });
+
+  it("swaps the treehouse for the founder's loft, and kids keep their island as it was", async () => {
+    const { personasFor } = await import("../src/game/personas.ts");
+    const kids = personasFor("kid", "en").map((p) => p.id);
+    const grownups = personasFor("grownup", "en").map((p) => p.id);
+    expect(kids).toContain("kid");
+    expect(kids).not.toContain("founder");
+    expect(grownups).toContain("founder");
+    expect(grownups).not.toContain("kid");
+    for (const id of grownups) expect(PLACES.some((p) => p.id === id)).toBe(true);
+  });
+});

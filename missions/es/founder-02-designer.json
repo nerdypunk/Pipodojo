@@ -1,0 +1,267 @@
+{
+  "id": "founder-02-designer",
+  "lang": "es",
+  "persona": "founder",
+  "path": "founder-launch",
+  "order": 2,
+  "title": "Pídele el diseño a tu diseñadora",
+  "icon": "🎨",
+  "recap": "Pipo le escribió a Priya un encargo claro para el banner del lanzamiento.",
+  "funFact": "Un buen encargo ahorra idas y vueltas. Los agentes lo escriben en segundos, si les das los detalles. ¡Ahora Pipo pide las cajas de envío y gasta tu dinero!",
+  "postcard": "una laptop brillante en un estudio creativo oscuro con el correo de Pipo sobre un banner de lanzamiento verde oscuro y dorado: {body}",
+  "situation": "¡Necesitamos un banner para el lanzamiento! ¿Le escribo a Priya, tu diseñadora?",
+  "facts": [
+    "🎨 Priya de Kiln Studio, por los $150 que acordaron",
+    "📐 Dos tamaños: un banner para la tienda y una publicación cuadrada para Instagram",
+    "📅 Lo necesitas para el martes 1 de diciembre",
+    "🌲 Colores de la marca: verde oscuro y dorado"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable para quien fundó un pequeño negocio en línea. Puedes enviar correos por esa persona. Haces lo que te pide: si te pide enviar algo, lo envías; si te pide verlo primero, escribes un borrador y esperas su OK.",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "Envía el correo de inmediato. Úsala cuando la persona quiere que se envíe.",
+      "app": "email",
+      "outcome": "done",
+      "store": "Correo de Ember & Oak",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el correo: una persona, una dirección de correo o una lista"
+          },
+          "subject": {
+            "type": "string",
+            "description": "El asunto, de hasta 8 palabras"
+          },
+          "body": {
+            "type": "string",
+            "description": "El texto del correo, de hasta 55 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Enviado"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "Escribe el correo y muéstraselo a la persona sin enviarlo, para que lo revise primero. Úsala cuando quiere leerlo antes de que salga.",
+      "app": "email",
+      "outcome": "waiting",
+      "store": "Correo de Ember & Oak",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "Quién recibe el correo: una persona, una dirección de correo o una lista"
+          },
+          "subject": {
+            "type": "string",
+            "description": "El asunto, de hasta 8 palabras"
+          },
+          "body": {
+            "type": "string",
+            "description": "El texto del correo, de hasta 55 palabras"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "Para: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Borrador listo, esperando tu OK para enviarlo"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_priya",
+          "label": "Escribe a Priya de Kiln Studio para encargar el banner",
+          "text": "Escríbele un correo a Priya de Kiln Studio, la diseñadora independiente con la que trabajo. Pídele que diseñe el banner de nuestro lanzamiento.",
+          "quality": "good"
+        },
+        {
+          "id": "email_designer",
+          "label": "Escribe a la diseñadora sobre el banner",
+          "text": "Escríbele a la diseñadora sobre el banner.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "¿Qué va en el encargo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "sizes",
+          "label": "Dos tamaños: banner y post cuadrado de Instagram",
+          "text": "Necesitamos dos tamaños: un banner ancho para la tienda y una publicación cuadrada para Instagram.",
+          "quality": "good"
+        },
+        {
+          "id": "deadline",
+          "label": "Lo necesito para el martes 1 de diciembre",
+          "text": "Lo necesitamos para el martes 1 de diciembre.",
+          "quality": "good"
+        },
+        {
+          "id": "price",
+          "label": "Los $150 que acordamos",
+          "text": "Confirma el precio de $150 que acordamos.",
+          "quality": "good"
+        },
+        {
+          "id": "pop",
+          "label": "Que resalte, ella entiende el estilo",
+          "text": "Dile que lo haga resaltar, ella entiende el estilo.",
+          "tip": "\"Que resalte\" significa algo distinto para cada quien. Tamaños, fechas y precio son con lo que una diseñadora puede trabajar.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "style",
+      "label": "¿Cómo debe verse?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "colors",
+          "label": "Nuestros colores: verde oscuro y dorado",
+          "text": "Los colores de nuestra marca son verde oscuro y dorado.",
+          "quality": "good"
+        },
+        {
+          "id": "trendy",
+          "label": "Lo que esté de moda ahora",
+          "text": "Usa lo que esté de moda ahora.",
+          "tip": "Las modas cambian cada semana. Tus propios colores hacen que el banner se vea como tu marca.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Antes de que Pipo lo envíe",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "Muéstrame el correo primero",
+          "text": "Muéstrame el correo antes de enviarlo.",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "Envíalo ya, Priya responde rápido",
+          "text": "Envíalo ya, Priya responde rápido.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:email_designer",
+      "signals": [
+        "📧(?![^\\n]*(priya|kiln))"
+      ],
+      "hint": "\"La diseñadora\" no dice a quién escribirle.",
+      "explain": "Pipo no sabía que te referías a Priya de Kiln Studio, así que el correo no le llega a ella."
+    },
+    {
+      "id": "no_sizes",
+      "when": "not_picked:sizes",
+      "signals": [
+        "^(?![\\s\\S]*(cuadrad|instagram))"
+      ],
+      "hint": "No le dijiste a Pipo qué tamaños necesitas.",
+      "explain": "Pipo no sabía de los dos tamaños, así que Priya tendría que adivinar."
+    },
+    {
+      "id": "no_deadline",
+      "when": "not_picked:deadline",
+      "signals": [
+        "^(?![\\s\\S]*((?<!\\d)1(º|°)? de dic|martes))"
+      ],
+      "hint": "No le dijiste a Pipo para cuándo lo necesitas.",
+      "explain": "Pipo no sabía del martes 1 de diciembre, así que Priya no sabe que hay fecha límite."
+    },
+    {
+      "id": "no_price",
+      "when": "not_picked:price",
+      "signals": [
+        "^(?![\\s\\S]*\\$\\s?150(?!\\d))"
+      ],
+      "hint": "No le dijiste a Pipo el precio que acordaron.",
+      "explain": "Pipo no mencionó los $150 que acordaron, así que el precio queda abierto."
+    },
+    {
+      "id": "no_colors",
+      "when": "picked:trendy",
+      "signals": [
+        "^(?![\\s\\S]*verde)"
+      ],
+      "hint": "\"Lo que esté de moda ahora\" no le da a Pipo los colores de tu marca.",
+      "explain": "Pipo no sabía que tus colores son verde oscuro y dorado, así que el banner podría no parecer de Ember & Oak."
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(enviad[oa]|entregad[oa])(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Pedir ver el correo primero te deja corregirlo antes de que Priya lo lea.",
+      "explain": "Pipo lo envió de inmediato, así que nunca pudiste revisarlo."
+    }
+  ],
+  "lesson": "Un buen encargo dice para quién es, qué necesitas, para cuándo y por cuánto. Y revísalo antes de que salga."
+}

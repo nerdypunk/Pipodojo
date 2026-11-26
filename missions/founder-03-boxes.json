@@ -1,0 +1,297 @@
+{
+  "id": "founder-03-boxes",
+  "persona": "founder",
+  "path": "founder-launch",
+  "order": 3,
+  "title": "Order the launch boxes",
+  "icon": "📦",
+  "recap": "Pipo filled a PackRight cart with your launch boxes.",
+  "funFact": "Agents like Meta's Muse can shop for you and wait for your OK before paying. Clear limits are what make that safe. You just ran a whole launch week with Pipo!",
+  "postcard": "a stack of recycled kraft gift boxes tied with gold ribbon under neon city lights, ready for launch orders: {items}",
+  "situation": "Orders are coming! Want me to get the gift boxes from PackRight?",
+  "facts": [
+    "📦 60 small gift boxes: 50 orders plus spares",
+    "♻️ Recycled cardboard, no plastic",
+    "💵 No more than $70",
+    "🚚 Delivered by Thursday, December 3"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant for the founder of a small online business. You can shop at PackRight, an online packaging store, and pay with their saved card. You do what they ask: if they ask you to buy or order something, you pay and place the order; if they ask to see the cart first, you fill it and wait for their OK.",
+  "tools": [
+    {
+      "name": "pay_and_order",
+      "description": "Buy it now: pay with the saved card and place the order. Use this when the user wants it handled.",
+      "app": "shop",
+      "outcome": "done",
+      "store": "PackRight",
+      "whenLabel": "Delivery",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Everything in the cart, each with its price in dollars",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total in dollars"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Delivery day and date, for example Monday, March 2"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📦",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "Delivery {delivery}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Paid and ordered"
+        }
+      ]
+    },
+    {
+      "name": "show_cart",
+      "description": "Fill the cart and show it to the user without paying, so they can check it first. Use this when the user wants to approve before paying.",
+      "app": "shop",
+      "outcome": "waiting",
+      "store": "PackRight",
+      "whenLabel": "Delivery",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Everything in the cart, each with its price in dollars",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total in dollars"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Delivery day and date, for example Monday, March 2"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📦",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "Delivery {delivery}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Cart ready, waiting for your OK to pay"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "order_boxes",
+          "label": "Order gift boxes from PackRight for our launch orders",
+          "text": "Order small gift boxes from PackRight for our launch orders.",
+          "quality": "good"
+        },
+        {
+          "id": "get_packaging",
+          "label": "Get us some packaging",
+          "text": "Get us some packaging.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "order",
+      "label": "What should Pipo order?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "count",
+          "label": "60 of them: 50 orders plus spares",
+          "text": "We need 60 of them: enough for 50 orders plus some spares.",
+          "quality": "good"
+        },
+        {
+          "id": "recycled",
+          "label": "Recycled cardboard, no plastic",
+          "text": "Only recycled cardboard, no plastic.",
+          "quality": "good"
+        },
+        {
+          "id": "fancy",
+          "label": "The fanciest ones they have",
+          "text": "Get the fanciest ones they have.",
+          "tip": "\"The fanciest\" usually means the priciest, and it says nothing about how many you need.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "label": "What are the limits?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "budget",
+          "label": "No more than $70",
+          "text": "Spend no more than $70.",
+          "quality": "good"
+        },
+        {
+          "id": "delivery",
+          "label": "Delivered by Thursday, December 3",
+          "text": "They must arrive by Thursday, December 3.",
+          "quality": "good"
+        },
+        {
+          "id": "address",
+          "label": "Use my saved address",
+          "text": "Use my saved address.",
+          "quality": "neutral"
+        }
+      ]
+    },
+    {
+      "id": "pay",
+      "label": "Before Pipo pays",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_cart",
+          "label": "Show me the cart first",
+          "text": "Show me the cart and wait for my OK before you pay.",
+          "quality": "good"
+        },
+        {
+          "id": "pay_now",
+          "label": "Just pay, I trust you",
+          "text": "Just pay for it, I trust you.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_what",
+      "when": "picked:get_packaging",
+      "signals": [
+        "📦(?![^\\n]*gift)"
+      ],
+      "hint": "\"Some packaging\" doesn't say what to buy.",
+      "explain": "Pipo didn't know you wanted gift boxes, so the cart has plain shipping boxes instead."
+    },
+    {
+      "id": "no_count",
+      "when": "not_picked:count",
+      "signals": [
+        "^(?![\\s\\S]*(?<![\\d.$])60(?!\\d))"
+      ],
+      "hint": "You didn't tell Pipo how many boxes you need.",
+      "explain": "Pipo didn't know you need 60 boxes, so it guessed the amount."
+    },
+    {
+      "id": "no_recycled",
+      "when": "not_picked:recycled",
+      "signals": [
+        "^(?![\\s\\S]*(recycl|kraft|eco|compostable|plastic-free))"
+      ],
+      "hint": "You didn't tell Pipo you want recycled cardboard.",
+      "explain": "Pipo didn't know you want recycled boxes and no plastic, so it picked any kind."
+    },
+    {
+      "id": "over_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "💳[^\\n]*\\$\\s?(7[1-9]|[89]\\d|[1-9]\\d{2,})(?![\\d])"
+      ],
+      "hint": "You didn't give Pipo a spending limit.",
+      "explain": "Pipo didn't know your limit is $70, so the cart costs more than that."
+    },
+    {
+      "id": "late",
+      "when": "not_picked:delivery",
+      "signals": [
+        "🚚(?![^\\n]*(thu(rs|rsday)?|dec(ember)?\\.?\\s*3(rd)?(?!\\d)))"
+      ],
+      "hint": "You didn't tell Pipo when the boxes must arrive.",
+      "explain": "Pipo didn't know they must arrive by Thursday, December 3, so they might come after launch day."
+    },
+    {
+      "id": "paid_unchecked",
+      "when": "picked:pay_now",
+      "signals": [
+        "✅",
+        "\\b(paid|purchased|bought|order placed|ordered)\\b(?![^\\n]*wait)"
+      ],
+      "hint": "Asking to see the cart first lets you catch mistakes before your money is spent.",
+      "explain": "Pipo paid straight away, so you never got to check the order."
+    }
+  ],
+  "lesson": "When Pipo spends money, say exactly what to buy, how many, the limit and the date, and check the cart before it pays."
+}

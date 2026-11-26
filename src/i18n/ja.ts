@@ -159,6 +159,16 @@ export const ja: Strings = {
     home: "ホーム",
   },
 
+  audience: {
+    eyebrow: "はじめる前に",
+    title: "子ども？それとも大人？",
+    lead: "あなたに合わせて準備します。",
+    kid: { title: "子どもです", text: "ツリーハウスやカフェがある、晴れた島。短くてやさしいレッスン。" },
+    grownup: { title: "大人です", text: "夜の街。仕事や毎日の暮らしに役立つ、少し長めのレッスン。" },
+    go: "はじめる",
+    note: "あとから街でいつでも切り替えられます。選んだことは、この端末だけが覚えています。",
+    switchLabel: "子ども？大人？",
+  },
   town: {
     backHome: "ホームに戻る",
     title: "Pipoはだれを手伝う？",
@@ -195,6 +205,9 @@ export const ja: Strings = {
     tagSub: (blurb: string, paths: number) => `${blurb} ${paths}コース。`,
     garageSub: "Pipoの見た目を変えられます。",
     moreIslands: { title: "🚧 工事中", sub: "新しい島、もうすぐ登場" },
+    nightTitle: "今夜、Pipoを必要としているのは？",
+    nightHint: "建物をクリックすると、コースが見られます。",
+    nightLoading: "街の明かりをつけています…",
   },
 
   paths: {

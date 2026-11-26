@@ -30,9 +30,18 @@ export const PLACES: readonly Place[] = [
   { id: "kid", at: [-7.2, -6.6], turn: Math.PI / 4, clear: 3.2, tag: 4.1 },
   { id: "executive", at: [2.7, -8.4], turn: 0, clear: 2.4, tag: 4.2 },
   { id: "garage", at: [-2.9, 8.6], turn: Math.PI / 2, clear: 1.9, tag: 2.6 },
+  // Only in the grown-ups' night city, on the treehouse's lot.
+  { id: "founder", at: [-7.2, -6.6], turn: Math.PI / 4, clear: 3.2, tag: 4.1 },
 ];
 
-export const placeOf = (id: PlaceId) => PLACES.find((p) => p.id === id)!;
+/**
+ * The grown-ups' night city: the same lots, with name tags raised over its taller buildings
+ * (the office tower is the tallest thing in either town).
+ */
+const CITY_TAGS: Partial<Record<PlaceId, number>> = { executive: 6.5, parent: 4.3, student: 4.0, business: 3.6, founder: 4.6, garage: 2.3 };
+export const CITY_PLACES: readonly Place[] = PLACES.map((p) => ({ ...p, tag: CITY_TAGS[p.id] ?? p.tag }));
+
+export const placeOf = (id: PlaceId, places: readonly Place[] = PLACES) => places.find((p) => p.id === id)!;
 
 /** A pond near the front edge; its stream spills over the edge as a waterfall. */
 export const POND = { at: [4.3, 9.7] as Vec2, radius: 1.35 };
@@ -173,4 +182,38 @@ export function scatterFlowers(clumps: number, seed = 11): FlowerSpot[] {
     }
   }
   return flowers;
+}
+
+export interface CityBlock {
+  x: number;
+  z: number;
+  w: number;
+  d: number;
+  h: number;
+}
+
+/**
+ * Low buildings filling the night city's blocks: anywhere on the square base (out to `half`) that
+ * isn't a road, a lot, the plaza or the fountain, kept apart from each other. The same every visit.
+ */
+export function cityBlocks(count: number, half: number, seed = 5): CityBlock[] {
+  const rand = seeded(seed);
+  const blocks: CityBlock[] = [];
+  for (let tries = 0; blocks.length < count && tries < count * 80; tries++) {
+    const x = (rand() * 2 - 1) * half;
+    const z = (rand() * 2 - 1) * half;
+    const w = 1.1 + rand() * 0.9;
+    const d = 1.0 + rand() * 0.8;
+    const reach = Math.hypot(w, d) / 2;
+    if (Math.abs(x) + w / 2 > half || Math.abs(z) + d / 2 > half) continue;
+    if (blocked(x, z, reach + 0.15)) continue;
+    // Clear of every lot by the block's own size too, not just its middle.
+    if (PLACES.some((p) => Math.hypot(x - p.at[0], z - p.at[1]) < p.clear + reach)) continue;
+    if (Math.hypot(x - POND.at[0], z - POND.at[1]) < POND.radius + reach + 0.4) continue;
+    if (blocks.some((b) => Math.abs(x - b.x) < (w + b.w) / 2 + 0.35 && Math.abs(z - b.z) < (d + b.d) / 2 + 0.35)) continue;
+    // Taller toward the back of town, so the front stays open toward the camera.
+    const back = (half - z) / (2 * half);
+    blocks.push({ x, z, w, d, h: 0.7 + rand() * 0.8 + back * 0.9 });
+  }
+  return blocks;
 }

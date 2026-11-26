@@ -1,0 +1,298 @@
+{
+  "id": "founder-03-boxes",
+  "lang": "es",
+  "persona": "founder",
+  "path": "founder-launch",
+  "order": 3,
+  "title": "Pide las cajas del lanzamiento",
+  "icon": "📦",
+  "recap": "Pipo llenó un carrito de PackRight con tus cajas para el lanzamiento.",
+  "funFact": "Agentes como Muse de Meta pueden comprar por ti y esperar tu OK antes de pagar. Los límites claros hacen que sea seguro. ¡Acabas de llevar toda una semana de lanzamiento con Pipo!",
+  "postcard": "una pila de cajas de regalo de cartón kraft reciclado con listón dorado bajo luces de neón de la ciudad, listas para los pedidos: {items}",
+  "situation": "¡Ya vienen los pedidos! ¿Compro las cajas de regalo en PackRight?",
+  "facts": [
+    "📦 60 cajas de regalo pequeñas: 50 pedidos y de repuesto",
+    "♻️ Cartón reciclado, sin plástico",
+    "💵 No más de $70",
+    "🚚 Que lleguen a más tardar el jueves 3 de diciembre"
+  ],
+  "systemPrompt": "Eres Pipo, un asistente personal amigable para quien fundó un pequeño negocio en línea. Puedes comprar en PackRight, una tienda de empaques en línea, y pagar con la tarjeta guardada. Haces lo que te pide: si te pide comprar o pedir algo, pagas y haces el pedido; si te pide ver el carrito primero, lo llenas y esperas su OK.",
+  "tools": [
+    {
+      "name": "pay_and_order",
+      "description": "Cómpralo ahora: paga con la tarjeta guardada y haz el pedido. Úsala cuando la persona quiere que se resuelva.",
+      "app": "shop",
+      "outcome": "done",
+      "store": "PackRight",
+      "whenLabel": "Entrega",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Todo lo que hay en el carrito, cada cosa con su precio en dólares",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total en dólares"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Día y fecha de entrega, por ejemplo lunes 2 de marzo"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📦",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "Entrega {delivery}"
+        },
+        {
+          "emoji": "✅",
+          "text": "Pagado y pedido"
+        }
+      ]
+    },
+    {
+      "name": "show_cart",
+      "description": "Llena el carrito y muéstraselo a la persona sin pagar, para que lo revise primero. Úsala cuando quiere aprobar antes de pagar.",
+      "app": "shop",
+      "outcome": "waiting",
+      "store": "PackRight",
+      "whenLabel": "Entrega",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "Todo lo que hay en el carrito, cada cosa con su precio en dólares",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total en dólares"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "Día y fecha de entrega, por ejemplo lunes 2 de marzo"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📦",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "Total ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "Entrega {delivery}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "Carrito listo, esperando tu OK para pagar"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "¿Qué quieres que haga Pipo?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "order_boxes",
+          "label": "Pide cajas de regalo en PackRight para los pedidos",
+          "text": "Pide cajas de regalo pequeñas en PackRight para los pedidos del lanzamiento.",
+          "quality": "good"
+        },
+        {
+          "id": "get_packaging",
+          "label": "Consíguenos empaques",
+          "text": "Consíguenos empaques.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "order",
+      "label": "¿Qué debe pedir Pipo?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "count",
+          "label": "60: 50 pedidos y de repuesto",
+          "text": "Necesitamos 60: suficientes para 50 pedidos y algunos de repuesto.",
+          "quality": "good"
+        },
+        {
+          "id": "recycled",
+          "label": "Cartón reciclado, sin plástico",
+          "text": "Solo cartón reciclado, sin plástico.",
+          "quality": "good"
+        },
+        {
+          "id": "fancy",
+          "label": "Las más elegantes que tengan",
+          "text": "Pide las más elegantes que tengan.",
+          "tip": "\"Las más elegantes\" suele significar las más caras, y no dice cuántas necesitas.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "label": "¿Cuáles son los límites?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "budget",
+          "label": "No más de $70",
+          "text": "No gastes más de $70.",
+          "quality": "good"
+        },
+        {
+          "id": "delivery",
+          "label": "Que lleguen el jueves 3 de diciembre",
+          "text": "Tienen que llegar a más tardar el jueves 3 de diciembre.",
+          "quality": "good"
+        },
+        {
+          "id": "address",
+          "label": "Usa mi dirección guardada",
+          "text": "Usa mi dirección guardada.",
+          "quality": "neutral"
+        }
+      ]
+    },
+    {
+      "id": "pay",
+      "label": "Antes de que Pipo pague",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_cart",
+          "label": "Muéstrame el carrito primero",
+          "text": "Muéstrame el carrito y espera mi OK antes de pagar.",
+          "quality": "good"
+        },
+        {
+          "id": "pay_now",
+          "label": "Paga y ya, confío en ti",
+          "text": "Págalo y ya, confío en ti.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_what",
+      "when": "picked:get_packaging",
+      "signals": [
+        "📦(?![^\\n]*regalo)"
+      ],
+      "hint": "\"Empaques\" no dice qué comprar.",
+      "explain": "Pipo no sabía que querías cajas de regalo, así que el carrito tiene cajas de envío comunes."
+    },
+    {
+      "id": "no_count",
+      "when": "not_picked:count",
+      "signals": [
+        "^(?![\\s\\S]*(?<![\\d.$])60(?!\\d))"
+      ],
+      "hint": "No le dijiste a Pipo cuántas cajas necesitas.",
+      "explain": "Pipo no sabía que necesitas 60 cajas, así que adivinó la cantidad."
+    },
+    {
+      "id": "no_recycled",
+      "when": "not_picked:recycled",
+      "signals": [
+        "^(?![\\s\\S]*(reciclad|kraft|eco|compostable|sin pl[aá]stico))"
+      ],
+      "hint": "No le dijiste a Pipo que quieres cartón reciclado.",
+      "explain": "Pipo no sabía que quieres cajas recicladas y sin plástico, así que eligió cualquiera."
+    },
+    {
+      "id": "over_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "💳[^\\n]*\\$\\s?(7[1-9]|[89]\\d|[1-9]\\d{2,})(?![\\d])"
+      ],
+      "hint": "No le diste a Pipo un límite de gasto.",
+      "explain": "Pipo no sabía que tu límite es $70, así que el carrito cuesta más."
+    },
+    {
+      "id": "late",
+      "when": "not_picked:delivery",
+      "signals": [
+        "🚚(?![^\\n]*(jueves|(?<!\\d)3 de dic))"
+      ],
+      "hint": "No le dijiste a Pipo cuándo deben llegar las cajas.",
+      "explain": "Pipo no sabía que deben llegar a más tardar el jueves 3 de diciembre, así que podrían llegar después del lanzamiento."
+    },
+    {
+      "id": "paid_unchecked",
+      "when": "picked:pay_now",
+      "signals": [
+        "✅",
+        "(?<![a-záéíóúñü])(pagad[oa]s?|comprad[oa]s?|pedido realizado)(?![a-záéíóúñü])(?![^\\n]*esper)"
+      ],
+      "hint": "Pedir ver el carrito primero te deja corregir errores antes de gastar tu dinero.",
+      "explain": "Pipo pagó de inmediato, así que nunca pudiste revisar el pedido."
+    }
+  ],
+  "lesson": "Cuando Pipo gasta dinero, dile exactamente qué comprar, cuántos, el límite y la fecha, y revisa el carrito antes de que pague."
+}

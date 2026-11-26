@@ -1,0 +1,267 @@
+{
+  "id": "founder-02-designer",
+  "lang": "ja",
+  "persona": "founder",
+  "path": "founder-launch",
+  "order": 2,
+  "title": "デザイナーに依頼しよう",
+  "icon": "🎨",
+  "recap": "Pipoがプリヤに、ローンチバナーのわかりやすい依頼を書きました。",
+  "funFact": "いい依頼文は、やり取りの往復を減らします。詳しく伝えれば、エージェントは数秒で書いてくれます。次は、Pipoが発送用の箱を注文します。あなたのお金を使います！",
+  "postcard": "暗いクリエイティブスタジオで光るノートパソコン。深緑と金のローンチバナーについてのPipoのメール: {body}",
+  "situation": "ローンチ用のバナーが必要です！デザイナーのプリヤにメールしましょうか？",
+  "facts": [
+    "🎨 Kiln Studioのプリヤ、約束した150ドルで",
+    "📐 2つのサイズ: ショップ用バナーと、正方形のInstagram投稿",
+    "📅 12月1日（火）までに必要",
+    "🌲 ブランドカラー: 深緑と金"
+  ],
+  "systemPrompt": "あなたはPipoです。小さなオンラインビジネスの創業者を手伝う、親しみやすいパーソナルアシスタントです。その人の代わりにメールを送れます。頼まれたとおりにします。送ってと言われたら送り、先に見たいと言われたら下書きを作ってOKを待ちます。",
+  "tools": [
+    {
+      "name": "send_email",
+      "description": "メールをすぐに送ります。ユーザーが送ってほしいときに使います。",
+      "app": "email",
+      "outcome": "done",
+      "store": "Ember & Oak メール",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メールの宛先: 人、メールアドレス、またはメーリングリスト"
+          },
+          "subject": {
+            "type": "string",
+            "description": "件名（8語以内）"
+          },
+          "body": {
+            "type": "string",
+            "description": "メールの本文（55語以内）"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "宛先: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "✅",
+          "text": "送信済み"
+        }
+      ]
+    },
+    {
+      "name": "draft_email",
+      "description": "メールを書き、送らずにユーザーに見せて、先に確認してもらいます。送る前に読みたいときに使います。",
+      "app": "email",
+      "outcome": "waiting",
+      "store": "Ember & Oak メール",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "メールの宛先: 人、メールアドレス、またはメーリングリスト"
+          },
+          "subject": {
+            "type": "string",
+            "description": "件名（8語以内）"
+          },
+          "body": {
+            "type": "string",
+            "description": "メールの本文（55語以内）"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📧",
+          "text": "宛先: {to}"
+        },
+        {
+          "emoji": "✏️",
+          "text": "{subject}"
+        },
+        {
+          "emoji": "💬",
+          "text": "{body}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "下書きができました。送信のOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "email_priya",
+          "label": "Kiln Studioのプリヤにローンチバナーを依頼",
+          "text": "いつもお願いしているフリーランスのデザイナー、Kiln Studioのプリヤにメールして。ローンチ用のバナーのデザインをお願いして。",
+          "quality": "good"
+        },
+        {
+          "id": "email_designer",
+          "label": "デザイナーにバナーのことをメールして",
+          "text": "デザイナーにバナーのことをメールして。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "label": "依頼に入れることは？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "sizes",
+          "label": "2サイズ: ショップ用と正方形のInstagram",
+          "text": "サイズは2つ必要です。ショップページ用の横長バナーと、正方形のInstagram投稿です。",
+          "quality": "good"
+        },
+        {
+          "id": "deadline",
+          "label": "12月1日（火）までに必要",
+          "text": "12月1日（火）までに必要です。",
+          "quality": "good"
+        },
+        {
+          "id": "price",
+          "label": "約束した150ドル",
+          "text": "約束した150ドルの金額を確認して。",
+          "quality": "good"
+        },
+        {
+          "id": "pop",
+          "label": "目立つ感じで、彼女ならわかる",
+          "text": "目立つ感じでお願いと伝えて。彼女なら雰囲気わかるから。",
+          "tip": "「目立つ感じ」は人によって意味が違います。サイズ、日付、金額があれば、デザイナーは作業を始められます。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "style",
+      "label": "どんな見た目にする？",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "colors",
+          "label": "ブランドカラー: 深緑と金",
+          "text": "ブランドカラーは深緑と金です。",
+          "quality": "good"
+        },
+        {
+          "id": "trendy",
+          "label": "今はやっている感じで",
+          "text": "今はやっている感じにして。",
+          "tip": "はやりは毎週変わります。自分のブランドカラーを使えば、バナーがブランドらしくなります。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "check",
+      "label": "Pipoが送る前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_first",
+          "label": "先にメールを見せて",
+          "text": "送る前にメールを見せて。",
+          "quality": "good"
+        },
+        {
+          "id": "go_now",
+          "label": "すぐ送って、プリヤは仕事が早いから",
+          "text": "すぐ送って。プリヤは仕事が早いから。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_who",
+      "when": "picked:email_designer",
+      "signals": [
+        "📧(?![^\\n]*(プリヤ|priya|kiln))"
+      ],
+      "hint": "「デザイナー」だけでは、誰にメールするのかわかりません。",
+      "explain": "PipoはKiln Studioのプリヤのことだと知らなかったので、メールが彼女に届きません。"
+    },
+    {
+      "id": "no_sizes",
+      "when": "not_picked:sizes",
+      "signals": [
+        "^(?![\\s\\S]*(正方形|スクエア|instagram|インスタ))"
+      ],
+      "hint": "どのサイズが必要か、Pipoに伝えていません。",
+      "explain": "Pipoは2つのサイズを知らなかったので、プリヤが推測するしかありません。"
+    },
+    {
+      "id": "no_deadline",
+      "when": "not_picked:deadline",
+      "signals": [
+        "^(?![\\s\\S]*((12|１２)\\s?月\\s?[1１]\\s?日(?![0-9０-９])|火曜|（火）|\\(火\\)))"
+      ],
+      "hint": "いつまでに必要か、Pipoに伝えていません。",
+      "explain": "Pipoは12月1日（火）の締め切りを知らなかったので、プリヤには期限が伝わりません。"
+    },
+    {
+      "id": "no_price",
+      "when": "not_picked:price",
+      "signals": [
+        "^(?![\\s\\S]*((\\$|＄)\\s?(150|１５０)|(150|１５０)\\s?ドル))"
+      ],
+      "hint": "約束した金額をPipoに伝えていません。",
+      "explain": "Pipoは約束の150ドルにふれなかったので、金額があいまいなままです。"
+    },
+    {
+      "id": "no_colors",
+      "when": "picked:trendy",
+      "signals": [
+        "^(?![\\s\\S]*(緑|グリーン|green))"
+      ],
+      "hint": "「今はやっている感じで」では、ブランドカラーがPipoに伝わりません。",
+      "explain": "Pipoはブランドカラーが深緑と金だと知らなかったので、バナーがEmber & Oakらしくならないかもしれません。"
+    },
+    {
+      "id": "sent_unchecked",
+      "when": "picked:go_now",
+      "signals": [
+        "✅",
+        "(送信(済み|しました|完了)|送りました)(?![^\\n]*待)"
+      ],
+      "hint": "先にメールを見せてもらえば、プリヤが読む前に直せます。",
+      "explain": "Pipoがすぐに送ったので、確認できませんでした。"
+    }
+  ],
+  "lesson": "いい依頼は、誰に、何を、いつまでに、いくらでを伝えます。そして送る前に確認しましょう。"
+}

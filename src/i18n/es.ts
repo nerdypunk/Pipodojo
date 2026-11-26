@@ -161,6 +161,16 @@ export const es: Strings = {
     home: "Inicio",
   },
 
+  audience: {
+    eyebrow: "Antes de empezar",
+    title: "¿Eres niño o adulto?",
+    lead: "Preparamos el espacio para ti.",
+    kid: { title: "Soy niño o niña", text: "Una isla soleada con casa del árbol, un café y lecciones cortas y amigables." },
+    grownup: { title: "Soy adulto", text: "Una ciudad de noche, con lecciones más largas para el trabajo y la vida diaria." },
+    go: "Vamos",
+    note: "Puedes cambiarlo cuando quieras desde la ciudad. Solo este dispositivo recuerda tu elección.",
+    switchLabel: "¿Niño o adulto?",
+  },
   town: {
     backHome: "Volver al inicio",
     title: "¿A quién ayuda Pipo?",
@@ -197,6 +207,9 @@ export const es: Strings = {
     tagSub: (blurb: string, paths: number) => `${blurb} ${paths} caminos.`,
     garageSub: "Cambia cómo se ve tu Pipo.",
     moreIslands: { title: "🚧 En construcción", sub: "Más islas muy pronto" },
+    nightTitle: "¿Quién necesita a Pipo esta noche?",
+    nightHint: "Haz clic en un edificio para ver sus caminos.",
+    nightLoading: "Encendiendo las luces de la ciudad…",
   },
 
   paths: {

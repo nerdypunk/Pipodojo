@@ -100,11 +100,11 @@ export function PathPicker({ persona, stars, onStart, onBack }: Props) {
           {t.paths.backToTown}
         </button>
         <Pipo mood="happy" className="h-16 w-16 drop-shadow-[0_6px_16px_rgba(45,36,112,0.35)]" />
-        <p className="text-sm font-black tracking-wide text-brand-700 uppercase">
+        <p className="text-sm font-black tracking-wide text-brand-700 uppercase grownup:text-fuchsia-300">
           {who.emoji} {who.place} · {who.name}
         </p>
-        <h1 className="text-3xl font-black text-ink md:text-4xl">{t.paths.title}</h1>
-        <p className="font-semibold text-gray-600">{t.paths.intro}</p>
+        <h1 className="text-3xl font-black text-ink md:text-4xl grownup:text-white">{t.paths.title}</h1>
+        <p className="font-semibold text-gray-600 grownup:text-indigo-200">{t.paths.intro}</p>
       </header>
 
       <div ref={wrapper} className="relative">

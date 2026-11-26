@@ -1,0 +1,298 @@
+{
+  "id": "founder-03-boxes",
+  "lang": "ja",
+  "persona": "founder",
+  "path": "founder-launch",
+  "order": 3,
+  "title": "ローンチ用の箱を注文しよう",
+  "icon": "📦",
+  "recap": "PipoがPackRightのカートに、ローンチ用の箱を入れました。",
+  "funFact": "MetaのMuseのようなエージェントは、代わりに買い物をして、支払いの前にあなたのOKを待てます。はっきりした上限があるから安心です。Pipoと一緒に、ローンチの一週間をやりきりました！",
+  "postcard": "ネオンの街明かりの下、金のリボンをかけた再生クラフト紙のギフトボックスの山。ローンチの注文を待っている: {items}",
+  "situation": "注文が入ってきます！PackRightでギフトボックスを買いましょうか？",
+  "facts": [
+    "📦 小さなギフトボックス60個: 注文50件と予備",
+    "♻️ 再生段ボール、プラスチックなし",
+    "💵 70ドルまで",
+    "🚚 12月3日（木）までに届くこと"
+  ],
+  "systemPrompt": "あなたはPipoです。小さなオンラインビジネスの創業者を手伝う、親しみやすいパーソナルアシスタントです。オンラインの梱包材ストアPackRightで買い物をして、登録済みのカードで支払えます。頼まれたとおりにします。買って・注文してと言われたら支払って注文し、先にカートを見たいと言われたらカートに入れてOKを待ちます。",
+  "tools": [
+    {
+      "name": "pay_and_order",
+      "description": "今すぐ購入: 登録済みのカードで支払って注文します。ユーザーが任せたいときに使います。",
+      "app": "shop",
+      "outcome": "done",
+      "store": "PackRight",
+      "whenLabel": "お届け",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "カートの中身すべて。それぞれドルでの価格つき",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "合計（ドル）"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "お届けの曜日と日付。例: 3月2日（月）"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📦",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "合計 ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "お届け {delivery}"
+        },
+        {
+          "emoji": "✅",
+          "text": "支払い済み・注文完了"
+        }
+      ]
+    },
+    {
+      "name": "show_cart",
+      "description": "カートに入れて、支払わずにユーザーに見せ、先に確認してもらいます。支払う前に承認したいときに使います。",
+      "app": "shop",
+      "outcome": "waiting",
+      "store": "PackRight",
+      "whenLabel": "お届け",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "カートの中身すべて。それぞれドルでの価格つき",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "合計（ドル）"
+          },
+          "delivery": {
+            "type": "string",
+            "description": "お届けの曜日と日付。例: 3月2日（月）"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "delivery"
+        ]
+      },
+      "lines": [
+        {
+          "emoji": "📦",
+          "text": "{items}"
+        },
+        {
+          "emoji": "💳",
+          "text": "合計 ${total}"
+        },
+        {
+          "emoji": "🚚",
+          "text": "お届け {delivery}"
+        },
+        {
+          "emoji": "⏳",
+          "text": "カートの準備ができました。支払いのOKを待っています"
+        }
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "want",
+      "label": "Pipoに何をしてほしい？",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "order_boxes",
+          "label": "ローンチの注文用に、PackRightでギフトボックスを注文",
+          "text": "ローンチの注文用に、PackRightで小さなギフトボックスを注文して。",
+          "quality": "good"
+        },
+        {
+          "id": "get_packaging",
+          "label": "梱包材を買っておいて",
+          "text": "梱包材を買っておいて。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "order",
+      "label": "Pipoは何を注文する？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "count",
+          "label": "60個: 注文50件と予備",
+          "text": "60個必要です。注文50件分と、予備が少し。",
+          "quality": "good"
+        },
+        {
+          "id": "recycled",
+          "label": "再生段ボール、プラスチックなし",
+          "text": "再生段ボールだけで、プラスチックはなしで。",
+          "quality": "good"
+        },
+        {
+          "id": "fancy",
+          "label": "いちばんおしゃれなもの",
+          "text": "いちばんおしゃれなのを買って。",
+          "tip": "「いちばんおしゃれ」はたいてい「いちばん高い」で、何個必要かも伝わりません。",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "limits",
+      "label": "上限や条件は？",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "budget",
+          "label": "70ドルまで",
+          "text": "使うのは70ドルまでにして。",
+          "quality": "good"
+        },
+        {
+          "id": "delivery",
+          "label": "12月3日（木）までに届けて",
+          "text": "12月3日（木）までに届かないと困ります。",
+          "quality": "good"
+        },
+        {
+          "id": "address",
+          "label": "登録済みの住所で",
+          "text": "登録済みの住所を使って。",
+          "quality": "neutral"
+        }
+      ]
+    },
+    {
+      "id": "pay",
+      "label": "Pipoが支払う前に",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "check_cart",
+          "label": "先にカートを見せて",
+          "text": "支払う前にカートを見せて、私のOKを待って。",
+          "quality": "good"
+        },
+        {
+          "id": "pay_now",
+          "label": "払っちゃって、任せるよ",
+          "text": "そのまま払っちゃって。任せるよ。",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_what",
+      "when": "picked:get_packaging",
+      "signals": [
+        "📦(?![^\\n]*(ギフト|gift|贈答))"
+      ],
+      "hint": "「梱包材」では、何を買えばいいかわかりません。",
+      "explain": "Pipoはギフトボックスがほしいと知らなかったので、カートにはふつうの発送用の箱が入りました。"
+    },
+    {
+      "id": "no_count",
+      "when": "not_picked:count",
+      "signals": [
+        "^(?![\\s\\S]*(?<![\\d０-９.$])(60|６０)(?![\\d０-９]))"
+      ],
+      "hint": "箱が何個必要か、Pipoに伝えていません。",
+      "explain": "Pipoは60個必要だと知らなかったので、数を推測しました。"
+    },
+    {
+      "id": "no_recycled",
+      "when": "not_picked:recycled",
+      "signals": [
+        "^(?![\\s\\S]*(再生|リサイクル|クラフト|エコ|プラスチック(なし|不使用|フリー)))"
+      ],
+      "hint": "再生段ボールがいいことを、Pipoに伝えていません。",
+      "explain": "Pipoは再生段ボールでプラスチックなしがいいと知らなかったので、種類を適当に選びました。"
+    },
+    {
+      "id": "over_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "💳[^\\n]*(\\$|＄)\\s?(7[1-9]|[89]\\d|[1-9]\\d{2,})(?![\\d])"
+      ],
+      "hint": "使っていい上限をPipoに伝えていません。",
+      "explain": "Pipoは上限が70ドルだと知らなかったので、カートがそれより高くなりました。"
+    },
+    {
+      "id": "late",
+      "when": "not_picked:delivery",
+      "signals": [
+        "🚚(?![^\\n]*(木曜|（木）|\\(木\\)|(12|１２)\\s?月\\s?[3３]\\s?日))"
+      ],
+      "hint": "箱がいつまでに届く必要があるか、Pipoに伝えていません。",
+      "explain": "Pipoは12月3日（木）までに必要だと知らなかったので、ローンチ日より後に届くかもしれません。"
+    },
+    {
+      "id": "paid_unchecked",
+      "when": "picked:pay_now",
+      "signals": [
+        "✅",
+        "(支払い?(済み|ました|完了)|払いました|購入(済み|しました|完了)|注文(済み|しました|完了))(?![^\\n]*待)"
+      ],
+      "hint": "先にカートを見せてもらえば、お金を使う前にまちがいに気づけます。",
+      "explain": "Pipoがすぐに支払ったので、注文を確認できませんでした。"
+    }
+  ],
+  "lesson": "Pipoがお金を使うときは、何を、いくつ、上限、日付をはっきり伝えて、支払う前にカートを確認しましょう。"
+}

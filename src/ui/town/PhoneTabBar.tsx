@@ -11,7 +11,7 @@ import { useCloseOnOutside } from "../useCloseOnOutside.ts";
 
 /** One tab: an icon over a short label, the full width of its quarter. */
 const TAB =
-  "flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-2xl py-1.5 text-[11px] leading-none font-extrabold text-ink transition active:scale-95 focus-visible:outline-3 focus-visible:outline-offset-[-3px] focus-visible:outline-brand-500 motion-reduce:transition-none";
+  "flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-2xl py-1.5 text-[11px] leading-none font-extrabold text-ink grownup:text-indigo-100 transition active:scale-95 focus-visible:outline-3 focus-visible:outline-offset-[-3px] focus-visible:outline-brand-500 motion-reduce:transition-none";
 
 interface Props {
   streak: number;
@@ -27,7 +27,7 @@ export function PhoneTabBar({ streak, stars, pathsDone, onRanking }: Props) {
     <>
       <nav
         aria-label={t.town.tabs}
-        className="fixed inset-x-0 bottom-0 z-[46] flex h-[calc(4rem+env(safe-area-inset-bottom))] items-start gap-1 border-t border-brand-100 bg-white/95 px-2 pt-1.5 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_-12px_rgb(45_36_112/0.35)] sm:hidden"
+        className="fixed inset-x-0 bottom-0 z-[46] flex h-[calc(4rem+env(safe-area-inset-bottom))] items-start gap-1 border-t border-brand-100 bg-white/95 px-2 grownup:border-white/10 grownup:bg-[#0f0d2c]/95 grownup:text-indigo-100 pt-1.5 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_-12px_rgb(45_36_112/0.35)] sm:hidden"
       >
         <button
           type="button"

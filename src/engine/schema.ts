@@ -16,7 +16,7 @@ const regexSource = z.string().min(1).refine((source) => {
   }
 }, "Not a valid regular expression");
 
-export const PersonaSchema = z.enum(["business", "student", "parent", "kid", "executive"]);
+export const PersonaSchema = z.enum(["business", "student", "parent", "kid", "executive", "founder"]);
 
 /** The game's languages. English lessons live in /missions, the others in /missions/<lang> (es, ja). */
 export const LangSchema = z.enum(["en", "es", "ja"]);

@@ -4,6 +4,8 @@ import type { Persona, RunLog } from "../engine/types.ts";
 import { pathById } from "../game/paths.ts";
 import { DEFAULT_LOOK, describeLook, parseLook, type PipoLook } from "../game/pipoLook.ts";
 import { currentDays, dayKey, parseStreak, playedOn, type Streak } from "../game/streak.ts";
+import type { Audience } from "../game/personas.ts";
+import { AudiencePicker } from "../ui/AudiencePicker.tsx";
 import { Backdrop } from "../ui/Backdrop.tsx";
 import { DesktopNote } from "../ui/DesktopNote.tsx";
 import { LessonComplete } from "../ui/LessonComplete.tsx";
@@ -27,6 +29,8 @@ import { cueMusic, installAudioUnlock, installHoverSounds } from "./sound.ts";
 type Screen =
   /** The front page: what Pipodojo is, and the way into the playground. */
   | { kind: "landing" }
+  /** Kid or grown-up: right after "Go to the playground", and later from the town's switch button. */
+  | { kind: "audience"; fromTown: boolean }
   /** Make your Pipo: first thing in the playground, and later from Pipo's garage in town. */
   | { kind: "build"; first: boolean }
   | { kind: "town" }
@@ -39,6 +43,17 @@ const isLabLink = () => window.location.hash === "#lab";
 
 const LOOK_KEY = "pipodojo.look";
 const STREAK_KEY = "pipodojo.streak";
+const AUDIENCE_KEY = "pipodojo.audience";
+
+/** Kid or grown-up, as last picked on this device (null before the first pick or without storage). */
+function loadAudience(): Audience | null {
+  try {
+    const raw = localStorage.getItem(AUDIENCE_KEY);
+    return raw === "kid" || raw === "grownup" ? raw : null;
+  } catch {
+    return null;
+  }
+}
 
 /** The day streak is kept on this device; storage may be missing, which just means no streak. */
 function loadStreak(): Streak | null {
@@ -86,6 +101,15 @@ export function App() {
   // Best stars per lesson, for this visit.
   const [stars, setStars] = useState<Record<string, number>>({});
   const [look, setLook] = useState<PipoLook>(loadLook);
+  const [audience, setAudience] = useState<Audience | null>(loadAudience);
+  const grownup = audience === "grownup";
+  // Grown-ups' screens get the night look (see index.css: [data-audience="grownup"]). The front page
+  // and the kid-or-grown-up choice keep their own look.
+  const themed = grownup && screen.kind !== "landing" && screen.kind !== "audience";
+  useEffect(() => {
+    if (themed) document.documentElement.dataset["audience"] = "grownup";
+    else delete document.documentElement.dataset["audience"];
+  }, [themed]);
   // The latest run of each lesson this visit, and the postcard painted from them at the end of a path.
   const runs = useRef<Record<string, RunLog>>({});
   const [postcard, setPostcard] = useState<Postcard | null>(null);
@@ -111,7 +135,7 @@ export function App() {
   // making your Pipo, like the Lab), then fades in. The front page stays quiet.
   useEffect(installAudioUnlock, []);
   useEffect(installHoverSounds, []);
-  const firstScreen = screen.kind === "landing" || (screen.kind === "build" && screen.first);
+  const firstScreen = screen.kind === "landing" || (screen.kind === "audience" && !screen.fromTown) || (screen.kind === "build" && screen.first);
   useEffect(() => {
     if (!firstScreen) cueMusic();
   }, [firstScreen]);
@@ -202,11 +226,29 @@ export function App() {
       />
     );
   } else if (screen.kind === "landing") {
-    content = <Landing onPlay={() => void go("to-right", () => setScreen({ kind: "build", first: true }))} />;
+    content = <Landing onPlay={() => void go("to-right", () => setScreen({ kind: "audience", fromTown: false }))} />;
+  } else if (screen.kind === "audience") {
+    const { fromTown } = screen;
+    content = (
+      <AudiencePicker
+        current={audience}
+        onPick={(picked) => {
+          setAudience(picked);
+          try {
+            localStorage.setItem(AUDIENCE_KEY, picked);
+          } catch {
+            // Not remembered this time.
+          }
+          void go("to-right", () => setScreen(fromTown ? { kind: "town" } : { kind: "build", first: true }));
+        }}
+      />
+    );
   } else if (screen.kind === "town") {
     content = (
       <Town
         look={look}
+        audience={audience ?? "kid"}
+        onSwitch={() => void go("to-left", () => setScreen({ kind: "audience", fromTown: true }))}
         stars={stars}
         streak={streakDays}
         onVisit={(persona) => void go("to-right", () => setScreen({ kind: "paths", persona }))}
@@ -233,7 +275,7 @@ export function App() {
     <HomeContext.Provider value={goHome}>
     <PipoLookContext.Provider value={look}>
       {/* The front page has its own dark backgrounds that cover this one completely. */}
-      <Backdrop paused={screen.kind === "landing"} />
+      <Backdrop paused={screen.kind === "landing"} night={themed} />
       <div className="swup-transition-main" data-screen={screen.kind}>{content}</div>
       <TransitionOverlay direction={direction} />
       {screen.kind !== "landing" && <DesktopNote />}

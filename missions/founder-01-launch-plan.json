@@ -1,0 +1,170 @@
+{
+  "id": "founder-01-launch-plan",
+  "persona": "founder",
+  "path": "founder-launch",
+  "order": 1,
+  "title": "Plan the launch week",
+  "icon": "🗓️",
+  "recap": "Pipo planned your launch week, day by day.",
+  "funFact": "A clear plan is where agents shine: they keep every date, budget and person in mind at once. Next, Pipo emails your designer for you!",
+  "postcard": "a neon-lit night city shop window with hand-poured candles and a big launch-week planner on the wall: {answer}",
+  "situation": "Big week! Ember & Oak's online shop is about to open. Want me to plan the days before?",
+  "facts": [
+    "🚀 The shop opens Friday, December 4",
+    "💸 $300 for ads, and not a cent more",
+    "📸 Maya does photos and posts, but she's off Wednesday",
+    "🎯 Goal: 50 orders in the first week"
+  ],
+  "systemPrompt": "You are Pipo, a friendly personal assistant for the founder of a small online business. Help with what they ask. Keep it short: one line per point.",
+  "slots": [
+    {
+      "id": "want",
+      "label": "What do you want Pipo to do?",
+      "pick": "one",
+      "required": true,
+      "pieces": [
+        {
+          "id": "plan_week",
+          "label": "Get our online shop ready to open",
+          "text": "Help me get Ember & Oak, my small candle brand, ready to open its online shop.",
+          "quality": "good"
+        },
+        {
+          "id": "help_launch",
+          "label": "Help me launch my business",
+          "text": "Help me launch my business and get lots of sales.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "know",
+      "label": "What does Pipo need to know?",
+      "pick": "many",
+      "pieces": [
+        {
+          "id": "date",
+          "label": "We open Friday, December 4",
+          "text": "The shop opens on Friday, December 4.",
+          "quality": "good"
+        },
+        {
+          "id": "budget",
+          "label": "$300 for ads, no more",
+          "text": "We have $300 to spend on ads, and no more.",
+          "quality": "good"
+        },
+        {
+          "id": "maya",
+          "label": "Maya does photos and posts, off Wednesday",
+          "text": "My cofounder Maya does the photos and social posts, but she's off on Wednesday.",
+          "quality": "good"
+        },
+        {
+          "id": "viral",
+          "label": "Make it go viral!",
+          "text": "Make it go viral!",
+          "tip": "\"Go viral\" is a wish, not a plan. Facts like dates, money and people give Pipo something to plan around.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "goal",
+      "label": "What counts as a good launch?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "fifty",
+          "label": "50 orders in the first week",
+          "text": "Our goal is 50 orders in the first week.",
+          "quality": "good"
+        },
+        {
+          "id": "max_sales",
+          "label": "As many sales as possible",
+          "text": "Get as many sales as possible.",
+          "tip": "\"As many as possible\" can't be planned for. A number gives Pipo a target to plan toward.",
+          "quality": "weak"
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "label": "How should Pipo answer?",
+      "pick": "one",
+      "pieces": [
+        {
+          "id": "by_day",
+          "label": "A day-by-day plan with who does what",
+          "text": "Give me a plan with one line per day, Monday to Friday, saying who does what.",
+          "quality": "good"
+        },
+        {
+          "id": "ideas",
+          "label": "Lots of marketing ideas",
+          "text": "Give me lots of marketing ideas.",
+          "tip": "A pile of ideas still leaves the planning to you. Ask for the shape you can act on.",
+          "quality": "weak"
+        }
+      ]
+    }
+  ],
+  "flaws": [
+    {
+      "id": "vague_goal",
+      "when": "picked:help_launch",
+      "signals": [
+        "^(?![\\s\\S]*candle)"
+      ],
+      "hint": "\"Help me launch my business\" doesn't say what the business is or what to plan.",
+      "explain": "Pipo didn't know you sell candles, so the plan could be for any business."
+    },
+    {
+      "id": "no_date",
+      "when": "not_picked:date",
+      "signals": [
+        "^(?![\\s\\S]*(dec(ember)?\\.?\\s*4|\\b(launch|open)\\w*\\b[^\\n]{0,40}\\bfri(day)?\\b|\\bfri(day)?\\b[^\\n]{0,40}\\b(launch|open)))"
+      ],
+      "hint": "You didn't tell Pipo when the shop opens.",
+      "explain": "Pipo didn't know you open Friday, December 4, so the plan doesn't build up to launch day."
+    },
+    {
+      "id": "no_budget",
+      "when": "not_picked:budget",
+      "signals": [
+        "^(?![\\s\\S]*\\$\\s?300(?!\\d))"
+      ],
+      "hint": "You didn't tell Pipo your ad budget.",
+      "explain": "Pipo didn't know you have $300 for ads, so the plan doesn't keep spending in check."
+    },
+    {
+      "id": "no_maya",
+      "when": "not_picked:maya",
+      "signals": [
+        "^(?![\\s\\S]*maya)"
+      ],
+      "hint": "You didn't tell Pipo about Maya.",
+      "explain": "Pipo didn't know Maya does the photos and is off Wednesday, so nobody is clearly in charge of them."
+    },
+    {
+      "id": "no_goal",
+      "when": "picked:max_sales",
+      "signals": [
+        "^(?![\\s\\S]*(\\b(50|fifty)\\s+(first[- ]week\\s+)?(orders|sales)|\\b(orders|sales)\\b[^\\n]{0,25}\\b(50|fifty)\\b))"
+      ],
+      "hint": "\"As many sales as possible\" doesn't give Pipo a target.",
+      "explain": "Pipo didn't know your goal is 50 orders, so the plan has nothing to aim for."
+    },
+    {
+      "id": "no_days",
+      "when": "picked:ideas",
+      "signals": [
+        "^(?![\\s\\S]*\\btue(s(day)?)?\\b[\\s\\S]*\\bthu(rs(day)?)?\\b)"
+      ],
+      "hint": "\"Lots of marketing ideas\" doesn't say what kind of answer you need.",
+      "explain": "Pipo gave you ideas, not a plan, so you still have to work out what happens each day."
+    }
+  ],
+  "lesson": "For a bigger job, give Pipo every fact that matters, a clear goal and the shape of the answer you need."
+}

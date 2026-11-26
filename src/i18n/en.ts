@@ -168,6 +168,17 @@ export const en = {
     home: "Home",
   },
 
+  audience: {
+    eyebrow: "Before we start",
+    title: "Are you a kid or a grown-up?",
+    lead: "We'll set up the playground for you.",
+    kid: { title: "I'm a kid", text: "A sunny island with a treehouse, a café and quick, friendly lessons." },
+    grownup: { title: "I'm a grown-up", text: "A city at night, with longer lessons for work and everyday life." },
+    go: "Let's go",
+    note: "You can switch anytime from town. Only this device remembers your choice.",
+    /** The town's button back to this choice. */
+    switchLabel: "Kid or grown-up?",
+  },
   town: {
     /** Above the town's title: the way back to the front page. */
     backHome: "Back to homepage",
@@ -205,6 +216,10 @@ export const en = {
     tagSub: (blurb: string, paths: number) => `${blurb} ${paths} paths.`,
     garageSub: "Change how your Pipo looks.",
     moreIslands: { title: "🚧 Under construction", sub: "More islands coming soon" },
+    /** The grown-ups' town: a city at night. */
+    nightTitle: "Who needs Pipo tonight?",
+    nightHint: "Click a building to see its paths.",
+    nightLoading: "Turning on the city lights…",
   },
 
   paths: {
