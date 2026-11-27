@@ -1,10 +1,11 @@
-// The sound button: 🔊 (or 🔇 when everything is off). It opens a small panel with two switches,
+// The sound button: a speaker (crossed out when everything is off). It opens a small panel with two switches,
 // music and sound effects, each remembered on this device. The panel is drawn on top of the whole
 // page (in a portal, placed under the button), so cards and headers can never cover it.
 import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { getSoundSettings, play, setSoundSettings, subscribeSound, type SoundSettings } from "../app/sound.ts";
 import { useLang } from "../i18n/index.tsx";
+import { Glyph } from "./Glyph.tsx";
 
 export function useSoundSettings(): SoundSettings {
   return useSyncExternalStore(subscribeSound, getSoundSettings, getSoundSettings);
@@ -92,7 +93,7 @@ export function SoundButton({
         ) : compact ? (
           <SpeakerIcon muted={muted} />
         ) : (
-          <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>
+          <SpeakerIcon muted={muted} className="h-[1.1em] w-[1.1em]" />
         )}
       </button>
       {open &&
@@ -104,8 +105,8 @@ export function SoundButton({
             style={{ ...at, width: PANEL_WIDTH }}
             className="pop-in fixed z-[10050] space-y-1 rounded-2xl bg-white p-2 shadow-xl ring-1 ring-brand-100"
           >
-            <Switch label={`🎵 ${t.sound.music}`} on={settings.music} onFlip={() => flip("music")} onText={t.sound.on} offText={t.sound.off} />
-            <Switch label={`🔔 ${t.sound.effects}`} on={settings.sfx} onFlip={() => flip("sfx")} onText={t.sound.on} offText={t.sound.off} />
+            <Switch icon="🎵" label={t.sound.music} on={settings.music} onFlip={() => flip("music")} onText={t.sound.on} offText={t.sound.off} />
+            <Switch icon="🔔" label={t.sound.effects} on={settings.sfx} onFlip={() => flip("sfx")} onText={t.sound.on} offText={t.sound.off} />
           </div>,
           document.body,
         )}
@@ -130,17 +131,20 @@ function SpeakerIcon({ muted, className = "h-5 w-5" }: { muted: boolean; classNa
   );
 }
 
-function Switch({ label, on, onFlip, onText, offText }: { label: string; on: boolean; onFlip: () => void; onText: string; offText: string }) {
+function Switch({ icon, label, on, onFlip, onText, offText }: { icon: string; label: string; on: boolean; onFlip: () => void; onText: string; offText: string }) {
   return (
     <button
       type="button"
       role="switch"
       aria-checked={on}
-      aria-label={label.replace(/^\S+\s/, "")}
+      aria-label={label}
       onClick={onFlip}
       className="flex w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-left text-sm font-extrabold text-ink hover:bg-brand-50"
     >
-      <span>{label}</span>
+      <span className="flex items-center gap-2">
+        <Glyph e={icon} className="text-brand-500" />
+        {label}
+      </span>
       <span className={`flex h-6 w-11 items-center rounded-full p-0.5 transition-colors ${on ? "bg-brand-600" : "bg-gray-300"}`}>
         <span className={`h-5 w-5 rounded-full bg-white shadow transition-transform motion-reduce:transition-none ${on ? "translate-x-5" : ""}`} />
         <span className="sr-only">{on ? onText : offText}</span>

@@ -142,7 +142,7 @@ function page({ user, rows, stats, role }) {
 <body>
 <main>
   <header>
-    <h1>🤖 Pipodojo waitlist</h1>
+    <h1>Pipodojo waitlist</h1>
     <div class="who">Signed in as ${esc(user)} · <a href="/cdn-cgi/access/logout">Sign out</a></div>
   </header>
   <section class="cards" aria-label="Counts">

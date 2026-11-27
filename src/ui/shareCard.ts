@@ -6,7 +6,7 @@ import { wrapLines } from "../lib/utils.ts";
 import type { Strings } from "../i18n/en.ts";
 
 export interface ShareInfo {
-  /** e.g. "My AI agent just handled a whole school week 🎒" */
+  /** e.g. "My AI agent just handled a whole school week" */
   brag: string;
   pathName: string;
   stars: number;
@@ -92,7 +92,7 @@ function statsRow(ctx: CanvasRenderingContext2D, info: ShareInfo): { pills: stri
   const w = info.words;
   const stats = [w.stars(info.stars, info.maxStars), w.lessons(info.lessons)];
   if (!info.country) return { pills: stats, size: 32 };
-  const pills = [...stats, `${canDrawFlags() ? flagOf(info.country.code) : "📍"} ${info.country.name}`];
+  const pills = [...stats, canDrawFlags() ? `${flagOf(info.country.code)} ${info.country.name}` : info.country.name];
   for (const size of [32, 30, 28, 26, 24]) {
     const total = pills.reduce((sum, text) => sum + pillWidth(ctx, text, size), 0) + GAP * (pills.length - 1);
     if (total <= W - 144) return { pills, size };
@@ -194,10 +194,7 @@ export async function drawShareCard(info: ShareInfo): Promise<Blob> {
   } else {
     ctx.fillStyle = "#e8e6ff";
     ctx.fillRect(-size / 2, -size / 2, size, size);
-    ctx.font = `200px ${FONT}`;
-    ctx.textAlign = "center";
-    ctx.fillText("🏅", 0, 70);
-    ctx.textAlign = "left";
+    drawMedal(ctx, size * 0.36);
   }
   // Credit the Meta model that painted it, on the photo itself
   if (img && info.painted) pill(ctx, w.paintedBy, -size / 2 + 22, -size / 2 + 22, "rgba(27,22,64,0.82)", "#ffffff", 26);
@@ -230,4 +227,41 @@ export async function drawShareCard(info: ShareInfo): Promise<Blob> {
   ctx.fillText(w.footer(info.site), 72, 1300);
 
   return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("No image"))), "image/jpeg", 0.92));
+}
+
+/** A simple gold medal with a star, centered on (0, 0), for when there's no postcard to show. */
+function drawMedal(ctx: CanvasRenderingContext2D, r: number) {
+  ctx.save();
+  // The ribbon
+  ctx.fillStyle = "#6e5cf2";
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.55, -r * 1.9);
+  ctx.lineTo(-r * 0.05, -r * 0.6);
+  ctx.lineTo(r * 0.05, -r * 0.6);
+  ctx.lineTo(r * 0.55, -r * 1.9);
+  ctx.lineTo(r * 0.2, -r * 1.9);
+  ctx.lineTo(0, -r * 1.2);
+  ctx.lineTo(-r * 0.2, -r * 1.9);
+  ctx.closePath();
+  ctx.fill();
+  // The medal
+  ctx.translate(0, r * 0.25);
+  ctx.fillStyle = "#ffb547";
+  ctx.strokeStyle = "#e08a12";
+  ctx.lineWidth = r * 0.1;
+  ctx.beginPath();
+  ctx.arc(0, 0, r, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  // A five-point star
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  for (let i = 0; i < 10; i++) {
+    const a = -Math.PI / 2 + (i * Math.PI) / 5;
+    const d = i % 2 ? r * 0.25 : r * 0.58;
+    ctx.lineTo(Math.cos(a) * d, Math.sin(a) * d);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
 }

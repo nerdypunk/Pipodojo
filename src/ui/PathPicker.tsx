@@ -11,6 +11,7 @@ import { missions } from "../app/missions.ts";
 import { pathsOf, type PathCard } from "../game/paths.ts";
 import { personaById } from "../game/personas.ts";
 import { useLang } from "../i18n/index.tsx";
+import { Glyph, GlyphTile } from "./Glyph.tsx";
 import { Button } from "./Button.tsx";
 import { Pipo } from "./Pipo.tsx";
 import { ShaderBorder } from "./ShaderBorder.tsx";
@@ -94,14 +95,13 @@ export function PathPicker({ persona, stars, onStart, onBack }: Props) {
           <span aria-hidden="true" className="text-xl leading-none">
             ‹
           </span>
-          <span aria-hidden="true" className="text-xl leading-none">
-            🏘️
-          </span>
+          <Glyph e="🏘" className="text-xl" />
           {t.paths.backToTown}
         </button>
         <Pipo mood="happy" className="h-16 w-16 drop-shadow-[0_6px_16px_rgba(45,36,112,0.35)]" />
         <p className="text-sm font-black tracking-wide text-brand-700 uppercase grownup:text-fuchsia-300">
-          {who.emoji} {who.place} · {who.name}
+          <Glyph e={who.emoji} className="mr-1.5 inline align-[-0.15em]" />
+          {who.place} · {who.name}
         </p>
         <h1 className="text-3xl font-black text-ink md:text-4xl grownup:text-white">{t.paths.title}</h1>
         <p className="font-semibold text-gray-600 grownup:text-indigo-200">{t.paths.intro}</p>
@@ -152,9 +152,7 @@ function PathPanel({
             playable ? "" : "grayscale-[60%]"
           }`}
         >
-          <span className="text-6xl drop-shadow-[0_6px_12px_rgba(0,0,0,0.25)]" aria-hidden="true">
-            {path.emoji}
-          </span>
+          <GlyphTile e={path.emoji} tone="glass" className="h-20 w-20 bg-white/25 drop-shadow-[0_8px_16px_rgba(45,36,112,0.3)] ring-white/50" />
           <span className="absolute top-2.5 right-2.5 rounded-full bg-white/85 px-2.5 py-0.5 text-xs font-extrabold text-brand-800">
             {playable ? t.paths.earned(earned, lessons.length * 3) : t.paths.comingSoon}
           </span>
@@ -169,8 +167,8 @@ function PathPanel({
               </span>
               <span className="flex-1">{name}</span>
               {!playable && (
-                <span className="text-xs" aria-label={t.paths.locked}>
-                  🔒
+                <span className="text-xs" role="img" aria-label={t.paths.locked}>
+                  <Glyph e="🔒" />
                 </span>
               )}
             </li>

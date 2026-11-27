@@ -10,6 +10,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { useId, useState, type FormEvent } from "react";
 import { closeWaitlist, isSurelyAdult, joinWaitlist, waitlistClosed, type WaitlistResult, type WaitlistRole } from "../../app/waitlist.ts";
 import { play } from "../../app/sound.ts";
+import { Glyph } from "../Glyph.tsx";
 import { useLang } from "../../i18n/index.tsx";
 import { YearPicker } from "./YearPicker.tsx";
 
@@ -55,7 +56,8 @@ export function Waitlist({ roles }: { roles: readonly WaitlistRole[] }) {
   if (status === "too_young" || status === "ok") {
     return (
       <p role="status" className="mx-auto max-w-xl rounded-2xl bg-white/10 px-5 py-4 text-center font-bold text-white ring-1 ring-white/15">
-        {status === "ok" ? `🎉 ${w.done}` : `💜 ${w.tooYoung}`}
+        <Glyph e={status === "ok" ? "🎉" : "💜"} className="mr-1.5 inline align-[-0.15em] text-brand-300" />
+        {status === "ok" ? w.done : w.tooYoung}
       </p>
     );
   }
@@ -153,7 +155,10 @@ export function Waitlist({ roles }: { roles: readonly WaitlistRole[] }) {
       <p aria-live="polite" className="mt-2 text-center text-sm font-bold text-amber-200 empty:hidden">
         {status === "invalid" ? w.invalid : status === "failed" ? w.failed : status === "need_year" ? w.yearNeeded : ""}
       </p>
-      <p className="mx-auto mt-3 max-w-lg text-center text-xs leading-relaxed font-semibold text-brand-200/80">🔒 {w.privacy}</p>
+      <p className="mx-auto mt-3 max-w-lg text-center text-xs leading-relaxed font-semibold text-brand-200/80">
+        <Glyph e="🔒" className="mr-1 inline align-[-0.15em]" />
+        {w.privacy}
+      </p>
     </form>
   );
 }

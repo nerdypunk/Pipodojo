@@ -6,6 +6,7 @@ import DynamicIsland from "@/components/smoothui/dynamic-island";
 import SiriOrb from "@/components/smoothui/siri-orb";
 import { Pipo, type Mood } from "./Pipo.tsx";
 import { useLang } from "../i18n/index.tsx";
+import { Glyph } from "./Glyph.tsx";
 
 export type StageMode = "idle" | "thinking" | "done";
 
@@ -33,7 +34,8 @@ export function PipoStage({ mode, mood, stars }: Props) {
     >
       {/* Which model answers, right where the AI does its work */}
       <span className="absolute top-2.5 right-3 z-10 rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-extrabold text-white/90 backdrop-blur-sm">
-        <span aria-hidden="true">⚡ </span>Muse Spark
+        <Glyph e="⚡" className="mr-0.5 inline align-[-0.1em]" />
+        Muse Spark
       </span>
       <div className="absolute inset-x-0 top-3 bottom-12 flex items-center justify-center gap-2">
         <Pipo mood={mood} className="h-full max-h-20 w-auto drop-shadow-[0_8px_18px_rgba(0,0,0,0.35)] md:max-h-28" />

@@ -10,6 +10,7 @@ import type { PipoLook } from "../../game/pipoLook.ts";
 import { personasFor, type Audience } from "../../game/personas.ts";
 import { useLang } from "../../i18n/index.tsx";
 import { useGoHome } from "../HomeLink.tsx";
+import { Glyph } from "../Glyph.tsx";
 import { LangSwitch } from "../LangSwitch.tsx";
 import { SoundButton } from "../SoundButton.tsx";
 import { hover, play } from "../../app/sound.ts";
@@ -17,6 +18,7 @@ import { PLACES, type PlaceId } from "../../game/townLayout.ts";
 import { Pipo } from "../Pipo.tsx";
 import { Leaderboard } from "./Leaderboard.tsx";
 import { PhoneTabBar } from "./PhoneTabBar.tsx";
+import { MedalBadge } from "./MedalBadge.tsx";
 import type { PlaceTag } from "./TownCanvas.tsx";
 
 const REPO_URL = "https://github.com/nerdypunk/Pipodojo";
@@ -57,7 +59,7 @@ export function Town({ look, stars, streak, onVisit, onGarage, audience, onSwitc
   const night = audience === "grownup";
   const [hovered, setHovered] = useState<PlaceId | null>(null);
   const [selected, setSelected] = useState<PlaceId | null>(null);
-  // Today's leaderboard, opened from the 🏆 button.
+  // Today's leaderboard, opened from the trophy button.
   const [showBoard, setShowBoard] = useState(false);
   const goHome = useGoHome();
   const closeBoard = useCallback(() => setShowBoard(false), []);
@@ -80,15 +82,16 @@ export function Town({ look, stars, streak, onVisit, onGarage, audience, onSwitc
         return lessons.length > 0 && lessons.every((m) => (stars[m.id] ?? 0) > 0);
       }).length;
       result[persona.id] = {
-        title: `${persona.emoji} ${persona.name}`,
+        title: persona.name,
+        icon: persona.emoji,
         sub: t.town.tagSub(persona.blurb, paths.length),
-        ...(playable.length > 0 ? { progress: `★ ${earned}/${playable.length * 3}` } : {}),
-        ...(finished > 0 ? { badge: `🏅${finished > 1 ? `×${finished}` : ""}` } : {}),
+        ...(playable.length > 0 ? { progress: `${earned}/${playable.length * 3}` } : {}),
+        ...(finished > 0 ? { badge: finished } : {}),
         open: true,
         visit: t.town.visit,
       };
     }
-    result.garage = { title: `🔧 ${t.town.garage}`, sub: t.town.garageSub, open: true, visit: t.town.visit };
+    result.garage = { title: t.town.garage, icon: "🔧", sub: t.town.garageSub, open: true, visit: t.town.visit };
     return result;
     // personas and t follow lang and audience
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -193,7 +196,7 @@ export function Town({ look, stars, streak, onVisit, onGarage, audience, onSwitc
             }}
             className="pointer-events-auto flex items-center gap-1.5 rounded-xl border-b-[3px] border-brand-200 bg-white px-2.5 py-1 text-xs font-extrabold whitespace-nowrap text-brand-800 transition hover:bg-brand-50 active:translate-y-px active:border-b focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand-500 motion-reduce:transition-none md:text-sm"
           >
-            <span aria-hidden="true">{night ? "🌙" : "☀️"}</span>
+            <Glyph e={night ? "🌙" : "☀"} className={night ? "text-indigo-500" : "text-amber-500"} />
             {t.audience.switchLabel}
           </button>
           <div className="glass pointer-events-auto min-w-0 rounded-2xl px-3 py-2 md:px-4 md:py-2.5">
@@ -205,13 +208,11 @@ export function Town({ look, stars, streak, onVisit, onGarage, audience, onSwitc
         {/* From sm up, one row of buttons. Phones have the tab bar along the bottom instead (PhoneTabBar). */}
         <div data-town-buttons className="pointer-events-auto flex shrink-0 flex-row items-center gap-2 max-sm:hidden">
           <span className={`chip flex items-center gap-1 rounded-full px-3 py-2 text-sm font-black`} title={t.town.streakTitle}>
-            <span aria-hidden="true">🔥</span>
+            <Glyph e="🔥" className="text-orange-300" />
             {streak} <span className="sr-only">{t.town.streak}</span>
           </span>
           <span className={`chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-black`}>
-            <span className="text-amber-300" aria-hidden="true">
-              ★
-            </span>
+            <Glyph e="⭐" className="fill-amber-300 text-amber-300" />
             {total} <span className="sr-only">{t.town.stars}</span>
           </span>
           <button
@@ -224,7 +225,7 @@ export function Town({ look, stars, streak, onVisit, onGarage, audience, onSwitc
             title={t.town.leaderboard}
             aria-haspopup="dialog"
           >
-            <span aria-hidden="true">🏆</span>
+            <Glyph e="🏆" className="text-amber-300" />
           </button>
           <button
             type="button"
@@ -232,7 +233,7 @@ export function Town({ look, stars, streak, onVisit, onGarage, audience, onSwitc
             className={`chip flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-extrabold transition hover:bg-brand-700 active:translate-y-px focus-visible:outline-3 focus-visible:outline-white md:px-4`}
             aria-label={t.town.garage}
           >
-            <span aria-hidden="true">🔧</span>
+            <Glyph e="🔧" />
             <span className="hidden sm:inline">{t.town.garage}</span>
           </button>
           <LangSwitch />
@@ -274,10 +275,14 @@ export function Town({ look, stars, streak, onVisit, onGarage, audience, onSwitc
                   className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xl max-sm:h-7 max-sm:w-7 max-sm:rounded-lg max-sm:text-base ${on ? "bg-white/20" : "bg-brand-50"}`}
                   aria-hidden="true"
                 >
-                  {place.emoji}
+                  <Glyph e={place.emoji} className={on ? "text-white" : "text-brand-600"} />
                 </span>
                 <span className="min-w-0 flex-1">{place.name}</span>
-                {tags[place.id].badge && <span aria-label={t.town.pathComplete}>{tags[place.id].badge}</span>}
+                {!!tags[place.id].badge && (
+                  <span role="img" aria-label={t.town.pathComplete}>
+                    <MedalBadge count={tags[place.id].badge ?? 0} />
+                  </span>
+                )}
                 <span className={`text-lg leading-none max-sm:text-base ${on ? "text-white/80" : "text-brand-400"}`} aria-hidden="true">
                   ›
                 </span>
@@ -289,18 +294,14 @@ export function Town({ look, stars, streak, onVisit, onGarage, audience, onSwitc
           {/* Both lines share one shape (icon in a fixed slot, same size and weight), and on phones
               each is centered, so the stacked pair sits in the middle. */}
           <p className="inline-flex items-center gap-1.5">
-            <span className="w-4 text-center" aria-hidden="true">
-              ⚡
-            </span>
+            <Glyph e="⚡" className="w-4 text-brand-500" />
             {t.common.poweredBy}
           </p>
           <span className="hidden text-brand-300 sm:inline" aria-hidden="true">
             ·
           </span>
           <p className="inline-flex items-center gap-1.5">
-            <span className="w-4 text-center" aria-hidden="true">
-              💻
-            </span>
+            <Glyph e="💻" className="w-4 text-brand-500" />
             {t.common.openSourceAuthorFirst ? (
               // Japanese puts the maker first: 「nerdypunk.devによるオープンソースのプロジェクト」, with no spaces.
               <span>

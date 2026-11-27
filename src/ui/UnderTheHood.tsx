@@ -18,6 +18,7 @@ import { hasGoodGoal } from "../engine/brief.ts";
 import { callKind, type CallKind, type CallRecord } from "../engine/trace.ts";
 import type { Mission, Score, ToolDefinition } from "../engine/types.ts";
 import { useLang, type Strings } from "../i18n/index.tsx";
+import { Glyph } from "./Glyph.tsx";
 
 const KEY = "pipodojo.hood";
 /** Set once someone has seen the "you're about to see the AI at work" dialog. */
@@ -88,7 +89,7 @@ export function UnderTheHood({ mission, picks, calls, waiting, score, buttonRef 
         aria-expanded={open}
         className="glass flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-extrabold text-brand-700 transition hover:bg-white/80"
       >
-        <span aria-hidden="true">🔧</span>
+        <Glyph e="🔧" />
         {t.hood.title}
         {calls.length > 0 && <span className="rounded-full bg-brand-600 px-2 text-xs text-white">{t.hood.calls(calls.length)}</span>}
         <span aria-hidden="true" className={`transition-transform ${open ? "rotate-180" : ""}`}>
@@ -178,7 +179,7 @@ function HoodIntro({ still, t, onGo, onClose }: { still: boolean; t: Strings; on
       >
         <div className="flex items-center gap-3">
           <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-500/25 text-2xl ring-1 ring-brand-400/40">
-            🔬
+            <Glyph e="🔬" className="text-brand-200" />
           </span>
           <h2 id={title} className="text-xl leading-tight font-black text-white">
             {i.title}
@@ -188,9 +189,7 @@ function HoodIntro({ still, t, onGo, onClose }: { still: boolean; t: Strings; on
         <ul className="mt-4 space-y-2">
           {i.parts.map((part) => (
             <li key={part.title} className="flex gap-3 rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
-              <span aria-hidden="true" className="text-lg leading-6">
-                {part.icon}
-              </span>
+              <Glyph e={part.icon} className="mt-0.5 shrink-0 text-lg text-brand-300" />
               <span className="min-w-0">
                 <span className="block font-extrabold text-white">{part.title}</span>
                 <span className="block text-sm font-semibold text-brand-200">{part.text}</span>
@@ -252,10 +251,13 @@ function Console({ mission, picks, calls, waiting, score, still, t }: Props & { 
           <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
           <span className="h-2.5 w-2.5 rounded-full bg-emerald-300" />
         </span>
-        <span className="rounded-md bg-white/10 px-2 py-0.5 font-mono text-[11px] text-white">⚡ {model}</span>
+        <span className="rounded-md bg-white/10 px-2 py-0.5 font-mono text-[11px] text-white">
+          <Glyph e="⚡" className="mr-1 inline align-[-0.1em]" />
+          {model}
+        </span>
         <span className="text-brand-200">{t.hood.calls(calls.length)}</span>
-        {totalMs > 0 && <span className="text-brand-200">⏱ {seconds(totalMs)} {t.hood.total}</span>}
-        {actions > 0 && <span className="text-brand-200">🛠 {t.hood.actions(actions)}</span>}
+        {totalMs > 0 && <span className="flex items-center gap-1 text-brand-200"><Glyph e="⏱" /> {seconds(totalMs)} {t.hood.total}</span>}
+        {actions > 0 && <span className="flex items-center gap-1 text-brand-200"><Glyph e="🛠" /> {t.hood.actions(actions)}</span>}
       </div>
       {/* One plain line on what this view is, for players who've never seen a devtools panel. */}
       <p className="border-b border-white/10 px-4 py-2 text-xs leading-relaxed font-semibold text-brand-200">{t.hood.intro}</p>

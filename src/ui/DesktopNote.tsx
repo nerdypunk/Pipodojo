@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import { useLang } from "../i18n/index.tsx";
+import { Glyph } from "./Glyph.tsx";
 
 const KEY = "pipodojo.desktop-note";
 
@@ -37,9 +38,7 @@ export function DesktopNote() {
       animate={{ opacity: 1, y: 0 }}
       className="fixed inset-x-3 top-3 z-[60] mx-auto flex max-w-md items-center gap-3 rounded-2xl bg-ink/90 px-4 py-3 text-white shadow-xl backdrop-blur"
     >
-      <span className="text-2xl" aria-hidden="true">
-        💻
-      </span>
+      <Glyph e="💻" className="shrink-0 text-2xl text-brand-300" />
       <p className="flex-1 text-sm leading-snug font-bold">
         {t.desktopNote.title} <span className="font-semibold text-white/75">{t.desktopNote.sub}</span>
       </p>

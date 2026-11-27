@@ -6,6 +6,7 @@ import { useState } from "react";
 import { readable } from "../engine/actions.ts";
 import type { PipoAction } from "../engine/types.ts";
 import { useLang } from "../i18n/index.tsx";
+import { Glyph } from "./Glyph.tsx";
 
 interface Props {
   action: PipoAction;
@@ -41,7 +42,9 @@ export function LaptopScreen({ action, flags }: Props) {
           <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
           <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
         </span>
-        <span className="text-[11px] font-black text-white">⚡ Pipo Code</span>
+        <span className="flex items-center gap-1 text-[11px] font-black text-white">
+          <Glyph e="⚡" className="text-brand-300" /> Pipo Code
+        </span>
         <span className="truncate text-[11px] font-bold text-white/60">· {title}</span>
         <span className="ml-auto flex rounded-lg bg-white/10 p-0.5" role="tablist">
           {(["preview", "code"] as const).map((t) => (
@@ -86,13 +89,13 @@ function SiteView({ action, flags }: Props) {
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-2 border-b border-gray-100 bg-gray-50 px-2 py-1 text-[10px] font-bold text-gray-500">
-        <span aria-hidden="true">{live ? "🌐" : "🔒"}</span>
+        <Glyph e={live ? "🌐" : "🔒"} className="shrink-0" />
         <span className="truncate">{live ? `${slug}.pipo.site` : t.laptop.previewOnly}</span>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto bg-gradient-to-b from-amber-50 to-white p-3">
         <h3 className={`rounded-md px-1 text-center text-lg leading-tight font-black text-orange-600 ${flags[0] ? FLAG : ""}`}>{text(a.title)}</h3>
         <div className="mx-auto my-2 flex h-14 w-24 items-center justify-center rounded-2xl bg-orange-100 text-3xl" aria-hidden="true">
-          {art}
+          <Glyph e={art} className="text-orange-500" />
         </div>
         <p className={`rounded-md px-1 text-center text-[12px] leading-snug font-semibold text-ink ${flags[1] ? FLAG : ""}`}>{text(a.intro)}</p>
         <div className={`mt-2 grid grid-cols-3 gap-1.5 rounded-md ${flags[2] ? FLAG : ""}`}>
@@ -121,7 +124,10 @@ function FixView({ action, flags }: Props) {
         <p className="text-[10px] font-black tracking-wide text-emerald-700 uppercase">{t.laptop.fix}</p>
         <p className="font-semibold text-ink">{text(a.fix)}</p>
       </div>
-      <p className={`rounded-md px-1 text-[11px] font-bold text-gray-500 ${flags[2] ? FLAG : ""}`}>📄 {text(a.page)}</p>
+      <p className={`rounded-md px-1 text-[11px] font-bold text-gray-500 ${flags[2] ? FLAG : ""}`}>
+        <Glyph e="📄" className="mr-1 inline align-[-0.15em]" />
+        {text(a.page)}
+      </p>
     </div>
   );
 }
@@ -137,7 +143,9 @@ function LevelView({ action, flags }: Props) {
   return (
     <div className="flex h-full flex-col">
       <div className={`flex items-center justify-between px-3 py-1.5 text-[11px] font-black text-ink ${flags[0] ? FLAG : ""}`}>
-        <span>🧱 BlockStudio · {text(a.name)}</span>
+        <span className="flex items-center gap-1">
+          <Glyph e="🧱" className="text-brand-600" /> BlockStudio · {text(a.name)}
+        </span>
         <span className="text-gray-500">{text(a.theme)}</span>
       </div>
       <div className="relative min-h-0 flex-1 overflow-hidden bg-gradient-to-b from-sky-200 to-pink-100">
@@ -165,16 +173,14 @@ function LevelView({ action, flags }: Props) {
               </g>
             );
           })}
-          <text x={286} y={60} fontSize="16" textAnchor="middle">
-            ⭐
-          </text>
+          <Glyph e="⭐" x={278} y={46} size={16} strokeWidth={2} className="fill-amber-300 text-amber-500" />
           <rect className="level-hopper" x={8} y={68} width={9} height={11} rx={2} fill="#ff7a1a" />
         </svg>
       </div>
       <div className="space-y-0.5 px-3 py-1.5 text-[11px] font-bold text-gray-700">
-        <p className={`rounded px-1 ${flags[1] ? FLAG : ""}`}>🧱 {obstacles.map(named).join(", ") || t.laptop.noObstacles}</p>
-        <p className={`rounded px-1 ${flags[2] ? FLAG : ""}`}>🚩 {t.laptop.checkpoints(cps)}</p>
-        <p className={`rounded px-1 ${flags[3] ? FLAG : ""}`}>🏁 {text(a.goal)}</p>
+        <p className={`rounded px-1 ${flags[1] ? FLAG : ""}`}><Glyph e="🧱" className="mr-1 inline align-[-0.15em]" />{obstacles.map(named).join(", ") || t.laptop.noObstacles}</p>
+        <p className={`rounded px-1 ${flags[2] ? FLAG : ""}`}><Glyph e="🚩" className="mr-1 inline align-[-0.15em]" />{t.laptop.checkpoints(cps)}</p>
+        <p className={`rounded px-1 ${flags[3] ? FLAG : ""}`}><Glyph e="🏁" className="mr-1 inline align-[-0.15em]" />{text(a.goal)}</p>
       </div>
     </div>
   );
@@ -186,15 +192,16 @@ function ShopView({ action, flags }: Props) {
   const { t } = useLang();
   return (
     <div className="flex h-full flex-col bg-gradient-to-b from-violet-50 to-white">
-      <p className="px-3 py-1.5 text-[11px] font-black text-ink">🧱 BlockStudio · {t.laptop.shop}</p>
+      <p className="flex items-center gap-1 px-3 py-1.5 text-[11px] font-black text-ink">
+        <Glyph e="🧱" className="text-brand-600" /> BlockStudio · {t.laptop.shop}
+      </p>
       <ul className={`grid min-h-0 flex-1 grid-cols-2 gap-2 overflow-y-auto px-3 py-1 ${flags[0] ? FLAG : ""}`}>
         {list(a.items).map((item, i) => (
           <li key={i} className="flex flex-col items-center rounded-xl bg-white p-2 text-center shadow-sm">
-            <span className="text-2xl" aria-hidden="true">
-              {i % 2 ? "🎩" : "⭐"}
-            </span>
+            <Glyph e={i % 2 ? "🎩" : "⭐"} className="text-2xl text-brand-500" strokeWidth={1.75} />
             <span className="text-[11px] font-black text-ink">{named(item)}</span>
-            <span className="text-[11px] font-bold text-amber-600">🪙 {readable(detail(item) ?? "?")}</span>
+            <span className="flex items-center gap-0.5 text-[11px] font-bold text-amber-600">
+              <Glyph e="🪙" /> {readable(detail(item) ?? "?")}</span>
           </li>
         ))}
       </ul>
@@ -274,9 +281,7 @@ function DiagramView({ action, flags }: Props) {
             </g>
           );
         })}
-        <text x="150" y="84" fontSize="20" textAnchor="middle">
-          💧
-        </text>
+        <Glyph e="💧" x={140} y={66} size={20} className="fill-sky-200 text-sky-500" />
       </svg>
     </div>
   );
@@ -289,7 +294,7 @@ function describe(action: PipoAction, shopTitle: string): { title: string; code:
     if (a.problem !== undefined) {
       return {
         title: text(a.page),
-        code: `// 🐞 ${text(a.problem)}\n// 🔧 ${text(a.fix)}\n\nmoreButton.addEventListener("click", showMorePhotos);\n+ moreButton.addEventListener("touchend", showMorePhotos);`,
+        code: `// Bug: ${text(a.problem)}\n// Fix: ${text(a.fix)}\n\nmoreButton.addEventListener("click", showMorePhotos);\n+ moreButton.addEventListener("touchend", showMorePhotos);`,
       };
     }
     const sections = list(a.sections).map((s) => `  <section>${named(s)}</section>`).join("\n");

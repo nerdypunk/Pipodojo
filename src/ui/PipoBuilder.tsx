@@ -7,6 +7,7 @@ import { useLang } from "../i18n/index.tsx";
 import { Button } from "./Button.tsx";
 import { useGoHome } from "./HomeLink.tsx";
 import { LangSwitch } from "./LangSwitch.tsx";
+import { Glyph } from "./Glyph.tsx";
 import { SoundButton } from "./SoundButton.tsx";
 import { play } from "../app/sound.ts";
 import { Pipo } from "./Pipo.tsx";
@@ -54,7 +55,7 @@ export function PipoBuilder({ look, onChange, onDone, first }: Props) {
         <span className={`${back ? "hidden sm:inline" : "ml-2.5"} text-lg font-black tracking-tight text-brand-700`}>Pipodojo</span>
         <span className="rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-extrabold text-white">{first ? t.builder.welcome : t.builder.garage}</span>
         <span className="ml-auto hidden items-center gap-1.5 text-xs font-extrabold text-brand-800 sm:inline-flex">
-          <span aria-hidden="true">⚡</span> {t.common.poweredBy}
+          <Glyph e="⚡" /> {t.common.poweredBy}
         </span>
         <LangSwitch className="ml-auto py-1.5 sm:ml-0" />
         <SoundButton compact />

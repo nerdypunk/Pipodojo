@@ -2,6 +2,7 @@ import type { Mission, Score } from "../engine/types.ts";
 import { resultNotes } from "../game/feedback.ts";
 import { useLang } from "../i18n/index.tsx";
 import { Button } from "./Button.tsx";
+import { Glyph } from "./Glyph.tsx";
 
 type Props =
   | {
@@ -72,9 +73,7 @@ export function MessageBubble({ text, empty }: { text: string; empty: string }) 
   if (!text) {
     return (
       <p className="flex items-center gap-2 py-2 text-sm font-bold text-gray-500">
-        <span aria-hidden="true" className="text-lg">
-          👆
-        </span>
+        <Glyph e="👆" className="text-lg text-brand-500" />
         {empty}
       </p>
     );

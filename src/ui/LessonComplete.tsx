@@ -8,6 +8,7 @@ import type { Postcard } from "../app/postcard.ts";
 import type { Mission, RunLog } from "../engine/types.ts";
 import { answerLines } from "../game/feedback.ts";
 import { Button } from "./Button.tsx";
+import { Glyph } from "./Glyph.tsx";
 import { PeelReward } from "./PeelReward.tsx";
 import { Pipo } from "./Pipo.tsx";
 import { useLang } from "../i18n/index.tsx";
@@ -98,9 +99,7 @@ export function LessonComplete({ pathName, lessons, index, log, stars, postcard,
           {/* The day streak, Duolingo style */}
           {streak > 0 && (
             <div className="pop-in ml-auto flex shrink-0 flex-col items-center rounded-2xl bg-white/15 px-3 py-1.5" style={{ animationDelay: "900ms" }}>
-              <span className="text-2xl leading-none" aria-hidden="true">
-                🔥
-              </span>
+              <Glyph e="🔥" className="text-2xl text-amber-300" />
               <span className="text-sm font-black">{t.complete.streak(streak)}</span>
             </div>
           )}
@@ -124,7 +123,7 @@ export function LessonComplete({ pathName, lessons, index, log, stars, postcard,
           {/* 3. What Pipo got done, folded into one line; opens by itself after a miss so the red line shows */}
           <details className="group rounded-xl bg-brand-50 px-3 py-2" open={won === 1}>
             <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-bold text-ink [&::-webkit-details-marker]:hidden">
-              <span aria-hidden="true">{mission.icon ?? "✅"}</span>
+              <Glyph e={mission.icon ?? "✅"} className="shrink-0 text-brand-600" />
               <span className="flex-1">{mission.recap ?? mission.title}</span>
               <span className="text-xs font-extrabold text-brand-700">
                 <span className="group-open:hidden">{t.complete.seeAnswer}</span>
@@ -139,7 +138,7 @@ export function LessonComplete({ pathName, lessons, index, log, stars, postcard,
                     line.flagged ? "bg-red-50 text-red-900 ring-2 ring-red-300" : "bg-white text-ink"
                   }`}
                 >
-                  <span aria-hidden="true">{line.emoji || "•"}</span>
+                  {line.emoji ? <Glyph e={line.emoji} className="shrink-0 text-brand-600" /> : <span aria-hidden="true">•</span>}
                   {line.text}
                 </li>
               ))}
@@ -148,7 +147,7 @@ export function LessonComplete({ pathName, lessons, index, log, stars, postcard,
 
           {/* What you learned, as one small line */}
           <p className="-mt-2 px-1 text-sm font-semibold text-gray-600">
-            <span aria-hidden="true">💡 </span>
+            <Glyph e="💡" className="mr-1 inline align-[-0.15em] text-amber-500" />
             {mission.lesson}
           </p>
 
@@ -190,7 +189,8 @@ export function LessonComplete({ pathName, lessons, index, log, stars, postcard,
                 {t.complete.otherPaths}
               </Button>
               <Button className="flex-1" onClick={onTown}>
-                <span aria-hidden="true">🏘️ </span>{t.complete.backToTown}
+                <Glyph e="🏘" className="mr-1.5 inline align-[-0.15em]" />
+                {t.complete.backToTown}
               </Button>
             </div>
           )}
@@ -267,7 +267,7 @@ function Step({
     "locked-reward": "border-gray-400 bg-gray-200 grayscale",
   };
   const glyph =
-    state === "done" ? "✓" : state === "next" ? (icon ?? "★") : state === "locked" ? "🔒" : state === "reward" ? "🏆" : "🎁";
+    state === "done" ? "✅" : state === "next" ? (icon ?? "⭐") : state === "locked" ? "🔒" : state === "reward" ? "🏆" : "🎁";
 
   return (
     <li className="relative flex flex-1 flex-col items-center text-center" aria-label={ariaLabel}>
@@ -285,7 +285,7 @@ function Step({
         <span
           className={`relative flex h-10 w-10 items-center justify-center rounded-full border-b-4 text-lg font-black ${circle[state]}`}
         >
-          {glyph}
+          <Glyph e={glyph} className={state === "reward" ? "text-amber-900" : ""} />
         </span>
       </span>
       <span

@@ -9,6 +9,8 @@ import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeom
 import type { PipoLook } from "../../game/pipoLook.ts";
 import { CITY_PLACES, PLACES, RING, SPOKE_END, placeOf, type Place, type PlaceId } from "../../game/townLayout.ts";
 import { TOUCH } from "../device.ts";
+import { Glyph } from "../Glyph.tsx";
+import { MedalBadge } from "./MedalBadge.tsx";
 import { Pipo3D } from "./Pipo3D.tsx";
 import { ReadyContext, useTownReady } from "./ready.ts";
 import { Static } from "./Static.tsx";
@@ -21,11 +23,13 @@ import { NIGHT, NightContext, useNight } from "./night.ts";
 
 export interface PlaceTag {
   title: string;
+  /** The place's emoji key, drawn as an icon before the title. */
+  icon?: string;
   sub: string;
-  /** Shown on the tag, e.g. "★ 4/9" for a persona with playable paths. */
+  /** Shown on the tag, e.g. "4/9" (with a star) for a persona with playable paths. */
   progress?: string;
-  /** Shown on the tag, e.g. "🏅" when a path here is complete. */
-  badge?: string;
+  /** How many paths here are complete: a medal on the tag (with "×2" when more than one). */
+  badge?: number;
   /** "Tap or click to visit ›", in the player's language. */
   visit?: string;
   /** False for places you can't visit yet. */
@@ -841,9 +845,15 @@ function Spot({ place, tag, hovered, locked, delay, still, onHover, onSelect, ch
                 tag.open ? "bg-white text-ink ring-white" : "bg-white/75 text-gray-600 ring-white/60"
               } ${hovered ? "scale-110" : ""}`}
             >
+              {tag.icon && <Glyph e={tag.icon} className="shrink-0 text-brand-600" />}
               {tag.title}
-              {tag.progress && <span className="text-xs font-extrabold text-amber-600">{tag.progress}</span>}
-              {tag.badge && <span aria-hidden="true">{tag.badge}</span>}
+              {tag.progress && (
+                <span className="flex items-center gap-0.5 text-xs font-extrabold text-amber-600">
+                  <Glyph e="⭐" className="fill-amber-400 text-amber-500" />
+                  {tag.progress}
+                </span>
+              )}
+              {!!tag.badge && <MedalBadge count={tag.badge} />}
             </div>
           </div>
         </div>

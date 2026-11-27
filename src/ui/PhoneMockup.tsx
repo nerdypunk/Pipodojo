@@ -5,6 +5,7 @@
 import type { PipoAction } from "../engine/types.ts";
 import { distance as distanceText, listingLineCount, readable, stars } from "../engine/actions.ts";
 import { useLang } from "../i18n/index.tsx";
+import { Glyph, stripEmoji } from "./Glyph.tsx";
 
 interface Props {
   action: PipoAction;
@@ -27,7 +28,7 @@ export function PhoneScreen({ action, flags }: Props) {
  *  Pipo's when the lesson has one. A draft waits in the typing box; once sent it's a bubble in the chat. */
 function ChatScreen({ action, flags }: Props) {
   const to = readable(action.args.to);
-  const message = typeof action.args.message === "string" ? action.args.message.trim() : readable(action.args.message);
+  const message = stripEmoji(typeof action.args.message === "string" ? action.args.message : readable(action.args.message));
   const sent = action.outcome === "done";
   const group = action.chat?.group ?? false;
   const earlier = action.chat?.earlier;
@@ -39,7 +40,7 @@ function ChatScreen({ action, flags }: Props) {
           ‹
         </span>
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-base font-black" aria-hidden="true">
-          {group ? "👥" : to.trim().charAt(0).toUpperCase() || "👤"}
+          {group ? <Glyph e="👥" /> : to.trim().charAt(0).toUpperCase() || <Glyph e="👤" />}
         </span>
         <div className="min-w-0">
           <p className="truncate text-sm font-black">{to}</p>
@@ -54,7 +55,7 @@ function ChatScreen({ action, flags }: Props) {
           <p className="max-w-[80%] self-start rounded-2xl rounded-tl-sm bg-white px-3 py-1.5 text-[13px] leading-snug font-semibold text-ink shadow-sm">
             {/* Like a real chat: the sender's name only shows in a group. */}
             {group && <span className="block text-[11px] font-black text-orange-600">{earlier.from}</span>}
-            {earlier.text}
+            {stripEmoji(earlier.text)}
             <span className="block text-right text-[10px] font-bold text-gray-400">3:58 PM</span>
           </p>
         )}
@@ -102,7 +103,7 @@ function ShopScreen({ action, flags }: Props) {
     <div className="flex h-full flex-col" aria-label={t.screens.cartLabel(total, paid)}>
       <div className="flex items-center justify-between bg-brand-700 px-3 py-2.5 text-white">
         <p className="text-sm font-black">
-          <span aria-hidden="true">🛒 </span>
+          <Glyph e="🛒" className="mr-1 inline align-[-0.15em]" />
           {action.store ?? "FreshCart"}
         </p>
         <p className="text-[11px] font-bold text-white/80">
@@ -133,7 +134,7 @@ function ShopScreen({ action, flags }: Props) {
         </p>
         <p className={`flex justify-between rounded-md px-1 text-[13px] font-semibold text-gray-700 ${flags[2] ? FLAG : ""}`}>
           <span>
-            <span aria-hidden="true">🚚 </span>
+            <Glyph e="🚚" className="mr-1 inline align-[-0.15em]" />
             {action.whenLabel ?? t.screens.delivery}
           </span>
           <span>{readable(action.args.delivery)}</span>
@@ -146,15 +147,15 @@ function ShopScreen({ action, flags }: Props) {
 /** An email: a draft waits in the compose view until you send it; once sent it's in Sent. */
 function EmailScreen({ action, flags }: Props) {
   const to = readable(action.args.to);
-  const subject = readable(action.args.subject);
-  const body = typeof action.args.body === "string" ? action.args.body.trim() : readable(action.args.body);
+  const subject = stripEmoji(readable(action.args.subject));
+  const body = stripEmoji(typeof action.args.body === "string" ? action.args.body : readable(action.args.body));
   const sent = action.outcome === "done";
   const { t } = useLang();
   return (
     <div className="flex h-full flex-col" aria-label={t.screens.emailLabel(to, sent)}>
       <div className="flex items-center justify-between bg-sky-600 px-3 py-2.5 text-white">
         <p className="text-sm font-black">
-          <span aria-hidden="true">✉️ </span>
+          <Glyph e="✉" className="mr-1 inline align-[-0.15em]" />
           {action.store ?? t.screens.mail}
         </p>
         <p className="text-[11px] font-bold text-white/85">{sent ? t.screens.sentBox : t.screens.draft}</p>
@@ -189,7 +190,7 @@ function CalendarScreen({ action, flags }: Props) {
     <div className="flex h-full flex-col" aria-label={t.screens.calendarLabel(action.store ?? t.screens.calendar, events.length, added)}>
       <div className="flex items-center justify-between bg-rose-500 px-3 py-2.5 text-white">
         <p className="text-sm font-black">
-          <span aria-hidden="true">📅 </span>
+          <Glyph e="📅" className="mr-1 inline align-[-0.15em]" />
           {action.store ?? t.screens.calendar}
         </p>
         <p className="text-[11px] font-bold text-white/85">{added ? t.screens.added : t.screens.notAdded}</p>
@@ -211,7 +212,7 @@ function CalendarScreen({ action, flags }: Props) {
       </ul>
       {reminder !== undefined && (
         <p className={`mx-3 mb-2 rounded-md px-1 text-[12px] font-bold text-gray-700 ${flags[1] ? FLAG : ""}`}>
-          <span aria-hidden="true">🔔 </span>
+          <Glyph e="🔔" className="mr-1 inline align-[-0.15em]" />
           {readable(reminder)}
         </p>
       )}
@@ -237,7 +238,7 @@ function FormScreen({ action, flags }: Props) {
     <div className="flex h-full flex-col bg-brand-50" aria-label={t.screens.formLabel(title, submitted)}>
       <div className="flex items-center justify-between bg-brand-700 px-3 py-2.5 text-white">
         <p className="text-sm font-black">
-          <span aria-hidden="true">📋 </span>
+          <Glyph e="📋" className="mr-1 inline align-[-0.15em]" />
           {action.store ?? t.screens.forms}
         </p>
         <p className="text-[11px] font-bold text-white/85">{submitted ? t.screens.submitted : t.screens.notSubmitted}</p>
@@ -317,7 +318,7 @@ function ListingsScreen({ action, flags }: Props) {
     <div className="flex h-full flex-col bg-brand-50" aria-label={t.screens.listingsLabel(items.length, saved)}>
       <div className="flex items-center justify-between bg-brand-700 px-3 py-2.5 text-white">
         <p className="text-sm font-black">
-          <span aria-hidden="true">🏷️ </span>
+          <Glyph e="🏷" className="mr-1 inline align-[-0.15em]" />
           {action.store ?? t.screens.marketplace}
         </p>
         <p className="text-[11px] font-bold text-white/85">
@@ -338,14 +339,12 @@ function ListingsScreen({ action, flags }: Props) {
               className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-lg text-3xl ${PHOTO_TONES[i % PHOTO_TONES.length]}`}
               aria-hidden="true"
             >
-              🪑
+              <Glyph e="🪑" strokeWidth={1.75} />
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex items-start justify-between gap-1.5">
                 <p className="line-clamp-2 text-[12px] leading-tight font-bold text-ink">{item.name}</p>
-                <span className={`shrink-0 text-sm leading-none ${saved ? "" : "opacity-40"}`} aria-hidden="true">
-                  🔖
-                </span>
+                <Glyph e="🔖" className={`shrink-0 text-sm ${saved ? "fill-brand-500 text-brand-600" : "text-gray-400"}`} />
               </div>
               {item.price !== undefined && <p className="mt-0.5 text-[15px] leading-tight font-black text-brand-700">${item.price}</p>}
               <p className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11px] font-semibold text-gray-600">
@@ -361,7 +360,7 @@ function ListingsScreen({ action, flags }: Props) {
                 )}
                 {item.distance !== undefined && (
                   <span>
-                    <span aria-hidden="true">📍</span>
+                    <Glyph e="📍" className="mr-0.5 inline align-[-0.15em]" />
                     {item.distance}
                   </span>
                 )}

@@ -354,9 +354,9 @@ export function Apartments() {
           <meshStandardMaterial color="#4a4c80" />
         </mesh>
       </group>
-      {/* Front door and a little neon heart */}
+      {/* Front door and a little neon HOME sign */}
       <Neon size={[0.45, 0.7, 0.03]} position={[-0.6, 0.36, 1.01]} color="#ffe2b8" />
-      <NeonSign text="♥" color={NIGHT.magenta} position={[-0.6, 0.95, 1.06]} size={0.34} board={false} />
+      <NeonSign text="HOME" color={NIGHT.magenta} position={[-0.6, 0.95, 1.06]} size={0.22} board={false} />
       <Pool position={[-0.4, 0.06, 1.7]} color={NIGHT.warm} size={2.4} opacity={0.3} />
     </group>
   );

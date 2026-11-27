@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { play } from "../../app/sound.ts";
 import { useLang } from "../../i18n/index.tsx";
+import { Glyph } from "../Glyph.tsx";
 import { LangSwitch } from "../LangSwitch.tsx";
 import { Pipo } from "../Pipo.tsx";
 import { SoundButton } from "../SoundButton.tsx";
@@ -79,7 +80,7 @@ function MeSheet({ streak, stars, pathsDone, onClose }: Omit<Props, "onRanking">
 
   const tiles = [
     { icon: "🔥", value: streak, label: t.town.streak },
-    { icon: "★", value: stars, label: t.town.stars },
+    { icon: "⭐", value: stars, label: t.town.stars },
     { icon: "🏅", value: pathsDone, label: t.town.mePaths },
   ];
   return (
@@ -108,9 +109,7 @@ function MeSheet({ streak, stars, pathsDone, onClose }: Omit<Props, "onRanking">
         <ul className="mt-3 grid grid-cols-3 gap-2">
           {tiles.map((tile) => (
             <li key={tile.label} className="flex flex-col items-center rounded-2xl bg-brand-50 px-1 py-2.5 text-center">
-              <span className={`text-xl leading-none ${tile.icon === "★" ? "text-amber-400" : ""}`} aria-hidden="true">
-                {tile.icon}
-              </span>
+              <Glyph e={tile.icon} className={`text-xl ${tile.icon === "🔥" ? "text-orange-500" : tile.icon === "⭐" ? "fill-amber-300 text-amber-500" : "text-brand-600"}`} />
               <span className="mt-1 text-2xl leading-none font-black text-ink">{tile.value}</span>
               <span className="mt-0.5 text-[11px] leading-tight font-bold text-gray-600">{tile.label}</span>
             </li>

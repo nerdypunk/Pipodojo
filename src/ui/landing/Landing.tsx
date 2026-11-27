@@ -9,6 +9,7 @@ import { Check, Copy, ExternalLink, Mail, Menu, X } from "lucide-react";
 import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 import { useLang } from "../../i18n/index.tsx";
 import { Button } from "../Button.tsx";
+import { Glyph, GlyphTile } from "../Glyph.tsx";
 import { LangSwitch } from "../LangSwitch.tsx";
 import { Pipo } from "../Pipo.tsx";
 import { TOUCH } from "../device.ts";
@@ -51,25 +52,29 @@ export function Landing({ onPlay }: { onPlay: () => void }) {
                 <li key={step.title} className={`${PANEL} p-5`}>
                   <div className="mb-3 flex items-center gap-2">
                     <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-500 text-sm font-black text-white">{i + 1}</span>
-                    <span className="text-2xl" aria-hidden="true">
-                      {step.emoji}
-                    </span>
+                    <GlyphTile e={step.emoji} className="h-9 w-9" />
                   </div>
                   <h3 className="text-lg font-black text-white">{step.title}</h3>
                   <p className="mt-1 font-semibold text-brand-100/80">{step.text}</p>
                 </li>
               ))}
             </ol>
-            <p className="mt-5 text-center text-sm font-bold text-brand-200">⚡ {l.about.powered}</p>
+            <p className="mt-5 flex items-center justify-center gap-1.5 text-center text-sm font-bold text-brand-200">
+              <Glyph e="⚡" className="text-brand-300" /> {l.about.powered}
+            </p>
           </Section>
 
           <Divider />
 
           <Section id="teachers" title={l.teachers.title} lead={l.teachers.lead}>
             <Cards items={l.teachers.points} columns="md:grid-cols-2" />
-            <p className="mt-4 rounded-3xl bg-amber-300/10 px-5 py-4 text-center font-bold text-amber-100 ring-1 ring-amber-200/30">💡 {l.teachers.idea}</p>
+            <p className="mt-4 rounded-3xl bg-amber-300/10 px-5 py-4 text-center font-bold text-amber-100 ring-1 ring-amber-200/30">
+              <Glyph e="💡" className="mr-1.5 inline align-[-0.15em] text-amber-300" />
+              {l.teachers.idea}
+            </p>
             <div className={`${PANEL} mt-4 px-5 py-8 text-center md:px-10 md:py-10`}>
-              <h3 className="text-2xl font-black text-white">👪 {l.accounts.title}</h3>
+              <GlyphTile e="👪" className="mx-auto mb-3 h-12 w-12" />
+              <h3 className="text-2xl font-black text-white">{l.accounts.title}</h3>
               <p className="mx-auto mt-2 mb-6 max-w-xl font-semibold text-brand-100/85">{l.accounts.text}</p>
               <Waitlist roles={["parent", "teacher"]} />
             </div>
@@ -96,7 +101,8 @@ export function Landing({ onPlay }: { onPlay: () => void }) {
               ]}
             />
             <div className={`${PANEL} mt-4 px-5 py-8 text-center md:px-10 md:py-10`}>
-              <h3 className="mx-auto mb-6 max-w-xl text-xl font-black text-white">🔬 {l.researchers.invite}</h3>
+              <GlyphTile e="🔬" className="mx-auto mb-3 h-12 w-12" />
+              <h3 className="mx-auto mb-6 max-w-xl text-xl font-black text-white">{l.researchers.invite}</h3>
               <Waitlist roles={["researcher"]} />
             </div>
           </Section>
@@ -158,9 +164,9 @@ function Field() {
           // The cursor scrambles a patch about 46px across, like the React Bits demo (the prop is a
           // share of the screen's height).
           scrambleRadius={Math.min(0.1, 46 / Math.max(1, height))}
-          // A soft light around the cursor, about 150px across, that lights up the letters under it.
-          pointerGlow={0.65}
-          pointerGlowRadius={Math.min(0.3, 150 / Math.max(1, height))}
+          // A faint light around the cursor, about 120px across, that lifts the letters under it a little.
+          pointerGlow={0.28}
+          pointerGlowRadius={Math.min(0.25, 120 / Math.max(1, height))}
         />
       </Suspense>
     </div>
@@ -307,9 +313,7 @@ function Cards({
     <ul className={`grid gap-3 md:gap-4 ${columns}`}>
       {items.map((item, i) => (
         <li key={item.title} className={`${PANEL} flex gap-3 p-5`}>
-          <span className="text-2xl" aria-hidden="true">
-            {item.emoji}
-          </span>
+          <GlyphTile e={item.emoji} className="h-10 w-10" />
           <div className="flex flex-col">
             <h3 className="text-lg font-black text-white">{item.title}</h3>
             <p className="mt-1 font-semibold text-brand-100/80">{item.text}</p>
@@ -352,9 +356,7 @@ function Contact() {
   };
   return (
     <section id="contact" aria-labelledby="contact-title" className={`${PANEL} scroll-mt-24 p-6 text-center md:p-10`}>
-      <span className="text-4xl" aria-hidden="true">
-        💌
-      </span>
+      <GlyphTile e="💌" className="mx-auto h-14 w-14" />
       <h2 id="contact-title" className="mt-2 text-3xl font-black text-white md:text-4xl">
         {contact.title}
       </h2>

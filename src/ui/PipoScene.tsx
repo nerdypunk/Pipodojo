@@ -5,6 +5,7 @@ import type { Mood } from "./Pipo.tsx";
 import { PipoStage, type StageMode } from "./PipoStage.tsx";
 import { isLaptopApp } from "./LaptopApps.tsx";
 import { useLang } from "../i18n/index.tsx";
+import { Glyph } from "./Glyph.tsx";
 
 interface Props {
   mission: Mission;
@@ -52,7 +53,7 @@ function MissionPanel({
 
       <div className="relative">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-extrabold tracking-wide text-white">
-          <span aria-hidden="true">🎯</span> {t.lesson.mission}
+          <Glyph e="🎯" /> {t.lesson.mission}
         </span>
         <h1 className="mt-1 text-2xl leading-tight font-black text-ink md:text-[28px]">{mission.title}</h1>
       </div>
@@ -67,7 +68,7 @@ function MissionPanel({
                 onClick={onOpenPhone}
                 className="rounded-full bg-ink px-3 py-1 text-xs font-extrabold text-white hover:bg-brand-800"
               >
-                <span aria-hidden="true">{action && isLaptopApp(action.app) ? "💻 " : "📱 "}</span>
+                <Glyph e={action && isLaptopApp(action.app) ? "💻" : "📱"} className="mr-1 inline align-[-0.15em]" />
                 {action && isLaptopApp(action.app) ? t.lesson.openLaptop : t.lesson.openPhone}
               </button>
             )}
@@ -93,9 +94,7 @@ function MissionPanel({
                   }`}
                 >
                   {emoji && (
-                    <span className={answer ? "text-base" : "text-lg"} aria-hidden="true">
-                      {emoji}
-                    </span>
+                    <Glyph e={emoji} className={`shrink-0 text-brand-600 ${answer ? "text-base" : "text-lg"}`} />
                   )}
                   {text}
                 </li>
@@ -121,9 +120,13 @@ function AnswerCard({ lines, short = false }: { lines: AnswerLine[]; short?: boo
           }`}
           style={{ animationDelay: `${i * LINE_DELAY_MS}ms` }}
         >
-          <span className="text-xl" aria-hidden="true">
-            {line.emoji || "•"}
-          </span>
+          {line.emoji ? (
+            <Glyph e={line.emoji} className={`shrink-0 text-xl ${line.flagged ? "text-red-600" : "text-brand-600"}`} />
+          ) : (
+            <span className="text-xl" aria-hidden="true">
+              •
+            </span>
+          )}
           <span className={short ? "min-w-0 truncate" : ""}>{line.text}</span>
         </li>
       ))}

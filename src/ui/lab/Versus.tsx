@@ -12,6 +12,7 @@ import type { Mission, Score } from "../../engine/types.ts";
 import { answerLines, resultNotes } from "../../game/feedback.ts";
 import { VERSUS_ROUNDS } from "../../game/versus.ts";
 import { useLang } from "../../i18n/index.tsx";
+import { Glyph } from "../Glyph.tsx";
 import { Button } from "../Button.tsx";
 import { Pipo } from "../Pipo.tsx";
 import { SoundButton } from "../SoundButton.tsx";
@@ -69,7 +70,9 @@ export function Versus({ onBack }: { onBack: () => void }) {
         >
           <span aria-hidden="true">‹</span>
         </button>
-        <span className="min-w-0 truncate text-base font-black text-ink">⚖️ {t.lab.versusTitle}</span>
+        <span className="flex min-w-0 items-center gap-1.5 truncate text-base font-black text-ink">
+          <Glyph e="⚖" className="shrink-0 text-brand-600" /> {t.lab.versusTitle}
+        </span>
         <span className="ml-auto shrink-0 rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-extrabold text-white">
           {t.lab.round(round + 1, VERSUS_ROUNDS.length)}
         </span>
@@ -166,7 +169,9 @@ function SideCard({
     >
       <div className="flex items-center gap-2">
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-600 text-sm font-black text-white">{side}</span>
-        {winner && <span className="rounded-full bg-amber-300 px-2.5 py-0.5 text-xs font-black text-amber-950">🏆 {t.lab.winner}</span>}
+        {winner && <span className="flex items-center gap-1 rounded-full bg-amber-300 px-2.5 py-0.5 text-xs font-black text-amber-950">
+            <Glyph e="🏆" /> {t.lab.winner}
+          </span>}
         {run && (
           <span className="ml-auto text-lg tracking-widest" aria-label={t.common.starsOf(run.score.stars)}>
             <span className="text-amber-400">{"★".repeat(run.score.stars)}</span>
@@ -193,7 +198,7 @@ function SideCard({
                 }`}
                 style={{ animationDelay: `${i * 120}ms` }}
               >
-                <span aria-hidden="true">{line.emoji || "•"}</span>
+                {line.emoji ? <Glyph e={line.emoji} className="shrink-0 text-brand-600" /> : <span aria-hidden="true">•</span>}
                 {line.text}
               </li>
             ))}

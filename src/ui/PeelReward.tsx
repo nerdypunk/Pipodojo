@@ -13,6 +13,7 @@ import { Pipo } from "./Pipo.tsx";
 import { ShareSheet } from "./ShareSheet.tsx";
 import { play } from "../app/sound.ts";
 import { useLang } from "../i18n/index.tsx";
+import { Glyph } from "./Glyph.tsx";
 
 interface Props {
   pathName: string;
@@ -151,8 +152,10 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
               </>
             ) : postcard?.status === "painting" ? (
               <div className="postcard-painting flex h-full w-full flex-col items-center justify-center gap-1 p-2 text-center">
-                <span className="text-2xl" aria-hidden="true">🎨</span>
-                <span className="text-[10px] leading-tight font-black text-white">⚡ {r.chip}</span>
+                <Glyph e="🎨" className="text-2xl text-white" />
+                <span className="flex items-center gap-0.5 text-[10px] leading-tight font-black text-white">
+                  <Glyph e="⚡" /> {r.chip}
+                </span>
                 <span className="text-[10px] leading-tight font-bold text-white/85">{r.paintingThumb}</span>
                 <LiveSeconds since={postcard.startedAt} />
               </div>
@@ -211,7 +214,7 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
             onClick={() => setSharing(true)}
             className="pop-in flex items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(115deg,#ff7a1a,#ffb547)] py-3 text-base font-black text-white shadow-[0_10px_24px_-10px_rgb(255_122_26/0.8)] transition hover:brightness-105 active:translate-y-px"
           >
-            <span aria-hidden="true">📣</span> {r.share}
+            <Glyph e="📣" /> {r.share}
           </button>
         {ready && (
           <div className="flex justify-center gap-4">
@@ -254,7 +257,8 @@ export function PeelReward({ pathName, lessons, stars, postcard, share }: Props)
 function MetaChip({ label }: { label: string }) {
   return (
     <span className="absolute inset-x-1 bottom-1 rounded-lg bg-ink/80 px-1 py-0.5 text-center text-[9px] leading-tight font-black text-white backdrop-blur-sm">
-      ⚡ {label}
+      <Glyph e="⚡" className="mr-0.5 inline align-[-0.1em]" />
+      {label}
     </span>
   );
 }
@@ -304,7 +308,9 @@ function BigPostcard({ postcard, still, onClose }: { postcard: Extract<Postcard,
       {postcard.painted && (
         <div className="w-full max-w-md cursor-auto rounded-2xl bg-white/95 p-3 text-left shadow-xl" onClick={(e) => e.stopPropagation()}>
           <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-black text-ink">
-            <span>🎨 {r.liveTitle}</span>
+            <span className="flex items-center gap-1.5">
+              <Glyph e="🎨" className="text-brand-600" /> {r.liveTitle}
+            </span>
             {postcard.model && <code className="rounded-md bg-ink px-1.5 py-0.5 font-mono text-[11px] font-bold text-white">{postcard.model}</code>}
             {postcard.ms !== undefined && <span className="text-xs font-bold text-gray-500">{r.took((postcard.ms / 1000).toFixed(1))}</span>}
           </p>

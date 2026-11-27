@@ -1,4 +1,4 @@
-// The language switch: a small 🌐 pill showing the current language. It opens a short menu with
+// The language switch: a small globe pill showing the current language. It opens a short menu with
 // every language, each written in its own words (English, Español, 日本語), so anyone can find
 // theirs. Like the sound panel, the menu is drawn in a portal under the button (above it in the
 // phone tab bar), so cards and headers can never cover it.
@@ -6,6 +6,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "re
 import { createPortal } from "react-dom";
 import { LANGS, useLang } from "../i18n/index.tsx";
 import { play } from "../app/sound.ts";
+import { Glyph } from "./Glyph.tsx";
 
 const MENU_WIDTH = 176;
 
@@ -89,7 +90,7 @@ export function LangSwitch({
           </>
         ) : (
           <>
-            <span aria-hidden="true">🌐</span>
+            <Glyph e="🌐" />
             {current.short}
           </>
         )}

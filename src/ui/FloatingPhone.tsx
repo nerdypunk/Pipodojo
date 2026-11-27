@@ -9,6 +9,7 @@ import { readable } from "../engine/actions.ts";
 import type { PipoAction } from "../engine/types.ts";
 import { isLaptopApp, LaptopScreen } from "./LaptopApps.tsx";
 import { PhoneScreen } from "./PhoneMockup.tsx";
+import { Glyph } from "./Glyph.tsx";
 import { play, type Sfx } from "../app/sound.ts";
 import { useLang, type Strings } from "../i18n/index.tsx";
 
@@ -70,7 +71,7 @@ export function FloatingPhone({ action, flags, status, open, onOpen, onClose, on
         animate={{ scale: 1, opacity: 1 }}
         className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-[calc(50%-80px)] z-40 flex items-center gap-2 rounded-full bg-ink px-4 py-3 font-extrabold text-white shadow-[0_12px_30px_-8px_rgb(27_22_64/0.7)] md:top-24 md:right-8 md:bottom-auto md:left-auto min-[1700px]:right-auto min-[1700px]:left-[calc(50%+576px)]"
       >
-        <span aria-hidden="true">{laptop ? "💻" : "📱"}</span> {laptop ? t.device.laptop : t.device.phone}
+        <Glyph e={laptop ? "💻" : "📱"} /> {laptop ? t.device.laptop : t.device.phone}
         {status === "review" && <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-amber-300 motion-reduce:animate-none" />}
       </motion.button>
     );
@@ -147,7 +148,10 @@ export function FloatingPhone({ action, flags, status, open, onOpen, onClose, on
             <div className="flex shrink-0 items-center justify-between px-6 pt-2.5 pb-1.5 text-[11px] font-black text-ink">
               <span>9:41</span>
               <span className="h-[18px] w-[72px] rounded-full bg-ink" aria-hidden="true" />
-              <span aria-hidden="true">📶 🔋</span>
+              <span className="flex items-center gap-1" aria-hidden="true">
+                <Glyph e="📶" strokeWidth={2.75} />
+                <Glyph e="🔋" strokeWidth={2.5} />
+              </span>
             </div>
 
             <div className="min-h-0 flex-1">
@@ -270,7 +274,9 @@ function PhoneFooter({
   if (status === "review") {
     return (
       <div className="space-y-2 border-t border-gray-100 px-3 pt-2 pb-1">
-        <p className="text-center text-xs font-extrabold text-amber-800">⏳ {copy.ask}</p>
+        <p className="flex items-center justify-center gap-1 text-center text-xs font-extrabold text-amber-800">
+          <Glyph e="⏳" /> {copy.ask}
+        </p>
         <div className="flex gap-2">
           <button
             type="button"

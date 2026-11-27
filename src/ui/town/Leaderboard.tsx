@@ -1,14 +1,16 @@
 // The leaderboard: countries ranked by the stars their players earned, today or all time (two
-// tabs), opened from the 🏆 button in town. Countries only (no names, no accounts, no cookies); the player's own country
+// tabs), opened from the trophy button in town. Countries only (no names, no accounts, no cookies); the player's own country
 // is highlighted, and shown under the top ten if it isn't in it.
 import { useEffect, useRef, useState } from "react";
 import { fetchLeaderboard, type CountryRow, type Leaderboard as Board } from "../../app/leaderboard.ts";
 import { countryName, flagOf } from "../../game/countries.ts";
 import { useLang } from "../../i18n/index.tsx";
+import { Glyph } from "../Glyph.tsx";
 import { useCloseOnOutside } from "../useCloseOnOutside.ts";
 
 const TOP = 10;
-const MEDALS = ["🥇", "🥈", "🥉"];
+/** Gold, silver and bronze medals for the top three. */
+const MEDALS = ["text-amber-500", "text-slate-400", "text-orange-700"];
 const TABS = ["today", "allTime"] as const;
 type Tab = (typeof TABS)[number];
 
@@ -52,8 +54,8 @@ export function Leaderboard({ onClose }: Props) {
       >
         <div className="flex items-start justify-between gap-2">
           <div>
-            <h2 id="leaderboard-title" className="text-lg font-black text-ink">
-              🏆 {t.town.leaderboard}
+            <h2 id="leaderboard-title" className="flex items-center gap-1.5 text-lg font-black text-ink">
+              <Glyph e="🏆" className="text-amber-500" /> {t.town.leaderboard}
             </h2>
             <p className="text-xs font-semibold text-gray-600">{tab === "today" ? t.town.leaderboardSub : t.town.leaderboardSubAll}</p>
           </div>
@@ -88,7 +90,7 @@ export function Leaderboard({ onClose }: Props) {
           {board === "loading" && <p className="py-4 text-center text-sm font-bold text-gray-600">{t.town.leaderboardLoading}</p>}
           {board === null && <p className="py-4 text-center text-sm font-bold text-gray-600">{t.town.leaderboardOff}</p>}
           {ready && rows.length === 0 && (
-            <p className="py-4 text-center text-sm font-bold text-gray-600">{empty(you ? `${flagOf(you)} ${countryName(you, lang)}` : "🌎")}</p>
+            <p className="py-4 text-center text-sm font-bold text-gray-600">{empty(you ? `${flagOf(you)} ${countryName(you, lang)}` : t.town.leaderboardYourCountry)}</p>
           )}
           {ready && rows.length > 0 && (
             <ol className="space-y-1.5">
@@ -120,7 +122,16 @@ function Row({ row, rank, mine, lang, lessons }: { row: CountryRow; rank: number
       className={`flex items-center gap-2 rounded-2xl px-2.5 py-1.5 text-sm ${mine ? "bg-brand-50 ring-2 ring-brand-400" : "bg-white ring-1 ring-brand-100"}`}
       aria-current={mine ? "true" : undefined}
     >
-      <span className="w-7 shrink-0 text-center font-black text-brand-700">{MEDALS[rank] ?? rank + 1}</span>
+      <span className="flex w-7 shrink-0 justify-center font-black text-brand-700">
+        {MEDALS[rank] ? (
+          <>
+            <Glyph e="🏅" className={`text-xl ${MEDALS[rank]}`} strokeWidth={2.5} />
+            <span className="sr-only">{rank + 1}</span>
+          </>
+        ) : (
+          rank + 1
+        )}
+      </span>
       <span className="text-xl leading-none" aria-hidden="true">
         {flagOf(row.country)}
       </span>

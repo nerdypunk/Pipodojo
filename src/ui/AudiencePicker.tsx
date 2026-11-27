@@ -5,6 +5,7 @@ import type { Audience } from "../game/personas.ts";
 import { useLang } from "../i18n/index.tsx";
 import { play } from "../app/sound.ts";
 import { useGoHome } from "./HomeLink.tsx";
+import { Glyph } from "./Glyph.tsx";
 import { LangSwitch } from "./LangSwitch.tsx";
 import { Pipo } from "./Pipo.tsx";
 import { SoundButton } from "./SoundButton.tsx";
@@ -72,9 +73,7 @@ export function AudiencePicker({ current, onPick }: Props) {
           }`}
         >
           <div className="relative flex h-40 items-end justify-center bg-gradient-to-b from-sky-300 via-sky-200 to-emerald-200 max-sm:h-28 md:h-52">
-            <span className="absolute top-4 right-6 text-4xl md:text-5xl" aria-hidden="true">
-              ☀️
-            </span>
+            <Glyph e="☀" className="absolute top-4 right-6 text-4xl text-amber-400 drop-shadow-[0_0_14px_rgb(251_191_36/0.8)] md:text-5xl" strokeWidth={2.5} />
             <span className="absolute top-8 left-6 h-6 w-16 rounded-full bg-white/80" aria-hidden="true" />
             <span className="absolute top-14 left-16 h-5 w-12 rounded-full bg-white/70" aria-hidden="true" />
             <div className="absolute inset-x-0 bottom-0 h-10 rounded-t-[50%] bg-emerald-400/80" aria-hidden="true" />

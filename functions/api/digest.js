@@ -43,7 +43,7 @@ export function digestEmail({ day, byRole, newOnes, total }, label) {
     `The list itself (emails) stays in Cloudflare D1. See everyone on the dashboard: ${DASHBOARD}`,
   ].join("\n");
   const html = `<div style="font-family:system-ui,sans-serif;font-size:16px;line-height:1.5;color:#26233a">
-<p style="font-size:20px;font-weight:800;margin:0 0 8px">🤖 ${newOnes} new on the Pipodojo waitlist ${label}</p>
+<p style="font-size:20px;font-weight:800;margin:0 0 8px">${newOnes} new on the Pipodojo waitlist ${label}</p>
 <p style="margin:0 0 4px">${summary}</p>
 <p style="margin:0 0 16px"><b>${total}</b> on the list in all.</p>
 <p style="margin:0;color:#6b6782;font-size:14px">The list itself stays in Cloudflare D1. <a href="${DASHBOARD}" style="color:#5b4bd6;font-weight:700">See everyone on the dashboard</a></p>

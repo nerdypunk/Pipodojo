@@ -7,6 +7,7 @@ import { drawShareCard, type ShareInfo } from "./shareCard.ts";
 import { fetchCountry } from "../app/leaderboard.ts";
 import { countryName } from "../game/countries.ts";
 import { useLang } from "../i18n/index.tsx";
+import { Glyph } from "./Glyph.tsx";
 
 interface Props {
   open: boolean;
@@ -108,9 +109,7 @@ export function ShareSheet({ open, info, painting, onClose }: Props) {
                 <img src={card.url} alt={t.share.cardAlt(info.brag)} className="h-full w-full object-cover" />
               ) : (
                 <div className="flex h-full flex-col items-center justify-center gap-2 text-center">
-                  <span className="text-4xl" aria-hidden="true">
-                    🎨
-                  </span>
+                  <Glyph e="🎨" className="text-4xl text-brand-500" />
                   <p className="px-6 text-sm font-extrabold text-brand-800">
                     {painting ? t.share.painting : t.share.making}
                   </p>
